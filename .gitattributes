@@ -10,3 +10,5 @@ CONTRIBUTING.md export-ignore
 phpunit.xml export-ignore
 composer.lock export-ignore
 /docs export-ignore
+mkdocs.yml export-ignore
+docs-requirements.txt export-ignore
