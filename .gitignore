@@ -1,0 +1,6 @@
+/vendor
+/.idea
+/coverage
+report.*
+.phpunit.result.cache
+docs/_site

@@ -1,0 +1,50 @@
+name: Build docs and commit to build branch
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout package
+      uses: actions/checkout@v2
+      with:
+        ref: 'build/documentation'
+        fetch-depth: 0
+
+    - name: Install Ruby
+      id: build-docs
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6
+
+    - name: Update build/documentation with changes from develop
+      uses: devmasx/merge-branch@v1.3.1
+      with:
+        type: now
+        from_branch: develop
+        target_branch: build/documentation
+        github_token: ${{ github.token }}
+
+    - name: Build Docs
+      working-directory: ./docs
+      run: |
+        sudo apt-get -yqq install libpq-dev
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+        bundle exec jekyll build
+
+    - name: 🧪 Deploy build
+      run: |
+        git config user.name "Toby Twigger"
+        git config user.email "tobytwigger1@gmail.com"
+        git config pull.rebase false
+        git pull origin develop
+        git add ./docs
+        git commit -am "🧪 Build docs"
+        git push  -f https://${{ github.token }}@github.com/tobytwigger/laravel-job-status.git
