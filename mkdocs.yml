@@ -1,0 +1,11 @@
+site_name: Laravel Job Status
+site_url: https://tobytwigger.github.io/laravel-job-status
+nav:
+    - Home: 'index.md'
+    - Tracking a job: 'tracking-jobs.md'
+theme:
+    name: material
+plugins:
+    - search
+    #  - with-pdf
+    - git-authors
