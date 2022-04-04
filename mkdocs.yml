@@ -2,7 +2,14 @@ site_name: Laravel Job Status
 site_url: https://tobytwigger.github.io/laravel-job-status
 nav:
     - Home: 'index.md'
-    - Tracking a job: 'tracking-jobs.md'
+    - Enable tracking: 'tracking-jobs.md'
+    - Track the job:
+          - Get job information: 'tracking/retrieve-status.md'
+          - Messages: 'tracking/messages.md'
+          - Progress: 'tracking/progress.md'
+    - Interacting with a job:
+          - Cancelling a job: 'interacting/cancel.md'
+          - Custom signals: 'interacting/signals.md'
 theme:
     name: material
 plugins:
