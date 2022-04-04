@@ -1,0 +1,38 @@
+site_name: Laravel Job Status
+site_url: https://tobytwigger.github.io/laravel-job-status
+repo_url: https://github.com/tobytwigger/laravel-job-status
+nav:
+    -   Home: 'overview.md'
+    -   Enable tracking: 'tracking-jobs.md'
+    -   Track the job:
+            -   Get job information: 'tracking/retrieve-status.md'
+            -   Messages: 'tracking/messages.md'
+            -   Progress: 'tracking/progress.md'
+    -   Interacting with a job:
+            -   Cancelling a job: 'interacting/cancel.md'
+            -   Custom signals: 'interacting/signals.md'
+    -   Vue Integration: 'vue.md'
+theme:
+    name: material
+    custom_dir: overrides
+    features:
+        - navigation.instant
+        - navigation.top
+    palette:
+        -   scheme: default
+            toggle:
+                icon: material/weather-night
+                name: Switch to dark mode
+        -   scheme: slate
+            toggle:
+                icon: material/weather-sunny
+                name: Switch to light mode
+
+plugins:
+    - search
+    #  - with-pdf
+    - git-authors
+markdown_extensions:
+    - admonition
+    - pymdownx.details
+    - pymdownx.superfences

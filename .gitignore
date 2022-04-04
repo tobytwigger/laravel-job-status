@@ -3,6 +3,4 @@
 /coverage
 report.*
 .phpunit.result.cache
-docs/_site
-venv/
-site/
+docs/venv

@@ -8,6 +8,9 @@ on:
 
 jobs:
     build:
+        defaults:
+            run:
+                working-directory: docs
         name: Deploy docs
         runs-on: ubuntu-latest
         steps:
@@ -20,7 +23,7 @@ jobs:
                   python-version: 3.x
 
             - name: Install python dependencies
-              run: pip install -r docs-requirements.txt
+              run: pip install -r requirements.txt
 
             - name: Build and deploy
               run: mkdocs gh-deploy --force --remote-branch build/documentation

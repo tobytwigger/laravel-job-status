@@ -21,3 +21,5 @@ php artisan vendor:publish --provider="JobStatus\JobStatusServiceProvider"
 This will publish the configuration file and migrations.
 
 ## Basic Usage
+
+Todo
