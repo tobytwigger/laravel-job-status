@@ -15,9 +15,11 @@ To retrieve a model, start with `JobStatus::`. This is just like Eloquent, so yo
 - `whereTag('election', '=', $electionId)`: Limit the job statuses to those with the given tag. The value of the tag must match.
 - `whereStatus(JobStatus::SUCCESS) or whereSuccess()`: Limit the job statuses to those of status success. Similar for all statuses
 - `whereNotStatus(JobStatus::SUCCESS) or whereNotSuccess()`: Limit the job statuses to those without the given status. Can also pass in an array.
-- 
+
+
 Once you've built up your query, call one of the following to get the results
-- `first()`: Get the most recently dispatched job status matching the query.
+- `first()`: Get the most recently dispatched job status matching the query or return null if no matching jobs.
+- `firstOrFail()`: Get the most recently dispatched job status matching the query, or throw an exception.
 - `all() or get()`: Get all matching job statuses
 - `count()`: Get the number of matching jobs
 
@@ -26,6 +28,12 @@ If you use `all` or `get` you will get a JobStatusCollection instance. You can u
 - `countSuccessful()`: Count how many jobs were sucessful`
 - `countRunning()`: Count how many jobs are still running
 - `countNotFinished()`: Count how many jobs are queued or running.
+
+## Examples
+
+- Get information about all jobs
+  - `JobStatus::all()->countNotFinished()`: Get the total number of jobs not yet finished.
+  - `JobStatus::first()`: Get the most recently dispatched job.
 
 ## Using the status model
 

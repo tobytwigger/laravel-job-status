@@ -9,7 +9,8 @@ You can also add tags, to help you find jobs in the future.
 ```php
 class ProcessPodcast
 {
-
+    use Trackable;
+    
     protected Podcast $podcast;
     
     public function handle()

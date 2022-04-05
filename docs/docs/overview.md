@@ -4,6 +4,10 @@
 
 This package allows you to interact with and track running jobs.
 
+### When to use this package
+
+### When not to use this package
+
 ## Installation
 
 All you need to do to use this project is pull it into an existing Laravel app using composer.
@@ -23,3 +27,5 @@ This will publish the configuration file and migrations.
 ## Basic Usage
 
 Todo
+
+## Roadmap

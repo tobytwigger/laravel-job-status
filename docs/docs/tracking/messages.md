@@ -14,7 +14,7 @@ You can also set a type on a message. A type is one of
 - warning
 - debug
 
-Call `$this->message('success', 'All emails sent successfully.)` to set a message with a type, There are also aliases of `successMessage`, `warningMessage` etc.
+Call `$this->message('All emails sent successfully.', 'success')` to set a message with a type, There are also aliases of `successMessage`, `warningMessage` etc.
 
 # Reading messages
 

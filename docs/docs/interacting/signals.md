@@ -4,7 +4,7 @@ Cancelling a job is one example of a signal, where the app is sending a message 
 
 ## Sending Signals
 
-With a status model, use `$status->sendSignal('signal-type');`.
+With a status model, use `$status->sendSignal('signal-type');`. This will send the signal to the job that owns the status model.
 
 ## Checking for signals
 
@@ -36,3 +36,5 @@ class MyJob
 
 }
 ```
+
+## Use Cases

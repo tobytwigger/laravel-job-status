@@ -13,3 +13,5 @@ Add this to your schedule to auto remove any old jobs that have finished process
 If you turn on debug mode you can see more information about each job, such as the runtime, These are saved in the database and can be accessed through the status model.
 
 `$status->debug()->getRuntime()`.
+
+You can see the runtime between each percentage increase if you use percentages.
