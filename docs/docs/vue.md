@@ -32,3 +32,7 @@ There are three ways to update this data.
 - The first is to have it update whenever the page loads - this will always happen.
 - The second is to poll the API. To do this pass in `:polling="true"` to the laravel status component.
 - The third is to use webhooks. If you have webhooks set up using Laravel Echo we will automatically fire and broadcast events from your application to your Vue component and keep the data up to date.
+
+## Job index
+
+In the longer term we'll also add a `<laravel-job-status-table>` component to list many jobs matching the given filters.

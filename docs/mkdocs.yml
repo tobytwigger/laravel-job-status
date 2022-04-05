@@ -12,6 +12,7 @@ nav:
             -   Cancelling a job: 'interacting/cancel.md'
             -   Custom signals: 'interacting/signals.md'
     -   Vue Integration: 'vue.md'
+    -   Debugging: 'debug-mode.md'
 theme:
     name: material
     custom_dir: overrides
