@@ -12,7 +12,8 @@ class JobFake
 
     public function __construct(
         private ?string $alias = null,
-        private array $tags = []
+        private array $tags = [],
+        private ?\Closure $callback = null
     ) {
 
     }
@@ -29,9 +30,10 @@ class JobFake
 
     public function handle()
     {
-        //
-
-//        throw new \Exception();
+        if($this->callback === null) {
+            return null;
+        }
+        return app()->call($this->callback, ['job' => $this]);
     }
 
 

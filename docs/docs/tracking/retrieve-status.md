@@ -11,7 +11,7 @@ The status model is an eloquent model which represents a job. There is one per j
 To retrieve a model, start with `JobStatus::`. This is just like Eloquent, so you can chain on as many of the following calls as you'd like.
 
 - `forJob(Job::class)`: Limit the job statuses to those of the given job type
-- `forJob('job-alias')`: Limit the job statuses to those of the given job alias. This is useful for referencing jobs in your frontend.
+- `forJobAlias('job-alias')`: Limit the job statuses to those of the given job alias. This is useful for referencing jobs in your frontend.
 - `whereTag('election', '=', $electionId)`: Limit the job statuses to those with the given tag. The value of the tag must match.
 - `whereStatus(JobStatus::SUCCESS) or whereSuccess()`: Limit the job statuses to those of status success. Similar for all statuses
 - `whereNotStatus(JobStatus::SUCCESS) or whereNotSuccess()`: Limit the job statuses to those without the given status. Can also pass in an array.
@@ -39,7 +39,7 @@ If you use `all` or `get` you will get a JobStatusCollection instance. You can u
 
 A job has one of the following statuses
 - queued
-- running
+- started
 - succeeded
 - cancelled
 - failed

@@ -3,6 +3,7 @@
 namespace JobStatus;
 
 use Carbon\Carbon;
+use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobStatus;
 
 trait Trackable
@@ -40,6 +41,52 @@ trait Trackable
     public function setJobStatus(string $status)
     {
         $this->jobStatus->statuses()->create(['status' => $status]);
+    }
+
+    public function message(string $message, string $type = 'info')
+    {
+        if(!in_array($type, JobMessage::ALLOWED_TYPES)) {
+            throw new \Exception(sprintf('Cannot send a message of type %s from the job', $type));
+        }
+        $this->jobStatus->messages()->create([
+            'message' => $message, 'type' => $type
+        ]);
+    }
+
+    public function line(string $message)
+    {
+        $this->message($message, 'info');
+    }
+
+    public function warningMessage(string $message)
+    {
+        $this->message($message, 'warning');
+    }
+
+    public function successMessage(string $message)
+    {
+        $this->message($message, 'success');
+    }
+
+    public function infoMessage(string $message)
+    {
+        $this->message($message, 'info');
+    }
+
+    public function debugMessage(string $message)
+    {
+        $this->message($message, 'debug');
+    }
+
+    public function errorMessage(string $message)
+    {
+        $this->message($message, 'error');
+    }
+
+    public function percentage(float $percentage)
+    {
+        $this->jobStatus->percentage = $percentage;
+        $this->jobStatus->save();
     }
 
 }

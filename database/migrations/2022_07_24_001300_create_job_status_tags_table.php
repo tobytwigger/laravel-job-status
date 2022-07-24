@@ -11,7 +11,7 @@ return new class() extends Migration {
      */
     public function up()
     {
-        Schema::create('job_status_tags', function (Blueprint $table) {
+        Schema::create(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), function (Blueprint $table) {
             $table->id();
             $table->string('key');
             $table->string('value');
@@ -19,8 +19,8 @@ return new class() extends Migration {
             $table->timestamps();
         });
 
-        Schema::table('job_signals', function (Blueprint $table) {
-            $table->foreign('job_status_id')->references('id')->on('job_status')->cascadeOnDelete();
+        Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), function (Blueprint $table) {
+            $table->foreign('job_status_id')->references('id')->on('job_statuses')->cascadeOnDelete();
         });
     }
 
@@ -30,6 +30,6 @@ return new class() extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('job_status_tags');
+        Schema::dropIfExists(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'));
     }
 };

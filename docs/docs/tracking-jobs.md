@@ -16,7 +16,6 @@ class ProcessPodcast
     public function handle()
     {
         // Code to handle the job in
-        $this->success('Podcast processed.');
     }
     
     public function tags(): array
@@ -34,5 +33,3 @@ class ProcessPodcast
 
 }
 ```
-
-You can make use of the `$this->success()` or `$this->failed()` methods to force your job to mark itself as successful or failed.

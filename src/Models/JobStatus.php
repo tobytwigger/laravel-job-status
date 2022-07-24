@@ -2,7 +2,10 @@
 
 namespace JobStatus\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use JobStatus\JobStatusCollection;
 
 class JobStatus extends Model
 {
@@ -15,6 +18,12 @@ class JobStatus extends Model
         'run_count' => 'integer',
         'percentage' => 'float'
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        $this->table = sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses');
+        parent::__construct($attributes);
+    }
 
     public function messages()
     {
@@ -34,6 +43,87 @@ class JobStatus extends Model
     public function statuses()
     {
         return $this->hasMany(JobStatusStatus::class);
+    }
+
+    public static function scopeForJob(Builder $query, string $class)
+    {
+        $query->where('job_class', $class);
+    }
+
+    public static function scopeForJobAlias(Builder $query, string $class)
+    {
+        $query->where('job_class', $class);
+    }
+
+    public static function scopeWhereTag(Builder $query, string $key, mixed $value)
+    {
+        $query->whereHas('tags', function(Builder $query) use ($key, $value) {
+            $query->where(['key' => $key, 'value' => $value]);
+        });
+    }
+
+    public static function scopeWhereStatus(Builder $query, string $status)
+    {
+        $query->where('status', $status);
+    }
+
+    public static function scopeWhereNotStatus(Builder $query, string|array $status)
+    {
+        $query->whereNotIn('status', Arr::wrap($status));
+    }
+
+    /**
+     * Create a new Eloquent Collection instance.
+     *
+     * @param  array  $models
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new JobStatusCollection($models);
+    }
+
+    public function getStatus(): string
+    {
+        return $this->statuses()->latest()->firstOrFail()->status;
+    }
+
+    public function isFinished(): bool
+    {
+        return in_array($this->getStatus(), [
+            'succeeded', 'failed', 'cancelled'
+        ]);
+    }
+
+    public function isSuccessful(): bool
+    {
+        return $this->getStatus() === 'succeeded';
+    }
+
+    public function isRunning(): bool
+    {
+        return $this->getStatus() === 'started';
+    }
+
+    public function mostRecentMessage(bool $includeDebug = false)
+    {
+        return $this->messages()
+            ->when($includeDebug === false, fn(Builder $query) => $query->where('type', '!=', 'debug'))
+            ->latest()
+            ->pluck('message');
+    }
+
+    public function messagesOfType(string $type)
+    {
+        return $this->messages()
+            ->where('type', $type)
+            ->latest()
+            ->pluck('message');
+    }
+
+    public function getPercentage(): float
+    {
+        return $this->percentage ?? 0;
     }
 
 }

@@ -11,7 +11,7 @@ return new class() extends Migration {
      */
     public function up()
     {
-        Schema::create('job_statuses', function (Blueprint $table) {
+        Schema::create(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), function (Blueprint $table) {
             $table->id();
             $table->text('job_class');
             $table->string('job_alias')->nullable();
@@ -27,6 +27,6 @@ return new class() extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('job_statuses');
+        Schema::dropIfExists(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'));
     }
 };

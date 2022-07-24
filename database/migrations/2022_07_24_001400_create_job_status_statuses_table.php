@@ -11,15 +11,15 @@ return new class() extends Migration {
      */
     public function up()
     {
-        Schema::create('job_status_statuses', function (Blueprint $table) {
+        Schema::create(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['queued', 'started', 'cancelled', 'failed', 'succeeded']);
             $table->unsignedBigInteger('job_status_id');
             $table->timestamps();
         });
 
-        Schema::table('job_status_statuses', function (Blueprint $table) {
-            $table->foreign('job_status_id')->references('id')->on('job_status')->cascadeOnDelete();
+        Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), function (Blueprint $table) {
+            $table->foreign('job_status_id')->references('id')->on('job_statuses')->cascadeOnDelete();
         });
     }
 
@@ -29,6 +29,6 @@ return new class() extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('job_status_statuses');
+        Schema::dropIfExists(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'));
     }
 };
