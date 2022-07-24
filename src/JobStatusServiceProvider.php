@@ -2,6 +2,12 @@
 
 namespace JobStatus;
 
+use Illuminate\Bus\Dispatcher as LaravelDispatcher;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\ServiceProvider;
+
 /**
  * The service provider for loading Laravel Setting
  */
@@ -13,6 +19,10 @@ class JobStatusServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->extend(
+            LaravelDispatcher::class,
+            fn(LaravelDispatcher $dispatcher, Container $app) => $app->make(Dispatcher::class)
+        );
     }
 
     /**

@@ -1,17 +1,18 @@
 <?php
 
-namespace Settings\Tests;
+namespace JobStatus\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use JobStatus\JobStatusServiceProvider;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Settings\SettingsServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    use ProphecyTrait;
+    use ProphecyTrait, RefreshDatabase;
 
     protected function getPackageProviders($app)
     {
-        return [SettingsServiceProvider::class];
+        return [JobStatusServiceProvider::class];
     }
 
     protected function setUp(): void
