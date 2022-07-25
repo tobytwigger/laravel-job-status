@@ -126,4 +126,18 @@ class JobStatus extends Model
         return $this->percentage ?? 0;
     }
 
+    public function cancel()
+    {
+        $this->sendSignal('cancel', cancel: true);
+    }
+
+    public function sendSignal(string $signal, array $parameters = [], bool $cancel = false)
+    {
+        $this->signals()->create([
+            'signal' => $signal,
+            'parameters' => $parameters,
+            'cancel_job' => $cancel
+        ]);
+    }
+
 }

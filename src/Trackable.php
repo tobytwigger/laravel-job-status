@@ -3,7 +3,10 @@
 namespace JobStatus;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobMessage;
+use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 
 trait Trackable
@@ -87,6 +90,29 @@ trait Trackable
     {
         $this->jobStatus->percentage = $percentage;
         $this->jobStatus->save();
+    }
+
+    public function checkForSignals(): void
+    {
+        $this->jobStatus->signals()
+            ->unread()
+            ->get()
+            ->each(fn(JobSignal $jobSignal) => $this->fireSignal($jobSignal));
+    }
+
+    protected function fireSignal(JobSignal $signal)
+    {
+        $method = sprintf('on%s', Str::ucfirst(Str::camel($signal->signal)));
+        if(method_exists($this, $method)) {
+            $this->{$method}($signal->parameters ?? []);
+        }
+
+        $signal->handled_at = Carbon::now();
+        $signal->save();
+
+        if($signal->cancel_job === true) {
+            throw JobCancelledException::for($signal);
+        }
     }
 
 }

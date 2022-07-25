@@ -8,9 +8,7 @@ nav:
             -   Get job information: 'tracking/retrieve-status.md'
             -   Messages: 'tracking/messages.md'
             -   Progress: 'tracking/progress.md'
-    -   Interacting with a job:
-            -   Cancelling a job: 'interacting/cancel.md'
-            -   Custom signals: 'interacting/signals.md'
+    -   Signals: 'signals.md'
     -   Vue Integration: 'vue.md'
     -   Debugging: 'debug-mode.md'
 theme:

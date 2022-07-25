@@ -15,6 +15,9 @@ return new class() extends Migration {
             $table->id();
             $table->unsignedBigInteger('job_status_id');
             $table->string('signal');
+            $table->dateTime('handled_at')->nullable();
+            $table->text('parameters')->nullable();
+            $table->boolean('cancel_job')->default(false);
             $table->timestamps();
         });
 
