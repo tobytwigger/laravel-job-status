@@ -2,10 +2,13 @@
 
 namespace JobStatus\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use JobStatus\Database\Factories\JobStatusStatusFactory;
 
 class JobStatusStatus extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'status'
@@ -22,6 +25,11 @@ class JobStatusStatus extends Model
     public function jobStatus()
     {
         return $this->belongsTo(JobStatus::class);
+    }
+
+    protected static function newFactory()
+    {
+        return JobStatusStatusFactory::new();
     }
 
 }

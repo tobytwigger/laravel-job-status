@@ -3,10 +3,13 @@
 namespace JobStatus\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use JobStatus\Database\Factories\JobSignalFactory;
 
 class JobSignal extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'signal', 'handled_at', 'parameters', 'cancel_job'
@@ -32,6 +35,11 @@ class JobSignal extends Model
     public function jobStatus()
     {
         return $this->belongsTo(JobStatus::class);
+    }
+
+    protected static function newFactory()
+    {
+        return JobSignalFactory::new();
     }
 
 }

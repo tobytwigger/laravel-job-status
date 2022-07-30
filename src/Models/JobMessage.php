@@ -2,10 +2,13 @@
 
 namespace JobStatus\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use JobStatus\Database\Factories\JobMessageFactory;
 
 class JobMessage extends Model
 {
+    use HasFactory;
 
     const ALLOWED_TYPES = [
         'info', 'success', 'error', 'warning', 'debug'
@@ -28,4 +31,8 @@ class JobMessage extends Model
         return $this->belongsTo(JobStatus::class);
     }
 
+    protected static function newFactory()
+    {
+        return JobMessageFactory::new();
+    }
 }

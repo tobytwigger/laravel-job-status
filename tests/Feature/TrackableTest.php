@@ -264,7 +264,7 @@ class TrackableTest extends TestCase
     public function it_can_be_made_to_cancel_execution_on_custom_signals()
     {
         $this->expectException(JobCancelledException::class);
-        $this->expectExceptionMessage('Job stopped with message custom_signal');
+        $this->expectExceptionMessage('Job stopped with signal custom_signal');
 
         dispatch(new JobFake(
                 alias: 'my-fake-job',

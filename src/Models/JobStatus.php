@@ -3,12 +3,15 @@
 namespace JobStatus\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\JobStatusCollection;
 
 class JobStatus extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'job_class', 'job_alias', 'run_count', 'percentage'
@@ -138,6 +141,11 @@ class JobStatus extends Model
             'parameters' => $parameters,
             'cancel_job' => $cancel
         ]);
+    }
+
+    public static function newFactory()
+    {
+        return JobStatusFactory::new();
     }
 
 }

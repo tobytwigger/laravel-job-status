@@ -11,7 +11,7 @@ class JobCancelledException extends \Exception
     public static function for(JobSignal $jobSignal)
     {
         return new static(
-            sprintf('Job stopped with message %s', $jobSignal->signal)
+            sprintf('Job stopped with signal %s', $jobSignal->signal)
         );
     }
 
