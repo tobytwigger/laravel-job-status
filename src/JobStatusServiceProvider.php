@@ -4,9 +4,9 @@ namespace JobStatus;
 
 use Illuminate\Bus\Dispatcher as LaravelDispatcher;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Queue\Events\JobFailed;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use JobStatus\Models\JobStatus;
 
 /**
  * The service provider for loading Laravel Setting
@@ -34,8 +34,8 @@ class JobStatusServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->mapRoutes();
         $this->publishAssets();
+        $this->mapRoutes();
     }
 
     /**
@@ -60,11 +60,12 @@ class JobStatusServiceProvider extends ServiceProvider
 
     private function mapRoutes()
     {
-//        if(config('laravel-job-status.routes.api.enabled', true)) {
-//            Route::prefix(config('laravel-job-status.routes.api.prefix'))
-//                ->middleware(config('laravel-job-status.routes.api.middleware', []))
-//                ->group(__DIR__ . '/../routes/api.php');
-//        }
+        if(config('laravel-job-status.routes.api.enabled', true)) {
+            Route::prefix(config('laravel-job-status.routes.api.prefix'))
+                ->middleware(config('laravel-job-status.routes.api.middleware', []))
+                ->group(__DIR__ . '/../routes/api.php');
+        }
+
     }
 
 }

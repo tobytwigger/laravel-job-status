@@ -9,9 +9,13 @@ use JobStatus\Models\JobStatus;
 class JobSignalController
 {
 
-    public function store(JobSignalStoreRequest $request, JobSignal $jobSignal)
+    public function store(JobSignalStoreRequest $request, JobStatus $jobStatus)
     {
-        return JobStatus::paginate();
+        $jobStatus->signals()->create([
+            'signal' => $request->input('signal'),
+            'cancel_job' => $request->input('cancel_job'),
+            'parameters' => $request->input('parameters', [])
+        ]);
     }
 
 }
