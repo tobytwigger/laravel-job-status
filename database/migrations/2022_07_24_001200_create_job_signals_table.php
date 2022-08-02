@@ -22,7 +22,7 @@ return new class() extends Migration {
         });
 
         Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_signals'), function (Blueprint $table) {
-            $table->foreign('job_status_id')->references('id')->on('job_statuses')->cascadeOnDelete();
+            $table->foreign('job_status_id')->references('id')->on(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'))->cascadeOnDelete();
         });
     }
 
