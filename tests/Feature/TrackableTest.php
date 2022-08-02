@@ -39,6 +39,58 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
+    public function it_creates_a_job_status_on_job_dispatch_now()
+    {
+        $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 0);
+
+        dispatch_now(new JobFake(
+            alias: 'my-fake-job',
+            tags: [
+                'my-first-tag' => 1,
+                'my-second-tag' => 'mytag-value'
+            ]
+        ));
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+            'job_class' => JobFake::class,
+            'job_alias' => 'my-fake-job'
+        ]);
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+            'key' => 'my-first-tag', 'value' => '1'
+        ]);
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+            'key' => 'my-second-tag', 'value' => 'mytag-value'
+        ]);
+    }
+
+    /** @test */
+    public function it_creates_a_job_status_on_job_dispatch_sync()
+    {
+        $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 0);
+
+        dispatch_sync(new JobFake(
+            alias: 'my-fake-job',
+            tags: [
+                'my-first-tag' => 1,
+                'my-second-tag' => 'mytag-value'
+            ]
+        ));
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+            'job_class' => JobFake::class,
+            'job_alias' => 'my-fake-job'
+        ]);
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+            'key' => 'my-first-tag', 'value' => '1'
+        ]);
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+            'key' => 'my-second-tag', 'value' => 'mytag-value'
+        ]);
+    }
+
+    /** @test */
     public function it_changes_the_job_status_to_finished()
     {
         dispatch(new JobFake(
