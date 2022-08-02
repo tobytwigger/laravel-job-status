@@ -3,6 +3,8 @@
 namespace JobStatus\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Router;
 use JobStatus\JobStatusServiceProvider;
 use Prophecy\PhpUnit\ProphecyTrait;
 
