@@ -6,7 +6,7 @@ return [
         'api' => [
             'prefix' => 'api',
             'enabled' => true,
-            'middleware' => [\Illuminate\Routing\Middleware\SubstituteBindings::class, 'api']
+            'middleware' => ['api']
         ]
     ]
 ];
