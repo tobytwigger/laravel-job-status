@@ -22,6 +22,15 @@ class JobStatusStatus extends Model
         parent::__construct($attributes);
     }
 
+    protected static function booted()
+    {
+        static::created(function(JobStatusStatus $model) {
+            $status = $model->jobStatus;
+            $status->status = $model->status;
+            $status->save();
+        });
+    }
+
     public function jobStatus()
     {
         return $this->belongsTo(JobStatus::class);

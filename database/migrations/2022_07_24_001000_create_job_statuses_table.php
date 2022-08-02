@@ -17,6 +17,7 @@ return new class() extends Migration {
             $table->string('job_alias')->nullable();
             $table->unsignedBigInteger('run_count')->default(1);
             $table->float('percentage')->default(0.0);
+            $table->enum('status', ['queued', 'started', 'cancelled', 'failed', 'succeeded'])->default('queued');
             $table->timestamps();
         });
     }

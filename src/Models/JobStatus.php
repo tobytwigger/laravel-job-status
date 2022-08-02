@@ -55,7 +55,7 @@ class JobStatus extends Model
 
     public static function scopeForJobAlias(Builder $query, string $class)
     {
-        $query->where('job_class', $class);
+        $query->where('job_alias', $class);
     }
 
     public static function scopeWhereTag(Builder $query, string $key, mixed $value)
@@ -88,7 +88,7 @@ class JobStatus extends Model
 
     public function getStatus(): string
     {
-        return $this->statuses()->latest()->firstOrFail()->status;
+        return $this->status;
     }
 
     public function isFinished(): bool
@@ -108,12 +108,19 @@ class JobStatus extends Model
         return $this->getStatus() === 'started';
     }
 
+    public function isQueued(): bool
+    {
+        return $this->getStatus() === 'queued';
+    }
+
     public function mostRecentMessage(bool $includeDebug = false)
     {
         return $this->messages()
             ->when($includeDebug === false, fn(Builder $query) => $query->where('type', '!=', 'debug'))
             ->latest()
-            ->pluck('message');
+            ->orderBy('id', 'DESC')
+            ->first()
+            ?->message;
     }
 
     public function messagesOfType(string $type)

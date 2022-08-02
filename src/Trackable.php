@@ -95,7 +95,7 @@ trait Trackable
     public function checkForSignals(): void
     {
         $this->jobStatus->signals()
-            ->unread()
+            ->unhandled()
             ->get()
             ->each(fn(JobSignal $jobSignal) => $this->fireSignal($jobSignal));
     }

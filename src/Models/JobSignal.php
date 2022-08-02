@@ -12,7 +12,7 @@ class JobSignal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'signal', 'handled_at', 'parameters', 'cancel_job'
+        'signal', 'handled_at', 'parameters', 'cancel_job', 'job_status_id'
     ];
 
     protected $casts = [
@@ -27,7 +27,7 @@ class JobSignal extends Model
         parent::__construct($attributes);
     }
 
-    public static function scopeUnread(Builder $query)
+    public static function scopeUnhandled(Builder $query)
     {
         $query->whereNull('handled_at');
     }
