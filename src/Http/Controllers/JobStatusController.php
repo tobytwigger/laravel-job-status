@@ -20,7 +20,8 @@ class JobStatusController extends Controller
                     $query->whereTag($key, $value);
                 }
             })
-            ->get();
+            ->get()
+            ->append(['lastMessage', 'isFinished']);
     }
 
 }

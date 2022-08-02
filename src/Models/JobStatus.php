@@ -113,6 +113,16 @@ class JobStatus extends Model
         return $this->getStatus() === 'queued';
     }
 
+    public function getIsFinishedAttribute()
+    {
+        return $this->isFinished();
+    }
+
+    public function getLastMessageAttribute()
+    {
+        return $this->mostRecentMessage();
+    }
+
     public function mostRecentMessage(bool $includeDebug = false)
     {
         return $this->messages()
