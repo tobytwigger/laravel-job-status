@@ -2,6 +2,7 @@
 
 namespace JobStatus\Http\Controllers;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ class JobStatusController extends Controller
             return response(sprintf('Job %s is not trackable.', $jobStatus->job_class), 500);
         }
         if(($jobStatus->job_class)::canSeeTracking($this->resolveAuth(), $jobStatus->getTagsAsArray()) === false) {
-            throw new UnauthorizedHttpException('You cannot access this job status');
+            throw new AuthorizationException('You cannot access this job status', 403);
         }
 
         return $jobStatus;
