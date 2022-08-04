@@ -28,6 +28,11 @@ class JobStatus extends Model
         parent::__construct($attributes);
     }
 
+    public function getTagsAsArray()
+    {
+        return $this->tags->mapWithKeys(fn(JobStatusTag $tag) => [$tag->key => $tag->value])->toArray();
+    }
+
     public function messages()
     {
         return $this->hasMany(JobMessage::class);

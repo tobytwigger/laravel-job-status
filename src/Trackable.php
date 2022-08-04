@@ -3,6 +3,7 @@
 namespace JobStatus;
 
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Str;
 use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobMessage;
@@ -29,6 +30,11 @@ trait Trackable
                 ]);
             }
         }
+    }
+
+    public static function canSeeTracking($user = null, array $tags = []): bool
+    {
+        return true;
     }
 
     public function alias(): ?string

@@ -5,6 +5,7 @@ namespace JobStatus\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
+use JobStatus\Tests\fakes\JobFake;
 
 class JobStatusFactory extends Factory
 {
@@ -18,7 +19,7 @@ class JobStatusFactory extends Factory
     public function definition()
     {
         return [
-            'job_class' => $this->faker->word,
+            'job_class' => JobFake::class,
             'job_alias' => $this->faker->word,
             'run_count' => 0,
             'percentage' => $this->faker->numberBetween(0, 100)

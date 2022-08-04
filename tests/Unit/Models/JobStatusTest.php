@@ -322,4 +322,24 @@ class JobStatusTest extends TestCase
             'cancel_job' => 0
         ]);
     }
+
+    /** @test */
+    public function getTagsAsArray_returns_all_tags_as_an_array()
+    {
+        $status = JobStatus::factory()->create();
+        JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'colour', 'value' => 'black']);
+        JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'make', 'value' => 'Trek']);
+        JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'wheels', 'value' => '32"']);
+        JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'material', 'value' => 'Aluminium']);
+        JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'pedals', 'value' => 'spd']);
+        JobStatusTag::factory()->count(10)->create();
+
+        $this->assertEquals([
+            'colour'=> 'black',
+            'make'=> 'Trek',
+            'wheels'=> '32"',
+            'material'=> 'Aluminium',
+            'pedals'=> 'spd',
+        ], $status->getTagsAsArray());
+    }
 }
