@@ -10,7 +10,7 @@ class JobFake
 {
     use Dispatchable, Trackable;
 
-    public static \Closure $canSeeTracking;
+    public static ?\Closure $canSeeTracking;
 
     public function __construct(
         private ?string $alias = null,
@@ -42,7 +42,7 @@ class JobFake
     public static function canSeeTracking($user = null, array $tags = []): bool
     {
         if(isset(static::$canSeeTracking)) {
-            return call_user_func(static::$canSeeTracking, [$user, $tags]);
+            return call_user_func(static::$canSeeTracking, $user, $tags);
         }
         return true;
     }

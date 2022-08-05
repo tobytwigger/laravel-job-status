@@ -2,24 +2,28 @@
 
 namespace JobStatus\Models;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\JobStatusCollection;
+use JobStatus\Trackable;
 
 class JobStatus extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'run_count', 'percentage'
+        'job_class', 'job_alias', 'run_count', 'percentage', 'status'
     ];
 
     protected $casts = [
         'run_count' => 'integer',
-        'percentage' => 'float'
+        'percentage' => 'float',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function __construct(array $attributes = [])
@@ -168,6 +172,17 @@ class JobStatus extends Model
     public static function newFactory()
     {
         return JobStatusFactory::new();
+    }
+
+    public function canSeeTracking($user): bool
+    {
+        if(!class_exists($this->job_class)) {
+            throw new \Exception(sprintf('No job of type %s found.', $this->job_class), 404);
+        }
+        if(!in_array(Trackable::class, class_uses_recursive($this->job_class))) {
+            throw new \Exception(sprintf('Job %s is not trackable.', $this->job_class), 500);
+        }
+        return ($this->job_class)::canSeeTracking($user, $this->getTagsAsArray());
     }
 
 }

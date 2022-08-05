@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Router;
 use JobStatus\JobStatusServiceProvider;
+use JobStatus\Tests\fakes\JobFake;
 use Prophecy\PhpUnit\ProphecyTrait;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -37,6 +38,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'database' => ':memory:',
             'prefix'   => '',
         ]);
+    }
+
+    protected function tearDown(): void
+    {
+        JobFake::$canSeeTracking = null;
+        parent::tearDown();
     }
 
 

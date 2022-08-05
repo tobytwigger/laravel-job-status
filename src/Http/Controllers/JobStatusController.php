@@ -5,16 +5,16 @@ namespace JobStatus\Http\Controllers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use JobStatus\Http\Requests\JobStatusSearchRequest;
+use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobStatus;
 use JobStatus\Trackable;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class JobStatusController extends Controller
 {
-
-    public static \Closure $resolveAuthWith;
 
     public function search(JobStatusSearchRequest $request)
     {
@@ -29,23 +29,16 @@ class JobStatusController extends Controller
             ->firstOrFail()
             ->append(['lastMessage', 'isFinished']);
 
-        if(!class_exists($jobStatus->job_class)) {
-            return response(sprintf('No job of type %s found', $jobStatus->job_class), 404);
-        }
-        if(!in_array(Trackable::class, class_uses_recursive($jobStatus->job_class))) {
-            return response(sprintf('Job %s is not trackable.', $jobStatus->job_class), 500);
-        }
-        if(($jobStatus->job_class)::canSeeTracking($this->resolveAuth(), $jobStatus->getTagsAsArray()) === false) {
+        if(!$jobStatus->canSeeTracking($this->resolveAuth())) {
             throw new AuthorizationException('You cannot access this job status', 403);
         }
 
-        return $jobStatus;
+        return Arr::except($jobStatus->toArray(), ['updated_at', 'tags']);
     }
 
     public function resolveAuth()
     {
-        $callback = static::$resolveAuthWith ?? fn() => Auth::user();
-        return call_user_func($callback);
+        return call_user_func(JobStatusServiceProvider::$resolveAuthWith ?? fn() => Auth::user());
     }
 
 }

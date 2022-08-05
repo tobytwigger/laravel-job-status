@@ -3,11 +3,13 @@
 namespace JobStatus\Tests\Unit\Models;
 
 use Carbon\Carbon;
+use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
+use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
 class JobStatusTest extends TestCase
@@ -341,5 +343,45 @@ class JobStatusTest extends TestCase
             'material'=> 'Aluminium',
             'pedals'=> 'spd',
         ], $status->getTagsAsArray());
+    }
+
+    /** @test */
+    public function canSeeTracking_returns_false_if_the_user_does_not_have_access_to_see_the_tracking(){
+        $jobStatus = JobStatus::factory()->has(
+            JobStatusTag::factory(['key' => 'tag1', 'value' => 'val1']), 'tags'
+        )->create(['job_class' => JobFake::class]);
+
+        JobFake::$canSeeTracking = fn($user, $tags) => false;
+        $this->assertFalse($jobStatus->canSeeTracking(55));
+
+        JobFake::$canSeeTracking = fn($user, $tags) => true;
+        $this->assertTrue($jobStatus->canSeeTracking(55));
+
+        JobFake::$canSeeTracking = function($user, $tags) {
+            $this->assertEquals(55, $user);
+            $this->assertEquals(['tag1' => 'val1'], $tags);
+            return true;
+        };
+        $this->assertTrue($jobStatus->canSeeTracking(55));
+    }
+
+    /** @test */
+    public function canSeeTracking_throws_an_exception_if_the_job_class_is_not_real(){
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No job of type NotAClass found.');
+
+        $jobStatus = JobStatus::factory()->create(['job_class' => 'NotAClass']);
+
+        $jobStatus->canSeeTracking(55);
+    }
+
+    /** @test */
+    public function canSeeTracking_throws_an_exception_if_the_job_class_exists_but_does_not_extend_trackable(){
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Job JobStatus\Tests\TestCase is not trackable.');
+
+        $jobStatus = JobStatus::factory()->create(['job_class' => TestCase::class]);
+
+        $jobStatus->canSeeTracking(55);
     }
 }

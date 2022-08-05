@@ -14,6 +14,8 @@ use JobStatus\Models\JobStatus;
 class JobStatusServiceProvider extends ServiceProvider
 {
 
+    public static ?\Closure $resolveAuthWith;
+
     /**
      * Bind service classes into the container
      */
