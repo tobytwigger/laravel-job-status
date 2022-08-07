@@ -1,6 +1,8 @@
 # Job Status
 > How to retrieve information about the status of running jobs.
 
+This is to do with using the backend. You can see the Vue integration page for the main Vue integration.
+
 ## Retrieving a status model
 
 The status model is an eloquent model which represents a job. There is one per job, and it holds info about the messages sent, the job status, runtime etc.
@@ -46,5 +48,12 @@ A job has one of the following statuses
 
 Methods on the single status model:
 - `getStatus()`: Get the status of the job.
-- `wasSuccessful()`: True if the job was a success
+- `getPercentge()`: Get the status of the job.
+- `isSuccessful()`: True if the job was a success
+- `isRunning()`: True if the job was a success
+- `isQueued()`: True if the job was a success
 - `hasFinished()`: True if the job is no longer running.
+
+There are more functions to do with signals and messages, which will be introduced later.
+
+

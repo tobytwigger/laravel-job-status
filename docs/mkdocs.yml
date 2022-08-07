@@ -1,16 +1,17 @@
 site_name: Laravel Job Status
 site_url: https://tobytwigger.github.io/laravel-job-status
 repo_url: https://github.com/tobytwigger/laravel-job-status
+
 nav:
-    -   Home: 'overview.md'
+    -   Getting Started: 'index.md'
     -   Enable tracking: 'tracking-jobs.md'
-    -   Track the job:
-            -   Get job information: 'tracking/retrieve-status.md'
-            -   Messages: 'tracking/messages.md'
-            -   Progress: 'tracking/progress.md'
-    -   Signals: 'signals.md'
+    -   Using tracking: 'retrieve-status.md'
+    -   Tracking tools:
+            -   Progress: 'progress.md'
+            -   Sending messages: 'messages.md'
+            -   Signals: 'signals.md'
+    -   Protecting jobs: 'auth.md'
     -   Vue Integration: 'vue.md'
-    -   Debugging: 'debug-mode.md'
 theme:
     name: material
     custom_dir: overrides

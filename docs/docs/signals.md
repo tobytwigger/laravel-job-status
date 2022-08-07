@@ -33,8 +33,6 @@ If a user cancels this job before it is complete, the `checkForSignals` function
 
 Cancelling a job is one example of a signal, where the app is sending a message to the job. You can have any number of custom signals to help your app run smoothly. For example, you may signal the job when a new job is added, so you can stop or limit operation of the original job.
 
-Unlike the cancel signal, your job will not be automatically stopped for a custom signal. Throw an exception in the `on` listener to cancel job execution.
-
 ## Sending Signals
 
 With a status model, use `$status->sendSignal('signal-type');`. This will send the signal to the job that owns the status model.
