@@ -3,6 +3,7 @@
 namespace JobStatus;
 
 use Illuminate\Contracts\Bus\QueueingDispatcher;
+use JobStatus\Exception\JobCancelledException;
 
 class Dispatcher extends \Illuminate\Bus\Dispatcher
 {
@@ -50,7 +51,11 @@ class Dispatcher extends \Illuminate\Bus\Dispatcher
             }
         } catch (\Throwable $e) {
             if($this->isTracked($command)) {
-                $command->setJobStatus('failed');
+                if($e instanceof JobCancelledException) {
+                    $command->setJobStatus('cancelled');
+                } else {
+                    $command->setJobStatus('failed');
+                }
             }
             throw $e;
         }

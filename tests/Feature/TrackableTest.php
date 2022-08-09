@@ -5,6 +5,7 @@ namespace JobStatus\Tests\Feature;
 use Illuminate\Testing\Assert;
 use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobSignal;
+use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
@@ -176,22 +177,24 @@ class TrackableTest extends TestCase
     /** @test */
     public function it_cancels_a_job()
     {
-        $this->expectException(JobCancelledException::class);
-
-        dispatch(new JobFake(
-            alias: 'my-fake-job',
-            tags: [
-                'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
-            ],
-            callback: function (JobFake $job) {
-                $job->jobStatus->cancel();
-                $job->checkForSignals();
-                throw new \Exception('Check for signals did not stop the job');
-            }
-        ));
-
-        $this->assertNotNull(JobSignal::firstOrFail()->handled_at);
+        try {
+            dispatch(new JobFake(
+                alias: 'my-fake-job',
+                tags: [
+                    'my-first-tag' => 1,
+                    'my-second-tag' => 'mytag-value'
+                ],
+                callback: function (JobFake $job) {
+                    $job->jobStatus->cancel();
+                    $job->checkForSignals();
+                    throw new \Exception('Check for signals did not stop the job');
+                }
+            ));
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(JobCancelledException::class, $e);
+            $this->assertNotNull(JobSignal::firstOrFail()->handled_at);
+            $this->assertEquals('cancelled', JobStatus::firstOrFail()->status);
+        }
     }
 
     /** @test */
