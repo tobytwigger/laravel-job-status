@@ -1,5 +1,5 @@
 {
-    "name": "tobytwigger/laravel-job-status",
+    "name": "twigger/laravel-job-status",
     "description": "Job status for Laravel",
     "type": "library",
     "keywords": [

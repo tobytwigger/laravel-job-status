@@ -8,6 +8,7 @@ Add this to your job. This method will be given a user and the tags for the job.
     public static function canSeeTracking($user = null, array $tags = []): bool
     {
         // Using the tags and the user, return true if the user can access the job and false if they can't
+        return $tags['user_id'] ?? null === $user?->id;
     }
 ```
 
@@ -19,6 +20,6 @@ By default, we use `Auth::User()`. If you retrieve your user differently, add a 
 
 ```php
     \JobStatus\JobStatusServiceProvider::$resolveAuthWith = function() {
-        return $user; // Resolve the user however you'd like
+        return Auth::user(); // Resolve the user however you'd like
     }
 ```

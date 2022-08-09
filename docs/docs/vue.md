@@ -1,8 +1,8 @@
 # Vue
 
-## Intro
+## Example use
 
-You will often want to mirror the status of specific jobs to the frontend. To help you with this, we've provided a `laravel-job-status` component.
+You will often want to mirror the status of specific jobs to the frontend. To help you with this, we've provided a `job-status` component.
 
 This component takes the alias of a job, and any tags the job should match. It finds the latest of these jobs and passes the information to the default slot.
 
@@ -13,7 +13,7 @@ This component takes the alias of a job, and any tags the job should match. It f
 - `signal('signal-name')` - Send a signal to the current job
 - 
 ```vue
-<v-job-status job="process-election" :tags="{election: electionId}">
+<job-status job="process-election" :tags="{election: electionId}">
     <template v-slot:default="{status, lastMessage, complete, cancel, signal}">
     
         <spinner v-if="complete === false"></spinner>
@@ -22,19 +22,39 @@ This component takes the alias of a job, and any tags the job should match. It f
         <v-button @click="cancel" type="danger">Cancel</v-button>
     
     </template>
-</v-job-status>
+</job-status>
 ```
 
-## Updating data
+## Slots
 
-There are three ways to update this data.
+The default slot is used to show information about the job. All the attributes given are listed above.
 
-- The first is to have it update whenever the page loads - this will always happen. If you do this, you should pass the job into your own Vue components and not rely on ours.
+We provide other slots to give your users as smooth an experience as possible.
 
-If you want the data to update without a user having to refresh the page, you can use either the API or websockets. If you already have websockets set up using Laravel Echo we recommend using this, as we will automatically fire and broadcast events from your application to your Vue component and keep the data up to date. Add `:websockets="true"` to the Vue component.z
+**Loading**
 
-If you don't have websockets and don't want to set them up, you can use polling. This will poll the API every few seconds looking for changes in the job status. Polling is by far the easiest method, but can be more resource intensive than websockets.
+The `loading` slot will show when we load the job status information. We'd recommend some sort of loading indicator here.
 
-## Job index
+**Errors**
 
-In the longer term we'll also add a `<laravel-job-status-table>` component to list many jobs matching the given filters.
+The `error` slot will show when the API returned an error, for example if your application is down.
+
+```vue
+<template v-slot:error="{message}">
+    Sorry, something went wrong. {{message}}
+</template>
+```
+
+**Empty**
+
+The `empty` slot shows if no job status was found. This usually occurs if the job matching the tags has never ran.
+
+## Keeping the data up to date
+
+You can always use our backend and build your own frontend component. If you do decide to use ours, we keep the data up to date for you automatically
+
+### Polling
+
+Polling is the quickest way to keep the data up to date - every 5 seconds we'll make a call to your application to check on the status of a job.
+
+To enable polling, pass `:method="polling"` to the job-status component.
