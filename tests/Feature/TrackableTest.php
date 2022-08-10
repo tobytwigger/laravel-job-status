@@ -114,6 +114,22 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
+    public function it_changes_the_percentage_to_100_on_finished()
+    {
+        dispatch(new JobFake(
+            alias: 'my-fake-job',
+            tags: [
+                'my-first-tag' => 1,
+                'my-second-tag' => 'mytag-value'
+            ]
+        ));
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+            'percentage' => 100.0
+        ]);
+    }
+
+    /** @test */
     public function it_changes_the_job_status_to_failed()
     {
         try {
@@ -166,12 +182,14 @@ class TrackableTest extends TestCase
                 'my-first-tag' => 1,
                 'my-second-tag' => 'mytag-value'
             ],
-            callback: fn(JobFake $job) => $job->percentage(52.6)
+            callback: function(JobFake $job) {
+                $job->percentage(52.6);
+                $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+                    'percentage' => 52.6,
+                ]);
+            }
         ));
 
-        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
-            'percentage' => 52.6,
-        ]);
     }
 
     /** @test */

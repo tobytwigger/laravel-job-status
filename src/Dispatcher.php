@@ -60,6 +60,8 @@ class Dispatcher extends \Illuminate\Bus\Dispatcher
             throw $e;
         }
 
+        $command->percentage(100);
+
         return $result;
     }
 
