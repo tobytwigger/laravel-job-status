@@ -130,6 +130,27 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
+    public function it_changes_the_percentage_to_100_if_the_job_fails()
+    {
+        try {
+            dispatch(new JobFake(
+                alias: 'my-fake-job',
+                tags: [
+                    'my-first-tag' => 1,
+                    'my-second-tag' => 'mytag-value'
+                ],
+                callback: fn() => throw new \Exception('Job went wrong')
+            ));
+        } catch (\Exception $e) {
+        }
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+            'percentage' => 100.0
+        ]);
+
+    }
+
+    /** @test */
     public function it_changes_the_job_status_to_failed()
     {
         try {

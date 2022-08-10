@@ -57,6 +57,7 @@ class Dispatcher extends \Illuminate\Bus\Dispatcher
                     $command->setJobStatus('failed');
                 }
             }
+            $command->percentage(100);
             throw $e;
         }
 
