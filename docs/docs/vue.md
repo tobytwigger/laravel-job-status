@@ -8,10 +8,11 @@ This component takes the alias of a job, and any tags the job should match. It f
 
 - `status` - the status of the job
 - `lastMessage` - The last message sent
-- `isComplete` - is the job complete
+- `isComplete` - Is the job complete
+- `percentage` - The percentage the job has progressed
 - `cancel` - Cancel the current job
 - `signal('signal-name')` - Send a signal to the current job
-- 
+
 ```vue
 <job-status job="process-election" :tags="{election: electionId}">
     <template v-slot:default="{status, lastMessage, complete, cancel, signal}">
