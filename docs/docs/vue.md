@@ -35,6 +35,8 @@ We provide other slots to give your users as smooth an experience as possible.
 
 The `loading` slot will show when we load the job status information. We'd recommend some sort of loading indicator here.
 
+If you exclude this slot, it will instead show the `empty` slot and pass you a boolean if the job is loading or not.
+
 **Errors**
 
 The `error` slot will show when the API returned an error, for example if your application is down.
@@ -48,6 +50,15 @@ The `error` slot will show when the API returned an error, for example if your a
 **Empty**
 
 The `empty` slot shows if no job status was found. This usually occurs if the job matching the tags has never ran.
+
+A 'loading' parameter lets you alter your slot content based on if the job status is loading or not, such as by disabling form inputs.
+
+```vue
+<template v-slot:empty="{loading}">
+    Your name: <input type="text" :disabled="loading" />
+    <button type="submit">Create user in the background</button>
+</template>
+```
 
 ## Keeping the data up to date
 
