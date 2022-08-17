@@ -61,7 +61,9 @@ class Dispatcher extends \Illuminate\Bus\Dispatcher
             throw $e;
         }
 
-        $command->percentage(100);
+        if($this->isTracked($command)) {
+            $command->percentage(100);
+        }
 
         return $result;
     }
