@@ -29,6 +29,7 @@ class Dispatcher
 
     private function startTracking($job)
     {
+        $this->parent->map([get_class($job) => fn($job) => $job->handleWithTracking()]);
         $job->startTracking();
         return $job;
     }

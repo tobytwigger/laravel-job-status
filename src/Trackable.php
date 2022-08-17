@@ -32,6 +32,28 @@ trait Trackable
         }
     }
 
+    public function handleWithTracking()
+    {
+        if(method_exists($this, 'handle')) {
+            try {
+                $result = $this->handle();
+                $this->setJobStatus('succeeded');
+            } catch (\Throwable $e) {
+                if($e instanceof JobCancelledException) {
+                    $this->setJobStatus('cancelled');
+                } else {
+                    $this->setJobStatus('failed');
+                }
+                $this->percentage(100);
+                throw $e;
+            }
+
+            $this->percentage(100);
+            return $result;
+        }
+        throw new \Exception('A handle method has not been defined');
+    }
+
     public static function canSeeTracking($user = null, array $tags = []): bool
     {
         return true;
