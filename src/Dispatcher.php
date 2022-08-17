@@ -2,17 +2,16 @@
 
 namespace JobStatus;
 
-use Illuminate\Contracts\Bus\Dispatcher as LaravelDispatcher;
+use Illuminate\Contracts\Bus\Dispatcher as LaravelDispatcherContract;
 use Illuminate\Support\Traits\ForwardsCalls;
-use JobStatus\Exception\JobCancelledException;
 
-class Dispatcher
+class Dispatcher implements LaravelDispatcherContract
 {
     use ForwardsCalls;
 
-    private LaravelDispatcher $parent;
+    private LaravelDispatcherContract $parent;
 
-    public function __construct(LaravelDispatcher $parent)
+    public function __construct(LaravelDispatcherContract $parent)
     {
         $this->parent = $parent;
     }
@@ -29,7 +28,7 @@ class Dispatcher
 
     private function startTracking($job)
     {
-        $this->parent->map([get_class($job) => fn($job) => $job->handleWithTracking()]);
+        $this->parent->map([get_class($job) => JobHandler::class]);
         $job->startTracking();
         return $job;
     }
@@ -69,5 +68,25 @@ class Dispatcher
             $command->setJobStatus('queued');
         }
         return $this->parent->dispatchToQueue($command);
+    }
+
+    public function hasCommandHandler($command)
+    {
+        return $this->parent->hasCommandHandler($command);
+    }
+
+    public function getCommandHandler($command)
+    {
+        return $this->parent->getCommandHandler($command);
+    }
+
+    public function pipeThrough(array $pipes)
+    {
+        return $this->parent->pipeThrough($pipes);
+    }
+
+    public function map(array $map)
+    {
+        return $this->parent->map($map);
     }
 }

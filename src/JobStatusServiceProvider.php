@@ -51,7 +51,7 @@ class JobStatusServiceProvider extends ServiceProvider
         $ifTracked = fn($job, $callback) => in_array(Trackable::class, class_uses_recursive($job)) ? $callback() : null;
 
         /** @var QueueManager $queueManager */
-        $queueManager = app(QueueManager::class);
+        $queueManager = app('queue');
         $queueManager->before(fn(JobProcessing $event) => $ifTracked($event->job, fn() => $event->job->setJobStatus('started')));
         $queueManager->after(fn(JobProcessing $event) => $ifTracked($event->job, fn() => $event->job->setJobStatus('finished')));
         $queueManager->before(fn(JobProcessing $event) => $ifTracked($event->job, fn() => $event->job->setPercentage(100)));

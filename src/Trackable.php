@@ -36,6 +36,7 @@ trait Trackable
     {
         if(method_exists($this, 'handle')) {
             try {
+                $this->setJobStatus('started');
                 $result = $this->handle();
                 $this->setJobStatus('succeeded');
             } catch (\Throwable $e) {
