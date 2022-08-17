@@ -70,3 +70,5 @@ You can always use our backend and build your own frontend component. If you do 
 Polling is the quickest way to keep the data up to date - every 5 seconds we'll make a call to your application to check on the status of a job.
 
 To enable polling, pass `:method="polling"` to the job-status component.
+
+You can customise how frequently we poll by passing the number of milliseconds to wait between polls to the `poll-interval` prop. For a poll every second, you'd pass `:poll-interval=1000` to the job status component.
