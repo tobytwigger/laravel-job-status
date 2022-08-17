@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Feature;
 
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\Assert;
 use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobSignal;

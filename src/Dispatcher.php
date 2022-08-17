@@ -2,11 +2,25 @@
 
 namespace JobStatus;
 
-use Illuminate\Contracts\Bus\QueueingDispatcher;
+use Illuminate\Contracts\Bus\Dispatcher as LaravelDispatcher;
+use Illuminate\Support\Traits\ForwardsCalls;
 use JobStatus\Exception\JobCancelledException;
 
-class Dispatcher extends \Illuminate\Bus\Dispatcher
+class Dispatcher
 {
+    use ForwardsCalls;
+
+    private LaravelDispatcher $parent;
+
+    public function __construct(LaravelDispatcher $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        return $this->forwardCallTo($this->parent, $name, $arguments);
+    }
 
     private function isTracked($job)
     {
@@ -25,7 +39,7 @@ class Dispatcher extends \Illuminate\Bus\Dispatcher
             $this->startTracking($command);
             $command->setJobStatus('queued');
         }
-        return parent::dispatch($command);
+        return $this->parent->dispatch($command);
     }
 
     public function dispatchSync($command, $handler = null)
@@ -34,38 +48,17 @@ class Dispatcher extends \Illuminate\Bus\Dispatcher
             $this->startTracking($command);
             $command->setJobStatus('queued');
         }
-        return parent::dispatchSync($command, $handler);
+        return $this->parent->dispatchSync($command, $handler);
     }
 
     public function dispatchNow($command, $handler = null)
     {
         if($this->isTracked($command)) {
             $this->startTracking($command);
-            $command->setJobStatus('started');
+            $command->setJobStatus('queued');
         }
 
-        try {
-            $result = parent::dispatchNow($command, $handler);
-            if($this->isTracked($command)) {
-                $command->setJobStatus('succeeded');
-            }
-        } catch (\Throwable $e) {
-            if($this->isTracked($command)) {
-                if($e instanceof JobCancelledException) {
-                    $command->setJobStatus('cancelled');
-                } else {
-                    $command->setJobStatus('failed');
-                }
-            }
-            $command->percentage(100);
-            throw $e;
-        }
-
-        if($this->isTracked($command)) {
-            $command->percentage(100);
-        }
-
-        return $result;
+        return $this->parent->dispatchNow($command, $handler);
     }
 
     public function dispatchToQueue($command)
@@ -74,6 +67,6 @@ class Dispatcher extends \Illuminate\Bus\Dispatcher
             $command = $this->startTracking($command);
             $command->setJobStatus('queued');
         }
-        return parent::dispatchToQueue($command);
+        return $this->parent->dispatchToQueue($command);
     }
 }
