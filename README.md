@@ -3,7 +3,6 @@
 > Show users the progress of their jobs.
 
 [![Latest version](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml)
-
 [![Build status](https://img.shields.io/github/v/release/tobytwigger/laravel-job-status?label=Latest%20Version&sort=semver&style=plastic)](https://github.com/tobytwigger/laravel-job-status/releases)
 
 [![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](http://buymeacoffee.com/translate)
