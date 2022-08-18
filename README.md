@@ -1,19 +1,14 @@
 <h1 align="center">Laravel Job Status</h1>
 
 <p align="center">
-    <strong>Extensible site and user settings for Laravel.</strong>
+    <strong>Show users the progress of their jobs.</strong>
 </p>
 
 <p align="center">
     <a href="https://github.com/ElbowSpaceUK/laravel-settings/releases">
         <img src="https://img.shields.io/github/v/release/ElbowSpaceUK/laravel-settings?label=Latest%20Version&sort=semver&style=plastic" alt="Latest Version">
     </a>
-    <a href="https://github.com/ElbowSpaceUK/laravel-settings/tree/master">
-        <img src="https://img.shields.io/github/workflow/status/ElbowSpaceUK/laravel-settings/build-status/master?label=release%20status&style=plastic" alt="Master branch status">
-    </a>
-    <a href="https://github.com/ElbowSpaceUK/laravel-settings/tree/develop">
-        <img src="https://img.shields.io/github/workflow/status/ElbowSpaceUK/laravel-settings/build-status/develop?label=dev%20status&style=plastic" alt="Develop branch status">
-    </a>
+    [![Test build of laravel job status](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml)
 </p>
 
 <p align="center">
@@ -35,51 +30,73 @@
 
 ## About
 
-Laravel Settings provides simple but flexible settings to any Laravel app.
+![example of job status in use](https://github.com/tobytwigger/laravel-job-status/tree/develop/docs/images/podcast.gif "Showing the user the status of their podcast being uploaded")
 
-- Quick to set up and use, but powerful enough to scale as your app does.
-- Supports string and class based keys.
-- Supports encryption and storing non-primitive values.
-- User and global settings provided by default.
-- Can add custom types such as a team or organisation.
+Laravel Job Status provides a simple way to track your jobs and show the progress to your users.
+
+- Show your users the ongoing progress of your job without refreshing the page.
+- Let users cancel running jobs
+- Customisable Vue component for displaying your own jobs
 
 ## Docs
 
-We've taken care over documenting everything you'll need to get started and use Laravel settings fully.
+We've taken care over documenting everything you'll need to get started and use Laravel Job Status fully.
 
-[Check out the docs](https://ElbowSpaceUK.github.io/laravel-settings) on our documentation site.
+[Check out the docs](https://tobytwigger.github.io/laravel-job-status) on our documentation site.
 
 [comment]: <> (To build them locally, you'll need to have ruby &#40;we'd recommend using rbenv&#41; and the gem bundler &#40;https://bundler.io/&#41; installed. Run `bundle install && bundle exec jekyll serve` in the docs folder.)
 
 ## Examples
 
-### Get a setting
+### Show users the status of their jobs
 
-```php
-    echo \Settings\Setting::getValue('siteName') // My App
+The following is enough to show a user the status of the 'process podcast' job for the podcast with the ID `podcastId`.
+
+```vue
+<job-status job="process-podcast" :tags="{podcast: podcastId}">
+    <template v-slot:default="{status, lastMessage, complete, cancel, signal}">
+    
+        <spinner v-if="complete === false"></spinner>
+        <p>The status of the job is {{status}}</p>
+        <p>{{lastMessage}}</p>
+        <v-button @click="cancel" type="danger">Cancel</v-button>
+    </template>
+    <template v-slot:empty>
+        Upload a podcast to get started
+    </template>
+</job-status>
 ```
 
-### Create a setting
+### Track a job
 
-You can create settings in the service provider, in your `boot` method
+Tracking is simple to enable on any job.
 
 ```php
-    public function boot()
+class ProcessPodcast
+{
+    use Trackable;
+
+    protected Podcast $podcast;
+
+    public function handle()
     {
-        \Settings\Setting::createGlobal('siteName', 'My App', Field::text('siteName')->setValue('My App')->setLabel('The name of the site'));
-        \Settings\Setting::createUser('theme', 'default', Field::select('theme')->setValue('default')->setLabel('The theme to use')->withOption('default', 'Default'));
+        // Upload and process the podcast
     }
-```
 
-#### Class-based settings
+    public function tags(): array
+    {
+        return [
+            'podcast' => $this->podcast->id,
+            'user' => $this->user->id
+        ];
+    }
 
-To make use of static analysis and IDE typehinting support, and to help you manage the defined settings, you can use class-based settings.
+    public function alias(): string
+    {
+        return 'process-podcast';
+    }
 
-### Set a setting
-
-```php
-    \Settings\Setting::setDefaultValue('theme', 'default-two'); // Set the default theme for users
-    \Settings\Setting::setDefaultValue('theme', 'my-custom-theme', 2); // User with an ID of `2` sets their own value.
+}
 ```
 
 ## Installation
@@ -87,14 +104,13 @@ To make use of static analysis and IDE typehinting support, and to help you mana
 All you need to do to use this project is pull it into an existing Laravel app using composer.
 
 ```console
-composer require twigger/laravel-settings
+composer require twigger/laravel-job-status
 ```
 
 You can publish the configuration file by running
 ```console
-php artisan vendor:publish --provider="Settings\SettingsServiceProvider"
+php artisan vendor:publish --provider="JobStatus\JobStatusServiceProvider"
 ```
-
 
 ## Contributing
 
