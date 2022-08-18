@@ -4,6 +4,9 @@
     "type": "library",
     "keywords": [
         "laravel",
+        "vue",
+        "progress",
+        "track",
         "job",
         "queue",
         "config"
