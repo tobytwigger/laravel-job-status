@@ -20,7 +20,7 @@
 
 ## About
 
-![example of job status in use](https://github.com/tobytwigger/laravel-job-status/tree/develop/docs/images/podcast.gif "Showing the user the status of their podcast being uploaded")
+![example of job status in use](https://github.com/tobytwigger/laravel-job-status/blob/develop/docs/images/podcast.gif "Showing the user the status of their podcast being uploaded")
 
 Laravel Job Status provides a simple way to track your jobs and show the progress to your users.
 
