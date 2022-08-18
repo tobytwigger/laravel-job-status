@@ -4,8 +4,13 @@ namespace JobStatus;
 
 use Illuminate\Bus\Dispatcher as LaravelDispatcher;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobStatus;
 
 /**
@@ -23,7 +28,7 @@ class JobStatusServiceProvider extends ServiceProvider
     {
         $this->app->extend(
             LaravelDispatcher::class,
-            fn(LaravelDispatcher $dispatcher, Container $app) => $app->make(Dispatcher::class)
+            fn(LaravelDispatcher $dispatcher, Container $app) => $app->make(Dispatcher::class, ['parent' => $dispatcher])
         );
     }
 
@@ -38,6 +43,24 @@ class JobStatusServiceProvider extends ServiceProvider
     {
         $this->publishAssets();
         $this->mapRoutes();
+        $this->mapQueueEventListeners();
+    }
+
+    public function mapQueueEventListeners()
+    {
+        $ifTracked = fn($job, $callback) => in_array(Trackable::class, class_uses_recursive($job)) ? $callback() : null;
+
+        /** @var QueueManager $queueManager */
+        $queueManager = app('queue');
+        $queueManager->before(fn(JobProcessing $event) => $ifTracked($event->job, fn() => $event->job->setJobStatus('started')));
+        $queueManager->after(fn(JobProcessing $event) => $ifTracked($event->job, fn() => $event->job->setJobStatus('finished')));
+        $queueManager->before(fn(JobProcessing $event) => $ifTracked($event->job, fn() => $event->job->setPercentage(100)));
+        $queueManager->exceptionOccurred(fn(JobExceptionOccurred $event) => $ifTracked($event->job,
+            fn() => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
+        ));
+        $queueManager->failing(fn(JobExceptionOccurred $event) => $ifTracked($event->job,
+            fn() => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
+        ));
     }
 
     /**
