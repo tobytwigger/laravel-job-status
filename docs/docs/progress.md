@@ -1,7 +1,39 @@
 # Progress
 
-For very long running jobs, you can track how far through the process your job is by regularly setting a percentage completion.
+Your job can let the rest of your application know how far through processing it is. This isn't always possible, so by default the percentage will be set to `100%` when the job is finished.
 
-Use `$this->percentage(55);` in the job to change the percentage of a job. It will change to 100 automatically when you complete the job.
+If you are able to track the percentage completion of your job, call `$this->percentage(55);` within the `handle` method of your job.
 
-When you have a status model, call `$status->getPercentage()` to get the percentage.
+
+## Examples
+
+### Not possible to use percentages
+
+In this example we can't set the percentage information, since we can't track the long running part of the job. We can rely on the default behaviour to show 100% to the user when the job is complete.
+
+```php
+class SendEmail {
+
+    public function handle() {
+        $this->email->send();
+    }
+
+}
+```
+
+### Can use percentages
+
+In this example we are set the percentage information, since we are iterating through a defined number of objects and so can calculate how far through we are.
+
+```php
+class SendEmail {
+
+    public function handle() {
+        foreach($this->users as $index => $user) {
+            $this->percentage(($i/$this->users->count()) * 100);
+            $this->email->sendTo($user);
+        }
+    }
+
+}
+```

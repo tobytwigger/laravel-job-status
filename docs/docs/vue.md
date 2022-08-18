@@ -1,38 +1,65 @@
 # Vue
 
-## Example use
+We've created a component for Vue 2 which will automatically update your users on the progress of a job.
 
-You will often want to mirror the status of specific jobs to the frontend. To help you with this, we've provided a `job-status` component.
+## Installation
 
-This component takes the alias of a job, and any tags the job should match. It finds the latest of these jobs and passes the information to the default slot.
+To install the frontend package, you can use `npm` or `yarn`.
 
-- `status` - the status of the job
-- `lastMessage` - The last message sent
-- `isComplete` - Is the job complete
-- `percentage` - The percentage the job has progressed
-- `cancel` - Cancel the current job
-- `signal('signal-name')` - Send a signal to the current job
+```npm install --save @tobytwigger/laravel-job-status-vue```
+
+```yarn add @tobytwigger/laravel-job-status-vue```
+
+### Setup
+
+You should then install the plugin in your `app.js` file.
+
+
+```js
+import Vue from 'vue';
+import JobStatus from '@tobytwigger/laravel-job-status-vue';
+
+Vue.use(JobStatus, {
+    axios: axios, // An instance of the `axios` library that we can use to make API calls.
+    url: '/_api' // The base URL to make the API calls to. This is set in the `config` of this package once [published](index.md), and defaults to `/_api`.
+});
+```
+
+## Props
+
+This component takes the alias of a job, and any tags the job should match. 
 
 ```vue
-<job-status job="process-election" :tags="{election: electionId}">
-    <template v-slot:default="{status, lastMessage, complete, cancel, signal}">
-    
-        <spinner v-if="complete === false"></spinner>
-        <p>The status of the job is {{status}}</p>
-        <p>{{lastMessage}}</p>
-        <v-button @click="cancel" type="danger">Cancel</v-button>
-    
-    </template>
+<job-status job="check-for-new-emails" :tags="{user: userId}">
+
 </job-status>
 ```
 
 ## Slots
 
-The default slot is used to show information about the job. All the attributes given are listed above.
+You can show the user different content based on the job status by using slots.
 
-We provide other slots to give your users as smooth an experience as possible.
+### Default
 
-**Loading**
+This slot is shown when a job status is being tracked.
+
+- `status` - the status of the job. One of queued, started, succeeded, cancelled, or failed.
+- `lastMessage` - The last message that was sent from the job.
+- `isComplete` - Whether the job is complete
+- `percentage` - The percentage the job has progressed
+- `cancel` - A method to cancel the current job
+- `signal('signal-name', cancelJob, parameters)` - A method to send a signal to the current job. Pass the name of the signal, an optional boolean defining whether the job should also be cancelled, and any parameters you want to pass to the signal handler.
+
+```vue
+<template v-slot:default="{status, lastMessage, complete, cancel, signal, percentage}">
+    <spinner v-if="complete === false"></spinner>
+    <p>The status of the job is {{status}}</p>
+    <p>{{lastMessage}}</p>
+    <v-button @click="cancel" type="danger">Cancel</v-button>
+</template>
+```
+
+### Loading
 
 The `loading` slot will show when we load the job status information. We'd recommend some sort of loading indicator here.
 
@@ -47,7 +74,7 @@ This slot receives an `initialLoad` parameter, which signifies if the loading is
 </template>
 ```
 
-**Errors**
+### Errors
 
 The `error` slot will show when the API returned an error, for example if your application is down.
 
@@ -57,7 +84,7 @@ The `error` slot will show when the API returned an error, for example if your a
 </template>
 ```
 
-**Empty**
+### Empty
 
 The `empty` slot shows if no job status was found. This usually occurs if the job matching the tags has never ran.
 
@@ -75,12 +102,18 @@ An `initialLoad` parameter is also passed, letting you show a proper loading scr
 
 ## Keeping the data up to date
 
-You can always use our backend and build your own frontend component. If you do decide to use ours, we keep the data up to date for you automatically
+You can always use our backend and [build your own frontend component](./custom-frontend.md). If you do decide to use ours, we keep the data up to date for you automatically using one of the following methods.
 
 ### Polling
 
-Polling is the quickest way to keep the data up to date - every 5 seconds we'll make a call to your application to check on the status of a job.
+Polling is the easiest way to keep the data up to date - every 5 seconds we'll make a call to your application to check on the status of a job.
 
 To enable polling, pass `:method="polling"` to the job-status component.
 
 You can customise how frequently we poll by passing the number of milliseconds to wait between polls to the `poll-interval` prop. For a poll every second, you'd pass `:poll-interval=1000` to the job status component.
+
+```vue
+<job-status job="check-for-new-emails" :tags="{user: userId}" method="polling" :poll-interval="1500">
+    <!--  Checking the job status every 1.5 seconds -->
+</job-status>
+```

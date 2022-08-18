@@ -1,15 +1,18 @@
 # Tracking a job
 
-<<<<<<< Updated upstream
+> Setting up tracking on Laravel jobs
+
 ## Basic Setup
 
-By default, we don't track jobs, since it adds a minimal overhead to your app. To track a specific job, simply add `use Trackable;` to your job class. This trait automatically starts recording information about your job.
+By default, a job is not tracked. To set up tracking, simply add `use Trackable;` to your job class. This trait automatically starts recording information about your job.
 
-To later track down information about your job, you should set a job 'alias'. This is a string unique to the job that represents the job. This is essential if you use our frontend package, since you can't pass class names through in JavaScript as easily as you can pass a string.
+### Job Alias
 
-## Tags
+To later track down information about your job, you should set a job alias. This is a string unique to the job type that represents the job (such as `process-podcast`). This is essential if you use our frontend package.
 
-You can also add tags, to help you find jobs in the future. These tags should let you identify the job, so will often include things like the user, and any additional models the job uses.
+### Tags
+
+You can also add tags, to help you find jobs in the future. These tags should let you identify the job uniquely, so will often include things like the user and any additional models the job uses. There should only ever be one job with the given tags running at a time.
 
 ```php
 class ProcessPodcast

@@ -11,13 +11,16 @@ nav:
             -   Sending messages: 'messages.md'
             -   Signals: 'signals.md'
     -   Protecting jobs: 'auth.md'
-    -   Vue Integration: 'vue.md'
+    - Frontend:
+          - Vue Integration: 'vue.md'
+          - Custom Frontend: 'custom-frontend.md'
 theme:
     name: material
     custom_dir: overrides
     features:
         - navigation.instant
         - navigation.top
+        - content.code.annotate
     palette:
         -   scheme: default
             media: "(prefers-color-scheme: dark)"

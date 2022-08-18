@@ -1,5 +1,7 @@
 # Signals
 
+Signals are the opposite of messages - they let your app communicate with your job.
+
 ## Cancelling a job
 
 Once you've dispatched a job, you are able to cancel it at a later date. To do so, from the job status model, simply
@@ -7,8 +9,8 @@ call `$status->cancel()`.
 
 ### Enabling cancelling
 
-Cancelling a job is not a first party feature in Laravel. Within a long running job, you will need to tell this
-package points at where a cancellation can happen. If the user has sent the cancellation signal you can run
+Cancelling a job is not a first party feature in Laravel. Within a long-running job, you will need to tell this
+package when a cancellation can happen. If the user has sent the cancellation signal you can run
 some cleanup code to clean up anything your job may have done.
 
 ```php
@@ -17,7 +19,7 @@ public function handle()
 {
     foreach($i = 0; $i<10;$i++) {
         $this->line('Processing number ' . $i);
-        $this->checkForSignals();
+        $this->checkForSignals(); // Check if the user has cancelled the job
     }
     
     public function onCancel()
@@ -33,11 +35,53 @@ If a user cancels this job before it is complete, the `checkForSignals` function
 
 Cancelling a job is one example of a signal, where the app is sending a message to the job. You can have any number of custom signals to help your app run smoothly. For example, you may signal the job when a new job is added, so you can stop or limit operation of the original job.
 
-## Sending Signals
+### Sending Signals
 
 With a status model, use `$status->sendSignal('signal-type');`. This will send the signal to the job that owns the status model.
 
-## Checking for signals
+#### Signal parameters
+
+With custom signals, you can also send parameters to the job. For example, a job that checks the price of all the books a user owns may want to be notified if a new book is added during processing. To avoid us having to redo all the books, the signal can contain information about the new book allowing us to add it to the queue.
+
+```php
+JobStatus::forJobAlias('check-book-price')
+->whereTag('user_id', Auth::id())
+->firstOrFail()
+->sendSignal('book-added', ['book_id' => $bookId]);
+````
+
+```php
+class CheckBookPrice
+{
+    protected Collection $books;
+    
+    public function handle()
+    {
+        foreach($this->books as $bookId) {
+            $this->priceChecker->checkFor($bookId)
+            $this->checkForSignals();
+        }
+    }
+    
+    public function onBookAdded($parameters)
+    {
+        $this->books->push($parameters['book_id']);
+    }
+
+    public function tags(): array
+    {
+        return ['user_id' => $this->user->id];
+    }
+    
+    public function alias(): string
+    {
+        return 'check-book-price';
+    }
+    
+}
+```
+
+### Checking for signals
 
 To make your job respond to these signals, you can add `onSignalName` methods, which will be executed when the signal is received. It's important to note that you need to regularly call `$this->checkSignals()` in your job to let this package check the status of any signals.
 
@@ -65,30 +109,13 @@ class MyJob
 }
 ```
 
-You can pass parameters, which will be passed to the listener.
+## Stopping jobs
 
-`$status->sendSignal('user-deleted', ['deleted_user_id' => $deletedUserId]);`
+If you want to stop your job on being sent a signal, you have two choices.
 
+You can throw an exception in the `onSignalName` method, which will mark your job as a failure.
+
+Or you can pass `cancelJob: true` to the `sendSignal` function to cancel the job after the cleanup has finished.
 ```php
-class UploadUserPhotos
-{
-
-    public function handle()
-    {
-        foreach($i = 0; $i<10;$i++) {
-            $this->checkForSignals();
-        }
-    }
-    
-    public function onUserDeleted($parameters)
-    {
-        $deletedUserId = $parameters['deleted_user_id'];
-    }
-    
-}
+$status->sendSignal('user-deleted', ['user_id' => $user->id], cancelJob: true);
 ```
-
-Pass a third parameter, a boolean, to say whether the signal should cancel the job or not.
-
-## Use Cases
-

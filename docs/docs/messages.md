@@ -1,24 +1,36 @@
 # Messages
 
-## Passing messages 
+Messages are bits of text that contain information about what a job is doing. These let your users see informative information about the task being processed.
 
-You can pass messages from a job to your app. This lets you give your users information about what the job is doing in realtime.
+## Sending messages 
 
-To send a message, you can call `$this->line('3/10 emails sent.');`. This will pass a basic message to your app.
+To send a message, you can call `$this->line('3/10 emails sent.');` within your job.
 
-You can also set a type on a message. A type is one of 
+You can also set a type on a message. A type is one of success, error, info (the default), warning or debug. Call `$this->message('All emails sent successfully.', 'success')` to set a message with a type. There are also aliases you can use such as `successMessage`, `warningMessage` etc.
 
-- success
-- error
-- info (default)
-- warning
-- debug
+```php
+class PlanRoute {
+    public function handle() {
+        $this->line('Planning public transport route');
+        $this->planner->planPublicTransportRoute();
+        
+        $this->line('Planning driving route');
+        $this->planner->planDrivingRoute();
 
-Call `$this->message('All emails sent successfully.', 'success')` to set a message with a type, There are also aliases of `successMessage`, `warningMessage` etc.
+        $this->line('Planning cycling route');
+        $this->planner->planCyclingRoute();
 
-# Reading messages
+        $this->line('Planning walking route');
+        $this->planner->planWalkingRoute();
 
-Once you have a status model, you can call
+        $this->successMessage('All routes planned');
+    }
+}
+```
+
+## Reading messages
+
+Once you have a [status model](./retrieve-status.md), you can call
 - `$status->messages()`: Get all messages from the status model
 - `$status->mostRecentMessage(includeDebug: true)`: Get the most recent message.
 - `$status->messagesOfType('error')`: Get the most recent message.
