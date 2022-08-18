@@ -38,6 +38,15 @@ The `loading` slot will show when we load the job status information. We'd recom
 
 If you exclude this slot, it will instead show the `empty` slot and pass you a boolean if the job is loading or not.
 
+This slot receives an `initialLoad` parameter, which signifies if the loading is the initial load (so it's likely there will be a status following shortly) or an update (so fewer changes are expected). This is useful for showing an initial loading screen without showing it during polling.
+
+```vue
+<template v-slot:loading="{initialLoad}">
+    Your name: <input type="text" :disabled="initialLoad" />
+    <button type="submit">Create user in the background</button>
+</template>
+```
+
 **Errors**
 
 The `error` slot will show when the API returned an error, for example if your application is down.
@@ -54,9 +63,12 @@ The `empty` slot shows if no job status was found. This usually occurs if the jo
 
 A 'loading' parameter lets you alter your slot content based on if the job status is loading or not, such as by disabling form inputs.
 
+An `initialLoad` parameter is also passed, letting you show a proper loading screen (or disabling form inputs etc) when it's likely a job status will shortly be loaded. You can use it in conjunction with `loading` to indicate to the user when we're checking for updated without blocking access to the empty template.
+
 ```vue
-<template v-slot:empty="{loading}">
-    Your name: <input type="text" :disabled="loading" />
+<template v-slot:empty="{loading, initialLoad}">
+    Your name: <input type="text" :disabled="initialLoad" />
+    <v-small-spinner v-show="loading"></v-small-spinner>
     <button type="submit">Create user in the background</button>
 </template>
 ```
