@@ -1,22 +1,12 @@
-<h1 align="center">Laravel Job Status</h1>
+# Laravel Job Status
 
-<p align="center">
-    <strong>Show users the progress of their jobs.</strong>
-</p>
+> Show users the progress of their jobs.
 
-<p align="center">
-    <a href="https://github.com/ElbowSpaceUK/laravel-settings/releases">
-        <img src="https://img.shields.io/github/v/release/ElbowSpaceUK/laravel-settings?label=Latest%20Version&sort=semver&style=plastic" alt="Latest Version">
-    </a>
-    [![Test build of laravel job status](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml)
-</p>
+[![Latest version](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/build-status.yml)
 
-<p align="center">
-    <a href="http://buymeacoffee.com/translate">
-        <img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy me a coffee">
-    </a>
-</p>
+[![Build status](https://img.shields.io/github/v/release/tobytwigger/laravel-job-status?label=Latest%20Version&sort=semver&style=plastic)](https://github.com/tobytwigger/laravel-job-status/releases)
 
+[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](http://buymeacoffee.com/translate)
 
 ## Contents
 
