@@ -23,9 +23,9 @@
 
 Laravel Job Status provides a simple way to track your jobs and show the progress to your users.
 
-- Show your users the ongoing progress of your job without refreshing the page.
-- Let users cancel running jobs
-- Customisable Vue component for displaying your own jobs
+- Show your users up-to-date progress of your job without refreshing the page.
+- Let users cancel running jobs.
+- Customisable Vue component for displaying your own progress components.
 
 ## Docs
 

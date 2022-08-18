@@ -1,0 +1,99 @@
+/* a11y-dark theme */
+/* Based on the Tomorrow Night Eighties theme: https://github.com/isagalaev/highlight.js/blob/master/src/styles/tomorrow-night-eighties.css */
+/* @author: ericwbailey */
+
+/* Comment */
+    body[data-md-color-scheme="slate"] > .hljs-comment,
+body[data-md-color-scheme="slate"] > .hljs-quote {
+    color: #d4d0ab;
+}
+
+/* Red */
+body[data-md-color-scheme="slate"] > .hljs-variable,
+body[data-md-color-scheme="slate"] > .hljs-template-variable,
+body[data-md-color-scheme="slate"] > .hljs-tag,
+body[data-md-color-scheme="slate"] > .hljs-name,
+body[data-md-color-scheme="slate"] > .hljs-selector-id,
+body[data-md-color-scheme="slate"] > .hljs-selector-class,
+body[data-md-color-scheme="slate"] > .hljs-regexp,
+body[data-md-color-scheme="slate"] > .hljs-deletion {
+    color: #ffa07a;
+}
+
+/* Orange */
+body[data-md-color-scheme="slate"] > .hljs-number,
+body[data-md-color-scheme="slate"] > .hljs-built_in,
+body[data-md-color-scheme="slate"] > .hljs-builtin-name,
+body[data-md-color-scheme="slate"] > .hljs-literal,
+body[data-md-color-scheme="slate"] > .hljs-type,
+body[data-md-color-scheme="slate"] > .hljs-params,
+body[data-md-color-scheme="slate"] > .hljs-meta,
+body[data-md-color-scheme="slate"] > .hljs-link {
+    color: #f5ab35;
+}
+
+/* Yellow */
+body[data-md-color-scheme="slate"] > .hljs-attribute {
+    color: #ffd700;
+}
+
+/* Green */
+body[data-md-color-scheme="slate"] > .hljs-string,
+body[data-md-color-scheme="slate"] > .hljs-symbol,
+body[data-md-color-scheme="slate"] > .hljs-bullet,
+body[data-md-color-scheme="slate"] > .hljs-addition {
+    color: #abe338;
+}
+
+/* Blue */
+body[data-md-color-scheme="slate"] > .hljs-title,
+body[data-md-color-scheme="slate"] > .hljs-section {
+    color: #00e0e0;
+}
+
+/* Purple */
+body[data-md-color-scheme="slate"] > .hljs-keyword,
+body[data-md-color-scheme="slate"] > .hljs-selector-tag {
+    color: #dcc6e0;
+}
+
+body[data-md-color-scheme="slate"] > .hljs {
+    display: block;
+    overflow-x: auto;
+    background: #2b2b2b;
+    color: #f8f8f2;
+    padding: 0.5em;
+}
+
+body[data-md-color-scheme="slate"] > .hljs-emphasis {
+    font-style: italic;
+}
+
+body[data-md-color-scheme="slate"] > .hljs-strong {
+    font-weight: bold;
+}
+
+@media screen and (-ms-high-contrast: active) {
+    body[data-md-color-scheme="slate"] > .hljs-addition,
+    body[data-md-color-scheme="slate"] > .hljs-attribute,
+    body[data-md-color-scheme="slate"] > .hljs-built_in,
+    body[data-md-color-scheme="slate"] > .hljs-builtin-name,
+    body[data-md-color-scheme="slate"] > .hljs-bullet,
+    body[data-md-color-scheme="slate"] > .hljs-comment,
+    body[data-md-color-scheme="slate"] > .hljs-link,
+    body[data-md-color-scheme="slate"] > .hljs-literal,
+    body[data-md-color-scheme="slate"] > .hljs-meta,
+    body[data-md-color-scheme="slate"] > .hljs-number,
+    body[data-md-color-scheme="slate"] > .hljs-params,
+    body[data-md-color-scheme="slate"] > .hljs-string,
+    body[data-md-color-scheme="slate"] > .hljs-symbol,
+    body[data-md-color-scheme="slate"] > .hljs-type,
+    body[data-md-color-scheme="slate"] > .hljs-quote {
+        color: highlight;
+    }
+
+    body[data-md-color-scheme="slate"] > .hljs-keyword,
+    body[data-md-color-scheme="slate"] > .hljs-selector-tag {
+        font-weight: bold;
+    }
+}

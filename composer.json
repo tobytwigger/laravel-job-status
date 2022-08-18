@@ -9,7 +9,8 @@
         "track",
         "job",
         "queue",
-        "config"
+        "config",
+        "cancel"
     ],
     "license": "MIT",
     "homepage": "https://github.com/tobytwigger/laravel-job-status",

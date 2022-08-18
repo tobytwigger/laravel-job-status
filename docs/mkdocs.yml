@@ -20,10 +20,12 @@ theme:
         - navigation.top
     palette:
         -   scheme: default
+            media: "(prefers-color-scheme: dark)"
             toggle:
                 icon: material/weather-night
                 name: Switch to dark mode
         -   scheme: slate
+            media: "(prefers-color-scheme: light)"
             toggle:
                 icon: material/weather-sunny
                 name: Switch to light mode
@@ -34,5 +36,15 @@ plugins:
     - git-authors
 markdown_extensions:
     - admonition
+    - codehilite:
+          guess_lang: true
+          use_pygments: false
     - pymdownx.details
     - pymdownx.superfences
+extra_css:
+    - assets/highlight.css
+    - assets/a11y-dark.css
+    - assets/a11y-light.css
+extra_javascript:
+    - assets/highlight.js
+    - assets/highlight_init.js
