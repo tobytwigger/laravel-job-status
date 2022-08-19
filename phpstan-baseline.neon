@@ -11,6 +11,11 @@ parameters:
 			path: src/Http/Controllers/JobStatusController.php
 
 		-
+			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:filter\\(\\) expects \\(callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, \\(int\\|string\\)\\)\\: bool\\)\\|null, Closure\\(JobStatus\\\\Models\\\\JobStatus\\)\\: bool given\\.$#"
+			count: 4
+			path: src/JobStatusCollection.php
+
+		-
 			message: "#^Call to an undefined method Illuminate\\\\Contracts\\\\Queue\\\\Job\\:\\:setJobStatus\\(\\)\\.$#"
 			count: 6
 			path: src/JobStatusServiceProvider.php

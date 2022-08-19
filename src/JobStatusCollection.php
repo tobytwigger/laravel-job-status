@@ -7,9 +7,10 @@ use JobStatus\Models\JobStatus;
 
 class JobStatusCollection extends Collection
 {
+
     public function countFinished()
     {
-        return $this->filter(fn (JobStatus $jobStatus) => $jobStatus->isFinished())->count();
+        return $this->filter(fn(JobStatus $jobStatus) => $jobStatus->isFinished())->count();
     }
 
     public function countSuccessful()

@@ -85,12 +85,20 @@ class Dispatcher implements LaravelDispatcherContract
         return $this->parent->getCommandHandler($command);
     }
 
-    public function pipeThrough(array $pipes)
+    /**
+     * @param array $pipes
+     * @return LaravelDispatcherContract
+     */
+    public function pipeThrough(array $pipes): LaravelDispatcherContract
     {
         return $this->parent->pipeThrough($pipes);
     }
 
-    public function map(array $map)
+    /**
+     * @param array $map
+     * @return LaravelDispatcherContract
+     */
+    public function map(array $map): LaravelDispatcherContract
     {
         return $this->parent->map($map);
     }
