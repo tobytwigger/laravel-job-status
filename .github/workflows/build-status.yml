@@ -38,7 +38,7 @@ jobs:
                 uses: stefanzweifel/git-auto-commit-action@v4
                 with:
                     commit_message: Apply php-cs-fixer changes
-                    file_pattern: app tests database config routes
+                    file_pattern: src tests database config routes
 
             -   name: Run phpstan
                 run: ./vendor/bin/phpstan analyze -c phpstan.neon
