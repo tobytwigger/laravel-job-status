@@ -240,28 +240,28 @@ class TrackableTest extends TestCase
 
         dispatch(
             new class() extends JobFake {
-            public function __construct()
-            {
-                parent::__construct(
-                    alias: 'my-fake-job',
-                    tags: [
-                        'my-first-tag' => 1,
-                        'my-second-tag' => 'mytag-value',
-                    ],
-                    callback: function (JobFake $job) {
-                        $job->jobStatus->cancel();
-                        $job->checkForSignals();
+                public function __construct()
+                {
+                    parent::__construct(
+                        alias: 'my-fake-job',
+                        tags: [
+                            'my-first-tag' => 1,
+                            'my-second-tag' => 'mytag-value',
+                        ],
+                        callback: function (JobFake $job) {
+                            $job->jobStatus->cancel();
+                            $job->checkForSignals();
 
-                        throw new \Exception('Check for signals did not stop the job');
-                    }
-                );
-            }
+                            throw new \Exception('Check for signals did not stop the job');
+                        }
+                    );
+                }
 
-            public function onCancel()
-            {
-                throw new \Exception('The job has been cancelled');
+                public function onCancel()
+                {
+                    throw new \Exception('The job has been cancelled');
+                }
             }
-        }
         );
     }
 
@@ -335,18 +335,18 @@ class TrackableTest extends TestCase
 
         dispatch(
             new JobFake(
-            alias: 'my-fake-job',
-            tags: [
-                'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value',
-            ],
-            callback: function (JobFake $job) {
-                $job->jobStatus->sendSignal('custom_signal');
-                $job->checkForSignals();
+                alias: 'my-fake-job',
+                tags: [
+                    'my-first-tag' => 1,
+                    'my-second-tag' => 'mytag-value',
+                ],
+                callback: function (JobFake $job) {
+                    $job->jobStatus->sendSignal('custom_signal');
+                    $job->checkForSignals();
 
-                throw new \Exception('Check for signals did not stop the job');
-            }
-        )
+                    throw new \Exception('Check for signals did not stop the job');
+                }
+            )
         );
     }
 
@@ -358,18 +358,18 @@ class TrackableTest extends TestCase
 
         dispatch(
             new JobFake(
-            alias: 'my-fake-job',
-            tags: [
-                'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value',
-            ],
-            callback: function (JobFake $job) {
-                $job->jobStatus->sendSignal('custom_signal', cancel: true);
-                $job->checkForSignals();
+                alias: 'my-fake-job',
+                tags: [
+                    'my-first-tag' => 1,
+                    'my-second-tag' => 'mytag-value',
+                ],
+                callback: function (JobFake $job) {
+                    $job->jobStatus->sendSignal('custom_signal', cancel: true);
+                    $job->checkForSignals();
 
-                throw new \Exception('Check for signals did not stop the job');
-            }
-        )
+                    throw new \Exception('Check for signals did not stop the job');
+                }
+            )
         );
     }
 
