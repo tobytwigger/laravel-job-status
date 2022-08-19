@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\fakes;
 
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Queue;
 use JobStatus\Trackable;
 
 class JobFake
@@ -17,7 +16,6 @@ class JobFake
         private array $tags = [],
         private ?\Closure $callback = null
     ) {
-
     }
 
     public function alias(): ?string
@@ -32,18 +30,20 @@ class JobFake
 
     public function handle()
     {
-        if($this->callback === null) {
+        if ($this->callback === null) {
             return null;
         }
+
         return app()->call($this->callback, ['job' => $this]);
     }
 
 
     public static function canSeeTracking($user = null, array $tags = []): bool
     {
-        if(isset(static::$canSeeTracking)) {
+        if (isset(static::$canSeeTracking)) {
             return call_user_func(static::$canSeeTracking, $user, $tags);
         }
+
         return true;
     }
 }

@@ -8,13 +8,13 @@ use JobStatus\Tests\TestCase;
 
 class JobStatusTagTest extends TestCase
 {
-
     /** @test */
-    public function a_model_can_be_created(){
+    public function a_model_can_be_created()
+    {
         $attributes = [
             'key' => 'my-key',
             'value' => 'my-value',
-            'job_status_id' => JobStatus::factory()->create()->id
+            'job_status_id' => JobStatus::factory()->create()->id,
         ];
 
         JobStatusTag::factory()->create($attributes);
@@ -22,7 +22,8 @@ class JobStatusTagTest extends TestCase
     }
 
     /** @test */
-    public function it_has_a_relationship_with_job_status(){
+    public function it_has_a_relationship_with_job_status()
+    {
         $jobStatus = JobStatus::factory()->create();
         $tag = JobStatusTag::factory()->create(['job_status_id' => $jobStatus->id]);
 
@@ -32,5 +33,4 @@ class JobStatusTagTest extends TestCase
             )
         );
     }
-
 }

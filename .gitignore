@@ -5,3 +5,4 @@ report.*
 .phpunit.result.cache
 docs/venv
 site
+.php-cs-fixer.cache

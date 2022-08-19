@@ -6,7 +6,7 @@ return [
         'api' => [
             'prefix' => 'api',
             'enabled' => true,
-            'middleware' => ['api']
-        ]
-    ]
+            'middleware' => ['api'],
+        ],
+    ],
 ];

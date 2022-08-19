@@ -11,7 +11,7 @@ class JobStatusStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'status'
+        'status',
     ];
 
     protected $casts = [];
@@ -24,7 +24,7 @@ class JobStatusStatus extends Model
 
     protected static function booted()
     {
-        static::created(function(JobStatusStatus $model) {
+        static::created(function (JobStatusStatus $model) {
             $status = $model->jobStatus;
             $status->status = $model->status;
             $status->save();
@@ -40,5 +40,4 @@ class JobStatusStatus extends Model
     {
         return JobStatusStatusFactory::new();
     }
-
 }

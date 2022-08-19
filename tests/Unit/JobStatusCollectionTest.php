@@ -8,7 +8,6 @@ use JobStatus\Tests\TestCase;
 
 class JobStatusCollectionTest extends TestCase
 {
-
     protected JobStatusCollection $finishedJobs;
 
     protected function setUp(): void
@@ -24,23 +23,26 @@ class JobStatusCollectionTest extends TestCase
     }
 
     /** @test */
-    public function it_counts_the_finished_jobs(){
+    public function it_counts_the_finished_jobs()
+    {
         $this->assertEquals(5+20+25, $this->finishedJobs->countFinished());
     }
 
     /** @test */
-    public function it_counts_the_unfinished_jobs(){
+    public function it_counts_the_unfinished_jobs()
+    {
         $this->assertEquals(10+15, $this->finishedJobs->countNotFinished());
     }
 
     /** @test */
-    public function it_counts_the_successful_jobs(){
+    public function it_counts_the_successful_jobs()
+    {
         $this->assertEquals(25, $this->finishedJobs->countSuccessful());
     }
 
     /** @test */
-    public function it_counts_the_running_jobs(){
+    public function it_counts_the_running_jobs()
+    {
         $this->assertEquals(15, $this->finishedJobs->countRunning());
     }
-
 }

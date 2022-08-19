@@ -3,7 +3,6 @@
 namespace JobStatus\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 
@@ -20,7 +19,7 @@ class JobStatusStatusFactory extends Factory
     {
         return [
             'status' => $this->faker->randomElement(['queued', 'started', 'cancelled', 'failed', 'succeeded']),
-            'job_status_id' => JobStatus::factory()
+            'job_status_id' => JobStatus::factory(),
         ];
     }
 }

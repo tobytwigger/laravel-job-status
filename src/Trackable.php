@@ -3,7 +3,6 @@
 namespace JobStatus;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Str;
 use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobMessage;
@@ -12,21 +11,20 @@ use JobStatus\Models\JobStatus;
 
 trait Trackable
 {
-
     public JobStatus $jobStatus;
 
     public function startTracking()
     {
-        if(!isset($this->jobStatus)) {
+        if (!isset($this->jobStatus)) {
             $this->jobStatus = JobStatus::create([
                 'job_class' => static::class,
-                'job_alias' => $this->alias()
+                'job_alias' => $this->alias(),
             ]);
 
-            foreach($this->tags() as $key => $value) {
+            foreach ($this->tags() as $key => $value) {
                 $this->jobStatus->tags()->create([
                     'key' => $key,
-                    'value' => $value
+                    'value' => $value,
                 ]);
             }
         }
@@ -34,24 +32,27 @@ trait Trackable
 
     public function handleWithTracking()
     {
-        if(method_exists($this, 'handle')) {
+        if (method_exists($this, 'handle')) {
             try {
                 $this->setJobStatus('started');
                 $result = $this->handle();
                 $this->setJobStatus('succeeded');
             } catch (\Throwable $e) {
-                if($e instanceof JobCancelledException) {
+                if ($e instanceof JobCancelledException) {
                     $this->setJobStatus('cancelled');
                 } else {
                     $this->setJobStatus('failed');
                 }
                 $this->percentage(100);
+
                 throw $e;
             }
 
             $this->percentage(100);
+
             return $result;
         }
+
         throw new \Exception('A handle method has not been defined');
     }
 
@@ -77,11 +78,11 @@ trait Trackable
 
     public function message(string $message, string $type = 'info')
     {
-        if(!in_array($type, JobMessage::ALLOWED_TYPES)) {
+        if (!in_array($type, JobMessage::ALLOWED_TYPES)) {
             throw new \Exception(sprintf('Cannot send a message of type %s from the job', $type));
         }
         $this->jobStatus->messages()->create([
-            'message' => $message, 'type' => $type
+            'message' => $message, 'type' => $type,
         ]);
     }
 
@@ -126,22 +127,21 @@ trait Trackable
         $this->jobStatus->signals()
             ->unhandled()
             ->get()
-            ->each(fn(JobSignal $jobSignal) => $this->fireSignal($jobSignal));
+            ->each(fn (JobSignal $jobSignal) => $this->fireSignal($jobSignal));
     }
 
     protected function fireSignal(JobSignal $signal)
     {
         $method = sprintf('on%s', Str::ucfirst(Str::camel($signal->signal)));
-        if(method_exists($this, $method)) {
+        if (method_exists($this, $method)) {
             $this->{$method}($signal->parameters ?? []);
         }
 
         $signal->handled_at = Carbon::now();
         $signal->save();
 
-        if($signal->cancel_job === true) {
+        if ($signal->cancel_job === true) {
             throw JobCancelledException::for($signal);
         }
     }
-
 }

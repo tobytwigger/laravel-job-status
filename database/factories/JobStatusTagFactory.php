@@ -3,7 +3,6 @@
 namespace JobStatus\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 
@@ -21,7 +20,7 @@ class JobStatusTagFactory extends Factory
         return [
             'key' => $this->faker->word,
             'value' => $this->faker->sentence,
-            'job_status_id' => JobStatus::factory()
+            'job_status_id' => JobStatus::factory(),
         ];
     }
 }

@@ -30,30 +30,33 @@ class Dispatcher implements LaravelDispatcherContract
     {
         $this->parent->map([get_class($job) => JobHandler::class]);
         $job->startTracking();
+
         return $job;
     }
 
     public function dispatch($command)
     {
-        if($this->isTracked($command)) {
+        if ($this->isTracked($command)) {
             $this->startTracking($command);
             $command->setJobStatus('queued');
         }
+
         return $this->parent->dispatch($command);
     }
 
     public function dispatchSync($command, $handler = null)
     {
-        if($this->isTracked($command)) {
+        if ($this->isTracked($command)) {
             $this->startTracking($command);
             $command->setJobStatus('queued');
         }
+
         return $this->parent->dispatchSync($command, $handler);
     }
 
     public function dispatchNow($command, $handler = null)
     {
-        if($this->isTracked($command)) {
+        if ($this->isTracked($command)) {
             $this->startTracking($command);
             $command->setJobStatus('queued');
         }
@@ -63,10 +66,11 @@ class Dispatcher implements LaravelDispatcherContract
 
     public function dispatchToQueue($command)
     {
-        if($this->isTracked($command)) {
+        if ($this->isTracked($command)) {
             $command = $this->startTracking($command);
             $command->setJobStatus('queued');
         }
+
         return $this->parent->dispatchToQueue($command);
     }
 

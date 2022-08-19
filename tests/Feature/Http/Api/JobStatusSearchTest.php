@@ -10,7 +10,6 @@ use JobStatus\Tests\TestCase;
 
 class JobStatusSearchTest extends TestCase
 {
-
     /** @test */
     public function it_gets_a_requested_job_status()
     {
@@ -19,7 +18,7 @@ class JobStatusSearchTest extends TestCase
 
         $statusQuery = [
             'alias' => 'mystatus',
-            'tags' => ['one' => 'yes']
+            'tags' => ['one' => 'yes'],
         ];
         $response = $this->getJson(route('job-status.search', $statusQuery));
         $response->assertJson($jobStatus->only(['id', 'job_class', 'job_alias']));
@@ -30,13 +29,14 @@ class JobStatusSearchTest extends TestCase
     {
 //        $this->markTestIncomplete('Need to test the full job status format');
         $jobStatus = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'one', 'value' => 'yes']), 'tags'
+            JobStatusTag::factory(['key' => 'one', 'value' => 'yes']),
+            'tags'
         )->create(['job_alias' => 'mystatus', 'status' => 'started']);
         JobStatus::factory()->count(10)->create();
 
         $statusQuery = [
             'alias' => 'mystatus',
-            'tags' => ['one' => 'yes']
+            'tags' => ['one' => 'yes'],
         ];
         $response = $this->getJson(route('job-status.search', $statusQuery));
         $response->assertJson([
@@ -57,7 +57,7 @@ class JobStatusSearchTest extends TestCase
     {
         $statusQuery = [
             'alias' => 'abc',
-            'tags' => ['one' => 'yes']
+            'tags' => ['one' => 'yes'],
         ];
         $response = $this->getJson(route('job-status.search', $statusQuery));
         $response->assertStatus(404);
@@ -68,7 +68,7 @@ class JobStatusSearchTest extends TestCase
     {
         $statusQuery = [
             'alias' => 'MyClass',
-            'tags' => 'Wait this is not an array'
+            'tags' => 'Wait this is not an array',
         ];
         $response = $this->getJson(route('job-status.search', $statusQuery));
 
@@ -79,7 +79,7 @@ class JobStatusSearchTest extends TestCase
     public function alias_must_be_given()
     {
         $statusQuery = [
-            'tags' => 'Wait this is not an array'
+            'tags' => 'Wait this is not an array',
         ];
         $response = $this->getJson(route('job-status.search', $statusQuery));
 
@@ -91,7 +91,7 @@ class JobStatusSearchTest extends TestCase
     {
         $statusQuery = [
             'alias' => ['my' => 'class'],
-            'tags' => 'Wait this is not an array'
+            'tags' => 'Wait this is not an array',
         ];
         $response = $this->getJson(route('job-status.search', $statusQuery));
 
@@ -102,14 +102,15 @@ class JobStatusSearchTest extends TestCase
     public function it_throws_an_exception_if_the_user_does_not_have_access_to_see_the_tracking()
     {
         $jobStatus = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'tag1', 'value' => 'val1']), 'tags'
+            JobStatusTag::factory(['key' => 'tag1', 'value' => 'val1']),
+            'tags'
         )->create(['job_class' => JobFake::class, 'job_alias' => 'my-test-job']);
 
-        JobFake::$canSeeTracking = fn($user, $tags) => false;
+        JobFake::$canSeeTracking = fn ($user, $tags) => false;
 
         $response = $this->getJson(route('job-status.search', [
             'alias' => 'my-test-job',
-            'tags' => ['tag1' => 'val1']
+            'tags' => ['tag1' => 'val1'],
         ]));
 
         $this->assertInstanceOf(AuthorizationException::class, $response->exception);
@@ -125,7 +126,7 @@ class JobStatusSearchTest extends TestCase
 
         $response = $this->getJson(route('job-status.search', [
             'alias' => 'my-test-job',
-            'tags' => []
+            'tags' => [],
         ]));
 
         $this->assertInstanceOf(\Exception::class, $response->exception);
@@ -141,7 +142,7 @@ class JobStatusSearchTest extends TestCase
 
         $response = $this->getJson(route('job-status.search', [
             'alias' => 'my-test-job',
-            'tags' => []
+            'tags' => [],
         ]));
 
         $this->assertInstanceOf(\Exception::class, $response->exception);
@@ -149,5 +150,4 @@ class JobStatusSearchTest extends TestCase
 
         $response->assertStatus(500);
     }
-
 }

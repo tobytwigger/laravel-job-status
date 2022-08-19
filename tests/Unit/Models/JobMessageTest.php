@@ -8,13 +8,13 @@ use JobStatus\Tests\TestCase;
 
 class JobMessageTest extends TestCase
 {
-
     /** @test */
-    public function a_model_can_be_created(){
+    public function a_model_can_be_created()
+    {
         $attributes = [
             'message' => 'My message',
             'type' => 'info',
-            'job_status_id' => JobStatus::factory()->create()->id
+            'job_status_id' => JobStatus::factory()->create()->id,
         ];
 
         JobMessage::factory()->create($attributes);
@@ -22,7 +22,8 @@ class JobMessageTest extends TestCase
     }
 
     /** @test */
-    public function it_has_a_relationship_with_job_status(){
+    public function it_has_a_relationship_with_job_status()
+    {
         $jobStatus = JobStatus::factory()->create();
         $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id]);
 
@@ -32,5 +33,4 @@ class JobMessageTest extends TestCase
             )
         );
     }
-
 }

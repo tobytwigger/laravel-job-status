@@ -2,7 +2,6 @@
 
 namespace JobStatus\Models;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +15,7 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'run_count', 'percentage', 'status'
+        'job_class', 'job_alias', 'run_count', 'percentage', 'status',
     ];
 
     protected $casts = [
@@ -34,7 +33,7 @@ class JobStatus extends Model
 
     public function getTagsAsArray()
     {
-        return $this->tags->mapWithKeys(fn(JobStatusTag $tag) => [$tag->key => $tag->value])->toArray();
+        return $this->tags->mapWithKeys(fn (JobStatusTag $tag) => [$tag->key => $tag->value])->toArray();
     }
 
     public function messages()
@@ -69,7 +68,7 @@ class JobStatus extends Model
 
     public static function scopeWhereTag(Builder $query, string $key, mixed $value)
     {
-        $query->whereHas('tags', function(Builder $query) use ($key, $value) {
+        $query->whereHas('tags', function (Builder $query) use ($key, $value) {
             $query->where(['key' => $key, 'value' => $value]);
         });
     }
@@ -103,7 +102,7 @@ class JobStatus extends Model
     public function isFinished(): bool
     {
         return in_array($this->getStatus(), [
-            'succeeded', 'failed', 'cancelled'
+            'succeeded', 'failed', 'cancelled',
         ]);
     }
 
@@ -135,7 +134,7 @@ class JobStatus extends Model
     public function mostRecentMessage(bool $includeDebug = false)
     {
         return $this->messages()
-            ->when($includeDebug === false, fn(Builder $query) => $query->where('type', '!=', 'debug'))
+            ->when($includeDebug === false, fn (Builder $query) => $query->where('type', '!=', 'debug'))
             ->latest()
             ->orderBy('id', 'DESC')
             ->first()
@@ -165,7 +164,7 @@ class JobStatus extends Model
         $this->signals()->create([
             'signal' => $signal,
             'parameters' => $parameters,
-            'cancel_job' => $cancel
+            'cancel_job' => $cancel,
         ]);
     }
 
@@ -176,13 +175,13 @@ class JobStatus extends Model
 
     public function canSeeTracking($user): bool
     {
-        if(!class_exists($this->job_class)) {
+        if (!class_exists($this->job_class)) {
             throw new \Exception(sprintf('No job of type %s found.', $this->job_class), 404);
         }
-        if(!in_array(Trackable::class, class_uses_recursive($this->job_class))) {
+        if (!in_array(Trackable::class, class_uses_recursive($this->job_class))) {
             throw new \Exception(sprintf('Job %s is not trackable.', $this->job_class), 500);
         }
+
         return ($this->job_class)::canSeeTracking($user, $this->getTagsAsArray());
     }
-
 }

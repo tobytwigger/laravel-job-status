@@ -3,8 +3,6 @@
 namespace JobStatus\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Routing\Router;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Tests\fakes\JobFake;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -21,14 +19,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadMigrationsFrom(realpath(__DIR__.'/../database/migrations'));
+        $this->loadMigrationsFrom(realpath(__DIR__ . '/../database/migrations'));
     }
 
     /**
      * Define environment setup.
      *
      * @param  \Illuminate\Foundation\Application  $app
-     * @return void
      */
     protected function getEnvironmentSetUp($app)
     {
@@ -45,6 +42,4 @@ class TestCase extends \Orchestra\Testbench\TestCase
         JobFake::$canSeeTracking = null;
         parent::tearDown();
     }
-
-
 }

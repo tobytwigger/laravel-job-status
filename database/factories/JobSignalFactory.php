@@ -29,8 +29,8 @@ class JobSignalFactory extends Factory
 
     public function handled()
     {
-        $this->state(fn(array $attributes) => [
-            'handled_at' => Carbon::now()->subDay()
+        $this->state(fn (array $attributes) => [
+            'handled_at' => Carbon::now()->subDay(),
         ]);
     }
 }

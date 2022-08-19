@@ -12,13 +12,13 @@ class JobSignal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'signal', 'handled_at', 'parameters', 'cancel_job', 'job_status_id'
+        'signal', 'handled_at', 'parameters', 'cancel_job', 'job_status_id',
     ];
 
     protected $casts = [
         'parameters' => 'array',
         'cancel_job' => 'boolean',
-        'handled_at' => 'datetime'
+        'handled_at' => 'datetime',
     ];
 
     public function __construct(array $attributes = [])
@@ -41,5 +41,4 @@ class JobSignal extends Model
     {
         return JobSignalFactory::new();
     }
-
 }

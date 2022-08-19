@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Unit\Models;
 
 use Carbon\Carbon;
-use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
@@ -14,14 +13,14 @@ use JobStatus\Tests\TestCase;
 
 class JobStatusTest extends TestCase
 {
-
     /** @test */
-    public function it_creates_a_model(){
+    public function it_creates_a_model()
+    {
         $attributes = [
             'job_class' => 'MyJobClass',
             'job_alias' => 'my-job-alias',
             'run_count' => 5,
-            'percentage' => 55.3
+            'percentage' => 55.3,
         ];
 
         JobStatus::factory()->create($attributes);
@@ -30,59 +29,64 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_has_many_messages(){
+    public function it_has_many_messages()
+    {
         $status = JobStatus::factory()->create();
         $messages = JobMessage::factory()->count(5)->create(['job_status_id' => $status->id]);
         JobMessage::factory()->count(10)->create();
 
         $this->assertEquals(5, $status->messages()->count());
         $retrieved = $status->messages;
-        foreach($messages as $message) {
+        foreach ($messages as $message) {
             $this->assertTrue($message->is($retrieved->shift()));
         }
     }
 
     /** @test */
-    public function it_has_many_signals(){
+    public function it_has_many_signals()
+    {
         $status = JobStatus::factory()->create();
         $signals = JobSignal::factory()->count(5)->create(['job_status_id' => $status->id]);
         JobSignal::factory()->count(10)->create();
 
         $this->assertEquals(5, $status->signals()->count());
         $retrieved = $status->signals;
-        foreach($signals as $signal) {
+        foreach ($signals as $signal) {
             $this->assertTrue($signal->is($retrieved->shift()));
         }
     }
 
     /** @test */
-    public function it_has_many_tags(){
+    public function it_has_many_tags()
+    {
         $status = JobStatus::factory()->create();
         $tags = JobStatusTag::factory()->count(5)->create(['job_status_id' => $status->id]);
         JobStatusTag::factory()->count(10)->create();
 
         $this->assertEquals(5, $status->tags()->count());
         $retrieved = $status->tags;
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $this->assertTrue($tag->is($retrieved->shift()));
         }
     }
 
     /** @test */
-    public function it_has_many_statuses(){
+    public function it_has_many_statuses()
+    {
         $status = JobStatus::factory()->create();
         $statuses = JobStatusStatus::factory()->count(5)->create(['job_status_id' => $status->id]);
         JobStatusStatus::factory()->count(10)->create();
 
         $this->assertEquals(5, $status->statuses()->count());
         $retrieved = $status->statuses;
-        foreach($statuses as $status) {
+        foreach ($statuses as $status) {
             $this->assertTrue($status->is($retrieved->shift()));
         }
     }
 
     /** @test */
-    public function it_can_scope_for_a_job_class(){
+    public function it_can_scope_for_a_job_class()
+    {
         JobStatus::factory()->count(5)->create();
         $status = JobStatus::factory()->create(['job_class' => 'MyJobClass']);
 
@@ -92,7 +96,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_can_scope_for_a_job_alias(){
+    public function it_can_scope_for_a_job_alias()
+    {
         JobStatus::factory()->count(5)->create();
         $status = JobStatus::factory()->create(['job_alias' => 'my-alias']);
 
@@ -102,14 +107,18 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function whereTag_can_query_based_on_one_tag(){
+    public function where_tag_can_query_based_on_one_tag()
+    {
         $status = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1']), 'tags'
+            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1']),
+            'tags'
         )->has(
-            JobStatusTag::factory(['key' => 'mykey2', 'value' => 'myvalue2']), 'tags'
+            JobStatusTag::factory(['key' => 'mykey2', 'value' => 'myvalue2']),
+            'tags'
         )->create();
         $status2 = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1-2']), 'tags'
+            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1-2']),
+            'tags'
         )->create();
 
         $this->assertEquals($status->id, JobStatus::whereTag('mykey', 'myvalue1')->first()?->id);
@@ -120,14 +129,18 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function whereTag_can_query_based_on_multiple_tags_with_an_and_operator(){
+    public function where_tag_can_query_based_on_multiple_tags_with_an_and_operator()
+    {
         $status = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1']), 'tags'
+            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1']),
+            'tags'
         )->has(
-            JobStatusTag::factory(['key' => 'mykey2', 'value' => 'myvalue2']), 'tags'
+            JobStatusTag::factory(['key' => 'mykey2', 'value' => 'myvalue2']),
+            'tags'
         )->create();
         $status2 = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1-2']), 'tags'
+            JobStatusTag::factory(['key' => 'mykey', 'value' => 'myvalue1-2']),
+            'tags'
         )->create();
 
         $this->assertEquals($status->id, JobStatus::whereTag('mykey', 'myvalue1')->whereTag('mykey2', 'myvalue2')->first()?->id);
@@ -136,7 +149,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_can_get_a_status(){
+    public function it_can_get_a_status()
+    {
         $now = Carbon::now();
         $status = JobStatus::factory()->create(['status' => 'failed']);
 
@@ -144,7 +158,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_can_query_by_status(){
+    public function it_can_query_by_status()
+    {
         $status = JobStatus::factory()->create(['status' => 'failed']);
 
         $this->assertTrue($status->is(
@@ -154,7 +169,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_can_query_by_where_not_status(){
+    public function it_can_query_by_where_not_status()
+    {
         $status = JobStatus::factory()->create(['status' => 'failed']);
 
         $this->assertTrue($status->is(
@@ -164,7 +180,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_can_query_by_many_where_not_status(){
+    public function it_can_query_by_many_where_not_status()
+    {
         $status = JobStatus::factory()->create(['status' => 'failed']);
 
         $this->assertTrue($status->is(
@@ -174,7 +191,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function isFinished_is_true_if_the_job_is_finished(){
+    public function is_finished_is_true_if_the_job_is_finished()
+    {
         $queued = JobStatus::factory()->create(['status' => 'queued']);
         $started = JobStatus::factory()->create(['status' => 'started']);
         $failed = JobStatus::factory()->create(['status' => 'failed']);
@@ -186,11 +204,11 @@ class JobStatusTest extends TestCase
         $this->assertTrue($failed->isFinished());
         $this->assertTrue($cancelled->isFinished());
         $this->assertTrue($succeeded->isFinished());
-
     }
 
     /** @test */
-    public function isSuccessful_is_true_if_the_job_is_successful(){
+    public function is_successful_is_true_if_the_job_is_successful()
+    {
         $queued = JobStatus::factory()->create(['status' => 'queued']);
         $started = JobStatus::factory()->create(['status' => 'started']);
         $failed = JobStatus::factory()->create(['status' => 'failed']);
@@ -205,7 +223,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function isRunning_is_true_if_the_job_is_running(){
+    public function is_running_is_true_if_the_job_is_running()
+    {
         $queued = JobStatus::factory()->create(['status' => 'queued']);
         $started = JobStatus::factory()->create(['status' => 'started']);
         $failed = JobStatus::factory()->create(['status' => 'failed']);
@@ -220,7 +239,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function isQueued_is_true_if_the_job_is_queued(){
+    public function is_queued_is_true_if_the_job_is_queued()
+    {
         $queued = JobStatus::factory()->create(['status' => 'queued']);
         $started = JobStatus::factory()->create(['status' => 'started']);
         $failed = JobStatus::factory()->create(['status' => 'failed']);
@@ -235,7 +255,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function mostRecentMessage_returns_the_most_recent_message_excluding_debug_types(){
+    public function most_recent_message_returns_the_most_recent_message_excluding_debug_types()
+    {
         $jobStatus = JobStatus::factory()->create();
         $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message one']);
         $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message two']);
@@ -246,7 +267,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function mostRecentMessage_can_return_the_most_recent_debug_message(){
+    public function most_recent_message_can_return_the_most_recent_debug_message()
+    {
         $jobStatus = JobStatus::factory()->create();
         $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message one']);
         $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message two']);
@@ -257,14 +279,16 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function mostRecentMessage_returns_null_if_no_messages_are_given(){
+    public function most_recent_message_returns_null_if_no_messages_are_given()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $this->assertNull($jobStatus->mostRecentMessage());
     }
 
     /** @test */
-    public function messagesOfType_returns_all_messages_matching_the_given_type(){
+    public function messages_of_type_returns_all_messages_matching_the_given_type()
+    {
         $jobStatus = JobStatus::factory()->create();
         $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message one']);
         $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'success', 'message' => 'Message two']);
@@ -276,14 +300,16 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function getPercentage_returns_the_percentage(){
+    public function get_percentage_returns_the_percentage()
+    {
         $jobStatus = JobStatus::factory()->create(['percentage' => 55.7]);
 
         $this->assertEquals(55.7, $jobStatus->getPercentage());
     }
 
     /** @test */
-    public function cancel_sends_a_cancel_signal(){
+    public function cancel_sends_a_cancel_signal()
+    {
         $jobStatus = JobStatus::factory()->create();
         $jobStatus->cancel();
 
@@ -291,12 +317,13 @@ class JobStatusTest extends TestCase
             'job_status_id' => $jobStatus->id,
             'signal' => 'cancel',
             'handled_at' => null,
-            'cancel_job' => 1
+            'cancel_job' => 1,
         ]);
     }
 
     /** @test */
-    public function sendSignal_creates_a_canceling_signal(){
+    public function send_signal_creates_a_canceling_signal()
+    {
         /** @var JobStatus $jobStatus */
         $jobStatus = JobStatus::factory()->create();
         $jobStatus->sendSignal('custom-signal', ['param' => 'val'], true);
@@ -306,12 +333,13 @@ class JobStatusTest extends TestCase
             'signal' => 'custom-signal',
             'parameters' => json_encode(['param' => 'val']),
             'handled_at' => null,
-            'cancel_job' => 1
+            'cancel_job' => 1,
         ]);
     }
 
     /** @test */
-    public function sendSignal_creates_a_non_cancelling_signal(){
+    public function send_signal_creates_a_non_cancelling_signal()
+    {
         /** @var JobStatus $jobStatus */
         $jobStatus = JobStatus::factory()->create();
         $jobStatus->sendSignal('user_updated', ['param' => 'val2'], false);
@@ -321,12 +349,12 @@ class JobStatusTest extends TestCase
             'signal' => 'user_updated',
             'parameters' => json_encode(['param' => 'val2']),
             'handled_at' => null,
-            'cancel_job' => 0
+            'cancel_job' => 0,
         ]);
     }
 
     /** @test */
-    public function getTagsAsArray_returns_all_tags_as_an_array()
+    public function get_tags_as_array_returns_all_tags_as_an_array()
     {
         $status = JobStatus::factory()->create();
         JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'colour', 'value' => 'black']);
@@ -346,27 +374,31 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function canSeeTracking_returns_false_if_the_user_does_not_have_access_to_see_the_tracking(){
+    public function can_see_tracking_returns_false_if_the_user_does_not_have_access_to_see_the_tracking()
+    {
         $jobStatus = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'tag1', 'value' => 'val1']), 'tags'
+            JobStatusTag::factory(['key' => 'tag1', 'value' => 'val1']),
+            'tags'
         )->create(['job_class' => JobFake::class]);
 
-        JobFake::$canSeeTracking = fn($user, $tags) => false;
+        JobFake::$canSeeTracking = fn ($user, $tags) => false;
         $this->assertFalse($jobStatus->canSeeTracking(55));
 
-        JobFake::$canSeeTracking = fn($user, $tags) => true;
+        JobFake::$canSeeTracking = fn ($user, $tags) => true;
         $this->assertTrue($jobStatus->canSeeTracking(55));
 
-        JobFake::$canSeeTracking = function($user, $tags) {
+        JobFake::$canSeeTracking = function ($user, $tags) {
             $this->assertEquals(55, $user);
             $this->assertEquals(['tag1' => 'val1'], $tags);
+
             return true;
         };
         $this->assertTrue($jobStatus->canSeeTracking(55));
     }
 
     /** @test */
-    public function canSeeTracking_throws_an_exception_if_the_job_class_is_not_real(){
+    public function can_see_tracking_throws_an_exception_if_the_job_class_is_not_real()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No job of type NotAClass found.');
 
@@ -376,7 +408,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function canSeeTracking_throws_an_exception_if_the_job_class_exists_but_does_not_extend_trackable(){
+    public function can_see_tracking_throws_an_exception_if_the_job_class_exists_but_does_not_extend_trackable()
+    {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Job JobStatus\Tests\TestCase is not trackable.');
 

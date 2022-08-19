@@ -11,7 +11,7 @@ class JobStatusTag extends Model
     use HasFactory;
 
     protected $fillable = [
-        'key', 'value'
+        'key', 'value',
     ];
 
     protected $casts = [];
@@ -31,5 +31,4 @@ class JobStatusTag extends Model
     {
         return JobStatusTagFactory::new();
     }
-
 }

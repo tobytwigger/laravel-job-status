@@ -11,11 +11,11 @@ class JobMessage extends Model
     use HasFactory;
 
     const ALLOWED_TYPES = [
-        'info', 'success', 'error', 'warning', 'debug'
+        'info', 'success', 'error', 'warning', 'debug',
     ];
 
     protected $fillable = [
-        'message', 'type'
+        'message', 'type',
     ];
 
     protected $casts = [];
