@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use JobStatus\Database\Factories\JobStatusStatusFactory;
 
+/**
+ * @property JobStatus $jobStatus The job status the status belongs to
+ * @property string $status The status of the job
+ */
 class JobStatusStatus extends Model
 {
     use HasFactory;

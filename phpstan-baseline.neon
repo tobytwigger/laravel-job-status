@@ -1,0 +1,21 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:forJobAlias\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Controllers/JobStatusController.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:whereTag\\(\\)\\.$#"
+			count: 1
+			path: src/Http/Controllers/JobStatusController.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Contracts\\\\Queue\\\\Job\\:\\:setJobStatus\\(\\)\\.$#"
+			count: 6
+			path: src/JobStatusServiceProvider.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Contracts\\\\Queue\\\\Job\\:\\:setPercentage\\(\\)\\.$#"
+			count: 1
+			path: src/JobStatusServiceProvider.php

@@ -4,4 +4,4 @@ includes:
 parameters:
     level: 2
     paths:
-      - app
+      - src

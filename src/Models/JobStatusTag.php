@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use JobStatus\Database\Factories\JobStatusTagFactory;
 
+/**
+ * @property string $key The key of the tag
+ * @property string $value The value of the tag
+ */
 class JobStatusTag extends Model
 {
     use HasFactory;

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use JobStatus\Database\Factories\JobSignalFactory;
 
+/**
+ * @property string $signal The signal that was sent to the job
+ */
 class JobSignal extends Model
 {
     use HasFactory;

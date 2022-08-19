@@ -2,6 +2,7 @@
 
 namespace JobStatus;
 
+use Illuminate\Bus\Dispatcher as LaravelDispatcher;
 use Illuminate\Contracts\Bus\Dispatcher as LaravelDispatcherContract;
 use Illuminate\Support\Traits\ForwardsCalls;
 
@@ -9,9 +10,9 @@ class Dispatcher implements LaravelDispatcherContract
 {
     use ForwardsCalls;
 
-    private LaravelDispatcherContract $parent;
+    private LaravelDispatcher $parent;
 
-    public function __construct(LaravelDispatcherContract $parent)
+    public function __construct(LaravelDispatcher $parent)
     {
         $this->parent = $parent;
     }
