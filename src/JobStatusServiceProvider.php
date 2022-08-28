@@ -5,6 +5,7 @@ namespace JobStatus;
 use Illuminate\Bus\Dispatcher as LaravelDispatcher;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\Route;
@@ -50,7 +51,7 @@ class JobStatusServiceProvider extends ServiceProvider
         /** @var QueueManager $queueManager */
         $queueManager = app('queue');
         $queueManager->before(fn (JobProcessing $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus('started')));
-        $queueManager->after(fn (JobProcessing $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus('finished')));
+        $queueManager->after(fn (JobProcessed $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus('finished')));
         $queueManager->before(fn (JobProcessing $event) => $ifTracked($event->job, fn () => $event->job->setPercentage(100)));
         $queueManager->exceptionOccurred(fn (JobExceptionOccurred $event) => $ifTracked(
             $event->job,
