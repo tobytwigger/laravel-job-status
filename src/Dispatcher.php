@@ -6,7 +6,7 @@ use Illuminate\Bus\Dispatcher as LaravelDispatcher;
 use Illuminate\Contracts\Bus\Dispatcher as LaravelDispatcherContract;
 use Illuminate\Support\Traits\ForwardsCalls;
 
-class Dispatcher implements LaravelDispatcherContract
+class Dispatcher implements LaravelDispatcherContract, \Illuminate\Contracts\Bus\QueueingDispatcher
 {
     use ForwardsCalls;
 
@@ -101,5 +101,15 @@ class Dispatcher implements LaravelDispatcherContract
     public function map(array $map): LaravelDispatcherContract
     {
         return $this->parent->map($map);
+    }
+
+    public function findBatch(string $batchId)
+    {
+        return $this->parent->findBatch($batchId);
+    }
+
+    public function batch($jobs)
+    {
+        return $this->parent->batch($jobs);
     }
 }
