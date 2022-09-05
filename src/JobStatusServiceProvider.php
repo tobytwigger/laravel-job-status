@@ -5,6 +5,7 @@ namespace JobStatus;
 use Illuminate\Bus\Dispatcher as LaravelDispatcher;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\Route;
@@ -56,7 +57,7 @@ class JobStatusServiceProvider extends ServiceProvider
             $event->job,
             fn () => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
         ));
-        $queueManager->failing(fn (JobExceptionOccurred $event) => $ifTracked(
+        $queueManager->failing(fn (JobFailed $event) => $ifTracked(
             $event->job,
             fn () => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
         ));
