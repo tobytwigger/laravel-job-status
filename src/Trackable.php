@@ -15,18 +15,16 @@ trait Trackable
 
     public function startTracking()
     {
-        if (!isset($this->jobStatus)) {
-            $this->jobStatus = JobStatus::create([
-                'job_class' => static::class,
-                'job_alias' => $this->alias(),
-            ]);
+        $this->jobStatus = JobStatus::create([
+            'job_class' => static::class,
+            'job_alias' => $this->alias(),
+        ]);
 
-            foreach ($this->tags() as $key => $value) {
-                $this->jobStatus->tags()->create([
-                    'key' => $key,
-                    'value' => $value,
-                ]);
-            }
+        foreach ($this->tags() as $key => $value) {
+            $this->jobStatus->tags()->create([
+                'key' => $key,
+                'value' => $value,
+            ]);
         }
     }
 
