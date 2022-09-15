@@ -20,7 +20,7 @@ trait Trackable
             $query->whereTag($key, $value);
         }
 
-        if($parentId === null && ($jobStatus = $query->first())) {
+        if ($parentId === null && ($jobStatus = $query->first())) {
             $this->jobStatus = $jobStatus;
         } else {
             $this->jobStatus = JobStatus::create([
