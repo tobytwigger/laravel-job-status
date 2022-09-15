@@ -39,11 +39,11 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function it_creates_a_job_status_on_job_dispatch_now()
+    public function it_does_not_create_a_job_status_on_job_dispatch_now()
     {
         $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 0);
 
-        dispatch_now(new JobFake(
+        app(Dispatcher::class)->dispatchNow(new JobFake(
             alias: 'my-fake-job',
             tags: [
                 'my-first-tag' => 1,
@@ -51,16 +51,9 @@ class TrackableTest extends TestCase
             ]
         ));
 
-        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+        $this->assertDatabaseMissing(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
             'job_class' => JobFake::class,
             'job_alias' => 'my-fake-job',
-        ]);
-
-        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
-            'key' => 'my-first-tag', 'value' => '1',
-        ]);
-        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
-            'key' => 'my-second-tag', 'value' => 'mytag-value',
         ]);
     }
 

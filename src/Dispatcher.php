@@ -48,7 +48,7 @@ class Dispatcher implements LaravelDispatcherContract, \Illuminate\Contracts\Bus
 
     public function dispatchSync($command, $handler = null)
     {
-        if ($this->isTracked($command) && !($command instanceof ShouldQueue)) {
+        if ($this->isTracked($command)) {
             $this->startTracking($command);
             $command->setJobStatus('queued');
         }
@@ -58,11 +58,6 @@ class Dispatcher implements LaravelDispatcherContract, \Illuminate\Contracts\Bus
 
     public function dispatchNow($command, $handler = null)
     {
-        if ($this->isTracked($command)) {
-            $this->startTracking($command);
-            $command->setJobStatus('queued');
-        }
-
         return $this->parent->dispatchNow($command, $handler);
     }
 

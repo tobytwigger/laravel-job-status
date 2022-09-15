@@ -19,8 +19,8 @@ trait Trackable
         foreach ($this->tags() as $key => $value) {
             $query->whereTag($key, $value);
         }
-
-        if ($parentId === null && ($jobStatus = $query->first())) {
+        $jobStatus = $query->first();
+        if ($parentId === null && $jobStatus) {
             $this->jobStatus = $jobStatus;
         } else {
             $this->jobStatus = JobStatus::create([
