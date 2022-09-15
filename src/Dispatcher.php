@@ -4,6 +4,7 @@ namespace JobStatus;
 
 use Illuminate\Bus\Dispatcher as LaravelDispatcher;
 use Illuminate\Contracts\Bus\Dispatcher as LaravelDispatcherContract;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Traits\ForwardsCalls;
 
 class Dispatcher implements LaravelDispatcherContract, \Illuminate\Contracts\Bus\QueueingDispatcher
@@ -47,6 +48,11 @@ class Dispatcher implements LaravelDispatcherContract, \Illuminate\Contracts\Bus
 
     public function dispatchSync($command, $handler = null)
     {
+        if ($this->isTracked($command) && !($command instanceof ShouldQueue)) {
+            $this->startTracking($command);
+            $command->setJobStatus('queued');
+        }
+
         return $this->parent->dispatchSync($command, $handler);
     }
 

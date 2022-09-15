@@ -198,7 +198,7 @@ class TrackableTest extends TestCase
     public function percentages_can_be_updated()
     {
 
-        dispatch_sync(new JobFake(
+        dispatch(new JobFake(
             alias: 'my-fake-job',
             tags: [
                 'my-first-tag' => 1,
@@ -206,13 +206,13 @@ class TrackableTest extends TestCase
             ],
             callback: function (JobFake $job) {
                 $job->percentage(52.6);
-                Assert::assertEquals(52.6, JobStatus::findOrFail($job->jobStatus->id)->getPercentage());
+                $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+                    'percentage' => 52.6
+                ]);
             }
         ));
 
-//        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
-//            'percentage' => 52.6
-//        ]);
+
 
     }
 
