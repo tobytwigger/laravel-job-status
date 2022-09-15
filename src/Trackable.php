@@ -15,8 +15,6 @@ trait Trackable
 
     public function startTracking()
     {
-        if (isset($this->jobStatus)) {
-        }
         $this->jobStatus = JobStatus::create([
             'job_class' => static::class,
             'job_alias' => $this->alias(),

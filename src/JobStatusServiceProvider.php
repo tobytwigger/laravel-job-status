@@ -56,6 +56,9 @@ class JobStatusServiceProvider extends ServiceProvider
         Event::listen(JobProcessed::class, $ifTracked(function (JobProcessed $event) {
             $event->job->setJobStatus($event->job->hasFailed() ? 'failed' : 'succeeded');
             $event->job->setPercentage(100);
+            if($event->job->isReleased()) {
+                $event->job->startTracking();
+            }
         }));
         Event::listen(JobExceptionOccurred::class, $ifTracked(function (JobExceptionOccurred $event) {
             $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed');
