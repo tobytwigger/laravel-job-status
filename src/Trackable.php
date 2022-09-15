@@ -13,19 +13,28 @@ trait Trackable
 {
     public JobStatus $jobStatus;
 
-    public function startTracking()
+    public function startTracking(?int $parentId = null)
     {
-        $this->jobStatus = JobStatus::create([
-            'job_class' => static::class,
-            'job_alias' => $this->alias(),
-            'parent_id' => isset($this->jobStatus) && $this->jobStatus->isFinished() ? $this->jobStatus->id : null,
-        ]);
-
+        $query = JobStatus::forJobAlias($this->alias)->forJob(static::class)->whereStatus('queued');
         foreach ($this->tags() as $key => $value) {
-            $this->jobStatus->tags()->create([
-                'key' => $key,
-                'value' => $value,
+            $query->whereTag($key, $value);
+        }
+
+        if($parentId === null && ($jobStatus = $query->first())) {
+            $this->jobStatus = $jobStatus;
+        } else {
+            $this->jobStatus = JobStatus::create([
+                'job_class' => static::class,
+                'job_alias' => $this->alias(),
+                'parent_id' => $parentId,
             ]);
+
+            foreach ($this->tags() as $key => $value) {
+                $this->jobStatus->tags()->create([
+                    'key' => $key,
+                    'value' => $value,
+                ]);
+            }
         }
     }
 
