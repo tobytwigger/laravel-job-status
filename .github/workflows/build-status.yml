@@ -28,14 +28,6 @@ jobs:
                 if: steps.composer-cache.outputs.cache-hit != 'true'
                 run: composer install --prefer-dist --no-progress --no-suggest
 
-            -   name: Run php cs fixer
-                run: ./vendor/bin/php-cs-fixer fix
-
-            -   name: Apply php-cs-fixer changes
-                uses: stefanzweifel/git-auto-commit-action@v4
-                with:
-                    commit_message: Apply php-cs-fixer changes
-                    file_pattern: src tests database config routes
 
     build_php:
         needs: php-cs-fixer
