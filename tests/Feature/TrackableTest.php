@@ -3,8 +3,6 @@
 namespace JobStatus\Tests\Feature;
 
 use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Assert;
 use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobSignal;
@@ -197,7 +195,6 @@ class TrackableTest extends TestCase
     /** @test */
     public function percentages_can_be_updated()
     {
-
         dispatch(new JobFake(
             alias: 'my-fake-job',
             tags: [
@@ -207,13 +204,10 @@ class TrackableTest extends TestCase
             callback: function (JobFake $job) {
                 $job->percentage(52.6);
                 $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
-                    'percentage' => 52.6
+                    'percentage' => 52.6,
                 ]);
             }
         ));
-
-
-
     }
 
     /** @test */
