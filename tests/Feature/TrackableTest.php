@@ -438,4 +438,48 @@ class TrackableTest extends TestCase
             }
         });
     }
+
+    /** @test */
+    public function it_marks_the_job_as_succeeded_if_it_is_released(){
+        try {
+            dispatch(new JobFake(
+                alias: 'my-fake-job',
+                tags: [
+                    'my-first-tag' => 1,
+                    'my-second-tag' => 'mytag-value',
+                ],
+                callback: fn (JobFake $job) => $job->release(5)
+            ));
+        } catch (\Exception $e) {
+        }
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), [
+            'status' => 'succeeded',
+        ]);
+    }
+
+    /** @test */
+    public function it_records_a_new_job_if_a_job_fails(){
+        try {
+            dispatch(new JobFake(
+                alias: 'my-fake-job',
+                tags: [
+                    'my-first-tag' => 1,
+                    'my-second-tag' => 'mytag-value',
+                ],
+                callback: fn () => throw new \Exception('Job went wrong')
+            ));
+        } catch (\Exception $e) {
+        }
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), [
+            'status' => 'queued',
+        ]);
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), [
+            'status' => 'started',
+        ]);
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), [
+            'status' => 'failed',
+        ]);
+    }
 }

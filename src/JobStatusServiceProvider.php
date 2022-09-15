@@ -8,7 +8,9 @@ use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Events\JobReleasedAfterException;
 use Illuminate\Queue\QueueManager;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use JobStatus\Exception\JobCancelledException;
@@ -52,8 +54,10 @@ class JobStatusServiceProvider extends ServiceProvider
         /** @var QueueManager $queueManager */
         $queueManager = app('queue');
         $queueManager->before(fn (JobProcessing $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus('started')));
+        $queueManager->after(fn (JobProcessed $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus($event->job->hasFailed() ? 'failed' : 'succeeded')));
         $queueManager->after(fn (JobProcessed $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus('finished')));
         $queueManager->before(fn (JobProcessing $event) => $ifTracked($event->job, fn () => $event->job->setPercentage(100)));
+
         $queueManager->exceptionOccurred(fn (JobExceptionOccurred $event) => $ifTracked(
             $event->job,
             fn () => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
@@ -62,6 +66,14 @@ class JobStatusServiceProvider extends ServiceProvider
             $event->job,
             fn () => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
         ));
+        $queueManager->failing(fn (JobFailed $event) => $ifTracked(
+            $event->job,
+            fn () => $event->exception instanceof JobCancelledException ? $event->job->warningMessage('The job has been cancelled') : $event->job->errorMessage($event->exception->getMessage())
+        ));
+
+        Event::listen(JobReleasedAfterException::class, function(JobReleasedAfterException $event) use ($ifTracked) {
+            $ifTracked($event->job, fn() => $event->job->setJobStatus('failed'));
+        });
     }
 
     /**
