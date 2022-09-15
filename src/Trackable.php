@@ -15,7 +15,7 @@ trait Trackable
 
     public function startTracking(?int $parentId = null)
     {
-        $query = JobStatus::forJobAlias($this->alias)->forJob(static::class)->whereStatus('queued');
+        $query = JobStatus::forJobAlias($this->alias())->forJob(static::class)->whereStatus('queued');
         foreach ($this->tags() as $key => $value) {
             $query->whereTag($key, $value);
         }
