@@ -49,31 +49,25 @@ class JobStatusServiceProvider extends ServiceProvider
 
     public function mapQueueEventListeners()
     {
-        $ifTracked = fn ($job, $callback) => in_array(Trackable::class, class_uses_recursive($job)) ? $callback() : null;
+        $ifTracked = fn ($callback) => fn($event) => in_array(Trackable::class, class_uses_recursive($event->job)) ? $callback($event) : null;
 
-        /** @var QueueManager $queueManager */
-        $queueManager = app('queue');
-        $queueManager->before(fn (JobProcessing $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus('started')));
-        $queueManager->after(fn (JobProcessed $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus($event->job->hasFailed() ? 'failed' : 'succeeded')));
-        $queueManager->after(fn (JobProcessed $event) => $ifTracked($event->job, fn () => $event->job->setJobStatus('finished')));
-        $queueManager->before(fn (JobProcessing $event) => $ifTracked($event->job, fn () => $event->job->setPercentage(100)));
-
-        $queueManager->exceptionOccurred(fn (JobExceptionOccurred $event) => $ifTracked(
-            $event->job,
-            fn () => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
-        ));
-        $queueManager->failing(fn (JobFailed $event) => $ifTracked(
-            $event->job,
-            fn () => $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed')
-        ));
-        $queueManager->failing(fn (JobFailed $event) => $ifTracked(
-            $event->job,
-            fn () => $event->exception instanceof JobCancelledException ? $event->job->warningMessage('The job has been cancelled') : $event->job->errorMessage($event->exception->getMessage())
-        ));
-
-        Event::listen(JobReleasedAfterException::class, function (JobReleasedAfterException $event) use ($ifTracked) {
-            $ifTracked($event->job, fn () => $event->job->setJobStatus('failed'));
-        });
+        Event::listen(JobProcessing::class, $ifTracked(function(JobProcessing $event) {
+            $event->job->setJobStatus('started');
+        }));
+        Event::listen(JobProcessed::class, $ifTracked(function(JobProcessed $event) {
+            $event->job->setJobStatus($event->job->hasFailed() ? 'failed' : 'succeeded');
+            $event->job->setPercentage(100);
+        }));
+        Event::listen(JobExceptionOccurred::class, $ifTracked(function(JobExceptionOccurred $event) {
+            $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed');
+        }));
+        Event::listen(JobFailed::class, $ifTracked(function(JobFailed $event) {
+            $event->exception instanceof JobCancelledException ? $event->job->setJobStatus('cancelled') : $event->job->setJobStatus('failed');
+            $event->exception instanceof JobCancelledException ? $event->job->warningMessage('The job has been cancelled') : $event->job->errorMessage($event->exception->getMessage());
+        }));
+        Event::listen(JobReleasedAfterException::class, $ifTracked(function(JobReleasedAfterException $event) {
+            $event->job->setJobStatus('failed');
+        }));
     }
 
     /**

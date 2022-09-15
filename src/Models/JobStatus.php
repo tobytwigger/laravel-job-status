@@ -22,11 +22,10 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'run_count', 'percentage', 'status',
+        'job_class', 'job_alias', 'percentage', 'status', 'parent_id'
     ];
 
     protected $casts = [
-        'run_count' => 'integer',
         'percentage' => 'float',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
@@ -103,7 +102,7 @@ class JobStatus extends Model
 
     public function getStatus(): string
     {
-        return $this->status;
+        return $this->status ?? 'queued';
     }
 
     public function isFinished(): bool

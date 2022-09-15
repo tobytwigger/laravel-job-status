@@ -47,11 +47,6 @@ class Dispatcher implements LaravelDispatcherContract, \Illuminate\Contracts\Bus
 
     public function dispatchSync($command, $handler = null)
     {
-        if ($this->isTracked($command)) {
-            $this->startTracking($command);
-            $command->setJobStatus('queued');
-        }
-
         return $this->parent->dispatchSync($command, $handler);
     }
 

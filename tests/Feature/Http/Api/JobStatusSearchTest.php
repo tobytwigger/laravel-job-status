@@ -43,7 +43,6 @@ class JobStatusSearchTest extends TestCase
             'id' => $jobStatus->id,
             'job_class' => $jobStatus->job_class,
             'job_alias' => $jobStatus->job_alias,
-            'run_count' => $jobStatus->run_count,
             'percentage' => $jobStatus->percentage,
             'status' => $jobStatus->status,
             'created_at' => $jobStatus->created_at->format('Y-m-d H:i:s'),

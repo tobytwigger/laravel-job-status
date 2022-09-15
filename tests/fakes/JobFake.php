@@ -2,21 +2,29 @@
 
 namespace JobStatus\Tests\fakes;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\Trackable;
+use Laravel\SerializableClosure\SerializableClosure;
 
-class JobFake
+class JobFake implements ShouldQueue
 {
-    use Dispatchable, Trackable, InteractsWithQueue;
+    use Dispatchable, Trackable, InteractsWithQueue, Queueable;
 
     public static ?\Closure $canSeeTracking;
+
+    public $tries = 3;
+
+    public ?SerializableClosure $callback;
 
     public function __construct(
         private ?string $alias = null,
         private array $tags = [],
-        private ?\Closure $callback = null
+        ?\Closure $callback = null
     ) {
+        $this->callback = $callback === null ? null : new SerializableClosure($callback);
     }
 
     public function alias(): ?string
@@ -35,7 +43,7 @@ class JobFake
             return null;
         }
 
-        return app()->call($this->callback, ['job' => $this]);
+        return app()->call($this->callback->getClosure(), ['job' => $this]);
     }
 
 
