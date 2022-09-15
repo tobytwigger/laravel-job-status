@@ -440,7 +440,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function it_marks_the_job_as_succeeded_if_it_is_released(){
+    public function it_marks_the_job_as_succeeded_if_it_is_released()
+    {
         try {
             dispatch(new JobFake(
                 alias: 'my-fake-job',
@@ -459,7 +460,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function it_records_a_new_job_if_a_job_fails(){
+    public function it_records_a_new_job_if_a_job_fails()
+    {
         try {
             dispatch(new JobFake(
                 alias: 'my-fake-job',

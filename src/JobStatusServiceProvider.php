@@ -71,8 +71,8 @@ class JobStatusServiceProvider extends ServiceProvider
             fn () => $event->exception instanceof JobCancelledException ? $event->job->warningMessage('The job has been cancelled') : $event->job->errorMessage($event->exception->getMessage())
         ));
 
-        Event::listen(JobReleasedAfterException::class, function(JobReleasedAfterException $event) use ($ifTracked) {
-            $ifTracked($event->job, fn() => $event->job->setJobStatus('failed'));
+        Event::listen(JobReleasedAfterException::class, function (JobReleasedAfterException $event) use ($ifTracked) {
+            $ifTracked($event->job, fn () => $event->job->setJobStatus('failed'));
         });
     }
 
