@@ -461,7 +461,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function it_creates_a_new_job_if_it_is_a_retry(){
+    public function it_creates_a_new_job_if_it_is_a_retry()
+    {
         $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 0);
 
         try {
@@ -479,7 +480,7 @@ class TrackableTest extends TestCase
 
         $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 1);
         $this->assertCount(1, JobStatus::all());
-        // Can't test two locally :( 
+        // Can't test two locally :(
 //
 //        $id1 = JobStatus::all()->first()->id;
 //        $id2 = JobStatus::all()->last()->id;
