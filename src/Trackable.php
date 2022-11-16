@@ -27,6 +27,7 @@ trait Trackable
                 'job_class' => static::class,
                 'job_alias' => $this->alias(),
                 'parent_id' => $parentId,
+                'uuid' => $this->uuid()
             ]);
 
             foreach ($this->tags() as $key => $value) {

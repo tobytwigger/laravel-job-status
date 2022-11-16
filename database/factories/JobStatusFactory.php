@@ -3,6 +3,7 @@
 namespace JobStatus\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
 
@@ -21,6 +22,7 @@ class JobStatusFactory extends Factory
             'job_class' => JobFake::class,
             'job_alias' => $this->faker->word,
             'percentage' => $this->faker->numberBetween(0, 100),
+            'uuid' => Str::uuid()
         ];
     }
 }

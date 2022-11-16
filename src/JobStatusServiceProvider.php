@@ -50,6 +50,14 @@ class JobStatusServiceProvider extends ServiceProvider
     {
         $ifTracked = fn ($callback) => fn ($event) => in_array(Trackable::class, class_uses_recursive($event->job)) ? $callback($event) : null;
 
+        // On job queued, add the job to the database.
+
+        // On job processing, if the job has a uuid, find it. Otherwise create an entry
+        // On job failed, change to failed in db and record error. This means there will be no more retries!
+        // On job processes, make sure the job is in a finished state. Set it to success if it isn't.
+        // On JobExceptionOccured,mark as failed. We should expect another job.
+        // On JobReleasedAfterException, create a job entry.
+
         Event::listen(JobProcessing::class, $ifTracked(function (JobProcessing $event) {
             $event->job->setJobStatus('started');
         }));
@@ -70,6 +78,10 @@ class JobStatusServiceProvider extends ServiceProvider
         Event::listen(JobReleasedAfterException::class, $ifTracked(function (JobReleasedAfterException $event) {
             $event->job->setJobStatus('failed');
         }));
+
+//        /** @var QueueManager $queueManager */
+//        $queueManager = app('queue');
+
     }
 
     /**
