@@ -8,11 +8,16 @@ use JobStatus\Models\JobStatus;
 class JobStatusModifier
 {
 
-    private JobStatus $jobStatus;
+    private ?JobStatus $jobStatus;
 
-    public function __construct(JobStatus $jobStatus)
+    public function __construct(?JobStatus $jobStatus = null)
     {
         $this->jobStatus = $jobStatus;
+    }
+
+    public function getJobStatus(): ?JobStatus
+    {
+        return $this->jobStatus;
     }
 
     public function setStatus(string $status): static
@@ -28,11 +33,6 @@ class JobStatusModifier
         $this->jobStatus->percentage = $percentage;
         $this->jobStatus->save();
         return $this;
-    }
-
-    public function getJobStatus(): JobStatus
-    {
-        return $this->jobStatus;
     }
 
     public function message(string $message, string $type = 'info'): static

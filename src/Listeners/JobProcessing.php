@@ -2,9 +2,6 @@
 
 namespace JobStatus\Listeners;
 
-use JobStatus\JobStatusModifier;
-use JobStatus\Models\JobStatus;
-
 class JobProcessing extends BaseListener
 {
 

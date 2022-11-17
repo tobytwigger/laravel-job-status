@@ -15,7 +15,7 @@ class JobFailed extends BaseListener
             return true;
         }
 
-        if($modifier->getJobStatus()->isRunning()) {
+        if($modifier?->getJobStatus()->isRunning()) {
             $event->exception instanceof JobCancelledException ? $modifier->setStatus('cancelled') : $modifier->setStatus('failed');
             $event->exception instanceof JobCancelledException ? $modifier->warningMessage('The job has been cancelled') : $modifier->errorMessage(get_class($event->exception) . '  ' . $event->exception->getMessage());
 
