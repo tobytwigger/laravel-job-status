@@ -11,15 +11,15 @@ use JobStatus\Models\JobStatus;
 trait InteractsWithSignals
 {
 
-    abstract public function getJobStatus(): JobStatus;
+    abstract public function getJobStatus(): ?JobStatus;
 
     public function checkForSignals(): void
     {
         $this->getJobStatus()
-            ->signals()
-            ->unhandled()
-            ->get()
-            ->each(fn (JobSignal $jobSignal) => $this->fireSignal($jobSignal));
+            ?->signals()
+            ?->unhandled()
+            ?->get()
+            ?->each(fn (JobSignal $jobSignal) => $this->fireSignal($jobSignal));
     }
 
     protected function fireSignal(JobSignal $signal)
