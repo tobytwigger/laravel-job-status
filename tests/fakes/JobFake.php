@@ -4,7 +4,7 @@ namespace JobStatus\Tests\fakes;
 
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use JobStatus\Trackable;
+use JobStatus\Concerns\Trackable;
 
 class JobFake
 {

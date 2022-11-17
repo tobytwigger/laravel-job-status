@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use JobStatus\Concerns\Trackable;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\JobStatusCollection;
-use JobStatus\Trackable;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
@@ -189,5 +189,11 @@ class JobStatus extends Model
         }
 
         return ($this->job_class)::canSeeTracking($user, $this->getTagsAsArray());
+    }
+
+    public function setStatus(string $status)
+    {
+        $this->status = $status;
+        $this->save();
     }
 }
