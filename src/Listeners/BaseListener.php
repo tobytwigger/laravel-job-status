@@ -15,6 +15,9 @@ class BaseListener
             return null;
         }
         $jobStatus = $this->getJobStatus($job);
+        if($jobStatus === null) {
+            return null;
+        }
         return new JobStatusModifier($jobStatus);
     }
 
@@ -43,7 +46,7 @@ class BaseListener
         return true;
     }
 
-    protected function getJobStatus(\Illuminate\Contracts\Queue\Job $job): JobStatus
+    protected function getJobStatus(\Illuminate\Contracts\Queue\Job $job): ?JobStatus
     {
         return JobStatus::query()->where('uuid', $job->uuid())->latest()->orderBy('id')->first();
     }
