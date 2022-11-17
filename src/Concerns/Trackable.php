@@ -9,7 +9,7 @@ trait Trackable
 {
     use InteractsWithSignals;
 
-    public JobStatus $jobStatus;
+    public ?JobStatus $jobStatus = null;
 
     public function getJobStatus(): JobStatus
     {
