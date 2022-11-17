@@ -56,8 +56,8 @@ class JobStatusModifier
     {
         if ($this->jobStatus !== null) {
             $this->message($message, 'info');
-            return $this;
         }
+        return $this;
     }
 
     public function warningMessage(string $message): static
@@ -96,8 +96,8 @@ class JobStatusModifier
     {
         if ($this->jobStatus !== null) {
             $this->message($message, 'error');
-            return $this;
         }
+        return $this;
     }
 
 }
