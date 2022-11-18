@@ -14,7 +14,7 @@ trait Trackable
     public function getJobStatus(): ?JobStatus
     {
         if (!isset($this->jobStatus)) {
-            $this->jobStatus = JobStatus::where('uuid', $this->job->uuid())->latest()->first();
+            $this->jobStatus = JobStatus::where('uuid', $this->job->uuid())->latest()->orderBy('id', 'DESC')->first();
         }
 
         return $this->jobStatus;
