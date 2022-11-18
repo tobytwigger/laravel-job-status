@@ -29,7 +29,7 @@ class JobReleasedAfterException extends BaseListener
             'uuid' => $event->job->uuid()
         ]);
 
-        foreach ($modifier->getJobStatus()->tags() as $tag) {
+        foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
             $jobStatus->tags()->create([
                 'key' => $tag->key,
                 'value' => $tag->value,
