@@ -48,7 +48,7 @@ class BaseListener
 
     protected function getJobStatus(\Illuminate\Contracts\Queue\Job $job): ?JobStatus
     {
-        return JobStatus::query()->where('uuid', $job->uuid())->latest()->orderBy('id')->first();
+        return JobStatus::query()->where('uuid', $job->uuid())->latest()->orderBy('id', 'DESC')->first();
     }
 
 }
