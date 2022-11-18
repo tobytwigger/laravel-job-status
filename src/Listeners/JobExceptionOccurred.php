@@ -14,6 +14,7 @@ class JobExceptionOccurred extends BaseListener
             return true;
         }
         $event->exception instanceof JobCancelledException ? $modifier->setStatus('cancelled') : $modifier->setStatus('failed');
+        $modifier->setPercentage(100);
         $event->exception instanceof JobCancelledException ? $modifier->warningMessage('The job has been cancelled') : $modifier->errorMessage(get_class($event->exception) . '  ' . $event->exception->getMessage());
 
         if($event->exception instanceof JobCancelledException) {

@@ -15,7 +15,6 @@ class JobProcessed extends BaseListener
         if($modifier === null) {
             return true;
         }
-        $modifier = $this->getJobStatusModifier($event->job);
 
         $modifier->setPercentage(100);
         if($modifier->getJobStatus()?->status !== 'cancelled') {
