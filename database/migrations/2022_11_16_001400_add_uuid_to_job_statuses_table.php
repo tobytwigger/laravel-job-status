@@ -19,7 +19,7 @@ return new class() extends Migration {
             ->whereNull('uuid')
             ->select('id')
             ->get() as $jobStatus) {
-            \Illuminate\Support\Facades\DB::table(config('laravel-job-status.table_prefix'), 'job_statuses')
+            \Illuminate\Support\Facades\DB::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'))
                 ->where('id', $jobStatus->id)
                 ->update(['uuid' => (string) \Illuminate\Support\Str::uuid()]);
         }
