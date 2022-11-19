@@ -4,6 +4,11 @@ namespace JobStatus\Listeners;
 
 use JobStatus\Models\JobStatus;
 
+/**
+ * Occurs when a job is pushed to an asynchronous queue.
+ *
+ * Create a new JobStatus and add the tags.
+ */
 class JobQueued extends BaseListener
 {
 

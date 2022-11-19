@@ -2,15 +2,17 @@
 
 namespace JobStatus\Listeners;
 
-
 use JobStatus\Models\JobStatus;
 
+/**
+ * When a job has finished processing but is going to be released to try again
+ *
+ * - Create a new job status.
+ */
 class JobReleasedAfterException extends BaseListener
 {
 
     /**
-     * Start tracking as normal, but making sure to copy across the uuid.
-     *
      * @param JobReleasedAfterException $event
      * @return void
      */

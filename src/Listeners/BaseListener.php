@@ -4,6 +4,7 @@ namespace JobStatus\Listeners;
 
 use JobStatus\Concerns\Trackable;
 use JobStatus\JobStatusModifier;
+use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
 
 class BaseListener
@@ -48,7 +49,7 @@ class BaseListener
 
     protected function getJobStatus(\Illuminate\Contracts\Queue\Job $job): ?JobStatus
     {
-        return JobStatus::query()->where('uuid', $job->uuid())->latest()->orderBy('id', 'DESC')->first();
+        return app(JobStatusRepository::class)->getLatestByUuid($job->uuid());
     }
 
 }
