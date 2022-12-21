@@ -2,6 +2,8 @@
 
 namespace JobStatus\Listeners;
 
+use JobStatus\Models\JobStatus;
+
 /**
  * When the job has finished.
  *
@@ -25,10 +27,35 @@ class JobProcessed extends BaseListener
             return true;
         }
 
-        if($modifier->getJobStatus()->isRunning() && !$event->job->hasFailed()) {
-            $modifier->setStatus('succeeded');
+        if($modifier->getJobStatus()->isRunning()) {
+            // If the job is manually released, it's been retried
+            if($event->job->isReleased()) {
+                $this->createJobRetry();
+            } elseif(!$event->job->hasFailed()) {
+                $modifier->setStatus('succeeded');
+            }
         }
+
         $modifier->setPercentage(100);
+    }
+
+    public function createJobRetry()
+    {
+        $modifier->setStatus('failed');
+        $jobStatus = JobStatus::create([
+            'job_class' => $modifier->getJobStatus()?->job_class,
+            'job_alias' => $modifier->getJobStatus()?->job_alias,
+            'percentage' => 0,
+            'status' => 'queued',
+            'uuid' => $event->job->uuid()
+        ]);
+
+        foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
+            $jobStatus->tags()->create([
+                'key' => $tag->key,
+                'value' => $tag->value,
+            ]);
+        }
     }
 
 }
