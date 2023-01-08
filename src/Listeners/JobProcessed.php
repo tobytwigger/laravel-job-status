@@ -30,7 +30,7 @@ class JobProcessed extends BaseListener
         if($modifier->getJobStatus()->isRunning()) {
             // If the job is manually released, it's been retried
             if($event->job->isReleased()) {
-                $this->createJobRetry();
+                $this->createJobRetry($modifier);
             } elseif(!$event->job->hasFailed()) {
                 $modifier->setStatus('succeeded');
             }
@@ -39,7 +39,7 @@ class JobProcessed extends BaseListener
         $modifier->setPercentage(100);
     }
 
-    public function createJobRetry()
+    public function createJobRetry(\JobStatus\JobStatusModifier $modifier)
     {
         $modifier->setStatus('failed');
         $jobStatus = JobStatus::create([
