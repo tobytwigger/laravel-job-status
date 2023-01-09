@@ -24,7 +24,7 @@ mkdocs-material-extensions==1.0.3
 mkdocs-new-features-notifier==0.1.6
 mkdocs-with-pdf==0.9.3
 packaging==21.3
-Pillow==9.0.1
+Pillow==9.3.0
 pycparser==2.21
 pydyf==0.1.2
 Pygments==2.11.2
