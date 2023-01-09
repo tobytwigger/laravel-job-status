@@ -17,20 +17,20 @@ class JobProcessed extends BaseListener
 {
 
     /**
-     * @param JobProcessed $event
+     * @param \Illuminate\Queue\Events\JobProcessed $event
      * @return void
      */
     public function handle(\Illuminate\Queue\Events\JobProcessed $event)
     {
         $modifier = $this->getJobStatusModifier($event->job);
         if($modifier === null) {
-            return true;
+            return;
         }
 
         if($modifier->getJobStatus()->isRunning()) {
             // If the job is manually released, it's been retried
             if($event->job->isReleased()) {
-                $this->createJobRetry($modifier);
+                $this->createJobRetry($modifier, $event->job->uuid());
             } elseif(!$event->job->hasFailed()) {
                 $modifier->setStatus('succeeded');
             }
@@ -39,7 +39,7 @@ class JobProcessed extends BaseListener
         $modifier->setPercentage(100);
     }
 
-    public function createJobRetry(\JobStatus\JobStatusModifier $modifier)
+    public function createJobRetry(\JobStatus\JobStatusModifier $modifier, ?string $uuid = null)
     {
         $modifier->setStatus('failed');
         $jobStatus = JobStatus::create([
@@ -47,7 +47,7 @@ class JobProcessed extends BaseListener
             'job_alias' => $modifier->getJobStatus()?->job_alias,
             'percentage' => 0,
             'status' => 'queued',
-            'uuid' => $event->job->uuid()
+            'uuid' => $uuid
         ]);
 
         foreach ($modifier->getJobStatus()->tags()->get() as $tag) {

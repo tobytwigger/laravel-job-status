@@ -11,14 +11,14 @@ class JobProcessing extends BaseListener
 {
 
     /**
-     * @param JobProcessing $event
+     * @param \Illuminate\Queue\Events\JobProcessing $event
      * @return void
      */
     public function handle(\Illuminate\Queue\Events\JobProcessing $event)
     {
         $modifier = $this->getJobStatusModifier($event->job);
         if($modifier === null) {
-            return true;
+            return;
         }
         $this->getJobStatusModifier($event->job)->setStatus('started');
     }

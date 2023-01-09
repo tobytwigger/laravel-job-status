@@ -2,6 +2,8 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Queue\Jobs\Job;
+use JobStatus\Concerns\Trackable;
 use JobStatus\Models\JobStatus;
 
 /**

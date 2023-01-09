@@ -13,14 +13,14 @@ class JobReleasedAfterException extends BaseListener
 {
 
     /**
-     * @param JobReleasedAfterException $event
+     * @param \Illuminate\Queue\Events\JobReleasedAfterException $event
      * @return void
      */
     public function handle(\Illuminate\Queue\Events\JobReleasedAfterException $event)
     {
         $modifier = $this->getJobStatusModifier($event->job);
         if($modifier === null) {
-            return true;
+            return;
         }
 
         $jobStatus = JobStatus::create([

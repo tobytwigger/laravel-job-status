@@ -16,6 +16,7 @@ use JobStatus\JobStatusCollection;
  * @property string $status The status of the job
  * @property string $job_class The class of the job
  * @property string $job_alias The alias of the job
+ * @property float $percentage The percentage of the way through the job we are
  */
 class JobStatus extends Model
 {
