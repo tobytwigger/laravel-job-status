@@ -2,7 +2,6 @@
 
 namespace JobStatus\Tests\Feature\Console;
 
-use Illuminate\Support\Benchmark;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
@@ -69,21 +68,20 @@ class ClearJobStatusCommandTest extends TestCase
 
     /** @test */
     public function it_deletes_a_job_status_with_all_its_relationships(){
-        $count = 3000;
         JobStatus::factory()->has(
-            JobStatusStatus::factory()->count($count), 'statuses'
+            JobStatusStatus::factory()->count(3), 'statuses'
         )->has(
-            JobStatusTag::factory()->count($count), 'tags'
+            JobStatusTag::factory()->count(3), 'tags'
         )->has(
-            JobSignal::factory()->count($count), 'signals'
+            JobSignal::factory()->count(3), 'signals'
         )->has(
-            JobMessage::factory()->count($count), 'messages'
-        )->count($count)->create([
+            JobMessage::factory()->count(3), 'messages'
+        )->count(3)->create([
             'status' => 'succeeded'
         ]);
 
-        Benchmark::dd(fn() => $this->artisan('job-status:clear')
-            ->assertOk());
+        $this->artisan('job-status:clear')
+            ->assertOk();
 
         $this->assertCount(0, JobStatus::all());
         $this->assertCount(0, JobStatusStatus::all());
