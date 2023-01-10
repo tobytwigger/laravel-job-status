@@ -19,30 +19,26 @@ class ResultsFactory
     {
         $queryResult = $query->with('tags')->get()->groupBy(['job_class']);
 
-        $sameJobTypeLists = new Collection();
+        $sameJobType = new Collection();
         foreach($queryResult as $jobClass => $sameJobTypes) {
-            $sameJobType = new SameJobTypeList($jobClass);
             $sameJobs = $sameJobTypes->groupBy(function(JobStatus $item) {
                 return $item->tags->sortBy('key')->mapWithKeys(fn(JobStatusTag $tag) => [$tag->key => $tag->value]);
             });
             foreach($sameJobs as $tags => $sameJob) {
-                // Group by uuid
-                /** @var Collection $sameJobGrouped */
                 $sameJobGrouped = $sameJob->groupBy('uuid')->sortBy('created_at')->sortBy('id', descending: true);
                 $jobStatuses = $sameJobGrouped->map(function(JobStatusCollection $jobs) {
                     return $jobs->reverse()->reduce(
                         fn(?JobStatusResult $result, JobStatus $jobStatus) => new JobStatusResult($jobStatus, $result)
                     );
                 })->values();
-                // Find the current one. Usually the only not finished one.
-                $sameJobType->pushResults(
+
+                $sameJobType->push(
                     new SameJobList($jobClass, json_decode($tags, true), $jobStatuses)
                 );
             }
-            $sameJobTypeLists[] = $sameJobType;
         }
 
-        return new Results($sameJobTypeLists);
+        return new Results($sameJobType);
     }
 
 }

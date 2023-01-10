@@ -49,4 +49,9 @@ class JobStatusResult implements Arrayable, Jsonable
         return json_encode($this->toArray(), $options);
     }
 
+    public function jobStatus()
+    {
+        return $this->jobStatus;
+    }
+
 }

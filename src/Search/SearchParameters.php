@@ -9,11 +9,16 @@ class SearchParameters
 
     private ?string $jobAlias = null;
 
-    private array $tags = [];
+    private TagsSearchParameters $tagsSearchParameters;
 
     private array $includeStatus = [];
 
     private array $excludeStatus = [];
+
+    public function __construct()
+    {
+        $this->tagsSearchParameters = new TagsSearchParameters();
+    }
 
     /**
      * @return string|null
@@ -51,28 +56,9 @@ class SearchParameters
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getTags(): array
+    public function tags(): TagsSearchParameters
     {
-        return $this->tags;
-    }
-
-    /**
-     * @param array $tags
-     * @return SearchParameters
-     */
-    public function setTags(array $tags): SearchParameters
-    {
-        $this->tags = $tags;
-        return $this;
-    }
-
-    public function pushTag(string $key, mixed $value): SearchParameters
-    {
-        $this->tags[] = ['key' => $key, 'value' => $value];
-        return $this;
+        return $this->tagsSearchParameters;
     }
 
     /**

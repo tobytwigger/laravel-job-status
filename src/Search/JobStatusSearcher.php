@@ -28,7 +28,7 @@ class JobStatusSearcher
 
     public function whereTag(string $key, mixed $value): JobStatusSearcher
     {
-        $this->searchParameters->pushTag($key, $value);
+        $this->searchParameters->tags()->include($key, $value);
         return $this;
     }
 
@@ -65,6 +65,14 @@ class JobStatusSearcher
         return ResultsFactory::fromQuery(
             QueryFactory::fromSearchParameters($this->searchParameters)
         );
+    }
+
+    public function whereTags(array $tags): JobStatusSearcher
+    {
+        foreach($tags as $key => $value) {
+            $this->whereTag($key, $value);
+        }
+        return $this;
     }
 
 }
