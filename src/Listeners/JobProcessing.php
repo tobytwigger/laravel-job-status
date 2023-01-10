@@ -2,6 +2,9 @@
 
 namespace JobStatus\Listeners;
 
+use JobStatus\JobStatusModifier;
+use JobStatus\Models\JobStatus;
+
 /**
  * Fired when a job is processing. This happens when the queue worker picks up the job.
  *
@@ -18,9 +21,15 @@ class JobProcessing extends BaseListener
     {
         $modifier = $this->getJobStatusModifier($event->job);
         if($modifier === null) {
-            return;
+            $modifier = new JobStatusModifier(JobStatus::create([
+                'job_class' => get_class($event->job),
+                'job_alias' => $event->job->alias(),
+                'percentage' => 0,
+                'status' => 'queued',
+                'uuid' => $event->id
+            ]));
         }
-        $this->getJobStatusModifier($event->job)->setStatus('started');
+        $modifier->setStatus('started');
     }
 
 }

@@ -27,7 +27,6 @@ class JobStatusSearchTest extends TestCase
     /** @test */
     public function it_returns_the_job_status_formatted()
     {
-//        $this->markTestIncomplete('Need to test the full job status format');
         $jobStatus = JobStatus::factory()->has(
             JobStatusTag::factory(['key' => 'one', 'value' => 'yes']),
             'tags'

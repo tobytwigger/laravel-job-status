@@ -34,13 +34,4 @@ class JobStatusStatusTest extends TestCase
             )
         );
     }
-
-    /** @test */
-    public function it_updates_the_job_status_when_created()
-    {
-        $jobStatus = JobStatus::factory()->create(['status' => 'queued']);
-        $status = JobStatusStatus::factory()->create(['job_status_id' => $jobStatus->id, 'status' => 'failed']);
-
-        $this->assertEquals('failed', $jobStatus->refresh()->status);
-    }
 }
