@@ -4,12 +4,29 @@ namespace JobStatus\Concerns;
 
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\JobStatusSearcher;
+use JobStatus\Search\Result\SameJobList;
 
 trait Trackable
 {
     use InteractsWithSignals;
 
     public ?JobStatus $jobStatus = null;
+
+    public static function search(): JobStatusSearcher
+    {
+        $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
+        return $search;
+    }
+
+    public function history(): ?SameJobList
+    {
+        $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
+        foreach($this->tags() as $key => $value) {
+            $search->whereTag($key, $value);
+        }
+        return $search->get()->firstJob();
+    }
 
     public function getJobStatus(): ?JobStatus
     {
