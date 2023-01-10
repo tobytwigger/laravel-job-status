@@ -416,4 +416,39 @@ class JobStatusTest extends TestCase
 
         $jobStatus->canSeeTracking(55);
     }
+
+    /** @test */
+    public function it_can_filter_to_jobs_that_are_finished()
+    {
+        $queued = JobStatus::factory()->create(['status' => 'queued']);
+        $started = JobStatus::factory()->create(['status' => 'started']);
+        $failed = JobStatus::factory()->create(['status' => 'failed']);
+        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
+        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+
+        $this->assertCount(3, JobStatus::whereFinished()->get());
+        $this->assertFalse(JobStatus::whereFinished()->where('id', $queued->id)->exists());
+        $this->assertFalse(JobStatus::whereFinished()->where('id', $started->id)->exists());
+        $this->assertTrue(JobStatus::whereFinished()->where('id', $failed->id)->exists());
+        $this->assertTrue(JobStatus::whereFinished()->where('id', $cancelled->id)->exists());
+        $this->assertTrue(JobStatus::whereFinished()->where('id', $succeeded->id)->exists());
+    }
+
+    /** @test */
+    public function it_can_filter_to_jobs_that_are_not_finished()
+    {
+        $queued = JobStatus::factory()->create(['status' => 'queued']);
+        $started = JobStatus::factory()->create(['status' => 'started']);
+        $failed = JobStatus::factory()->create(['status' => 'failed']);
+        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
+        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+
+        $this->assertCount(3, JobStatus::whereFinished()->get());
+        $this->assertTrue(JobStatus::whereNotFinished()->where('id', $queued->id)->exists());
+        $this->assertTrue(JobStatus::whereNotFinished()->where('id', $started->id)->exists());
+        $this->assertFalse(JobStatus::whereNotFinished()->where('id', $failed->id)->exists());
+        $this->assertFalse(JobStatus::whereNotFinished()->where('id', $cancelled->id)->exists());
+        $this->assertFalse(JobStatus::whereNotFinished()->where('id', $succeeded->id)->exists());
+    }
+
 }

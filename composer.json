@@ -71,7 +71,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/paratest --colors --verbose --configuration phpunit.xml"
+        "test": "vendor/bin/phpunit"
     },
     "config": {
         "allow-plugins": {
