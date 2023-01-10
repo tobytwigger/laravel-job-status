@@ -38,6 +38,16 @@ class JobStatus extends Model
         parent::__construct($attributes);
     }
 
+    protected static function booted()
+    {
+        static::deleting(function(JobStatus $jobStatus) {
+            $jobStatus->statuses()->delete();
+            $jobStatus->tags()->delete();
+            $jobStatus->signals()->delete();
+            $jobStatus->messages()->delete();
+        });
+    }
+
     public function getTagsAsArray()
     {
         return $this->tags->mapWithKeys(fn (JobStatusTag $tag) => [$tag->key => $tag->value])->toArray();
@@ -88,6 +98,20 @@ class JobStatus extends Model
     public static function scopeWhereNotStatus(Builder $query, string|array $status)
     {
         $query->whereNotIn('status', Arr::wrap($status));
+    }
+
+    public static function scopeWhereFinished(Builder $query)
+    {
+        $query->whereIn('status', [
+            'failed', 'succeeded', 'cancelled'
+        ]);
+    }
+
+    public static function scopeWhereNotFinished(Builder $query)
+    {
+        $query->whereIn('status', [
+            'queued', 'started'
+        ]);
     }
 
     /**
