@@ -22,7 +22,7 @@ class ClearJobStatusCommand  extends Command
      *
      * @var string
      */
-    protected $description = 'Give permissions to a user.';
+    protected $description = 'Clear finished job statuses from the database.';
 
     /**
      * Create a new command instance.
