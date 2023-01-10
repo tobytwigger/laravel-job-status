@@ -23,6 +23,7 @@ class JobStatusController extends Controller
                 }
             })
             ->latest()
+            ->orderBy('id', 'DESC')
             ->firstOrFail()
             ->append(['lastMessage', 'isFinished']);
 

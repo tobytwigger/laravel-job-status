@@ -19,7 +19,6 @@ class JobStatusTest extends TestCase
         $attributes = [
             'job_class' => 'MyJobClass',
             'job_alias' => 'my-job-alias',
-            'run_count' => 5,
             'percentage' => 55.3,
         ];
 

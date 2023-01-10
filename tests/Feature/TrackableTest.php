@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Feature;
 
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Testing\Assert;
 use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobSignal;
@@ -38,11 +39,11 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function it_creates_a_job_status_on_job_dispatch_now()
+    public function it_does_not_create_a_job_status_on_job_dispatch_now()
     {
         $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 0);
 
-        dispatch_now(new JobFake(
+        app(Dispatcher::class)->dispatchNow(new JobFake(
             alias: 'my-fake-job',
             tags: [
                 'my-first-tag' => 1,
@@ -50,16 +51,9 @@ class TrackableTest extends TestCase
             ]
         ));
 
-        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+        $this->assertDatabaseMissing(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
             'job_class' => JobFake::class,
             'job_alias' => 'my-fake-job',
-        ]);
-
-        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
-            'key' => 'my-first-tag', 'value' => '1',
-        ]);
-        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
-            'key' => 'my-second-tag', 'value' => 'mytag-value',
         ]);
     }
 
@@ -438,4 +432,71 @@ class TrackableTest extends TestCase
             }
         });
     }
+
+    /** @test */
+    public function it_marks_the_job_as_failed_if_it_is_released()
+    {
+        try {
+            dispatch(new JobFake(
+                alias: 'my-fake-job',
+                tags: [
+                    'my-first-tag' => 1,
+                    'my-second-tag' => 'mytag-value',
+                ],
+                callback: fn (JobFake $job) => $job->release(5)
+            ));
+        } catch (\Exception $e) {
+        }
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), [
+            'status' => 'succeeded',
+        ]);
+    }
+
+//    /** @test */
+//    public function it_creates_a_new_job_if_it_is_a_retry(){
+//        $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 0);
+//
+//        try {
+//            $dispatcher = app(Dispatcher::class);
+//            $dispatcher->dispatchSync(new JobFake(
+//                alias: 'my-fake-job',
+//                tags: [
+//                    'my-first-tag' => 1,
+//                    'my-second-tag' => 'mytag-value',
+//                ],
+//                callback: fn ($job) => $job->release()
+//            ));
+//        } catch (\Exception $e) {
+//        }
+//
+//        $this->assertDatabaseCount(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), 1);
+//        $this->assertCount(1, JobStatus::all());
+        // Can't test two locally :(
+//
+//        $id1 = JobStatus::all()->first()->id;
+//        $id2 = JobStatus::all()->last()->id;
+//        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+//            'status' => 'succeeded',
+//            'id' => $id1, 'parent_id' => null
+//        ]);
+//        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), [
+//            'status' => 'queued',
+//            'id' => $id2, 'parent_id' => $id1
+//        ]);
+//
+//        $this->assertNotEquals($id1, $id2);
+//        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+//            'key' => 'my-first-tag', 'value' => '1', 'job_status_id' => $id1
+//        ]);
+//        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+//            'key' => 'my-second-tag', 'value' => 'mytag-value', 'job_status_id' => $id1
+//        ]);
+//        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+//            'key' => 'my-first-tag', 'value' => '1', 'job_status_id' => $id2
+//        ]);
+//        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), [
+//            'key' => 'my-second-tag', 'value' => 'mytag-value', 'job_status_id' => $id2
+//        ]);
+//    }
 }

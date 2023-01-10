@@ -3,11 +3,12 @@
 namespace JobStatus\Tests\fakes;
 
 use Illuminate\Foundation\Bus\Dispatchable;
-use JobStatus\Trackable;
+use Illuminate\Queue\InteractsWithQueue;
+use JobStatus\Concerns\Trackable;
 
 class JobFake
 {
-    use Dispatchable, Trackable;
+    use Dispatchable, Trackable, InteractsWithQueue;
 
     public static ?\Closure $canSeeTracking;
 

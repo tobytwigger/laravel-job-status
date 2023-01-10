@@ -7,26 +7,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use JobStatus\Concerns\Trackable;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\JobStatusCollection;
-use JobStatus\Trackable;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
  * @property string $status The status of the job
  * @property string $job_class The class of the job
  * @property string $job_alias The alias of the job
+ * @property float $percentage The percentage of the way through the job we are
  */
 class JobStatus extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'run_count', 'percentage', 'status',
+        'job_class', 'job_alias', 'percentage', 'status', 'uuid'
     ];
 
     protected $casts = [
-        'run_count' => 'integer',
         'percentage' => 'float',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
@@ -103,7 +103,7 @@ class JobStatus extends Model
 
     public function getStatus(): string
     {
-        return $this->status;
+        return $this->status ?? 'queued';
     }
 
     public function isFinished(): bool
@@ -190,5 +190,11 @@ class JobStatus extends Model
         }
 
         return ($this->job_class)::canSeeTracking($user, $this->getTagsAsArray());
+    }
+
+    public function setStatus(string $status)
+    {
+        $this->status = $status;
+        $this->save();
     }
 }
