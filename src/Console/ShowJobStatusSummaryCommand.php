@@ -52,10 +52,9 @@ class ShowJobStatusSummaryCommand  extends Command
         if($this->option('alias')) {
             $search->whereJobAlias($this->option('alias'));
         }
-        if($this->option('tag') && count($this->option('tag')) > 0) {
-            foreach($this->option('tag') as $tagString) {
-                $tagData = explode(':', $tagString);
-                $search->whereTag($tagData[0], )
+        if($this->hasTags()) {
+            foreach($this->getTags() as $key => $value) {
+                $search->whereTag($key, $value);
             }
         }
         $statuses = $search->get();
@@ -78,6 +77,21 @@ class ShowJobStatusSummaryCommand  extends Command
     private function getStatusCount(SameJobList $sameJobList, string $status): int
     {
         return $sameJobList->jobs()->filter(fn(JobStatusResult $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
+    }
+
+    private function hasTags(): bool
+    {
+        return $this->option('tag') && count($this->option('tag')) > 0;
+    }
+
+    private function getTags(): array
+    {
+        $tags = [];
+        foreach($this->option('tag') as $tagString) {
+            $tagData = explode(':', $tagString);
+            $tags[$tagData[0]] = $tagData[1];
+        }
+        return $tags;
     }
 
 }

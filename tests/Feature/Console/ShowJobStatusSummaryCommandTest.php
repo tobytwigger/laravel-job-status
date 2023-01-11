@@ -107,15 +107,58 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valuetwo']), 'tags')->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => 'started']);
 
 
-        $response = $this->artisan('job-status:summary --tag=keyone:valueone')
+        $response = $this->artisan('job-status:summary --tag=keyone:valuetwo')
             ->assertOk()
             ->expectsTable([
                 'Job', 'Tags', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
             ], [
-                ['SomeJobTwo', 'keyone = valueone', 0, 1, 0, 0, 0],
+                ['SomeJobTwo', 'keyone = valuetwo', 0, 1, 0, 0, 0],
             ])
             // Test the table excludes any mention of MyFirstJob
             ->doesntExpectOutputToContain('SomeJobOne');
-        $this->markTestIncomplete();
+    }
+
+    /** @test */
+    public function it_can_filter_by_multiple_tags(){
+        JobStatus::factory()->count(20)
+            ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valueone']), 'tags')
+            ->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => 'failed']);
+        JobStatus::factory()
+            ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valuetwo']), 'tags')
+            ->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => 'started']);
+
+
+        $response = $this->artisan('job-status:summary --tag=keyone:valueone --tag=keytwo:valuetwo')
+            ->assertOk()
+            ->expectsTable([
+                'Job', 'Tags', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+            ], [
+                ['SomeJobTwo', 'keyone = valueone, keytwo = valuetwo', 0, 1, 0, 0, 0],
+            ])
+            // Test the table excludes any mention of MyFirstJob
+            ->doesntExpectOutputToContain('SomeJobOne');
+    }
+
+    /** @test */
+    public function it_takes_the_final_tag_if_same_key_given_twice(){
+        JobStatus::factory()->count(20)
+            ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
+            ->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => 'failed']);
+        JobStatus::factory()
+            ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valuetwo']), 'tags')
+            ->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => 'started']);
+
+
+        $response = $this->artisan('job-status:summary --tag=keyone:valueone --tag=keyone:valuetwo')
+            ->assertOk()
+            ->expectsTable([
+                'Job', 'Tags', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+            ], [
+                ['SomeJobTwo', 'keyone = valuetwo', 0, 1, 0, 0, 0],
+            ])
+            // Test the table excludes any mention of MyFirstJob
+            ->doesntExpectOutputToContain('SomeJobOne');
     }
 }
