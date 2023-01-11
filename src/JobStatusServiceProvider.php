@@ -5,6 +5,7 @@ namespace JobStatus;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use JobStatus\Console\ClearJobStatusCommand;
+use JobStatus\Console\ShowJobStatusSummaryCommand;
 
 /**
  * The service provider for loading Laravel Setting.
@@ -19,7 +20,8 @@ class JobStatusServiceProvider extends ServiceProvider
     public function register()
     {
         $this->commands([
-            ClearJobStatusCommand::class
+            ClearJobStatusCommand::class,
+            ShowJobStatusSummaryCommand::class
         ]);
         $this->app->register(JobStatusEventServiceProvider::class);
     }

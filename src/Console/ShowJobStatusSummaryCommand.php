@@ -5,7 +5,10 @@ namespace JobStatus\Console;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\Result\JobStatusResult;
+use JobStatus\Search\Result\SameJobList;
 
 class ShowJobStatusSummaryCommand  extends Command
 {
@@ -36,16 +39,28 @@ class ShowJobStatusSummaryCommand  extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(JobStatusRepository $repository)
     {
-        $this->table([
-            'Job Alias', 'Tags', 'Status (Summary)'
+        $statuses = $repository->search()->get();
+        $data = $statuses->jobs()->map(fn(SameJobList $sameJobList) => [
+            $sameJobList->jobClass(),
+            collect($sameJobList->tags())->reduce(fn($string, $value, $key) => sprintf('%s%s = %s', $string !== null ? $string . ', ' : '', $key, $value)),
+            $this->getStatusCount($sameJobList, 'queued'),
+            $this->getStatusCount($sameJobList, 'started'),
+            $this->getStatusCount($sameJobList, 'succeeded'),
+            $this->getStatusCount($sameJobList, 'failed'),
+            $this->getStatusCount($sameJobList, 'cancelled'),
         ]);
-        // Get every job alias and tags.
-        $statuses = JobStatus::whereFinished()
-            ->when($hours !== 0, fn(Builder $query) => $query->where('updated_at', '<', now()->subHours($hours)))
-            ->get();
-        $this->withProgressBar($statuses, fn(JobStatus $jobStatus) => $jobStatus->delete());
+        $this->table([
+            'Job', 'Tags', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+        ], $data);
+
+        return static::SUCCESS;
+    }
+
+    private function getStatusCount(SameJobList $sameJobList, string $status): int
+    {
+        return $sameJobList->jobs()->filter(fn(JobStatusResult $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
     }
 
 }
