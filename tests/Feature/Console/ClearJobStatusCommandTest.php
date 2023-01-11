@@ -2,7 +2,6 @@
 
 namespace JobStatus\Tests\Feature\Console;
 
-use Illuminate\Support\Benchmark;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
