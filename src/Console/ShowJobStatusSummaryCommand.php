@@ -5,6 +5,7 @@ namespace JobStatus\Console;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobStatusResult;
@@ -18,7 +19,9 @@ class ShowJobStatusSummaryCommand  extends Command
      * @var string
      */
     protected $signature = 'job-status:summary
-                            {--class=:The class of the job to show}';
+                            {--class= : The class of the job to show}
+                            {--alias= : The alias of the job to show}
+                            {--tag=* : Any tags to filter by. Separate the key and the value with a colon.}';
 
     /**
      * The console command description.
@@ -42,7 +45,20 @@ class ShowJobStatusSummaryCommand  extends Command
      */
     public function handle(JobStatusRepository $repository)
     {
-        $statuses = $repository->search()->get();
+        $search = $repository->search();
+        if($this->option('class')) {
+            $search->whereJobClass($this->option('class'));
+        }
+        if($this->option('alias')) {
+            $search->whereJobAlias($this->option('alias'));
+        }
+        if($this->option('tag') && count($this->option('tag')) > 0) {
+            foreach($this->option('tag') as $tagString) {
+                $tagData = explode(':', $tagString);
+                $search->whereTag($tagData[0], )
+            }
+        }
+        $statuses = $search->get();
         $data = $statuses->jobs()->map(fn(SameJobList $sameJobList) => [
             $sameJobList->jobClass(),
             collect($sameJobList->tags())->reduce(fn($string, $value, $key) => sprintf('%s%s = %s', $string !== null ? $string . ', ' : '', $key, $value)),
