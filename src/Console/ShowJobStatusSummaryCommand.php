@@ -17,7 +17,8 @@ class ShowJobStatusSummaryCommand  extends Command
      *
      * @var string
      */
-    protected $signature = 'job-status:summary';
+    protected $signature = 'job-status:summary
+                            {--class=:The class of the job to show}';
 
     /**
      * The console command description.

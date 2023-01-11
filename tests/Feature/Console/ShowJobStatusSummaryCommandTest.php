@@ -67,4 +67,31 @@ class ShowJobStatusSummaryCommandTest extends TestCase
                 ['MySecondJob', 'keyone = valueone', 0, 1, 0, 0, 0],
             ]);
     }
+
+    /** @test */
+    public function it_can_filter_by_job_class(){
+        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => 'failed']);
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MySecondJob', 'status' => 'started']);
+
+
+        $response = $this->artisan('job-status:summary --class=MySecondJob')
+            ->assertOk()
+            ->expectsTable([
+                'Job', 'Tags', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+            ], [
+                // ISSUE HERE - THIS STILL PASSES SO NOT ACTUALLY TESTING THAT IS THE ONLY OUTPUT, HOW TO CHECK WE NEED TO NOT SEE THIS ROW?
+//                ['MyFirstJob', 'keyone = valueone', 0, 0, 0, 20, 0],
+                ['MySecondJob', 'keyone = valueone', 0, 1, 0, 0, 0],
+            ]);
+    }
+
+    /** @test */
+    public function it_can_filter_by_job_alias(){
+        $this->markTestIncomplete();
+    }
+
+    /** @test */
+    public function it_can_filter_by_tags(){
+        $this->markTestIncomplete();
+    }
 }
