@@ -15,4 +15,9 @@ class JobStatusRepositoryTest extends TestCase
         $this->assertInstanceOf(JobStatusSearcher::class, $repo->search());
     }
 
+    /** @test */
+    public function it_gets_the_latest_job_status_by_uuid(){
+        $this->markTestIncomplete();
+    }
+
 }
