@@ -105,7 +105,7 @@ class ListenerTest extends TestCase
 
 
 
-    
+
     /** @test */
     public function it_tracks_a_new_job_when_failed_and_retried(){
 

@@ -27,7 +27,7 @@ class SignalsTest extends TestCase
                     'my-second-tag' => 'mytag-value'
                 ])
                 ->setCallback(static::class . '@itCancelsAJobCallback')
-                ->dispatch();
+                ->dispatchSync();
         } catch (\Exception $e) {
             $this->assertInstanceOf(JobCancelledException::class, $e);
             $this->assertNotNull(JobSignal::firstOrFail()->handled_at);
@@ -61,7 +61,7 @@ class SignalsTest extends TestCase
             ])
             ->setCallback(static::class . '@itRunsOnCancelWhenAJobIsCancelled')
             ->handleSignal('cancel', static::class . '@itRunsOnCancelWhenAJobIsCancelledOnCancel')
-            ->dispatch();
+            ->dispatchSync();
     }
 
     public static function itRunsOnCancelWhenAJobIsCancelled(JobFake $job)
@@ -95,7 +95,7 @@ class SignalsTest extends TestCase
             ])
             ->setCallback(static::class . '@theExceptionTypeCanBeOverriddenForASignal')
             ->handleSignal('cancel', static::class . '@theExceptionTypeCanBeOverriddenForASignalOnCancel')
-            ->dispatch();
+            ->dispatchSync();
 
         $this->assertNotNull(JobSignal::firstOrFail()->handled_at);
     }
@@ -131,7 +131,7 @@ class SignalsTest extends TestCase
             ])
             ->setCallback(static::class . '@ItCanHandleCustomSignalsCallback')
             ->handleSignal('customSignal', static::class . '@ItCanHandleCustomSignalsCustomSignal')
-            ->dispatch();
+            ->dispatchSync();
     }
 
     public static function ItCanHandleCustomSignalsCallback(JobFake $job)
@@ -165,7 +165,7 @@ class SignalsTest extends TestCase
                 'my-second-tag' => 'mytag-value'
             ])
             ->setCallback(static::class . '@itDoesNotCancelExecutionOnCustomSignalsCallback')
-            ->dispatch();
+            ->dispatchSync();
     }
 
     public static function itDoesNotCancelExecutionOnCustomSignalsCallback(JobFake $job)
@@ -198,7 +198,7 @@ class SignalsTest extends TestCase
                 'my-second-tag' => 'mytag-value'
             ])
             ->setCallback(static::class . '@ItCanBeMadeToCancelExecutionOnCustomSignalsCallback')
-            ->dispatch();
+            ->dispatchSync();
     }
 
     public static function ItCanBeMadeToCancelExecutionOnCustomSignalsCallback(JobFake $job)
@@ -230,7 +230,7 @@ class SignalsTest extends TestCase
             ])
             ->setCallback(static::class . '@ItOnlyCallsForASignalOnceCallback')
             ->handleSignal('CustomSignal', static::class . '@ItOnlyCallsForASignalOnceHandler')
-            ->dispatch();
+            ->dispatchSync();
 
         $this->assertTrue(static::$itOnlyCallsForASignalOnceCalled);
     }
@@ -272,7 +272,7 @@ class SignalsTest extends TestCase
             ])
             ->setCallback(static::class . '@ParametersCanBePassedCallback')
             ->handleSignal('custom-signal', static::class . '@ParametersCanBePassedHandler')
-            ->dispatch();
+            ->dispatchSync();
     }
 
     public static function ParametersCanBePassedCallback(JobFake $job)

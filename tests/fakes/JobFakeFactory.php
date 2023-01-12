@@ -117,6 +117,13 @@ class JobFakeFactory
         return $job;
     }
 
+    public function dispatchSync(): JobFake
+    {
+        $job = $this->create();
+        app(Dispatcher::class)->dispatchSync($job);
+        return $job;
+    }
+
     public function handleSignal(string $signal, string $method): static
     {
         $this->signals[$signal] = $method;
