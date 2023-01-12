@@ -3,9 +3,11 @@
 namespace JobStatus\Tests\fakes;
 
 use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Events\QueuedClosure;
 use Illuminate\Queue\DatabaseQueue;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 use Opis\Closure\SerializableClosure;
 
 class JobFakeFactory
@@ -20,6 +22,8 @@ class JobFakeFactory
     private ?\Closure $canSeeTracking = null;
 
     private array $signals = [];
+
+    private int $maxExceptions = 3;
 
     /**
      * @return string|null
@@ -96,20 +100,47 @@ class JobFakeFactory
     public function create(): JobFake
     {
         $job = new JobFake($this->alias, $this->tags, $this->callback, $this->signals);
+        $job->maxExceptions = $this->maxExceptions;
         if($this->canSeeTracking) {
             $job::$canSeeTracking = $this->canSeeTracking;
         }
         return $job;
     }
 
-    public function dispatch(): void
+    public function dispatch(): JobFake
     {
-        app(Dispatcher::class)->dispatchSync($this->create());
+        $job = $this->create();
+        $job->onConnection('database');
+        $this->createJobsTable();
+        app(Dispatcher::class)->dispatch($job);
+        Artisan::call('queue:work database --once');
+        return $job;
     }
 
     public function handleSignal(string $signal, string $method): static
     {
         $this->signals[$signal] = $method;
+        return $this;
+    }
+
+    private function createJobsTable()
+    {
+        if(!Schema::hasTable('jobs')) {
+            Schema::create('jobs', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('queue')->index();
+                $table->longText('payload');
+                $table->unsignedTinyInteger('attempts');
+                $table->unsignedInteger('reserved_at')->nullable();
+                $table->unsignedInteger('available_at');
+                $table->unsignedInteger('created_at');
+            });
+        }
+    }
+
+    public function maxExceptions(int $maxExceptions): JobFakeFactory
+    {
+        $this->maxExceptions = $maxExceptions;
         return $this;
     }
 

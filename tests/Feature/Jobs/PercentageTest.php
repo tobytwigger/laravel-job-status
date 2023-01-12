@@ -29,7 +29,7 @@ class PercentageTest extends TestCase
         $this->assertTrue(static::$calledPercentagesCanBeUpdatedCallback);
     }
 
-    public static function percentagesCanBeUpdatedCallback(JobFake $job, TestCase $testCase)
+    public static function percentagesCanBeUpdatedCallback(JobFake $job)
     {
         Assert::assertFalse(JobStatus::where('percentage', 52.6)->exists());
         $job->status()->setPercentage(52.6);

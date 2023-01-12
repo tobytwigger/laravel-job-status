@@ -18,4 +18,10 @@ class JobStatusRepository
         return new JobStatusSearcher();
     }
 
+    public function getLatestByQueueReference(string $jobId, string $connectionName): ?JobStatus
+    {
+        return JobStatus::query()->where('job_id', $jobId)
+            ->where('connection_name', $connectionName)
+            ->latest()->orderBy('id', 'DESC')->first();
+    }
 }

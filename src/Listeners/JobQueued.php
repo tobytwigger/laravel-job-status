@@ -3,8 +3,10 @@
 namespace JobStatus\Listeners;
 
 use Illuminate\Queue\Jobs\Job;
+use Illuminate\Support\Facades\Queue;
 use JobStatus\Concerns\Trackable;
 use JobStatus\Models\JobStatus;
+use JobStatus\Tests\fakes\JobFake;
 
 /**
  * Occurs when a job is pushed to an asynchronous queue.
@@ -21,6 +23,7 @@ class JobQueued extends BaseListener
     public function handle(\Illuminate\Queue\Events\JobQueued $event)
     {
         $job = $event->job;
+
         if($this->validateJob($job) === false) {
             return true;
         }
@@ -30,7 +33,9 @@ class JobQueued extends BaseListener
             'job_alias' => $job->alias(),
             'percentage' => 0,
             'status' => 'queued',
-            'uuid' => $event->id
+            'uuid' => null,
+            'job_id' => $event->id,
+            'connection_name' => $event->connectionName
         ]);
 
         foreach ($job->tags() as $key => $value) {

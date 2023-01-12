@@ -23,7 +23,7 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'percentage', 'status', 'uuid'
+        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name'
     ];
 
     protected $casts = [

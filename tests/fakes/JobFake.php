@@ -14,6 +14,8 @@ class JobFake implements ShouldQueue
 
     public static string|\Closure|null $canSeeTracking;
 
+    public int $maxExceptions = 3;
+
     public function __construct(
         private ?string $alias = null,
         private array $tags = [],
