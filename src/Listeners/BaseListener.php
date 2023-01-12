@@ -2,6 +2,7 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Contracts\Queue\Job;
 use JobStatus\Concerns\Trackable;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;

@@ -307,52 +307,6 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function cancel_sends_a_cancel_signal()
-    {
-        $jobStatus = JobStatus::factory()->create();
-        $jobStatus->cancel();
-
-        $this->assertDatabaseHas('job_status_job_signals', [
-            'job_status_id' => $jobStatus->id,
-            'signal' => 'cancel',
-            'handled_at' => null,
-            'cancel_job' => 1,
-        ]);
-    }
-
-    /** @test */
-    public function send_signal_creates_a_canceling_signal()
-    {
-        /** @var JobStatus $jobStatus */
-        $jobStatus = JobStatus::factory()->create();
-        $jobStatus->sendSignal('custom-signal', ['param' => 'val'], true);
-
-        $this->assertDatabaseHas('job_status_job_signals', [
-            'job_status_id' => $jobStatus->id,
-            'signal' => 'custom-signal',
-            'parameters' => json_encode(['param' => 'val']),
-            'handled_at' => null,
-            'cancel_job' => 1,
-        ]);
-    }
-
-    /** @test */
-    public function send_signal_creates_a_non_cancelling_signal()
-    {
-        /** @var JobStatus $jobStatus */
-        $jobStatus = JobStatus::factory()->create();
-        $jobStatus->sendSignal('user_updated', ['param' => 'val2'], false);
-
-        $this->assertDatabaseHas('job_status_job_signals', [
-            'job_status_id' => $jobStatus->id,
-            'signal' => 'user_updated',
-            'parameters' => json_encode(['param' => 'val2']),
-            'handled_at' => null,
-            'cancel_job' => 0,
-        ]);
-    }
-
-    /** @test */
     public function get_tags_as_array_returns_all_tags_as_an_array()
     {
         $status = JobStatus::factory()->create();

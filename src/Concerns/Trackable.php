@@ -52,7 +52,7 @@ trait Trackable
         return true;
     }
 
-    public function alias(): ?string
+    public static function alias(): ?string
     {
         return null;
     }
