@@ -21,6 +21,7 @@ class JobProcessing extends BaseListener
     {
         $modifier = $this->getJobStatusModifier($event->job);
         if($modifier === null) {
+            dd($event->job->uuid());
             $modifier = new JobStatusModifier(JobStatus::create([
                 'job_class' => get_class($event->job),
                 'job_alias' => $event->job->alias(),

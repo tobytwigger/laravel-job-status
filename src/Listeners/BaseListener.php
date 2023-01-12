@@ -49,7 +49,18 @@ class BaseListener
 
     protected function getJobStatus(\Illuminate\Contracts\Queue\Job $job): ?JobStatus
     {
-        return app(JobStatusRepository::class)->getLatestByUuid($job->uuid());
+        if($job->uuid()) {
+            // We will create a job status when a sync job is dispatched, since these skip JobQueued
+            return app(JobStatusRepository::class)->getLatestByUuid($job->uuid())
+                ?? JobStatus::create([
+                    'job_class' => $job->resolveName(),
+                    'job_alias' => null,
+                    'percentage' => 0,
+                    'status' => 'queued',
+                    'uuid' => $job->uuid()
+                ]);
+        }
+        return null;
     }
 
 }

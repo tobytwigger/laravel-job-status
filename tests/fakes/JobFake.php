@@ -2,20 +2,23 @@
 
 namespace JobStatus\Tests\fakes;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\Concerns\Trackable;
 
-class JobFake
+class JobFake implements ShouldQueue
 {
-    use Dispatchable, Trackable, InteractsWithQueue;
+    use Dispatchable, Trackable, InteractsWithQueue, Queueable;
 
-    public static ?\Closure $canSeeTracking;
+    public static string|\Closure|null $canSeeTracking;
 
     public function __construct(
         private ?string $alias = null,
         private array $tags = [],
-        private ?\Closure $callback = null
+        private \Closure|string|null $callback = null,
+        private array $signals = []
     ) {
     }
 
@@ -36,6 +39,13 @@ class JobFake
         }
 
         return app()->call($this->callback, ['job' => $this]);
+    }
+
+    public function handleSignalCallback(string $signal, array $arguments)
+    {
+        if(array_key_exists($signal, $this->signals)) {
+            app()->call($this->signals[$signal], ['job' => $this, 'parameters' => $arguments]);
+        }
     }
 
 

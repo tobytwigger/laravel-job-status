@@ -27,6 +27,8 @@ trait InteractsWithSignals
         $method = sprintf('on%s', Str::ucfirst(Str::camel($signal->signal)));
         if (method_exists($this, $method)) {
             $this->{$method}($signal->parameters ?? []);
+        } elseif (method_exists($this, 'handleSignalCallback')) {
+            $this->handleSignalCallback($signal->signal, $signal->parameters);
         }
 
         $signal->handled_at = Carbon::now();

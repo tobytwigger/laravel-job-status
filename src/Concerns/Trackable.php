@@ -2,6 +2,7 @@
 
 namespace JobStatus\Concerns;
 
+use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\JobStatusSearcher;
@@ -9,7 +10,7 @@ use JobStatus\Search\Result\SameJobList;
 
 trait Trackable
 {
-    use InteractsWithSignals;
+    use InteractsWithSignals, InteractsWithQueue;
 
     public ?JobStatus $jobStatus = null;
 
@@ -31,7 +32,11 @@ trait Trackable
     public function getJobStatus(): ?JobStatus
     {
         if (!isset($this->jobStatus)) {
-            $this->jobStatus = JobStatus::where('uuid', $this->job->uuid())->latest()->orderBy('id', 'DESC')->first();
+            if($this->job?->uuid()) {
+                $this->jobStatus = JobStatus::where('uuid', $this->job->uuid())->latest()->orderBy('id', 'DESC')->first();
+            } else {
+                $this->jobStatus = null;
+            }
         }
 
         return $this->jobStatus;
