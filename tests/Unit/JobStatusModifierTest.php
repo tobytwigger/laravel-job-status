@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Unit;
 
+use Illuminate\Support\Str;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
@@ -35,6 +36,29 @@ class JobStatusModifierTest extends TestCase
         $this->assertEquals('failed', $jobStatus->refresh()->status);
         $modifier->setStatus('cancelled');
         $this->assertEquals('cancelled', $jobStatus->refresh()->status);
+    }
+
+    /** @test */
+    public function the_uuid_can_be_set(){
+        $uuidOriginal = Str::uuid();
+        $uuidUpdated = Str::uuid();
+
+        $jobStatus = JobStatus::factory()->create(['uuid' => (string) $uuidOriginal]);
+
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $modifier->setUuid((string) $uuidUpdated);
+        $this->assertEquals((string) $uuidUpdated, $jobStatus->refresh()->uuid);
+    }
+
+    /** @test */
+    public function the_job_id_can_be_set(){
+        $jobStatus = JobStatus::factory()->create(['job_id' => 1]);
+
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $modifier->setJobId(2);
+        $this->assertEquals(2, $jobStatus->refresh()->job_id);
     }
 
     /** @test */

@@ -2,7 +2,10 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Queue\Job;
+use Illuminate\Contracts\Queue\Job as JobContract;
+use Illuminate\Support\Facades\App;
 use JobStatus\Concerns\Trackable;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
@@ -20,7 +23,19 @@ class BaseListener
         if($jobStatus === null) {
             return null;
         }
-        return new JobStatusModifier($jobStatus);
+        $modifier = new JobStatusModifier($jobStatus);
+        $this->checkJobUpToDate($modifier, $job);
+        return $modifier;
+    }
+
+    protected function checkJobUpToDate(JobStatusModifier $jobStatusModifier, JobContract $job): void
+    {
+        if($job->uuid() !== null && $jobStatusModifier->getJobStatus()->uuid !== $job->uuid()) {
+            $jobStatusModifier->setUuid($job->uuid());
+        }
+        if($job->getJobId() !== null && $jobStatusModifier->getJobStatus()->job_id !== $job->getJobId()) {
+            $jobStatusModifier->setJobId($job->getJobId());
+        }
     }
 
     protected function validateJob(mixed $job): bool
@@ -59,16 +74,34 @@ class BaseListener
         if($jobStatus === null && $job->uuid()) {
             $jobStatus = app(JobStatusRepository::class)->getLatestByUuid($job->uuid());
         }
-        if($jobStatus === null) {
+        if($jobStatus === null && $job->getConnectionName() === 'sync') {
+            $command = null;
+            if (str_starts_with($job->payload()['data']['command'], 'O:')) {
+                $command = unserialize($job->payload()['data']['command']);
+            } elseif (App::bound(Encrypter::class)) {
+                $command = unserialize(App::make(Encrypter::class)->decrypt($job->payload()['data']['command']));
+            } else {
+                throw new \RuntimeException('Unable to extract job payload.');
+            }
             $jobStatus = JobStatus::create([
-                'job_class' => $job->resolveName(),
-                'job_alias' => null,
+                'job_class' => get_class($command),
+                'job_alias' => $command->alias(),
                 'percentage' => 0,
                 'status' => 'queued',
                 'uuid' => $job->uuid(),
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId()
             ]);
+            JobStatusModifier::forJobStatus($jobStatus)->setStatus('queued');
+            foreach ($command->tags() as $key => $value) {
+                $jobStatus->tags()->create([
+                    'key' => $key,
+                    'value' => $value,
+                ]);
+            }
+            // Need to create tags?!?! BUT Cant as we dont have a full job instance here
+        } elseif($jobStatus === null) {
+            dd('NEED TO CREATE HERE');
         }
 
         return $jobStatus;

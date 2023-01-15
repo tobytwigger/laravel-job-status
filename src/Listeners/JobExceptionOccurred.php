@@ -32,9 +32,10 @@ class JobExceptionOccurred extends BaseListener
                 $modifier->warningMessage('The job has been cancelled');
             } else {
                 $modifier->setStatus('failed');
-                $modifier->errorMessage(get_class($event->exception) . ': ' . $event->exception->getMessage());
+                $modifier->errorMessage($event->exception->getMessage());
             }
         }
+
         $modifier->setPercentage(100);
 
     }

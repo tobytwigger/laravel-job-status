@@ -25,6 +25,26 @@ class JobFakeFactory
 
     private int $maxExceptions = 3;
 
+    private int $tries = 3;
+
+    /**
+     * @return int
+     */
+    public function getTries(): int
+    {
+        return $this->tries;
+    }
+
+    /**
+     * @param int $tries
+     * @return JobFakeFactory
+     */
+    public function maxTries(int $tries): JobFakeFactory
+    {
+        $this->tries = $tries;
+        return $this;
+    }
+
     /**
      * @return string|null
      */
@@ -99,21 +119,29 @@ class JobFakeFactory
 
     public function create(): JobFake
     {
-        $job = new JobFake($this->alias, $this->tags, $this->callback, $this->signals);
+        $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals);
         $job->maxExceptions = $this->maxExceptions;
+        $job->tries = $this->tries;
         if($this->canSeeTracking) {
             $job::$canSeeTracking = $this->canSeeTracking;
         }
         return $job;
     }
 
-    public function dispatch(): JobFake
+    public function fakeCallback(): void
+    {
+        return;
+    }
+
+    public function dispatch(int $jobsToRun = 1): JobFake
     {
         $job = $this->create();
         $job->onConnection('database');
         $this->createJobsTable();
         app(Dispatcher::class)->dispatch($job);
-        Artisan::call('queue:work database --once');
+        for($i = 0; $i < $jobsToRun; $i++) {
+            Artisan::call('queue:work database --once');
+        }
         return $job;
     }
 

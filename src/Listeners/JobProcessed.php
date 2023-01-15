@@ -2,6 +2,8 @@
 
 namespace JobStatus\Listeners;
 
+use Composer\XdebugHandler\Process;
+use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 
 /**
@@ -33,6 +35,27 @@ class JobProcessed extends BaseListener
                 $modifier->setStatus('failed');
             } else {
                 $modifier->setStatus('succeeded');
+            }
+        }
+
+        if($event->job->isReleased()) {
+            $jobStatus = JobStatus::create([
+                'job_class' => $modifier->getJobStatus()?->job_class,
+                'job_alias' => $modifier->getJobStatus()?->job_alias,
+                'percentage' => 0,
+                'status' => 'queued',
+                'uuid' => $event->job->uuid(),
+                'connection_name' => $event->job->getConnectionName(),
+                'job_id' => $event->job->getJobId()
+            ]);
+
+            JobStatusModifier::forJobStatus($jobStatus)->setStatus('queued');
+
+            foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
+                $jobStatus->tags()->create([
+                    'key' => $tag->key,
+                    'value' => $tag->value,
+                ]);
             }
         }
 

@@ -122,4 +122,22 @@ class JobStatusModifier
         return $this;
     }
 
+    public function setUuid(?string $uuid): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->uuid = $uuid;
+            $this->jobStatus->save();
+        }
+        return $this;
+    }
+
+    public function setJobId(string|int $jobId): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->job_id = $jobId;
+            $this->jobStatus->save();
+        }
+        return $this;
+    }
+
 }

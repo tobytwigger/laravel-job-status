@@ -2,9 +2,11 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Queue;
 use JobStatus\Concerns\Trackable;
+use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
 
@@ -38,11 +40,18 @@ class JobQueued extends BaseListener
             'connection_name' => $event->connectionName
         ]);
 
+        $modifier = JobStatusModifier::forJobStatus($jobStatus);
+        $modifier->setStatus('queued');
+
         foreach ($job->tags() as $key => $value) {
             $jobStatus->tags()->create([
                 'key' => $key,
                 'value' => $value,
             ]);
+        }
+
+        if($job->job) {
+            $this->checkJobUpToDate($modifier, $job->job);
         }
     }
 
