@@ -14,11 +14,11 @@ class JobStatusCollectionTest extends TestCase
     {
         parent::setUp();
         $this->finishedJobs = new JobStatusCollection([
-            ...JobStatus::factory()->count(5)->create(['status' => 'failed']),
-            ...JobStatus::factory()->count(10)->create(['status' => 'queued']),
-            ...JobStatus::factory()->count(15)->create(['status' => 'started']),
-            ...JobStatus::factory()->count(20)->create(['status' => 'cancelled']),
-            ...JobStatus::factory()->count(25)->create(['status' => 'succeeded']),
+            ...JobStatus::factory()->count(5)->create(['status' => \JobStatus\Enums\Status::FAILED]),
+            ...JobStatus::factory()->count(10)->create(['status' => \JobStatus\Enums\Status::QUEUED]),
+            ...JobStatus::factory()->count(15)->create(['status' => \JobStatus\Enums\Status::STARTED]),
+            ...JobStatus::factory()->count(20)->create(['status' => \JobStatus\Enums\Status::CANCELLED]),
+            ...JobStatus::factory()->count(25)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]),
         ]);
     }
 

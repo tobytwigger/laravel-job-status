@@ -57,43 +57,43 @@ class JobStatusSearcherTest extends TestCase
 
     /** @test */
     public function it_filters_by_statuses_in(){
-        $set1 = JobStatus::factory()->count(3)->create(['status' => 'succeeded'])
-            ->merge(JobStatus::factory()->count(3)->create(['status' => 'queued']));
-        $set2 = JobStatus::factory()->count(4)->create(['status' => 'failed'])
-            ->merge(JobStatus::factory()->count(4)->create(['status' => 'cancelled']));
+        $set1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED])
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::QUEUED]));
+        $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::FAILED])
+            ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
 
-        $results = (new JobStatusSearcher())->whereStatusIn(['succeeded', 'queued'])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get()->raw();
         $this->assertCount(6, $results);
         $this->assertEquals($results->pluck('id')->sort(), $set1->pluck('id')->sort());
 
-        $results = (new JobStatusSearcher())->whereStatusIn(['failed', 'cancelled'])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get()->raw();
         $this->assertCount(8, $results);
         $this->assertEquals($results->pluck('id')->sort(), $set2->pluck('id')->sort());
     }
 
     /** @test */
     public function it_filters_by_statuses_not_in(){
-        $set1 = JobStatus::factory()->count(3)->create(['status' => 'succeeded'])
-            ->merge(JobStatus::factory()->count(3)->create(['status' => 'queued']));
-        $set2 = JobStatus::factory()->count(4)->create(['status' => 'failed'])
-            ->merge(JobStatus::factory()->count(4)->create(['status' => 'cancelled']));
+        $set1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED])
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::QUEUED]));
+        $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::FAILED])
+            ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
 
-        $results = (new JobStatusSearcher())->whereStatusNotIn(['succeeded', 'queued'])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusNotIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get()->raw();
         $this->assertCount(8, $results);
         $this->assertEquals($results->pluck('id')->sort(), $set2->pluck('id')->sort());
 
-        $results = (new JobStatusSearcher())->whereStatusNotIn(['failed', 'cancelled'])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusNotIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get()->raw();
         $this->assertCount(6, $results);
         $this->assertEquals($results->pluck('id')->sort(), $set1->pluck('id')->sort());
     }
 
     /** @test */
     public function it_filters_by_finished(){
-        $set1 = JobStatus::factory()->count(3)->create(['status' => 'succeeded'])
-            ->merge(JobStatus::factory()->count(3)->create(['status' => 'failed']))
-            ->merge(JobStatus::factory()->count(3)->create(['status' => 'cancelled']));
-        $set2 = JobStatus::factory()->count(4)->create(['status' => 'queued'])
-            ->merge(JobStatus::factory()->count(4)->create(['status' => 'started']));
+        $set1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED])
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::FAILED]))
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
+        $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::QUEUED])
+            ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::STARTED]));
 
         $results = (new JobStatusSearcher())->whereFinished()->get()->raw();
         $this->assertCount(9, $results);

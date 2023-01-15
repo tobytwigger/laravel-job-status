@@ -2,6 +2,7 @@
 
 namespace JobStatus\Listeners;
 
+use JobStatus\Enums\Status;
 use JobStatus\Exception\JobCancelledException;
 
 /**
@@ -26,12 +27,12 @@ class JobExceptionOccurred extends BaseListener
         }
 
         // This is only the case if JobFailed has not ran, so we need to update the status since Jobfailed hasn't done it.
-        if($modifier->getJobStatus()->status !== 'failed' && $modifier->getJobStatus()->status !== 'cancelled') {
+        if($modifier->getJobStatus()->status !== Status::FAILED && $modifier->getJobStatus()->status !== Status::CANCELLED) {
             if($event->exception instanceof JobCancelledException) {
-                $modifier->setStatus('cancelled');
+                $modifier->setStatus(Status::CANCELLED);
                 $modifier->warningMessage('The job has been cancelled');
             } else {
-                $modifier->setStatus('failed');
+                $modifier->setStatus(Status::FAILED);
                 $modifier->errorMessage($event->exception->getMessage());
             }
         }

@@ -24,7 +24,8 @@ class JobStatusFactory extends Factory
             'percentage' => $this->faker->numberBetween(0, 100),
             'uuid' => Str::uuid(),
             'job_id' => $this->faker->numberBetween(1, 10000000),
-            'connection_name' => 'database'
+            'connection_name' => 'database',
+            'status' => 'queued'
         ];
     }
 }

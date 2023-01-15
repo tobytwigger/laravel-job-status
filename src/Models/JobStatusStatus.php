@@ -5,6 +5,7 @@ namespace JobStatus\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use JobStatus\Database\Factories\JobStatusStatusFactory;
+use JobStatus\Enums\Status;
 
 /**
  * @property JobStatus $jobStatus The job status the status belongs to
@@ -18,7 +19,9 @@ class JobStatusStatus extends Model
         'status',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'status' => Status::class
+    ];
 
     public function __construct(array $attributes = [])
     {

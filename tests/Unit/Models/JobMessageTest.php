@@ -13,7 +13,7 @@ class JobMessageTest extends TestCase
     {
         $attributes = [
             'message' => 'My message',
-            'type' => 'info',
+            'type' => \JobStatus\Enums\MessageType::INFO,
             'job_status_id' => JobStatus::factory()->create()->id,
         ];
 

@@ -2,6 +2,7 @@
 
 namespace JobStatus\Listeners;
 
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 
@@ -22,7 +23,7 @@ class JobProcessing extends BaseListener
         $modifier = $this->getJobStatusModifier($event->job);
 
         if($modifier !== null) {
-            $modifier->setStatus('started');
+            $modifier->setStatus(Status::STARTED);
         }
     }
 

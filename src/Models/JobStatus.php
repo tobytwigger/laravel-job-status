@@ -9,11 +9,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use JobStatus\Concerns\Trackable;
 use JobStatus\Database\Factories\JobStatusFactory;
+use JobStatus\Enums\MessageType;
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusCollection;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
- * @property string $status The status of the job
+ * @property Status $status The status of the job
  * @property string $job_class The class of the job
  * @property string $job_alias The alias of the job
  * @property float $percentage The percentage of the way through the job we are
@@ -30,6 +32,7 @@ class JobStatus extends Model
         'percentage' => 'float',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
+        'status' => Status::class
     ];
 
     public function __construct(array $attributes = [])
@@ -90,12 +93,12 @@ class JobStatus extends Model
         });
     }
 
-    public static function scopeWhereStatus(Builder $query, string $status)
+    public static function scopeWhereStatus(Builder $query, Status $status)
     {
         $query->where('status', $status);
     }
 
-    public static function scopeWhereNotStatus(Builder $query, string|array $status)
+    public static function scopeWhereNotStatus(Builder $query, Status|array $status)
     {
         $query->whereNotIn('status', Arr::wrap($status));
     }
@@ -103,14 +106,14 @@ class JobStatus extends Model
     public static function scopeWhereFinished(Builder $query)
     {
         $query->whereIn('status', [
-            'failed', 'succeeded', 'cancelled'
+            Status::FAILED, Status::SUCCEEDED, Status::CANCELLED
         ]);
     }
 
     public static function scopeWhereNotFinished(Builder $query)
     {
         $query->whereIn('status', [
-            'queued', 'started'
+            Status::QUEUED, Status::STARTED
         ]);
     }
 
@@ -125,31 +128,31 @@ class JobStatus extends Model
         return new JobStatusCollection($models);
     }
 
-    public function getStatus(): string
+    public function getStatus(): Status
     {
-        return $this->status ?? 'queued';
+        return $this->status ?? Status::QUEUED;
     }
 
     public function isFinished(): bool
     {
         return in_array($this->getStatus(), [
-            'succeeded', 'failed', 'cancelled',
+            Status::SUCCEEDED, Status::FAILED, Status::CANCELLED,
         ]);
     }
 
     public function isSuccessful(): bool
     {
-        return $this->getStatus() === 'succeeded';
+        return $this->getStatus() === Status::SUCCEEDED;
     }
 
     public function isRunning(): bool
     {
-        return $this->getStatus() === 'started';
+        return $this->getStatus() === Status::STARTED;
     }
 
     public function isQueued(): bool
     {
-        return $this->getStatus() === 'queued';
+        return $this->getStatus() === Status::QUEUED;
     }
 
     public function getIsFinishedAttribute()
@@ -165,14 +168,14 @@ class JobStatus extends Model
     public function mostRecentMessage(bool $includeDebug = false)
     {
         return $this->messages()
-            ->when($includeDebug === false, fn (Builder $query) => $query->where('type', '!=', 'debug'))
+            ->when($includeDebug === false, fn (Builder $query) => $query->where('type', '!=', MessageType::DEBUG))
             ->latest()
             ->orderBy('id', 'DESC')
             ->first()
             ?->message;
     }
 
-    public function messagesOfType(string $type)
+    public function messagesOfType(MessageType $type)
     {
         return $this->messages()
             ->where('type', $type)

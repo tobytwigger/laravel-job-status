@@ -5,6 +5,7 @@ namespace JobStatus\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use JobStatus\Database\Factories\JobMessageFactory;
+use JobStatus\Enums\MessageType;
 
 class JobMessage extends Model
 {
@@ -18,7 +19,9 @@ class JobMessage extends Model
         'message', 'type',
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'type' => MessageType::class
+    ];
 
     public function __construct(array $attributes = [])
     {

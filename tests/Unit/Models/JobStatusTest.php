@@ -151,52 +151,52 @@ class JobStatusTest extends TestCase
     public function it_can_get_a_status()
     {
         $now = Carbon::now();
-        $status = JobStatus::factory()->create(['status' => 'failed']);
+        $status = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
 
-        $this->assertEquals('failed', $status->getStatus());
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $status->getStatus());
     }
 
     /** @test */
     public function it_can_query_by_status()
     {
-        $status = JobStatus::factory()->create(['status' => 'failed']);
+        $status = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
 
         $this->assertTrue($status->is(
-            JobStatus::whereStatus('failed')->first()
+            JobStatus::whereStatus(\JobStatus\Enums\Status::FAILED)->first()
         ));
-        $this->assertNull(JobStatus::whereStatus('started')->first());
+        $this->assertNull(JobStatus::whereStatus(\JobStatus\Enums\Status::STARTED)->first());
     }
 
     /** @test */
     public function it_can_query_by_where_not_status()
     {
-        $status = JobStatus::factory()->create(['status' => 'failed']);
+        $status = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
 
         $this->assertTrue($status->is(
-            JobStatus::whereNotStatus('started')->first()
+            JobStatus::whereNotStatus(\JobStatus\Enums\Status::STARTED)->first()
         ));
-        $this->assertNull(JobStatus::whereNotStatus('failed')->first());
+        $this->assertNull(JobStatus::whereNotStatus(\JobStatus\Enums\Status::FAILED)->first());
     }
 
     /** @test */
     public function it_can_query_by_many_where_not_status()
     {
-        $status = JobStatus::factory()->create(['status' => 'failed']);
+        $status = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
 
         $this->assertTrue($status->is(
-            JobStatus::whereNotStatus(['started', 'succeeded', 'queued'])->first()
+            JobStatus::whereNotStatus([\JobStatus\Enums\Status::STARTED, \JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->first()
         ));
-        $this->assertNull(JobStatus::whereNotStatus(['started', 'cancelled', 'failed'])->first());
+        $this->assertNull(JobStatus::whereNotStatus([\JobStatus\Enums\Status::STARTED, \JobStatus\Enums\Status::CANCELLED, \JobStatus\Enums\Status::FAILED])->first());
     }
 
     /** @test */
     public function is_finished_is_true_if_the_job_is_finished()
     {
-        $queued = JobStatus::factory()->create(['status' => 'queued']);
-        $started = JobStatus::factory()->create(['status' => 'started']);
-        $failed = JobStatus::factory()->create(['status' => 'failed']);
-        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
-        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+        $queued = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        $started = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]);
+        $failed = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
+        $cancelled = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        $succeeded = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
 
         $this->assertFalse($queued->isFinished());
         $this->assertFalse($started->isFinished());
@@ -208,11 +208,11 @@ class JobStatusTest extends TestCase
     /** @test */
     public function is_successful_is_true_if_the_job_is_successful()
     {
-        $queued = JobStatus::factory()->create(['status' => 'queued']);
-        $started = JobStatus::factory()->create(['status' => 'started']);
-        $failed = JobStatus::factory()->create(['status' => 'failed']);
-        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
-        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+        $queued = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        $started = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]);
+        $failed = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
+        $cancelled = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        $succeeded = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
 
         $this->assertFalse($queued->isSuccessful());
         $this->assertFalse($started->isSuccessful());
@@ -224,11 +224,11 @@ class JobStatusTest extends TestCase
     /** @test */
     public function is_running_is_true_if_the_job_is_running()
     {
-        $queued = JobStatus::factory()->create(['status' => 'queued']);
-        $started = JobStatus::factory()->create(['status' => 'started']);
-        $failed = JobStatus::factory()->create(['status' => 'failed']);
-        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
-        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+        $queued = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        $started = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]);
+        $failed = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
+        $cancelled = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        $succeeded = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
 
         $this->assertFalse($queued->isRunning());
         $this->assertTrue($started->isRunning());
@@ -240,11 +240,11 @@ class JobStatusTest extends TestCase
     /** @test */
     public function is_queued_is_true_if_the_job_is_queued()
     {
-        $queued = JobStatus::factory()->create(['status' => 'queued']);
-        $started = JobStatus::factory()->create(['status' => 'started']);
-        $failed = JobStatus::factory()->create(['status' => 'failed']);
-        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
-        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+        $queued = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        $started = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]);
+        $failed = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
+        $cancelled = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        $succeeded = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
 
         $this->assertTrue($queued->isQueued());
         $this->assertFalse($started->isQueued());
@@ -257,10 +257,10 @@ class JobStatusTest extends TestCase
     public function most_recent_message_returns_the_most_recent_message_excluding_debug_types()
     {
         $jobStatus = JobStatus::factory()->create();
-        $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message one']);
-        $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message two']);
-        $message3 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message three']);
-        $message4 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'debug', 'message' => 'Message four']);
+        $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message one']);
+        $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message two']);
+        $message3 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message three']);
+        $message4 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::DEBUG, 'message' => 'Message four']);
 
         $this->assertEquals($message3->message, $jobStatus->mostRecentMessage());
     }
@@ -269,10 +269,10 @@ class JobStatusTest extends TestCase
     public function most_recent_message_can_return_the_most_recent_debug_message()
     {
         $jobStatus = JobStatus::factory()->create();
-        $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message one']);
-        $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message two']);
-        $message3 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message three']);
-        $message4 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'debug', 'message' => 'Message four']);
+        $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message one']);
+        $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message two']);
+        $message3 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message three']);
+        $message4 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::DEBUG, 'message' => 'Message four']);
 
         $this->assertEquals($message4->message, $jobStatus->mostRecentMessage(true));
     }
@@ -289,13 +289,13 @@ class JobStatusTest extends TestCase
     public function messages_of_type_returns_all_messages_matching_the_given_type()
     {
         $jobStatus = JobStatus::factory()->create();
-        $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message one']);
-        $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'success', 'message' => 'Message two']);
-        $message3 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'info', 'message' => 'Message three']);
-        $message4 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => 'debug', 'message' => 'Message four']);
+        $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message one']);
+        $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::SUCCESS, 'message' => 'Message two']);
+        $message3 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message three']);
+        $message4 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::DEBUG, 'message' => 'Message four']);
 
-        $this->assertCount(2, $jobStatus->messagesOfType('info'));
-        $this->assertEquals(['Message one', 'Message three'], $jobStatus->messagesOfType('info')->toArray());
+        $this->assertCount(2, $jobStatus->messagesOfType(\JobStatus\Enums\MessageType::INFO));
+        $this->assertEquals(['Message one', 'Message three'], $jobStatus->messagesOfType(\JobStatus\Enums\MessageType::INFO)->toArray());
     }
 
     /** @test */
@@ -374,11 +374,11 @@ class JobStatusTest extends TestCase
     /** @test */
     public function it_can_filter_to_jobs_that_are_finished()
     {
-        $queued = JobStatus::factory()->create(['status' => 'queued']);
-        $started = JobStatus::factory()->create(['status' => 'started']);
-        $failed = JobStatus::factory()->create(['status' => 'failed']);
-        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
-        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+        $queued = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        $started = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]);
+        $failed = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
+        $cancelled = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        $succeeded = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
 
         $this->assertCount(3, JobStatus::whereFinished()->get());
         $this->assertFalse(JobStatus::whereFinished()->where('id', $queued->id)->exists());
@@ -391,11 +391,11 @@ class JobStatusTest extends TestCase
     /** @test */
     public function it_can_filter_to_jobs_that_are_not_finished()
     {
-        $queued = JobStatus::factory()->create(['status' => 'queued']);
-        $started = JobStatus::factory()->create(['status' => 'started']);
-        $failed = JobStatus::factory()->create(['status' => 'failed']);
-        $cancelled = JobStatus::factory()->create(['status' => 'cancelled']);
-        $succeeded = JobStatus::factory()->create(['status' => 'succeeded']);
+        $queued = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        $started = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]);
+        $failed = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]);
+        $cancelled = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        $succeeded = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
 
         $this->assertCount(3, JobStatus::whereFinished()->get());
         $this->assertTrue(JobStatus::whereNotFinished()->where('id', $queued->id)->exists());
