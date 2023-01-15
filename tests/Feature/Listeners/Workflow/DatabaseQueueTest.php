@@ -41,7 +41,7 @@ class DatabaseQueueTest extends TestCase
         Assert::assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         Assert::assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        Assert::assertCount(0, $jobStatus->messages);
+        Assert::assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         Assert::assertCount(1, $jobStatus->statuses);
         Assert::assertEquals('started', $jobStatus->statuses[0]->status);
@@ -82,7 +82,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(0, $jobStatus->messages);
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
 
         $this->assertCount(3, $jobStatus->statuses);
@@ -121,9 +121,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages);
-        $this->assertEquals('The job has been cancelled', $jobStatus->messages[0]->message);
-        $this->assertEquals('warning', $jobStatus->messages[0]->type);
+        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
+        $this->assertEquals('warning', $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
 
         $this->assertCount(3, $jobStatus->statuses);
@@ -173,9 +173,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages);
-        $this->assertEquals('The job has been cancelled', $jobStatus->messages[0]->message);
-        $this->assertEquals('warning', $jobStatus->messages[0]->type);
+        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
+        $this->assertEquals('warning', $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
 
         $this->assertCount(3, $jobStatus->statuses);
@@ -233,9 +233,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages);
-        $this->assertEquals('Test', $jobStatus->messages[0]->message);
-        $this->assertEquals('error', $jobStatus->messages[0]->type);
+        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
+        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals('queued', $jobStatus->statuses[0]->status);
@@ -283,9 +283,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages);
-        $this->assertEquals('Test', $jobStatus->messages[0]->message);
-        $this->assertEquals('error', $jobStatus->messages[0]->type);
+        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
+        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals('queued', $jobStatus->statuses[0]->status);
@@ -308,7 +308,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatusRetry->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatusRetry->tags[1]->value);
 
-        $this->assertCount(0, $jobStatusRetry->messages);
+        $this->assertCount(0, $jobStatusRetry->messages()->orderBy('id')->get());
 
         $this->assertCount(1, $jobStatusRetry->statuses);
         $this->assertEquals('queued', $jobStatusRetry->statuses[0]->status);
@@ -358,9 +358,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages);
-        $this->assertEquals('Test', $jobStatus->messages[0]->message);
-        $this->assertEquals('error', $jobStatus->messages[0]->type);
+        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
+        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals('queued', $jobStatus->statuses[0]->status);
@@ -383,9 +383,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatusRetry->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatusRetry->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages);
-        $this->assertEquals('Test', $jobStatus->messages[0]->message);
-        $this->assertEquals('error', $jobStatus->messages[0]->type);
+        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
+        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatusRetry->statuses);
         $this->assertEquals('queued', $jobStatusRetry->statuses[0]->status);
@@ -433,9 +433,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages);
-        $this->assertEquals('Test', $jobStatus->messages[0]->message);
-        $this->assertEquals('error', $jobStatus->messages[0]->type);
+        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
+        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals('queued', $jobStatus->statuses[0]->status);
@@ -487,7 +487,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(0, $jobStatus->messages);
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals('queued', $jobStatus->statuses[0]->status);
@@ -509,7 +509,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatusRetry->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatusRetry->tags[1]->value);
 
-        $this->assertCount(0, $jobStatusRetry->messages);
+        $this->assertCount(0, $jobStatusRetry->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatusRetry->statuses);
         $this->assertEquals('queued', $jobStatusRetry->statuses[0]->status);
@@ -533,7 +533,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatusRetryNotRan->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatusRetryNotRan->tags[1]->value);
 
-        $this->assertCount(0, $jobStatusRetryNotRan->messages);
+        $this->assertCount(0, $jobStatusRetryNotRan->messages()->orderBy('id')->get());
 
         $this->assertCount(1, $jobStatusRetryNotRan->statuses);
         $this->assertEquals('queued', $jobStatusRetryNotRan->statuses[0]->status);

@@ -35,7 +35,7 @@ class JobStatusTest extends TestCase
         JobMessage::factory()->count(10)->create();
 
         $this->assertEquals(5, $status->messages()->count());
-        $retrieved = $status->messages;
+        $retrieved = $status->messages()->orderBy('id')->get();
         foreach ($messages as $message) {
             $this->assertTrue($message->is($retrieved->shift()));
         }
