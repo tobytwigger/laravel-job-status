@@ -41,7 +41,8 @@ class JobQueued extends BaseListener
                 'status' => Status::QUEUED,
                 'uuid' => null,
                 'job_id' => $event->id,
-                'connection_name' => $event->connectionName
+                'connection_name' => $event->connectionName,
+                'configuration' => $job->getJobStatusConfiguration()
             ]);
 
             $modifier = JobStatusModifier::forJobStatus($jobStatus);

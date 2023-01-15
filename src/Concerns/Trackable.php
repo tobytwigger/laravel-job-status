@@ -15,6 +15,11 @@ trait Trackable
 
     public ?JobStatus $jobStatus = null;
 
+    public function getJobStatusConfiguration(): array
+    {
+        return [];
+    }
+
     public static function search(array $tags = []): JobStatusSearcher
     {
         $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
