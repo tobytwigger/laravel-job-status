@@ -2,6 +2,8 @@
 
 namespace JobStatus;
 
+use JobStatus\Enums\MessageType;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobStatus;
 
@@ -25,7 +27,7 @@ class JobStatusModifier
         return $this->jobStatus;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(Status $status): static
     {
         if ($this->jobStatus !== null) {
             $this->jobStatus->status = $status;
@@ -44,12 +46,9 @@ class JobStatusModifier
         return $this;
     }
 
-    public function message(string $message, string $type = 'info'): static
+    public function message(string $message, MessageType $type = MessageType::INFO): static
     {
         if ($this->jobStatus !== null) {
-            if (!in_array($type, JobMessage::ALLOWED_TYPES)) {
-                throw new \Exception(sprintf('Cannot send a message of type %s from the job', $type));
-            }
             $this->jobStatus->messages()->create([
                 'message' => $message, 'type' => $type,
             ]);
@@ -65,7 +64,7 @@ class JobStatusModifier
     public function warningMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, 'warning');
+            $this->message($message, MessageType::WARNING);
         }
         return $this;
     }
@@ -73,7 +72,7 @@ class JobStatusModifier
     public function successMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, 'success');
+            $this->message($message, MessageType::SUCCESS);
         }
         return $this;
     }
@@ -81,7 +80,7 @@ class JobStatusModifier
     public function infoMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, 'info');
+            $this->message($message, MessageType::INFO);
         }
         return $this;
     }
@@ -89,7 +88,7 @@ class JobStatusModifier
     public function debugMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, 'debug');
+            $this->message($message, MessageType::DEBUG);
         }
         return $this;
     }
@@ -97,7 +96,7 @@ class JobStatusModifier
     public function errorMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, 'error');
+            $this->message($message, MessageType::ERROR);
         }
         return $this;
     }

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobStatusResult;
@@ -58,14 +59,15 @@ class ShowJobStatusSummaryCommand  extends Command
             }
         }
         $statuses = $search->get();
+
         $data = $statuses->jobs()->map(fn(SameJobList $sameJobList) => [
             $sameJobList->jobClass(),
             collect($sameJobList->tags())->reduce(fn($string, $value, $key) => sprintf('%s%s = %s', $string !== null ? $string . ', ' : '', $key, $value)),
-            $this->getStatusCount($sameJobList, 'queued'),
-            $this->getStatusCount($sameJobList, 'started'),
-            $this->getStatusCount($sameJobList, 'succeeded'),
-            $this->getStatusCount($sameJobList, 'failed'),
-            $this->getStatusCount($sameJobList, 'cancelled'),
+            $this->getStatusCount($sameJobList, Status::QUEUED),
+            $this->getStatusCount($sameJobList, Status::STARTED),
+            $this->getStatusCount($sameJobList, Status::SUCCEEDED),
+            $this->getStatusCount($sameJobList, Status::FAILED),
+            $this->getStatusCount($sameJobList, Status::CANCELLED),
         ]);
         $this->table([
             'Job', 'Tags', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
@@ -74,7 +76,7 @@ class ShowJobStatusSummaryCommand  extends Command
         return static::SUCCESS;
     }
 
-    private function getStatusCount(SameJobList $sameJobList, string $status): int
+    private function getStatusCount(SameJobList $sameJobList, Status $status): int
     {
         return $sameJobList->jobs()->filter(fn(JobStatusResult $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
     }

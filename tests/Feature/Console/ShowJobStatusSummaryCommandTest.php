@@ -11,11 +11,11 @@ class ShowJobStatusSummaryCommandTest extends TestCase
 {
 
     /** @test */
-    public function it_shows_the_right_data_for_one_job_type(){
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => 'queued']);
-        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => 'failed']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => 'started']);
-
+    public function it_shows_the_right_data_for_one_job_type()
+    {
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::QUEUED]);
+        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
         $response = $this->artisan('job-status:summary')
             ->assertOk()
@@ -29,11 +29,12 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_shows_multiple_tags(){
+    public function it_shows_multiple_tags()
+    {
         JobStatus::factory()
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valuetwo']), 'tags')
-            ->create(['job_class' => 'MyFirstJob', 'status' => 'queued']);
+            ->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::QUEUED]);
 
 
         $response = $this->artisan('job-status:summary')
@@ -48,13 +49,14 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_shows_multiple_jobs(){
+    public function it_shows_multiple_jobs()
+    {
         JobStatus::factory()
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valuetwo']), 'tags')
-            ->create(['job_class' => 'MyFirstJob', 'status' => 'queued']);
-        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => 'failed']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MySecondJob', 'status' => 'started']);
+            ->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::QUEUED]);
+        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
 
         $response = $this->artisan('job-status:summary')
@@ -69,9 +71,10 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_by_job_class(){
-        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => 'failed']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MySecondJob', 'status' => 'started']);
+    public function it_can_filter_by_job_class()
+    {
+        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
         $response = $this->artisan('job-status:summary --class=MySecondJob')
             ->assertOk()
@@ -85,9 +88,10 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_by_job_alias(){
-        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => 'failed']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => 'started']);
+    public function it_can_filter_by_job_alias()
+    {
+        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
 
         $response = $this->artisan('job-status:summary --alias=MySecondJob')
@@ -102,9 +106,10 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_by_tags(){
-        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => 'failed']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valuetwo']), 'tags')->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => 'started']);
+    public function it_can_filter_by_tags()
+    {
+        JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valuetwo']), 'tags')->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
 
         $response = $this->artisan('job-status:summary --tag=keyone:valuetwo')
@@ -119,15 +124,16 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_by_multiple_tags(){
+    public function it_can_filter_by_multiple_tags()
+    {
         JobStatus::factory()->count(20)
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valueone']), 'tags')
-            ->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => 'failed']);
+            ->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valuetwo']), 'tags')
-            ->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => 'started']);
+            ->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
 
         $response = $this->artisan('job-status:summary --tag=keyone:valueone --tag=keytwo:valuetwo')
@@ -142,13 +148,14 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_takes_the_final_tag_if_same_key_given_twice(){
+    public function it_takes_the_final_tag_if_same_key_given_twice()
+    {
         JobStatus::factory()->count(20)
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
-            ->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => 'failed']);
+            ->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valuetwo']), 'tags')
-            ->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => 'started']);
+            ->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
 
         $response = $this->artisan('job-status:summary --tag=keyone:valueone --tag=keyone:valuetwo')

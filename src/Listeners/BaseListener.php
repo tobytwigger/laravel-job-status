@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\Job;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Support\Facades\App;
 use JobStatus\Concerns\Trackable;
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
@@ -87,21 +88,18 @@ class BaseListener
                 'job_class' => get_class($command),
                 'job_alias' => $command->alias(),
                 'percentage' => 0,
-                'status' => 'queued',
+                'status' => Status::QUEUED,
                 'uuid' => $job->uuid(),
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId()
             ]);
-            JobStatusModifier::forJobStatus($jobStatus)->setStatus('queued');
+            JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
             foreach ($command->tags() as $key => $value) {
                 $jobStatus->tags()->create([
                     'key' => $key,
                     'value' => $value,
                 ]);
             }
-            // Need to create tags?!?! BUT Cant as we dont have a full job instance here
-        } elseif($jobStatus === null) {
-            dd('NEED TO CREATE HERE');
         }
 
         return $jobStatus;

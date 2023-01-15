@@ -26,16 +26,16 @@ class JobStatusModifierTest extends TestCase
 
     /** @test */
     public function the_status_can_be_set(){
-        $jobStatus = JobStatus::factory()->create(['status' => 'queued']);
+        $jobStatus = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
 
         $modifier = new JobStatusModifier($jobStatus);
 
-        $modifier->setStatus('started');
-        $this->assertEquals('started', $jobStatus->refresh()->status);
-        $modifier->setStatus('failed');
-        $this->assertEquals('failed', $jobStatus->refresh()->status);
-        $modifier->setStatus('cancelled');
-        $this->assertEquals('cancelled', $jobStatus->refresh()->status);
+        $modifier->setStatus(\JobStatus\Enums\Status::STARTED);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->refresh()->status);
+        $modifier->setStatus(\JobStatus\Enums\Status::FAILED);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->refresh()->status);
+        $modifier->setStatus(\JobStatus\Enums\Status::CANCELLED);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->refresh()->status);
     }
 
     /** @test */
@@ -84,7 +84,7 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'info',
+            'type' => \JobStatus\Enums\MessageType::INFO,
             'job_status_id' => $jobStatus->id
         ]);
     }
@@ -94,11 +94,11 @@ class JobStatusModifierTest extends TestCase
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
-        $modifier->message('Test 123', 'success');
+        $modifier->message('Test 123', \JobStatus\Enums\MessageType::SUCCESS);
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'success',
+            'type' => \JobStatus\Enums\MessageType::SUCCESS,
             'job_status_id' => $jobStatus->id
         ]);
     }
@@ -112,7 +112,7 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'info',
+            'type' => \JobStatus\Enums\MessageType::INFO,
             'job_status_id' => $jobStatus->id
         ]);
     }
@@ -126,7 +126,7 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'warning',
+            'type' => \JobStatus\Enums\MessageType::WARNING,
             'job_status_id' => $jobStatus->id
         ]);
     }
@@ -140,7 +140,7 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'success',
+            'type' => \JobStatus\Enums\MessageType::SUCCESS,
             'job_status_id' => $jobStatus->id
         ]);
     }
@@ -154,7 +154,7 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'info',
+            'type' => \JobStatus\Enums\MessageType::INFO,
             'job_status_id' => $jobStatus->id
         ]);
     }
@@ -168,7 +168,7 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'debug',
+            'type' => \JobStatus\Enums\MessageType::DEBUG,
             'job_status_id' => $jobStatus->id
         ]);
     }
@@ -182,7 +182,7 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
-            'type' => 'error',
+            'type' => \JobStatus\Enums\MessageType::ERROR,
             'job_status_id' => $jobStatus->id
         ]);
     }

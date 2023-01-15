@@ -24,7 +24,7 @@ class MessagesTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'This is a test message',
-            'type' => 'info'
+            'type' => \JobStatus\Enums\MessageType::INFO
         ]);
     }
 
@@ -49,13 +49,13 @@ class MessagesTest extends TestCase
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'This is a test message',
-            'type' => 'success'
+            'type' => \JobStatus\Enums\MessageType::SUCCESS
         ]);
     }
 
     public static function theMessageTypeCanBeSetCallback(JobFake $job)
     {
-        JobStatusModifier::forJobStatus($job->getJobStatus())->message('This is a test message', 'success');
+        JobStatusModifier::forJobStatus($job->getJobStatus())->message('This is a test message', \JobStatus\Enums\MessageType::SUCCESS);
     }
 
 }

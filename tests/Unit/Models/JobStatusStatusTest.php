@@ -14,7 +14,7 @@ class JobStatusStatusTest extends TestCase
         $jobStatus = JobStatus::factory()->create();
 
         $attributes = [
-            'status' => 'succeeded',
+            'status' => \JobStatus\Enums\Status::SUCCEEDED,
             'job_status_id' => $jobStatus->id,
         ];
 
