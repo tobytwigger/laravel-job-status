@@ -13,18 +13,18 @@ class JobSignalTest extends TestCase
     public function it_can_be_created()
     {
         $jobStatus = JobStatus::factory()->create();
-
+        $now = Carbon::now();
         $signal = JobSignal::factory()->create([
             'job_status_id' => $jobStatus->id,
             'signal' => 'my-signal',
-            'handled_at' => Carbon::now(),
+            'handled_at' => $now,
             'parameters' => ['one' => 'param'],
             'cancel_job' => false,
         ]);
         $this->assertDatabaseHas('job_status_job_signals', [
             'job_status_id' => $jobStatus->id,
             'signal' => 'my-signal',
-            'handled_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'handled_at' => $now->format('Y-m-d H:i:s'),
             'parameters' => json_encode(['one' => 'param']),
             'cancel_job' => 0,
         ]);
