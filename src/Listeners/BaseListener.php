@@ -76,7 +76,6 @@ class BaseListener
             $jobStatus = app(JobStatusRepository::class)->getLatestByUuid($job->uuid());
         }
         if($jobStatus === null && $job->getConnectionName() === 'sync') {
-            $command = null;
             if (str_starts_with($job->payload()['data']['command'], 'O:')) {
                 $command = unserialize($job->payload()['data']['command']);
             } elseif (App::bound(Encrypter::class)) {
@@ -91,7 +90,8 @@ class BaseListener
                 'status' => Status::QUEUED,
                 'uuid' => $job->uuid(),
                 'connection_name' => $job->getConnectionName(),
-                'job_id' => $job->getJobId()
+                'job_id' => $job->getJobId(),
+                'configuration' => $command->getJobStatusConfiguration()
             ]);
             JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
             foreach ($command->tags() as $key => $value) {

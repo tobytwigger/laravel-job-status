@@ -25,14 +25,15 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name'
+        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration'
     ];
 
     protected $casts = [
         'percentage' => 'float',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
-        'status' => Status::class
+        'status' => Status::class,
+        'configuration' => 'array'
     ];
 
     public function __construct(array $attributes = [])
@@ -204,4 +205,5 @@ class JobStatus extends Model
 
         return ($this->job_class)::canSeeTracking($user, $this->getTagsAsArray());
     }
+
 }
