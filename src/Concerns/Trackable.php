@@ -15,9 +15,12 @@ trait Trackable
 
     public ?JobStatus $jobStatus = null;
 
-    public static function search(): JobStatusSearcher
+    public static function search(array $tags = []): JobStatusSearcher
     {
         $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
+        foreach($tags as $key => $value) {
+            $search->whereTag($key, $value);
+        }
         return $search;
     }
 
@@ -34,11 +37,11 @@ trait Trackable
     {
         if (!isset($this->jobStatus)) {
             $this->jobStatus = null;
-            if($this->job?->uuid()) {
-                $this->jobStatus = app(JobStatusRepository::class)->getLatestByUuid($this->job->uuid());
-            }
-            if($this->jobStatus === null && $this->job?->getJobId()) {
+            if($this->job?->getJobId()) {
                 $this->jobStatus = app(JobStatusRepository::class)->getLatestByQueueReference($this->job->getJobId(), $this->job->getConnectionName());
+            }
+            if($this->jobStatus === null && $this->job?->uuid()) {
+                $this->jobStatus = app(JobStatusRepository::class)->getLatestByUuid($this->job->uuid());
             }
         }
 
