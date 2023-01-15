@@ -31,7 +31,7 @@ class SignalsTest extends TestCase
         } catch (\Exception $e) {
             $this->assertInstanceOf(JobCancelledException::class, $e);
             $this->assertNotNull(JobSignal::firstOrFail()->handled_at);
-            $this->assertEquals('cancelled', JobStatus::firstOrFail()->status);
+            $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, JobStatus::firstOrFail()->status);
             $caught = true;
         }
         $this->assertTrue($caught);

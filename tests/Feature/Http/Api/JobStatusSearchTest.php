@@ -30,7 +30,7 @@ class JobStatusSearchTest extends TestCase
         $jobStatus = JobStatus::factory()->has(
             JobStatusTag::factory(['key' => 'one', 'value' => 'yes']),
             'tags'
-        )->create(['job_alias' => 'mystatus', 'status' => 'started']);
+        )->create(['job_alias' => 'mystatus', 'status' => \JobStatus\Enums\Status::STARTED]);
         JobStatus::factory()->count(10)->create();
 
         $statusQuery = [
@@ -43,7 +43,7 @@ class JobStatusSearchTest extends TestCase
             'job_class' => $jobStatus->job_class,
             'job_alias' => $jobStatus->job_alias,
             'percentage' => $jobStatus->percentage,
-            'status' => $jobStatus->status,
+            'status' => $jobStatus->status->value,
             'created_at' => $jobStatus->created_at->format('Y-m-d H:i:s'),
             'lastMessage' => $jobStatus->last_message,
             'isFinished' => $jobStatus->isFinished(),

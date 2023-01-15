@@ -2,6 +2,8 @@
 
 namespace JobStatus\Search;
 
+use JobStatus\Enums\Status;
+
 class SearchParameters
 {
 
@@ -11,8 +13,14 @@ class SearchParameters
 
     private TagsSearchParameters $tagsSearchParameters;
 
+    /**
+     * @var array|Status[]
+     */
     private array $includeStatus = [];
 
+    /**
+     * @var array|Status[]
+     */
     private array $excludeStatus = [];
 
     public function __construct()

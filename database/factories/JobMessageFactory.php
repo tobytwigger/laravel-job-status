@@ -3,6 +3,7 @@
 namespace JobStatus\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use JobStatus\Enums\MessageType;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobStatus;
 
@@ -19,7 +20,7 @@ class JobMessageFactory extends Factory
     {
         return [
             'message' => $this->faker->sentence,
-            'type' => $this->faker->randomElement(['success', 'error', 'info', 'warning', 'debug']),
+            'type' => $this->faker->randomElement(MessageType::cases()),
             'job_status_id' => JobStatus::factory(),
         ];
     }

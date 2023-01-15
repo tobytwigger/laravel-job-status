@@ -6,6 +6,7 @@ use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Queue;
 use JobStatus\Concerns\Trackable;
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
@@ -34,14 +35,14 @@ class JobQueued extends BaseListener
             'job_class' => get_class($job),
             'job_alias' => $job->alias(),
             'percentage' => 0,
-            'status' => 'queued',
+            'status' => Status::QUEUED,
             'uuid' => null,
             'job_id' => $event->id,
             'connection_name' => $event->connectionName
         ]);
 
         $modifier = JobStatusModifier::forJobStatus($jobStatus);
-        $modifier->setStatus('queued');
+        $modifier->setStatus(Status::QUEUED);
 
         foreach ($job->tags() as $key => $value) {
             $jobStatus->tags()->create([

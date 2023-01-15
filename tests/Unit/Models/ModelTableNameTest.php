@@ -20,7 +20,7 @@ class ModelTableNameTest extends TestCase
     {
         $attributes = [
             'message' => 'My message 2',
-            'type' => 'info',
+            'type' => \JobStatus\Enums\MessageType::INFO,
             'job_status_id' => JobStatus::factory()->create()->id,
         ];
 

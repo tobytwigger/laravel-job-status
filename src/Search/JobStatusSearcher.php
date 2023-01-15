@@ -2,6 +2,7 @@
 
 namespace JobStatus\Search;
 
+use JobStatus\Enums\Status;
 use JobStatus\Search\Result\Results;
 
 class JobStatusSearcher
@@ -47,7 +48,7 @@ class JobStatusSearcher
     public function whereFinished(): JobStatusSearcher
     {
         $this->whereStatusIn([
-            'failed', 'succeeded', 'cancelled'
+            Status::FAILED, Status::SUCCEEDED, Status::CANCELLED
         ]);
         return $this;
     }
@@ -55,7 +56,7 @@ class JobStatusSearcher
     public function whereNotFinished(): JobStatusSearcher
     {
         $this->whereStatusIn([
-            'queued', 'started'
+            Status::QUEUED, Status::STARTED
         ]);
         return $this;
     }

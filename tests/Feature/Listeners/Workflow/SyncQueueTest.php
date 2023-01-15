@@ -31,7 +31,7 @@ class SyncQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         Assert::assertEquals(JobFake::class, $jobStatus->job_class);
         Assert::assertEquals('my-fake-job', $jobStatus->job_alias);
-        Assert::assertEquals('started', $jobStatus->status);
+        Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->status);
         Assert::assertEquals(0, $jobStatus->percentage);
         Assert::assertEquals('', $jobStatus->job_id);
         Assert::assertEquals('sync', $jobStatus->connection_name);
@@ -45,8 +45,8 @@ class SyncQueueTest extends TestCase
         Assert::assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         Assert::assertCount(2, $jobStatus->statuses);
-        Assert::assertEquals('queued', $jobStatus->statuses[0]->status);
-        Assert::assertEquals('started', $jobStatus->statuses[1]->status);
+        Assert::assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
     }
 
 
@@ -72,7 +72,7 @@ class SyncQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('succeeded', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals('', $jobStatus->job_id);
         $this->assertEquals('sync', $jobStatus->connection_name);
@@ -88,9 +88,9 @@ class SyncQueueTest extends TestCase
 
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('succeeded', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->statuses[2]->status);
     }
 
 
@@ -120,7 +120,7 @@ class SyncQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('cancelled', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals('', $jobStatus->job_id);
         $this->assertEquals('sync', $jobStatus->connection_name);
@@ -134,13 +134,13 @@ class SyncQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('warning', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('cancelled', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
     }
 
 
@@ -180,7 +180,7 @@ class SyncQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('cancelled', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals('', $jobStatus->job_id);
         $this->assertEquals('sync', $jobStatus->connection_name);
@@ -194,13 +194,13 @@ class SyncQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('warning', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('cancelled', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
     }
 
     static bool $calledCancelledCustomSignal = false;
@@ -250,7 +250,7 @@ class SyncQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('failed', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals('', $jobStatus->job_id);
         $this->assertEquals('sync', $jobStatus->connection_name);
@@ -264,12 +264,12 @@ class SyncQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('failed', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
     }
 
 
@@ -308,7 +308,7 @@ class SyncQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('failed', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals('', $jobStatus->job_id);
         $this->assertEquals('sync', $jobStatus->connection_name);
@@ -322,12 +322,12 @@ class SyncQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('failed', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
     }
 
 

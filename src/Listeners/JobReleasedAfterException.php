@@ -2,6 +2,7 @@
 
 namespace JobStatus\Listeners;
 
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 
@@ -27,14 +28,14 @@ class JobReleasedAfterException extends BaseListener
             'job_class' => $modifier->getJobStatus()?->job_class,
             'job_alias' => $modifier->getJobStatus()?->job_alias,
             'percentage' => 0,
-            'status' => 'queued',
+            'status' => Status::QUEUED,
             'uuid' => $event->job->uuid(),
             'connection_name' => $event->job->getConnectionName(),
             'job_id' => $event->job->getJobId()
         ]);
 
-        JobStatusModifier::forJobStatus($jobStatus)->setStatus('queued');
-        
+        JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
+
         foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
             $jobStatus->tags()->create([
                 'key' => $tag->key,

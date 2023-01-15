@@ -30,7 +30,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         Assert::assertEquals(JobFake::class, $jobStatus->job_class);
         Assert::assertEquals('my-fake-job', $jobStatus->job_alias);
-        Assert::assertEquals('started', $jobStatus->status);
+        Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->status);
         Assert::assertEquals(0, $jobStatus->percentage);
         Assert::assertEquals(1, $jobStatus->job_id);
         Assert::assertEquals('database', $jobStatus->connection_name);
@@ -44,7 +44,7 @@ class DatabaseQueueTest extends TestCase
         Assert::assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         Assert::assertCount(1, $jobStatus->statuses);
-        Assert::assertEquals('started', $jobStatus->statuses[0]->status);
+        Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[0]->status);
     }
 
 
@@ -70,7 +70,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('succeeded', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -86,9 +86,9 @@ class DatabaseQueueTest extends TestCase
 
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('succeeded', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->statuses[2]->status);
     }
 
 
@@ -109,7 +109,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('cancelled', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -123,13 +123,13 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('warning', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('cancelled', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
     }
 
 
@@ -161,7 +161,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('cancelled', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -175,13 +175,13 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('warning', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('cancelled', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
     }
 
     static bool $calledCancelledCustomSignal = false;
@@ -221,7 +221,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('failed', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -235,12 +235,12 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('failed', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
     }
 
 
@@ -271,7 +271,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('failed', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -285,18 +285,18 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('failed', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
 
 
         $jobStatusRetry = JobStatus::all()[1];
         $this->assertEquals(JobFake::class, $jobStatusRetry->job_class);
         $this->assertEquals('my-fake-job', $jobStatusRetry->job_alias);
-        $this->assertEquals('queued', $jobStatusRetry->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->status);
         $this->assertEquals(0, $jobStatusRetry->percentage);
         $this->assertEquals(1, $jobStatusRetry->job_id); // has not yet been changed to 2 since has not ran
         $this->assertEquals('database', $jobStatusRetry->connection_name);
@@ -311,7 +311,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertCount(0, $jobStatusRetry->messages()->orderBy('id')->get());
 
         $this->assertCount(1, $jobStatusRetry->statuses);
-        $this->assertEquals('queued', $jobStatusRetry->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->statuses[0]->status);
     }
 
 
@@ -346,7 +346,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('failed', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -360,18 +360,18 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('failed', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
 
 
         $jobStatusRetry = JobStatus::all()[1];
         $this->assertEquals(JobFake::class, $jobStatusRetry->job_class);
         $this->assertEquals('my-fake-job', $jobStatusRetry->job_alias);
-        $this->assertEquals('failed', $jobStatusRetry->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatusRetry->status);
         $this->assertEquals(100, $jobStatusRetry->percentage);
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
@@ -385,12 +385,12 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatusRetry->statuses);
-        $this->assertEquals('queued', $jobStatusRetry->statuses[0]->status);
-        $this->assertEquals('started', $jobStatusRetry->statuses[1]->status);
-        $this->assertEquals('failed', $jobStatusRetry->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatusRetry->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatusRetry->statuses[2]->status);
     }
 
 
@@ -421,7 +421,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('failed', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -435,12 +435,12 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
         $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals('error', $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('failed', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
     }
 
 
@@ -475,7 +475,7 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
         $this->assertEquals('my-fake-job', $jobStatus->job_alias);
-        $this->assertEquals('succeeded', $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -490,14 +490,14 @@ class DatabaseQueueTest extends TestCase
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
-        $this->assertEquals('queued', $jobStatus->statuses[0]->status);
-        $this->assertEquals('started', $jobStatus->statuses[1]->status);
-        $this->assertEquals('succeeded', $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->statuses[2]->status);
 
         $jobStatusRetry = JobStatus::all()[1];
         $this->assertEquals(JobFake::class, $jobStatusRetry->job_class);
         $this->assertEquals('my-fake-job', $jobStatusRetry->job_alias);
-        $this->assertEquals('succeeded', $jobStatusRetry->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatusRetry->status);
         $this->assertEquals(100, $jobStatusRetry->percentage);
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
@@ -512,16 +512,16 @@ class DatabaseQueueTest extends TestCase
         $this->assertCount(0, $jobStatusRetry->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatusRetry->statuses);
-        $this->assertEquals('queued', $jobStatusRetry->statuses[0]->status);
-        $this->assertEquals('started', $jobStatusRetry->statuses[1]->status);
-        $this->assertEquals('succeeded', $jobStatusRetry->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatusRetry->statuses[1]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatusRetry->statuses[2]->status);
 
 
 
         $jobStatusRetryNotRan = JobStatus::all()[2];
         $this->assertEquals(JobFake::class, $jobStatusRetryNotRan->job_class);
         $this->assertEquals('my-fake-job', $jobStatusRetryNotRan->job_alias);
-        $this->assertEquals('queued', $jobStatusRetryNotRan->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetryNotRan->status);
         $this->assertEquals(0, $jobStatusRetryNotRan->percentage);
         $this->assertEquals(2, $jobStatusRetryNotRan->job_id);
         $this->assertEquals('database', $jobStatusRetryNotRan->connection_name);
@@ -536,7 +536,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertCount(0, $jobStatusRetryNotRan->messages()->orderBy('id')->get());
 
         $this->assertCount(1, $jobStatusRetryNotRan->statuses);
-        $this->assertEquals('queued', $jobStatusRetryNotRan->statuses[0]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetryNotRan->statuses[0]->status);
     }
 
 

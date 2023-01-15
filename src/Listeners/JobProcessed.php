@@ -3,6 +3,7 @@
 namespace JobStatus\Listeners;
 
 use Composer\XdebugHandler\Process;
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 
@@ -32,9 +33,9 @@ class JobProcessed extends BaseListener
         if($modifier->getJobStatus()->isRunning()) {
             // If the job is manually released, it's been retried
             if($event->job->hasFailed()) {
-                $modifier->setStatus('failed');
+                $modifier->setStatus(Status::FAILED);
             } else {
-                $modifier->setStatus('succeeded');
+                $modifier->setStatus(Status::SUCCEEDED);
             }
         }
 
@@ -43,13 +44,13 @@ class JobProcessed extends BaseListener
                 'job_class' => $modifier->getJobStatus()?->job_class,
                 'job_alias' => $modifier->getJobStatus()?->job_alias,
                 'percentage' => 0,
-                'status' => 'queued',
+                'status' => Status::QUEUED,
                 'uuid' => $event->job->uuid(),
                 'connection_name' => $event->job->getConnectionName(),
                 'job_id' => $event->job->getJobId()
             ]);
 
-            JobStatusModifier::forJobStatus($jobStatus)->setStatus('queued');
+            JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
 
             foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
                 $jobStatus->tags()->create([
