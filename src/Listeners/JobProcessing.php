@@ -20,16 +20,10 @@ class JobProcessing extends BaseListener
     public function handle(\Illuminate\Queue\Events\JobProcessing $event)
     {
         $modifier = $this->getJobStatusModifier($event->job);
-        if($modifier === null) {
-            $modifier = new JobStatusModifier(JobStatus::create([
-                'job_class' => get_class($event->job),
-                'job_alias' => $event->job->alias(),
-                'percentage' => 0,
-                'status' => 'queued',
-                'uuid' => $event->id
-            ]));
+
+        if($modifier !== null) {
+            $modifier->setStatus('started');
         }
-        $modifier->setStatus('started');
     }
 
 }

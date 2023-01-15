@@ -22,7 +22,9 @@ class JobStatusFactory extends Factory
             'job_class' => JobFake::class,
             'job_alias' => $this->faker->word,
             'percentage' => $this->faker->numberBetween(0, 100),
-            'uuid' => Str::uuid()
+            'uuid' => Str::uuid(),
+            'job_id' => $this->faker->numberBetween(1, 10000000),
+            'connection_name' => 'database'
         ];
     }
 }

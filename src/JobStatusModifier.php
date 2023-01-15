@@ -10,6 +10,11 @@ class JobStatusModifier
 
     private ?JobStatus $jobStatus;
 
+    public static function forJobStatus(?JobStatus $jobStatus): JobStatusModifier
+    {
+        return new JobStatusModifier($jobStatus);
+    }
+
     public function __construct(?JobStatus $jobStatus = null)
     {
         $this->jobStatus = $jobStatus;
@@ -54,10 +59,7 @@ class JobStatusModifier
 
     public function line(string $message): static
     {
-        if ($this->jobStatus !== null) {
-            $this->message($message, 'info');
-        }
-        return $this;
+        return $this->infoMessage($message);
     }
 
     public function warningMessage(string $message): static
@@ -96,6 +98,44 @@ class JobStatusModifier
     {
         if ($this->jobStatus !== null) {
             $this->message($message, 'error');
+        }
+        return $this;
+    }
+
+    public function cancel(array $parameters = []): static
+    {
+        if ($this->jobStatus !== null) {
+            return $this->sendSignal('cancel', $parameters, true);
+        }
+        return $this;
+    }
+
+    public function sendSignal(string $signal, array $parameters = [], bool $cancel = false): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->signals()->create([
+                'signal' => $signal,
+                'cancel_job' => $cancel,
+                'parameters' => $parameters,
+            ]);
+        }
+        return $this;
+    }
+
+    public function setUuid(?string $uuid): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->uuid = $uuid;
+            $this->jobStatus->save();
+        }
+        return $this;
+    }
+
+    public function setJobId(string|int $jobId): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->job_id = $jobId;
+            $this->jobStatus->save();
         }
         return $this;
     }

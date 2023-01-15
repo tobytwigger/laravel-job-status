@@ -61,4 +61,19 @@ jobs:
                 run: ./vendor/bin/phpstan analyze -c phpstan.neon
 
             -   name: Run test suite
-                run: composer run-script test
+                run: ./vendor/bin/paratest --coverage-clover ci/phpunit/clover.xml --coverage-html ci/phpunit/html
+
+            -   name: Upload test coverage
+                uses: actions/upload-artifact@v3
+                with:
+                    name: test-coverage
+                    path: ci/phpunit/html
+
+            -   name: Check test coverage
+                uses: johanvanhelden/gha-clover-test-coverage-check@v1
+                id: coverage
+                with:
+                    percentage: "50"
+                    filename: ci/phpunit/clover.xml
+                    rounded-precision: "0"
+                    exit: false

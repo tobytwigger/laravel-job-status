@@ -3,6 +3,8 @@
 namespace JobStatus\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Queue\Console\TableCommand;
+use Illuminate\Support\Facades\Artisan;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Tests\fakes\JobFake;
 use Prophecy\PhpUnit\ProphecyTrait;

@@ -2,20 +2,25 @@
 
 namespace JobStatus\Concerns;
 
+use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\JobStatusModifier;
+use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\SameJobList;
 
 trait Trackable
 {
-    use InteractsWithSignals;
+    use InteractsWithSignals, InteractsWithQueue;
 
     public ?JobStatus $jobStatus = null;
 
-    public static function search(): JobStatusSearcher
+    public static function search(array $tags = []): JobStatusSearcher
     {
         $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
+        foreach($tags as $key => $value) {
+            $search->whereTag($key, $value);
+        }
         return $search;
     }
 
@@ -31,7 +36,13 @@ trait Trackable
     public function getJobStatus(): ?JobStatus
     {
         if (!isset($this->jobStatus)) {
-            $this->jobStatus = JobStatus::where('uuid', $this->job->uuid())->latest()->orderBy('id', 'DESC')->first();
+            $this->jobStatus = null;
+            if($this->job?->getJobId()) {
+                $this->jobStatus = app(JobStatusRepository::class)->getLatestByQueueReference($this->job->getJobId(), $this->job->getConnectionName());
+            }
+            if($this->jobStatus === null && $this->job?->uuid()) {
+                $this->jobStatus = app(JobStatusRepository::class)->getLatestByUuid($this->job->uuid());
+            }
         }
 
         return $this->jobStatus;

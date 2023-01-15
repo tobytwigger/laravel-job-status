@@ -23,7 +23,7 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'percentage', 'status', 'uuid'
+        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name'
     ];
 
     protected $casts = [
@@ -185,20 +185,6 @@ class JobStatus extends Model
         return $this->percentage ?? 0;
     }
 
-    public function cancel()
-    {
-        $this->sendSignal('cancel', cancel: true);
-    }
-
-    public function sendSignal(string $signal, array $parameters = [], bool $cancel = false)
-    {
-        $this->signals()->create([
-            'signal' => $signal,
-            'parameters' => $parameters,
-            'cancel_job' => $cancel,
-        ]);
-    }
-
     public static function newFactory()
     {
         return JobStatusFactory::new();
@@ -214,11 +200,5 @@ class JobStatus extends Model
         }
 
         return ($this->job_class)::canSeeTracking($user, $this->getTagsAsArray());
-    }
-
-    public function setStatus(string $status)
-    {
-        $this->status = $status;
-        $this->save();
     }
 }

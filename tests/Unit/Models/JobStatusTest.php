@@ -35,7 +35,7 @@ class JobStatusTest extends TestCase
         JobMessage::factory()->count(10)->create();
 
         $this->assertEquals(5, $status->messages()->count());
-        $retrieved = $status->messages;
+        $retrieved = $status->messages()->orderBy('id')->get();
         foreach ($messages as $message) {
             $this->assertTrue($message->is($retrieved->shift()));
         }
@@ -304,52 +304,6 @@ class JobStatusTest extends TestCase
         $jobStatus = JobStatus::factory()->create(['percentage' => 55.7]);
 
         $this->assertEquals(55.7, $jobStatus->getPercentage());
-    }
-
-    /** @test */
-    public function cancel_sends_a_cancel_signal()
-    {
-        $jobStatus = JobStatus::factory()->create();
-        $jobStatus->cancel();
-
-        $this->assertDatabaseHas('job_status_job_signals', [
-            'job_status_id' => $jobStatus->id,
-            'signal' => 'cancel',
-            'handled_at' => null,
-            'cancel_job' => 1,
-        ]);
-    }
-
-    /** @test */
-    public function send_signal_creates_a_canceling_signal()
-    {
-        /** @var JobStatus $jobStatus */
-        $jobStatus = JobStatus::factory()->create();
-        $jobStatus->sendSignal('custom-signal', ['param' => 'val'], true);
-
-        $this->assertDatabaseHas('job_status_job_signals', [
-            'job_status_id' => $jobStatus->id,
-            'signal' => 'custom-signal',
-            'parameters' => json_encode(['param' => 'val']),
-            'handled_at' => null,
-            'cancel_job' => 1,
-        ]);
-    }
-
-    /** @test */
-    public function send_signal_creates_a_non_cancelling_signal()
-    {
-        /** @var JobStatus $jobStatus */
-        $jobStatus = JobStatus::factory()->create();
-        $jobStatus->sendSignal('user_updated', ['param' => 'val2'], false);
-
-        $this->assertDatabaseHas('job_status_job_signals', [
-            'job_status_id' => $jobStatus->id,
-            'signal' => 'user_updated',
-            'parameters' => json_encode(['param' => 'val2']),
-            'handled_at' => null,
-            'cancel_job' => 0,
-        ]);
     }
 
     /** @test */
