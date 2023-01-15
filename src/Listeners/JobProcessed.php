@@ -25,42 +25,47 @@ class JobProcessed extends BaseListener
      */
     public function handle(\Illuminate\Queue\Events\JobProcessed $event)
     {
-        $modifier = $this->getJobStatusModifier($event->job);
-        if($modifier === null) {
-            return;
-        }
+        if($this->isTrackingEnabled()) {
 
-        if($modifier->getJobStatus()->isRunning()) {
-            // If the job is manually released, it's been retried
-            if($event->job->hasFailed()) {
-                $modifier->setStatus(Status::FAILED);
-            } else {
-                $modifier->setStatus(Status::SUCCEEDED);
+
+            $modifier = $this->getJobStatusModifier($event->job);
+            if ($modifier === null) {
+                return;
             }
-        }
 
-        if($event->job->isReleased()) {
-            $jobStatus = JobStatus::create([
-                'job_class' => $modifier->getJobStatus()?->job_class,
-                'job_alias' => $modifier->getJobStatus()?->job_alias,
-                'percentage' => 0,
-                'status' => Status::QUEUED,
-                'uuid' => $event->job->uuid(),
-                'connection_name' => $event->job->getConnectionName(),
-                'job_id' => $event->job->getJobId()
-            ]);
+            if ($modifier->getJobStatus()->isRunning()) {
+                // If the job is manually released, it's been retried
+                if ($event->job->hasFailed()) {
+                    $modifier->setStatus(Status::FAILED);
+                } else {
+                    $modifier->setStatus(Status::SUCCEEDED);
+                }
+            }
 
-            JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
-
-            foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
-                $jobStatus->tags()->create([
-                    'key' => $tag->key,
-                    'value' => $tag->value,
+            if ($event->job->isReleased()) {
+                $jobStatus = JobStatus::create([
+                    'job_class' => $modifier->getJobStatus()?->job_class,
+                    'job_alias' => $modifier->getJobStatus()?->job_alias,
+                    'percentage' => 0,
+                    'status' => Status::QUEUED,
+                    'uuid' => $event->job->uuid(),
+                    'connection_name' => $event->job->getConnectionName(),
+                    'job_id' => $event->job->getJobId()
                 ]);
-            }
-        }
 
-        $modifier->setPercentage(100);
+                JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
+
+                foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
+                    $jobStatus->tags()->create([
+                        'key' => $tag->key,
+                        'value' => $tag->value,
+                    ]);
+                }
+            }
+
+            $modifier->setPercentage(100);
+
+        }
     }
 
 }

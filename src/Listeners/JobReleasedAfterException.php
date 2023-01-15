@@ -20,27 +20,30 @@ class JobReleasedAfterException extends BaseListener
      */
     public function handle(\Illuminate\Queue\Events\JobReleasedAfterException $event)
     {
-        $modifier = $this->getJobStatusModifier($event->job);
-        if($modifier === null) {
-            return;
-        }
-        $jobStatus = JobStatus::create([
-            'job_class' => $modifier->getJobStatus()?->job_class,
-            'job_alias' => $modifier->getJobStatus()?->job_alias,
-            'percentage' => 0,
-            'status' => Status::QUEUED,
-            'uuid' => $event->job->uuid(),
-            'connection_name' => $event->job->getConnectionName(),
-            'job_id' => $event->job->getJobId()
-        ]);
+        if($this->isTrackingEnabled()) {
 
-        JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
-
-        foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
-            $jobStatus->tags()->create([
-                'key' => $tag->key,
-                'value' => $tag->value,
+            $modifier = $this->getJobStatusModifier($event->job);
+            if ($modifier === null) {
+                return;
+            }
+            $jobStatus = JobStatus::create([
+                'job_class' => $modifier->getJobStatus()?->job_class,
+                'job_alias' => $modifier->getJobStatus()?->job_alias,
+                'percentage' => 0,
+                'status' => Status::QUEUED,
+                'uuid' => $event->job->uuid(),
+                'connection_name' => $event->job->getConnectionName(),
+                'job_id' => $event->job->getJobId()
             ]);
+
+            JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
+
+            foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
+                $jobStatus->tags()->create([
+                    'key' => $tag->key,
+                    'value' => $tag->value,
+                ]);
+            }
         }
     }
 

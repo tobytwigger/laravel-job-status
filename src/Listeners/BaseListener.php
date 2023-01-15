@@ -105,4 +105,9 @@ class BaseListener
         return $jobStatus;
     }
 
+    protected function isTrackingEnabled()
+    {
+        return config('laravel-job-status.enabled', true);
+    }
+
 }

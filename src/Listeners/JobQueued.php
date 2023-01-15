@@ -25,34 +25,38 @@ class JobQueued extends BaseListener
      */
     public function handle(\Illuminate\Queue\Events\JobQueued $event)
     {
-        $job = $event->job;
+        if($this->isTrackingEnabled()) {
 
-        if($this->validateJob($job) === false) {
-            return true;
-        }
 
-        $jobStatus = JobStatus::create([
-            'job_class' => get_class($job),
-            'job_alias' => $job->alias(),
-            'percentage' => 0,
-            'status' => Status::QUEUED,
-            'uuid' => null,
-            'job_id' => $event->id,
-            'connection_name' => $event->connectionName
-        ]);
+            $job = $event->job;
 
-        $modifier = JobStatusModifier::forJobStatus($jobStatus);
-        $modifier->setStatus(Status::QUEUED);
+            if ($this->validateJob($job) === false) {
+                return true;
+            }
 
-        foreach ($job->tags() as $key => $value) {
-            $jobStatus->tags()->create([
-                'key' => $key,
-                'value' => $value,
+            $jobStatus = JobStatus::create([
+                'job_class' => get_class($job),
+                'job_alias' => $job->alias(),
+                'percentage' => 0,
+                'status' => Status::QUEUED,
+                'uuid' => null,
+                'job_id' => $event->id,
+                'connection_name' => $event->connectionName
             ]);
-        }
 
-        if($job->job) {
-            $this->checkJobUpToDate($modifier, $job->job);
+            $modifier = JobStatusModifier::forJobStatus($jobStatus);
+            $modifier->setStatus(Status::QUEUED);
+
+            foreach ($job->tags() as $key => $value) {
+                $jobStatus->tags()->create([
+                    'key' => $key,
+                    'value' => $value,
+                ]);
+            }
+
+            if ($job->job) {
+                $this->checkJobUpToDate($modifier, $job->job);
+            }
         }
     }
 
