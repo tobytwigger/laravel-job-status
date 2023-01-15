@@ -154,4 +154,5 @@ class JobSignalStoreTest extends TestCase
 
         $response->assertStatus(500);
     }
+
 }

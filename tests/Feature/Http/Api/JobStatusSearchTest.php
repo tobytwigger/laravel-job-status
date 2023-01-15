@@ -3,6 +3,7 @@
 namespace JobStatus\Tests\Feature\Http\Api;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Tests\fakes\JobFake;
@@ -148,4 +149,5 @@ class JobStatusSearchTest extends TestCase
 
         $response->assertStatus(500);
     }
+
 }

@@ -20,10 +20,13 @@ class JobProcessing extends BaseListener
      */
     public function handle(\Illuminate\Queue\Events\JobProcessing $event)
     {
-        $modifier = $this->getJobStatusModifier($event->job);
+        if($this->isTrackingEnabled()) {
 
-        if($modifier !== null) {
-            $modifier->setStatus(Status::STARTED);
+            $modifier = $this->getJobStatusModifier($event->job);
+
+            if ($modifier !== null) {
+                $modifier->setStatus(Status::STARTED);
+            }
         }
     }
 

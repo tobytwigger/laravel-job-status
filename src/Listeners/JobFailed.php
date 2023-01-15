@@ -24,25 +24,27 @@ class JobFailed extends BaseListener
 
     public function handle(\Illuminate\Queue\Events\JobFailed $event)
     {
-        $modifier = $this->getJobStatusModifier($event->job);
+        if($this->isTrackingEnabled()) {
 
-        if($modifier === null) {
-            return true;
-        }
+            $modifier = $this->getJobStatusModifier($event->job);
 
-        $modifier->setPercentage(100);
+            if($modifier === null) {
+                return true;
+            }
 
-        // This is only the case if JobExceptionOccurred has not been ran
-        if($modifier->getJobStatus()->status !== Status::FAILED && $modifier->getJobStatus()->status !== Status::CANCELLED) {
-            if($event->exception instanceof JobCancelledException) {
-                $modifier->setStatus(Status::CANCELLED);
-                $modifier->warningMessage('The job has been cancelled');
-            } else {
-                $modifier->setStatus(Status::FAILED);
-                $modifier->errorMessage($event->exception->getMessage());
+            $modifier->setPercentage(100);
+
+            // This is only the case if JobExceptionOccurred has not been ran
+            if($modifier->getJobStatus()->status !== Status::FAILED && $modifier->getJobStatus()->status !== Status::CANCELLED) {
+                if($event->exception instanceof JobCancelledException) {
+                    $modifier->setStatus(Status::CANCELLED);
+                    $modifier->warningMessage('The job has been cancelled');
+                } else {
+                    $modifier->setStatus(Status::FAILED);
+                    $modifier->errorMessage($event->exception->getMessage());
+                }
             }
         }
-
     }
 
 }
