@@ -63,6 +63,12 @@ jobs:
             -   name: Run test suite
                 run: ./vendor/bin/paratest --coverage-clover ci/phpunit/clover.xml
 
+            -   name: Upload test coverage
+                uses: actions/upload-artifact@v3
+                with:
+                    name: test-coverage
+                    path: ci/phpunit/clover.xml
+
             -   name: Check test coverage
                 uses: johanvanhelden/gha-clover-test-coverage-check@v1
                 id: coverage
