@@ -7,8 +7,8 @@ use Illuminate\Support\Collection;
 use JobStatus\JobStatusCollection;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
-use JobStatus\Search\Result\JobStatusResult;
-use JobStatus\Search\Result\SameJobList;
+use JobStatus\Search\Result\JobRunResult;
+use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Search\Result\SameJobTypeList;
 use JobStatus\Search\Result\Results;
 
@@ -27,13 +27,12 @@ class ResultsFactory
             foreach($sameJobs as $tags => $sameJob) {
                 $sameJobGrouped = $sameJob->groupBy('uuid')->sortBy('created_at')->sortBy('id', descending: true);
                 $jobStatuses = $sameJobGrouped->map(function(JobStatusCollection $jobs) {
-                    return $jobs->reverse()->reduce(
-                        fn(?JobStatusResult $result, JobStatus $jobStatus) => new JobStatusResult($jobStatus, $result)
+                    return $jobs->reduce(
+                        fn(?JobRunResult $result, JobStatus $jobStatus) => new JobRunResult($jobStatus, $result)
                     );
-                })->values();
-
+                })->sortBy(fn(JobRunResult $result) => $result->jobStatus()->created_at)->values();
                 $sameJobType->push(
-                    new SameJobList($jobClass, json_decode($tags, true), $jobStatuses)
+                    new TrackedJob($jobClass, json_decode($tags, true), $jobStatuses)
                 );
             }
         }

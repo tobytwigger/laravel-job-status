@@ -6,13 +6,13 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JobStatus\Models\JobStatus;
 
-class JobStatusResult implements Arrayable, Jsonable
+class JobRunResult implements Arrayable, Jsonable
 {
 
     private JobStatus $jobStatus;
-    private ?JobStatusResult $parent;
+    private ?JobRunResult $parent;
 
-    public function __construct(JobStatus $jobStatus, ?JobStatusResult $parent = null)
+    public function __construct(JobStatus $jobStatus, ?JobRunResult $parent = null)
     {
         $this->jobStatus = $jobStatus;
         $this->parent = $parent;
@@ -24,9 +24,9 @@ class JobStatusResult implements Arrayable, Jsonable
     }
 
     /**
-     * @return JobStatusResult
+     * @return JobRunResult
      */
-    public function parent(): ?JobStatusResult
+    public function parent(): ?JobRunResult
     {
         return $this->parent;
     }

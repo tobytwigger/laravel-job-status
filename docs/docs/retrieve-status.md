@@ -1,25 +1,68 @@
-# Job Status
+# Finding Jobs
 > How to retrieve information about the status of running jobs.
 
-Although our frontend package takes care of this for you, you can make use of the job tracking in your backend too.
+Each job has a corresponding database entry containing the tracking information. 
+
+You can display information about the status of a job, any messages that it's sent, and how many times it's previously ran by searching the database.
 
 ## Retrieving a status model
 
-The status model is an eloquent model which represents a job. There is one per job, and it holds info about the messages sent, the job status, runtime etc.
+Use the `\JobStatus\Search\JobStatusSearcher` class to search for a status model.
 
-### Status model scopes
+```php
+<?php
 
-You can retrieve the `JobStatus` model as you would a normal Eloquent model, but we've added a few extra scopes and methods to make it easier for you.
+$results = \JobStatus\Search\JobStatusSearcher::query()
+    ->whereJobAlias('process-podcast')
+    ->whereTag('podcast', 5)
+    ->get();
+// or
+$results = ProcessPodcast::search(['podcast' => 5])->get();
+```
 
-- `forJob(Job::class)`: Limit the job statuses to those of the given job type
-- `forJobAlias('job-alias')`: Limit the job statuses to those of the given job alias. This is useful for referencing jobs in your frontend.
-- `whereTag('election', '=', $electionId)`: Limit the job statuses to those with the given tag. The value of the tag must match.
-- `whereStatus(JobStatus::SUCCESS) or whereSuccess()`: Limit the job statuses to those of status success. Similar for all statuses
-- `whereNotStatus(JobStatus::SUCCESS) or whereNotSuccess()`: Limit the job statuses to those without the given status. Can also pass in an array.
+### Filtering results
+
+There are additional queries you can chain onto the searcher to further filter results.
+
+- `whereJobClass($jobClass)` - Filter by the job class (.e.g `\App\Jobs\ProcessPodcast`)
+- `whereJobAlias($jobAlias)` - Filter by the job alias
+- `whereTag($key, $value)` - Filter by a tag
+- `whereTags(['key' => 'value'])` - Filter by multiple tags in a key-value array
+- `whereFinished` - Filter to jobs that have finished running
+- `whereNotFinished` - Filter to jobs that are running or queued
+- `whereStatusIn([\JobStatus\Enums\Status::SUCCEEDED])` - Filter to jobs with the given statuses
+- `whereStatusIn([\JobStatus\Enums\Status::FAILED])` - Filter to jobs without the given statuses
+
+### Understanding the results
+
+#### Job types
+
+Searches may contain different jobs if you do not limit them by class or alias or tags differ. The results are an instance of `\JobStatus\Search\Result`, which contains all the different jobs.
+
+`$result = \JobStatus\Search\JobStatusSearcher::query()->get()`
+
+When getting results you will generally either want to get a summary of the job, or see the history or status of a specific run.
+
+To see all the different jobs in the query and summarise them, you can call `$result->jobs()`. This will give you an array of `TrackedJob` classes.
+
+If you have specified enough filters to only return one job type, simply calling `$result->first()` will get you the first `TrackedJob`.
+
+#### Tracked Jobs
+
+The tracked job has information about the job and a list of all past runs.
+
+These runs can be accessed with `$trackedJob->runs()`, or the lastest run with `$trackedJob->latest()`.
+
+#### Job Run
+
+A job run will give you access to the **status model** through `jobStatus()`, which then has more information about signals, messages, the job itself etc.
+
+You can also access the parent job with `hasParent()` or `parent()`. This will either be false/null, or will return the job that started this job. This is the case when a job is retried - if the parent job failed, it dispatched the child and can be accessed with `parent()`.
+
 
 ## Using the status model
 
-A job has one of the following statuses
+A job has one of the following statuses (in the enum `\App\Enums\Status`)
 - queued
 - started
 - succeeded
@@ -35,14 +78,3 @@ Methods on the single status model:
 - `hasFinished()`: True if the job is no longer running.
 
 There are more functions covered later, to do with [signals](./signals.md) and [messages](./messages.md).
-
-## Collections
-
-If you retrieve a collection of status models, we provide some extra useful functions for interacting with them.
-
-- `countFinished()`: Count how many jobs have finished.
-- `countSuccessful()`: Count how many jobs were successful.
-- `countRunning()`: Count how many jobs are still running.
-- `countNotFinished()`: Count how many jobs are queued or running.
-
-

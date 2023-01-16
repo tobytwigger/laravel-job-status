@@ -14,9 +14,4 @@ enum Status: string
     case FAILED = 'failed';
 
     case SUCCEEDED = 'succeeded';
-
-    public static function isFinished(string $getStatus): bool
-    {
-
-    }
 }

@@ -4,16 +4,16 @@ repo_url: https://github.com/tobytwigger/laravel-job-status
 
 nav:
     -   Getting Started: 'index.md'
-    -   Enable tracking: 'tracking-jobs.md'
-    -   Using tracking: 'retrieve-status.md'
-    -   Tracking tools:
+    -   Enable Tracking: 'tracking-jobs.md'
+    -   Tracking Tools:
             -   Progress: 'progress.md'
             -   Sending messages: 'messages.md'
             -   Signals: 'signals.md'
-    -   Protecting jobs: 'auth.md'
+    -   Finding Jobs: 'retrieve-status.md'
+    -   Securing Jobs: 'auth.md'
     - Frontend:
+          - Javascript Integration: 'custom-frontend.md'
           - Vue Integration: 'vue.md'
-          - Custom Frontend: 'custom-frontend.md'
 theme:
     name: material
     custom_dir: overrides

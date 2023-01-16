@@ -9,8 +9,8 @@ use Illuminate\Support\Str;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Result\JobStatusResult;
-use JobStatus\Search\Result\SameJobList;
+use JobStatus\Search\Result\JobRunResult;
+use JobStatus\Search\Result\TrackedJob;
 
 class ShowJobStatusSummaryCommand  extends Command
 {
@@ -60,7 +60,7 @@ class ShowJobStatusSummaryCommand  extends Command
         }
         $statuses = $search->get();
 
-        $data = $statuses->jobs()->map(fn(SameJobList $sameJobList) => [
+        $data = $statuses->jobs()->map(fn(TrackedJob $sameJobList) => [
             $sameJobList->jobClass(),
             collect($sameJobList->tags())->reduce(fn($string, $value, $key) => sprintf('%s%s = %s', $string !== null ? $string . ', ' : '', $key, $value)),
             $this->getStatusCount($sameJobList, Status::QUEUED),
@@ -76,9 +76,9 @@ class ShowJobStatusSummaryCommand  extends Command
         return static::SUCCESS;
     }
 
-    private function getStatusCount(SameJobList $sameJobList, Status $status): int
+    private function getStatusCount(TrackedJob $sameJobList, Status $status): int
     {
-        return $sameJobList->jobs()->filter(fn(JobStatusResult $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
+        return $sameJobList->runs()->filter(fn(JobRunResult $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
     }
 
     private function hasTags(): bool
