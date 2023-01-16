@@ -7,7 +7,7 @@ use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\JobStatusSearcher;
-use JobStatus\Search\Result\SameJobList;
+use JobStatus\Search\Result\TrackedJob;
 
 trait Trackable
 {
@@ -24,13 +24,13 @@ trait Trackable
         return $search;
     }
 
-    public function history(): ?SameJobList
+    public function history(): ?TrackedJob
     {
         $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
         foreach($this->tags() as $key => $value) {
             $search->whereTag($key, $value);
         }
-        return $search->get()->firstJob();
+        return $search->get()->first();
     }
 
     public function getJobStatus(): ?JobStatus

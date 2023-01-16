@@ -9,7 +9,7 @@ use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Search\JobStatusSearcher;
-use JobStatus\Search\Result\SameJobList;
+use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
 use JobStatus\Tests\fakes\NonTrackedJobFake;
@@ -45,7 +45,7 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['job_class' => 'AnotherClass']);
         $search = JobFake::search();
         $this->assertInstanceOf(JobStatusSearcher::class, $search);
-        $this->assertCount(10, $search->get()->firstJob()->jobs());
+        $this->assertCount(10, $search->get()->first()->runs());
     }
 
     /** @test */
@@ -57,7 +57,7 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['job_class' => 'AnotherClass']);
         $search = JobFake::search(['key1' => 'val1']);
         $this->assertInstanceOf(JobStatusSearcher::class, $search);
-        $this->assertCount(8, $search->get()->firstJob()->jobs());
+        $this->assertCount(8, $search->get()->first()->runs());
     }
 
 
@@ -76,8 +76,8 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['job_class' => 'AnotherClass']);
 
         $jobs = $job->history();
-        $this->assertInstanceOf(SameJobList::class, $jobs);
-        $this->assertCount(8, $jobs->jobs());
+        $this->assertInstanceOf(TrackedJob::class, $jobs);
+        $this->assertCount(8, $jobs->runs());
 
     }
 

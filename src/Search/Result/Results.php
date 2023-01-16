@@ -13,7 +13,7 @@ class Results implements Arrayable, Jsonable
     private Collection $results;
 
     /**
-     * @param SameJobList[] $jobStatusResultsList
+     * @param TrackedJob[] $jobStatusResultsList
      */
     public function __construct(Collection $jobStatusResultsList)
     {
@@ -21,7 +21,7 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
-     * @return SameJobList[]|Collection
+     * @return TrackedJob[]|Collection
      */
     public function jobs(): Collection
     {
@@ -47,8 +47,8 @@ class Results implements Arrayable, Jsonable
     public function raw(): Collection
     {
         $jobs = collect();
-        /** @var JobStatusResult $job */
-        foreach($this->jobs()->map(fn(SameJobList $sameJobList) => $sameJobList->jobs())
+        /** @var JobRunResult $job */
+        foreach($this->jobs()->map(fn(TrackedJob $sameJobList) => $sameJobList->runs())
                     ->flatten(1) as $job) {
             do {
                 $jobs[] = $job->jobStatus();
@@ -58,20 +58,20 @@ class Results implements Arrayable, Jsonable
         return $jobs;
     }
 
-    public function firstJob(): SameJobList
+    public function first(): ?TrackedJob
     {
         return $this->jobs()->first();
     }
 
-    public function first(): JobStatusResult
+    public function firstRun(): ?JobRunResult
     {
-        return $this->firstJob()?->first();
+        return $this->first()?->latest();
     }
 
-    public function jobOfTypeWithTags(string $jobType, array $jobTags): ?SameJobList
+    public function jobOfTypeWithTags(string $jobType, array $jobTags): ?TrackedJob
     {
         return $this->jobs()
-            ->filter(function(SameJobList $sameJobList) use ($jobType, $jobTags) {
+            ->filter(function(TrackedJob $sameJobList) use ($jobType, $jobTags) {
                 foreach($jobTags as $key => $value) {
                     if(collect($sameJobList->tags())->has($key) === false || collect($sameJobList->tags())[$key] !== $value) {
                         return false;

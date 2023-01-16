@@ -8,8 +8,8 @@ use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Search\JobStatusSearcher;
-use JobStatus\Search\Result\JobStatusResult;
-use JobStatus\Search\Result\SameJobList;
+use JobStatus\Search\Result\JobRunResult;
+use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Search\Result\SameJobTypeList;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
@@ -28,7 +28,7 @@ class JobStatusResultsTest extends TestCase
         JobStatus::factory()->create(['job_class' => 'JobClass1']);
 
         $result = (new JobStatusSearcher())->get()->jobOfTypeWithTags('JobClass1', ['key1' => 'val1']);
-        $this->assertInstanceOf(SameJobList::class, $result);
+        $this->assertInstanceOf(TrackedJob::class, $result);
         $this->assertEquals(['key1' => 'val1'], $result->tags());
     }
 
@@ -37,18 +37,18 @@ class JobStatusResultsTest extends TestCase
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val2']), 'tags')->create(['job_class' => 'JobClass1']);
 
-        $result = (new JobStatusSearcher())->get()->firstJob();
-        $this->assertInstanceOf(SameJobList::class, $result);
+        $result = (new JobStatusSearcher())->get()->first();
+        $this->assertInstanceOf(TrackedJob::class, $result);
     }
 
     /** @test */
     public function i_can_go_through_trackable(){
         $jobStatus = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => JobFake::class]);
 
-        $result = JobFake::search()->whereTags(['key1' => 'val1'])->get()->firstJob();
-        $this->assertInstanceOf(SameJobList::class, $result);
-        $this->assertCount(1, $result->jobs());
-        $this->assertEquals($jobStatus->id, $result->first()->jobStatus()->id);
+        $result = JobFake::search()->whereTags(['key1' => 'val1'])->get()->first();
+        $this->assertInstanceOf(TrackedJob::class, $result);
+        $this->assertCount(1, $result->runs());
+        $this->assertEquals($jobStatus->id, $result->latest()->jobStatus()->id);
     }
 
     /** @test */
@@ -57,9 +57,9 @@ class JobStatusResultsTest extends TestCase
 
         $job = new JobFake('alias', ['key1' => 'val1']);
         $result = $job->history();
-        $this->assertInstanceOf(SameJobList::class, $result);
-        $this->assertCount(1, $result->jobs());
-        $this->assertEquals($jobStatus->id, $result->first()->jobStatus()->id);
+        $this->assertInstanceOf(TrackedJob::class, $result);
+        $this->assertCount(1, $result->runs());
+        $this->assertEquals($jobStatus->id, $result->latest()->jobStatus()->id);
     }
 
     /** @test */
@@ -69,8 +69,8 @@ class JobStatusResultsTest extends TestCase
 
         $result = (new JobStatusSearcher())->get()->jobOfTypeWithTags('JobClass1', ['key1' => 'val1']);
 
-        $this->assertCount(2, $result->jobs());
-        $this->assertInstanceOf(JobStatusResult::class, $result->first());
+        $this->assertCount(2, $result->runs());
+        $this->assertInstanceOf(JobRunResult::class, $result->latest());
     }
 
     /** @test */
@@ -78,8 +78,17 @@ class JobStatusResultsTest extends TestCase
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
 
-        $result = (new JobStatusSearcher())->get()->first();
-        $this->assertInstanceOf(JobStatusResult::class, $result);
+        $result = (new JobStatusSearcher())->get()->firstRun();
+        $this->assertInstanceOf(JobRunResult::class, $result);
+    }
+
+    /** @test */
+    public function i_can_shortcut_getting_the_first_job_result_from_the_query_builder(){
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
+        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
+
+        $result = (new JobStatusSearcher())->first();
+        $this->assertInstanceOf(TrackedJob::class, $result);
     }
 
 
@@ -95,10 +104,10 @@ class JobStatusResultsTest extends TestCase
         ]);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
 
-        $result = (new JobStatusSearcher())->get()->first();
+        $result = (new JobStatusSearcher())->get()->firstRun();
 
 
-        $this->assertInstanceOf(JobStatusResult::class, $result);
+        $this->assertInstanceOf(JobRunResult::class, $result);
     }
 
     /********************************************************************************************************

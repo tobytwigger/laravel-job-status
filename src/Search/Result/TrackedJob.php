@@ -6,7 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Collection;
 
-class SameJobList implements Arrayable, Jsonable
+class TrackedJob implements Arrayable, Jsonable
 {
 
     private string $jobClass;
@@ -19,7 +19,7 @@ class SameJobList implements Arrayable, Jsonable
     }
 
     /**
-     * @var Collection|JobStatusResult[]
+     * @var Collection|JobRunResult[]
      */
     private Collection $sameJobs;
 
@@ -36,9 +36,9 @@ class SameJobList implements Arrayable, Jsonable
     }
 
     /**
-     * @return Collection|JobStatusResult[]
+     * @return Collection|JobRunResult[]
      */
-    public function jobs(): Collection
+    public function runs(): Collection
     {
         return $this->sameJobs;
     }
@@ -58,8 +58,10 @@ class SameJobList implements Arrayable, Jsonable
         return json_encode($this->toArray(), $options);
     }
 
-    public function first(): JobStatusResult
+
+
+    public function latest(): JobRunResult
     {
-        return $this->jobs()->first();
+        return $this->runs()->first();
     }
 }

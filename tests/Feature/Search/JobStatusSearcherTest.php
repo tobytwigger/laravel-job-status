@@ -104,4 +104,20 @@ class JobStatusSearcherTest extends TestCase
         $this->assertEquals($results->pluck('id')->sort(), $set2->pluck('id')->sort());
     }
 
+    /** @test */
+    public function it_orders_runs_by_run_date(){
+        $jobStatus1 = JobStatus::factory()->create(['job_class' => 'class1', 'uuid' => '123', 'updated_at' => now()->subMinutes(5), 'created_at' => now()->subMinutes(5)]);
+        $jobStatus2 = JobStatus::factory()->create(['job_class' => 'class1', 'uuid' => '456', 'updated_at' => now()->subMinutes(4), 'created_at' => now()->subMinutes(4)]);
+        $jobStatus3 = JobStatus::factory()->create(['job_class' => 'class1', 'uuid' => '123', 'updated_at' => now()->subMinutes(3), 'created_at' => now()->subMinutes(3)]);
+        $jobStatus4 = JobStatus::factory()->create(['job_class' => 'class1', 'uuid' => '789', 'updated_at' => now()->subMinutes(2), 'created_at' => now()->subMinutes(2)]);
+        $jobStatus5 = JobStatus::factory()->create(['job_class' => 'class1', 'uuid' => '789', 'updated_at' => now()->subMinutes(1), 'created_at' => now()->subMinutes(1)]);
+
+        $results = (new JobStatusSearcher())->get()->first();
+
+        $this->assertCount(3, $results->runs());
+        $this->assertEquals($jobStatus2->id, $results->runs()[0]->jobStatus()->id);
+        $this->assertEquals($jobStatus3->id, $results->runs()[1]->jobStatus()->id);
+        $this->assertEquals($jobStatus5->id, $results->runs()[2]->jobStatus()->id);
+    }
+
 }
