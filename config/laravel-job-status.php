@@ -44,4 +44,18 @@ return [
             'middleware' => ['api'],
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard information
+    |--------------------------------------------------------------------------
+    |
+    | Configuration around the dashboard to view job history
+    |
+    */
+
+    'dashboard' => [
+        'enabled' => true,
+    ],
+
 ];
