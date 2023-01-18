@@ -19,7 +19,7 @@ class TrackedJob implements Arrayable, Jsonable
     }
 
     /**
-     * @var Collection|JobRunResult[]
+     * @var Collection|JobRun[]
      */
     private Collection $sameJobs;
 
@@ -36,7 +36,7 @@ class TrackedJob implements Arrayable, Jsonable
     }
 
     /**
-     * @return Collection|JobRunResult[]
+     * @return Collection|JobRun[]
      */
     public function runs(): Collection
     {
@@ -60,7 +60,7 @@ class TrackedJob implements Arrayable, Jsonable
 
 
 
-    public function latest(): JobRunResult
+    public function latest(): JobRun
     {
         return $this->runs()->first();
     }

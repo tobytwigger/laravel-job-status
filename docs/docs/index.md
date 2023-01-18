@@ -35,12 +35,11 @@ This will publish the configuration file and migrations.
 
 ## Basic Usage
 
-Enable tracking on your jobs
+To enable tracking on your jobs, include the `\JobStatus\Concerns\Trackable` trait.;
 
 ```php
-Enable tracking on the job
+use \JobStatus\Concerns\Trackable;
 
-<?php
 class ProcessPodcast implements ShouldQueue
 {
     use Queueable, Trackable;
@@ -54,17 +53,16 @@ class ProcessPodcast implements ShouldQueue
 ```
 
 Find the job in the database
-```
-<?php
+```php
 $jobStatus = \App\Jobs\ProcessPodcast::search()->first()
 ```
 
 Show feedback to the user on the frontend
 
-```
-@if($jobStatus->isFinished())
+```php
+@if($jobStatus->latest()->isFinished())
     <div>Your podcast has been uploaded</div>
-@elseif($jobStatus->isRunning())
+@elseif($jobStatus->latest()->isRunning())
     <div>Your podcast is being uploaded</div>
 @else
     <div>Your podcast is in the queue</div>

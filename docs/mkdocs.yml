@@ -9,7 +9,9 @@ nav:
             -   Progress: 'progress.md'
             -   Sending messages: 'messages.md'
             -   Signals: 'signals.md'
-    -   Finding Jobs: 'retrieve-status.md'
+    -   Job History:
+            -   Finding Jobs: 'searching.md'
+            -   Reading the history: 'reading-jobs.md'
     -   Securing Jobs: 'auth.md'
     - Frontend:
           - Javascript Integration: 'custom-frontend.md'

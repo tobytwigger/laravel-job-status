@@ -3,7 +3,7 @@
 namespace JobStatus\Search;
 
 use JobStatus\Enums\Status;
-use JobStatus\Search\Result\JobRunResult;
+use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Results;
 use JobStatus\Search\Result\TrackedJob;
 
