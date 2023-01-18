@@ -8,7 +8,7 @@ use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Search\JobStatusSearcher;
-use JobStatus\Search\Result\JobRunResult;
+use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Search\Result\SameJobTypeList;
 use JobStatus\Tests\fakes\JobFake;
@@ -70,7 +70,7 @@ class JobStatusResultsTest extends TestCase
         $result = (new JobStatusSearcher())->get()->jobOfTypeWithTags('JobClass1', ['key1' => 'val1']);
 
         $this->assertCount(2, $result->runs());
-        $this->assertInstanceOf(JobRunResult::class, $result->latest());
+        $this->assertInstanceOf(JobRun::class, $result->latest());
     }
 
     /** @test */
@@ -79,7 +79,7 @@ class JobStatusResultsTest extends TestCase
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
 
         $result = (new JobStatusSearcher())->get()->firstRun();
-        $this->assertInstanceOf(JobRunResult::class, $result);
+        $this->assertInstanceOf(JobRun::class, $result);
     }
 
     /** @test */
@@ -107,7 +107,7 @@ class JobStatusResultsTest extends TestCase
         $result = (new JobStatusSearcher())->get()->firstRun();
 
 
-        $this->assertInstanceOf(JobRunResult::class, $result);
+        $this->assertInstanceOf(JobRun::class, $result);
     }
 
     /********************************************************************************************************

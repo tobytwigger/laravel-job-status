@@ -47,7 +47,7 @@ class Results implements Arrayable, Jsonable
     public function raw(): Collection
     {
         $jobs = collect();
-        /** @var JobRunResult $job */
+        /** @var JobRun $job */
         foreach($this->jobs()->map(fn(TrackedJob $sameJobList) => $sameJobList->runs())
                     ->flatten(1) as $job) {
             do {
@@ -63,7 +63,7 @@ class Results implements Arrayable, Jsonable
         return $this->jobs()->first();
     }
 
-    public function firstRun(): ?JobRunResult
+    public function firstRun(): ?JobRun
     {
         return $this->first()?->latest();
     }

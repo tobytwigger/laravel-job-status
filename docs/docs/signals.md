@@ -44,10 +44,7 @@ With a status model, use `$status->sendSignal('signal-type');`. This will send t
 With custom signals, you can also send parameters to the job. For example, a job that checks the price of all the books a user owns may want to be notified if a new book is added during processing. To avoid us having to redo all the books, the signal can contain information about the new book allowing us to add it to the queue.
 
 ```php
-JobStatus::forJobAlias('check-book-price')
-->whereTag('user_id', Auth::id())
-->firstOrFail()
-->sendSignal('book-added', ['book_id' => $bookId]);
+$jobStatus->sendSignal('book-added', ['book_id' => $bookId]);
 ````
 
 ```php

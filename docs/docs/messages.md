@@ -30,7 +30,8 @@ class PlanRoute {
 
 ## Reading messages
 
-Once you have a [status model](./retrieve-status.md), you can call
+Once you have a [run history](./searching.md), you can use
+
 - `$status->messages()`: Get all messages from the status model
 - `$status->mostRecentMessage(includeDebug: true)`: Get the most recent message.
 - `$status->messagesOfType('error')`: Get the most recent message.

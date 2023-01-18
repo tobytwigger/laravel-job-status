@@ -2,7 +2,7 @@
 
 Your job can let the rest of your application know how far through processing it is. This isn't always possible, so by default the percentage will be set to `100%` when the job is finished.
 
-If you are able to track the percentage completion of your job, call `$this->percentage(55);` within the `handle` method of your job.
+If you are able to track the percentage completion of your job, call `$this->percentage($progressValue)` within the `handle` method of your job.
 
 
 ## Examples
@@ -30,9 +30,15 @@ class SendEmail {
 
     public function handle() {
         foreach($this->users as $index => $user) {
-            $this->percentage(($i/$this->users->count()) * 100);
+            $percentageValue = $this->generatePercentage($index);
+            $this->percentage($percentageValue);
             $this->email->sendTo($user);
         }
+    }
+    
+    private function generatePercentage($index): int
+    {
+        return ($index/$this->users->count()) * 100
     }
 
 }

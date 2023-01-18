@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Result\JobRunResult;
+use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 
 class ShowJobStatusSummaryCommand  extends Command
@@ -78,7 +78,7 @@ class ShowJobStatusSummaryCommand  extends Command
 
     private function getStatusCount(TrackedJob $sameJobList, Status $status): int
     {
-        return $sameJobList->runs()->filter(fn(JobRunResult $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
+        return $sameJobList->runs()->filter(fn(JobRun $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
     }
 
     private function hasTags(): bool

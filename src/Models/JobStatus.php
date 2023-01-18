@@ -12,6 +12,7 @@ use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusCollection;
+use JobStatus\JobStatusModifier;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
@@ -163,6 +164,18 @@ class JobStatus extends Model
     public function getLastMessageAttribute()
     {
         return $this->mostRecentMessage();
+    }
+
+    public function cancel(array $parameters = []): void
+    {
+        JobStatusModifier::forJobStatus($this)
+            ->cancel($parameters);
+    }
+
+    public function sendSignal(string $signal, array $parameters = [], bool $cancel = false): void
+    {
+        JobStatusModifier::forJobStatus($this)
+            ->sendSignal($signal, $parameters, $cancel);
     }
 
     public function mostRecentMessage(bool $includeDebug = false)
