@@ -1,5 +1,4 @@
 <?php
 
-\Illuminate\Support\Facades\Route::get('/{view?}', \JobStatus\Dashboard\Http\Controllers\DashboardController::class)
-    ->where('view', '(.*)')
+\Illuminate\Support\Facades\Route::get('/', \JobStatus\Dashboard\Http\Controllers\DashboardController::class)
     ->name('job-status.dashboard');

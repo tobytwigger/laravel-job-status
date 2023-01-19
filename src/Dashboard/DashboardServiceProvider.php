@@ -29,7 +29,10 @@ class DashboardServiceProvider extends ServiceProvider
     public function defineAssetPublishing()
     {
         $this->publishes([
-            __DIR__ . '/../../public' => public_path('vendor/job-status'),
+            __DIR__ . '/../../public/dashboard' => public_path('vendor/job-status'),
+        ], ['job-status-dashboard']);
+        $this->publishes([
+            __DIR__ . '/../../public/dashboard/index.html' => resource_path('views/vendor/job-status/layout.blade.php'),
         ], ['job-status-dashboard']);
 
         View::composer('job-status::layout', DashboardVariables::class);
