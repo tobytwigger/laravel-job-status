@@ -27,6 +27,6 @@
     <!-- quasar:entry-point -->
   </body>
   <script>
-      window.JobStatus = {{json_encode($jobStatusVariables)}}
+      window.JobStatus = {!! json_encode($jobStatusVariables) !!}
   </script>
 </html>
