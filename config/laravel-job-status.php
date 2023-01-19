@@ -56,6 +56,16 @@ return [
 
     'dashboard' => [
         'enabled' => true,
+
+        // The domain the dashboard is on, or null to host on the main app domain
+        'domain' => null,
+
+        // The path where the dashboard will be accessible from.
+        'path' => 'job-status',
+
+        // These middleware will get attached onto each route of laravel job status
+        'middleware' => ['web']
+
     ],
 
 ];
