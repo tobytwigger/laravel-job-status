@@ -12,10 +12,14 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Job Tracker
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>
+          <a href="https://github.com/tobytwigger/laravel-job-status" style="color: white; text-decoration: none;">
+            Version {{ version }}
+          </a>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -40,58 +44,29 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import {defineComponent, ref} from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
+import {useConfig} from 'src/compostables/configuration';
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
+    title: 'Dashboard',
+    caption: 'Job dashboard.',
     icon: 'school',
-    link: 'https://quasar.dev'
+    route: 'dashboard'
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Jobs',
+    caption: 'All tracked jobs.',
+    icon: 'school',
+    route: 'jobs'
   },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
 ];
 
 export default defineComponent({
@@ -101,13 +76,15 @@ export default defineComponent({
     EssentialLink
   },
 
-  setup () {
+  setup() {
     const leftDrawerOpen = ref(false)
 
+
     return {
+      version: useConfig().version,
       essentialLinks: linksList,
       leftDrawerOpen,
-      toggleLeftDrawer () {
+      toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value
       }
     }
