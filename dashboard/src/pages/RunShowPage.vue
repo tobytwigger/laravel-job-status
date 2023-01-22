@@ -155,7 +155,7 @@ const results = ref<JobRun | null>(null);
 const tab = ref<string>('messages');
 
 const props = defineProps<{
-  jobStatusId: string
+  jobStatusId: number
 }>();
 
 useApi((after) => {

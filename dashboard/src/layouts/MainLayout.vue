@@ -64,13 +64,13 @@ const linksList = [
     title: 'Dashboard',
     caption: 'Job dashboard.',
     icon: 'school',
-    route: {path: 'dashboard'}
+    route: {path: '/dashboard'}
   },
   {
     title: 'Jobs',
     caption: 'All tracked jobs.',
     icon: 'school',
-    route: {path: 'jobs'}
+    route: {path: '/jobs'}
   },
 ];
 

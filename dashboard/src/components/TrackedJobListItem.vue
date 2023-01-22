@@ -5,13 +5,13 @@
     </q-item-section>
 
     <q-item-section top class="col-2 gt-sm">
-      <q-item-label class="q-mt-sm">{{ props.trackedJob.alias ?? props.trackedJob.class }}</q-item-label>
+      <q-item-label class="q-mt-sm">{{ props.trackedJob.class }}</q-item-label>
     </q-item-section>
 
     <q-item-section top>
       <q-item-label lines="1">
-        <span class="text-weight-medium">{{ runningCount }} running</span>
-        <span class="text-grey-8"> - {{ finishedCount }} finished.</span>
+        <span class="text-weight-medium">{{ props.trackedJob.alias ?? props.trackedJob.class }}</span>
+<!--        <span class="text-grey-8"> - {{ finishedCount }} finished.</span>-->
       </q-item-label>
       <q-item-label caption lines="2">
         {{ failedCount }} failed
