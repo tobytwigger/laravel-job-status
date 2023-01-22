@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use JobStatus\Dashboard\Commands\InstallAssets;
 use JobStatus\Dashboard\Http\Composers\DashboardVariables;
 
 class DashboardServiceProvider extends ServiceProvider
@@ -13,7 +14,9 @@ class DashboardServiceProvider extends ServiceProvider
 
     public function register()
     {
-        //
+        $this->commands([
+            InstallAssets::class
+        ]);;
     }
 
     public function boot()
