@@ -63,10 +63,7 @@ trait Trackable
         return true;
     }
 
-    public function alias(): ?string
-    {
-        return null;
-    }
+    abstract public function alias(): ?string;
 
     public function tags(): array
     {

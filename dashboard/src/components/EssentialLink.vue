@@ -40,7 +40,6 @@ export default defineComponent({
     },
 
     route: {
-      type: String,
       default: null
     },
 

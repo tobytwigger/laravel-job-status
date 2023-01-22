@@ -35,12 +35,18 @@ class JobRun implements Arrayable, Jsonable
     {
         return [
             'alias' => $this->jobStatus->job_alias,
-            'job_class' => $this->jobStatus->job_class,
+            'class' => $this->jobStatus->job_class,
             'percentage' => $this->jobStatus->percentage,
             'status' => $this->jobStatus->status,
             'uuid' => $this->jobStatus->uuid,
             'has_parent' => $this->hasParent(),
-            'parent' => $this->parent()?->toArray()
+            'parent' => $this->parent()?->toArray(),
+            'tags' => $this->jobStatus->getTagsAsArray(),
+            'created_at' => $this->jobStatus->created_at,
+            'messages' => $this->jobStatus->messages()->orderByDesc('created_at')->orderByDesc('id')->get(),
+            'signals' => $this->jobStatus->signals()->orderByDesc('created_at')->orderByDesc('id')->get(),
+            'id' => $this->jobStatus->id,
+            'statuses' => $this->jobStatus->statuses()->orderByDesc('created_at')->orderByDesc('id')->get()
         ];
     }
 

@@ -59,13 +59,13 @@ const linksList = [
     title: 'Dashboard',
     caption: 'Job dashboard.',
     icon: 'school',
-    route: 'dashboard'
+    route: {name: 'dashboard'}
   },
   {
     title: 'Jobs',
     caption: 'All tracked jobs.',
     icon: 'school',
-    route: 'jobs'
+    route: {name: 'jobs.index'}
   },
 ];
 

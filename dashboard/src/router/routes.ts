@@ -1,21 +1,33 @@
-import { RouteRecordRaw } from 'vue-router';
+import {RouteRecordRaw} from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: { name: 'dashboard' }
+    redirect: {name: 'dashboard'}
   },
   {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/DashboardPage.vue') }],
+    children: [{path: '', component: () => import('pages/DashboardPage.vue')}],
   },
   {
     path: '/jobs',
-    name: 'jobs',
+    name: 'jobs.index',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/JobListPage.vue') }],
+    children: [{path: '', component: () => import('pages/JobListPage.vue')}],
+  },
+  {
+    path: '/jobs/:alias',
+    name: 'jobs.show',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{path: '', props: true, component: () => import('pages/JobShowPage.vue')}],
+  },
+  {
+    path: '/run/:jobStatusId',
+    name: 'run.show',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{path: '', props: true, component: () => import('pages/RunShowPage.vue')}],
   },
 
   // Always leave this as last one,

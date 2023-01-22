@@ -11,7 +11,7 @@ class TrackedJob implements Arrayable, Jsonable
 
     private string $jobClass;
 
-    private array $tags;
+    private ?string $alias;
 
     public function jobClass(): string
     {
@@ -21,18 +21,13 @@ class TrackedJob implements Arrayable, Jsonable
     /**
      * @var Collection|JobRun[]
      */
-    private Collection $sameJobs;
+    private Collection $runs;
 
-    public function __construct(string $jobClass, array $tags, Collection $sameJobs)
+    public function __construct(string $jobClass, Collection $runs, ?string $alias = null)
     {
         $this->jobClass = $jobClass;
-        $this->tags = $tags;
-        $this->sameJobs = $sameJobs;
-    }
-
-    public function tags(): array
-    {
-        return $this->tags;
+        $this->runs = $runs;
+        $this->alias = $alias;
     }
 
     /**
@@ -40,16 +35,16 @@ class TrackedJob implements Arrayable, Jsonable
      */
     public function runs(): Collection
     {
-        return $this->sameJobs;
+        return $this->runs;
     }
 
     public function toArray()
     {
         return [
-            'count' => $this->sameJobs->count(),
-            'tags' => $this->tags,
-            'job_class' => $this->jobClass,
-            'jobs' => $this->sameJobs->toArray()
+            'count' => $this->runs->count(),
+            'alias' => $this->alias,
+            'class' => $this->jobClass,
+            'runs' => $this->runs->toArray()
         ];
     }
 
@@ -58,7 +53,10 @@ class TrackedJob implements Arrayable, Jsonable
         return json_encode($this->toArray(), $options);
     }
 
-
+    public function alias(): string
+    {
+        return $this->alias;
+    }
 
     public function latest(): JobRun
     {

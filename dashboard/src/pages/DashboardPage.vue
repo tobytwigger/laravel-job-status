@@ -12,16 +12,16 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
 import api from 'src/utils/client/api';
-import {dashboardResponse} from 'src/types/api';
+import {DashboardResponse} from 'src/types/api';
 
 export default defineComponent({
   name: 'IndexPage',
   setup () {
-    let results: dashboardResponse|null = null;
+    let results: DashboardResponse|null = null;
 
     function loadApi() {
       api.dashboard()
-        .then((response: dashboardResponse )=> {
+        .then((response: DashboardResponse )=> {
           results = reactive(response);
         })
     }

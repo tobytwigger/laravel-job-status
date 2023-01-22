@@ -15,6 +15,7 @@ class QueryFactory
         $query = static::addJobClass($query, $parameters);
         $query = static::addJobTags($query, $parameters);
         $query = static::addStatuses($query, $parameters);
+        $query = static::addUuid($query, $parameters);
 
         return $query;
     }
@@ -23,6 +24,14 @@ class QueryFactory
     {
         if ($parameters->getJobAlias()) {
             $query->forJobAlias($parameters->getJobAlias());
+        }
+        return $query;
+    }
+
+    private static function addUuid(Builder $query, SearchParameters $parameters): Builder
+    {
+        if ($parameters->getUuid()) {
+            $query->where('uuid', $parameters->getUuid());
         }
         return $query;
     }

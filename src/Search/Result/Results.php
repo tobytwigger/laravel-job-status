@@ -42,18 +42,26 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
-     * @return JobStatus[]|Collection
+     * @return Collection<JobStatus>
      */
     public function raw(): Collection
     {
+        return $this->runs()->map(fn(JobRun $jobStatus) => $jobStatus->jobStatus());
+    }
+
+    /**
+     * @return Collection<JobRun>
+     */
+    public function runs(): Collection
+    {
         $jobs = collect();
         /** @var JobRun $job */
-        foreach($this->jobs()->map(fn(TrackedJob $sameJobList) => $sameJobList->runs())
-                    ->flatten(1) as $job) {
+        foreach ($this->jobs()->map(fn(TrackedJob $sameJobList) => $sameJobList->runs())
+                     ->flatten(1) as $job) {
             do {
-                $jobs[] = $job->jobStatus();
+                $jobs[] = $job;
                 $job = $job->parent();
-            } while($job !== null);
+            } while ($job !== null);
         }
         return $jobs;
     }
@@ -71,9 +79,9 @@ class Results implements Arrayable, Jsonable
     public function jobOfTypeWithTags(string $jobType, array $jobTags): ?TrackedJob
     {
         return $this->jobs()
-            ->filter(function(TrackedJob $sameJobList) use ($jobType, $jobTags) {
-                foreach($jobTags as $key => $value) {
-                    if(collect($sameJobList->tags())->has($key) === false || collect($sameJobList->tags())[$key] !== $value) {
+            ->filter(function (TrackedJob $sameJobList) use ($jobType, $jobTags) {
+                foreach ($jobTags as $key => $value) {
+                    if (collect($sameJobList->tags())->has($key) === false || collect($sameJobList->tags())[$key] !== $value) {
                         return false;
                     }
                 }

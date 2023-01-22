@@ -22,6 +22,12 @@ class JobStatusSearcher
         return new static();
     }
 
+    public function whereUuid(string $uuid): JobStatusSearcher
+    {
+        $this->searchParameters->setUuid($uuid);
+        return $this;
+    }
+
     public function whereJobClass(string $jobClass): JobStatusSearcher
     {
         $this->searchParameters->setJobClass($jobClass);

@@ -17,27 +17,29 @@ class ResultsFactory
 
     public static function fromQuery(Builder $query): Results
     {
-        $queryResult = $query->with('tags')->get()->groupBy(['job_class']);
+        $queryResult = $query->with('tags')->orderBy('created_at', 'DESC')->get()->groupBy(['job_class']);
 
-        $sameJobType = new Collection();
+        $trackedJobs = new Collection();
         foreach($queryResult as $jobClass => $sameJobTypes) {
-            $sameJobs = $sameJobTypes->groupBy(function(JobStatus $item) {
-                return $item->tags->sortBy('key')->mapWithKeys(fn(JobStatusTag $tag) => [$tag->key => $tag->value]);
-            });
-            foreach($sameJobs as $tags => $sameJob) {
-                $sameJobGrouped = $sameJob->groupBy('uuid')->sortBy('created_at')->sortBy('id', descending: true);
-                $jobStatuses = $sameJobGrouped->map(function(JobStatusCollection $jobs) {
-                    return $jobs->reduce(
-                        fn(?JobRun $result, JobStatus $jobStatus) => new JobRun($jobStatus, $result)
-                    );
-                })->sortBy(fn(JobRun $result) => $result->jobStatus()->created_at)->values();
-                $sameJobType->push(
-                    new TrackedJob($jobClass, json_decode($tags, true), $jobStatuses)
-                );
+            // Groups of the same run
+            $exactJobGrouped = $sameJobTypes->groupBy('uuid');
+            $jobAlias = $sameJobTypes->filter(fn(JobStatus $jobStatus) => $jobStatus->job_alias !== null)
+                ->sortByDesc('created_at')
+                ->first()
+                ?->job_alias;
+
+            $jobRuns = new Collection();
+            foreach($exactJobGrouped as $runs) {
+                $jobRuns->push($runs->sortBy('created_at')->reduce(
+                    fn(?JobRun $result, JobStatus $jobStatus) => new JobRun($jobStatus, $result)
+                ));
             }
+            $trackedJobs->push(
+                new TrackedJob($jobClass, $jobRuns, $jobAlias)
+            );
         }
 
-        return new Results($sameJobType);
+        return new Results($trackedJobs);
     }
 
 }

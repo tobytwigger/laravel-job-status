@@ -13,6 +13,8 @@ class SearchParameters
 
     private TagsSearchParameters $tagsSearchParameters;
 
+    private ?string $uuid = null;
+
     /**
      * @var array|Status[]
      */
@@ -34,6 +36,24 @@ class SearchParameters
     public function getJobClass(): ?string
     {
         return $this->jobClass;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param string|null $uuid
+     * @return SearchParameters
+     */
+    public function setUuid(?string $uuid): SearchParameters
+    {
+        $this->uuid = $uuid;
+        return $this;
     }
 
     /**

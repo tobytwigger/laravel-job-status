@@ -1,1 +1,9 @@
-const o=()=>{if(window.JobStatusConfig===void 0)throw new Error("Job status configuratino not found in the window. Have you loaded the package correctly?");return window.JobStatusConfig};var t={get:o};export{t as C};
+const get = () => {
+  if (window.JobStatusConfig === void 0) {
+    throw new Error("Job status configuratino not found in the window. Have you loaded the package correctly?");
+  }
+  return window.JobStatusConfig;
+};
+var Config = { get };
+export { Config as C };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29uZmlnLmI2ZjYxNjg0LmpzIiwic291cmNlcyI6WyIuLi8uLi8uLi9kYXNoYm9hcmQvc3JjL3V0aWxzL2NvbmZpZy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJjb25zdCBnZXQgPSAoKTogQ29uZmlnID0+IHtcbiAgaWYod2luZG93LkpvYlN0YXR1c0NvbmZpZyA9PT0gdW5kZWZpbmVkKSB7XG4gICAgdGhyb3cgbmV3IEVycm9yKCdKb2Igc3RhdHVzIGNvbmZpZ3VyYXRpbm8gbm90IGZvdW5kIGluIHRoZSB3aW5kb3cuIEhhdmUgeW91IGxvYWRlZCB0aGUgcGFja2FnZSBjb3JyZWN0bHk/Jyk7XG4gIH1cbiAgcmV0dXJuIHdpbmRvdy5Kb2JTdGF0dXNDb25maWc7XG59O1xuXG5leHBvcnQgZGVmYXVsdCB7Z2V0fVxuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE1BQU0sTUFBTSxNQUFjO0FBQ3JCLE1BQUEsT0FBTyxvQkFBb0IsUUFBVztBQUNqQyxVQUFBLElBQUksTUFBTSwwRkFBMEY7QUFBQSxFQUM1RztBQUNBLFNBQU8sT0FBTztBQUNoQjtBQUVBLElBQWUsU0FBQSxFQUFDLElBQUc7OyJ9
