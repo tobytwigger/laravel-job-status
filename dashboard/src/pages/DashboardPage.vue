@@ -15,7 +15,7 @@ import api from 'src/utils/client/api';
 import {DashboardResponse} from 'src/types/api';
 
 export default defineComponent({
-  name: 'IndexPage',
+  name: 'DashboardPage',
   setup () {
     let results: DashboardResponse|null = null;
 

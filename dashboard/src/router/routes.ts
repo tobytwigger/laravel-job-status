@@ -15,13 +15,13 @@ const routes: RouteRecordRaw[] = [
     path: '/jobs',
     name: 'jobs.index',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', component: () => import('pages/JobListPage.vue')}],
+    children: [{path: '', component:  () => import('pages/JobListPage.vue')}]
   },
   {
     path: '/jobs/:alias',
     name: 'jobs.show',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', props: true, component: () => import('pages/JobShowPage.vue')}],
+    children: [{path: '', props: true, component:  () => import('pages/JobShowPage.vue')}],
   },
   {
     path: '/run/:jobStatusId',

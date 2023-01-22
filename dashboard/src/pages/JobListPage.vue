@@ -27,8 +27,6 @@ import {useApi} from "../compostables/useApi";
 
 const results = ref<ResultsType|null>(null);
 
-console.log('HI');
-
 useApi((after) => {
   api.jobList()
     .then((response: ResultsType) => results.value = response)

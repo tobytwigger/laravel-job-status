@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="{name: 'jobs.show', params: {alias: props.trackedJob.alias}}">
+  <q-item clickable :to="{path: '/jobs/' + props.trackedJob.alias}">
     <q-item-section avatar top>
       <q-icon name="account_tree" color="black" size="34px" />
     </q-item-section>

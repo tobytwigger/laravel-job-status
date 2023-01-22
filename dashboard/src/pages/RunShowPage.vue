@@ -4,7 +4,7 @@
       This job was dispatched by another when it failed.
       <template v-slot:action>
         <q-btn flat color="white" label="View parent job"
-               :to="{name: 'run.show', params: {jobStatusId: results.parent.id}}"/>
+               :to="{path: '/run/' + results.parent.id}"/>
       </template>
     </q-banner>
 

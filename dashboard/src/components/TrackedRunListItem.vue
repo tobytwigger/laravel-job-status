@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="{name: 'run.show', params: {jobStatusId: props.trackedRun.id}}">
+  <q-item clickable :to="{path: '/run/' + props.trackedRun.id}">
     <q-item-section avatar top>
       <q-icon name="hourglass_top" color="black" size="34px" v-if="props.trackedRun.status === Status.Queued" />
       <q-circular-progress
