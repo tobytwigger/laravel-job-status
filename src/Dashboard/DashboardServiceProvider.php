@@ -16,7 +16,7 @@ class DashboardServiceProvider extends ServiceProvider
     {
         $this->commands([
             InstallAssets::class
-        ]);;
+        ]);
     }
 
     public function boot()

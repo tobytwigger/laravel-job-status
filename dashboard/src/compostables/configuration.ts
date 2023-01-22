@@ -7,9 +7,10 @@ export function useConfig() {
   const version = ref(config.version);
   const domain = ref(config.domain);
   const path = ref(config.path);
+  const assets_in_date = ref(config.assets_in_date);
 
   return {
-    version, domain, path
+    version, domain, path, assets_in_date
   };
 
 }

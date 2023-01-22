@@ -44,6 +44,11 @@
     </q-drawer>
 
     <q-page-container>
+
+      <q-banner class="bg-warning text-black" v-if="!assets_in_date">
+        The assets are not in date, which makes this site unstable. Run `artisan job:install` to update them.
+      </q-banner>
+
       <router-view/>
     </q-page-container>
   </q-layout>
@@ -82,6 +87,7 @@ export default defineComponent({
 
     return {
       version: useConfig().version,
+      assets_in_date: useConfig().assets_in_date,
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer() {
