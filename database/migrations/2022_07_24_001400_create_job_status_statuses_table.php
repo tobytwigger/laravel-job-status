@@ -13,9 +13,9 @@ return new class() extends Migration {
     {
         Schema::create(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['queued', 'started', 'cancelled', 'failed', 'succeeded']);
+            $table->string('status')->default('queued');
             $table->unsignedBigInteger('job_status_id');
-            $table->timestamps();
+            $table->timestamps(3);
         });
 
         Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_statuses'), function (Blueprint $table) {

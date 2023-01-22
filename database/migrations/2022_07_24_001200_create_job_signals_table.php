@@ -15,10 +15,10 @@ return new class() extends Migration {
             $table->id();
             $table->unsignedBigInteger('job_status_id');
             $table->string('signal');
-            $table->dateTime('handled_at')->nullable();
+            $table->dateTime('handled_at', 3)->nullable();
             $table->text('parameters')->nullable();
             $table->boolean('cancel_job')->default(false);
-            $table->timestamps();
+            $table->timestamps(3);
         });
 
         Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_signals'), function (Blueprint $table) {

@@ -20,8 +20,10 @@ class JobMessage extends Model
     ];
 
     protected $casts = [
-        'type' => MessageType::class
+        'type' => MessageType::class,
     ];
+
+    protected $dateFormat = 'Y-m-d H:i:s.v';
 
     public function __construct(array $attributes = [])
     {
@@ -38,4 +40,5 @@ class JobMessage extends Model
     {
         return JobMessageFactory::new();
     }
+
 }

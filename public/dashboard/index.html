@@ -22,7 +22,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/vendor/job-status/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/vendor/job-status/icons/favicon-16x16.png">
     <link rel="icon" type="image/ico" href="/vendor/job-status/favicon.ico">
-    <script type="module" crossorigin src="/vendor/job-status/assets/index.bb057e5d.js"></script>
+    <script type="module" crossorigin src="/vendor/job-status/assets/index.6ef0c4c5.js"></script>
     <link rel="stylesheet" href="/vendor/job-status/assets/index.ff55622b.css">
   </head>
   <body>
