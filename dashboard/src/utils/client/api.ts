@@ -5,6 +5,7 @@ import {
   jobList as jobListUrl,
   jobShow as jobShowUrl,
   runShow as runShowUrl,
+  history as historyUrl,
 } from 'src/utils/client/urlGenerator';
 
 const dashboard = (): Promise<DashboardResponse> => {
@@ -30,11 +31,18 @@ const jobShow = (alias: string): Promise<TrackedJob> => {
     })
 }
 
-const runShow = (jobStatusId: string): Promise<JobRun> => {
+const runShow = (jobStatusId: number): Promise<JobRun> => {
   return get(runShowUrl(jobStatusId))
     .then(response => {
       return response.data as JobRun
     })
 }
 
-export default {dashboard, jobList, jobShow, runShow};
+const history = (): Promise<JobRun[]> => {
+  return get(historyUrl)
+    .then(response => {
+        return response.data as JobRun[]
+    })
+}
+
+export default {dashboard, jobList, jobShow, runShow, history};

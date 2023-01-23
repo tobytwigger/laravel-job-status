@@ -1,158 +1,189 @@
 <template>
-  <q-page class="row items-center justify-evenly" v-if="results !== null">
-    <q-banner class="bg-primary text-white" v-if="results.parent !== null">
-      This job was dispatched by another when it failed.
-      <template v-slot:action>
-        <q-btn flat color="white" label="View parent job"
-               :to="{path: '/run/' + results.parent.id}"/>
-      </template>
-    </q-banner>
+  <q-page class="justify-evenly" padding v-if="selectedRun !== null">
 
-    <q-list bordered separator>
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>{{ results.alias }}</q-item-label>
-          <q-item-label caption>Alias</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>{{ results.class }}</q-item-label>
-          <q-item-label caption>Class</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>{{ results.status }}</q-item-label>
-          <q-item-label caption>Status</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>{{ results.uuid }}</q-item-label>
-          <q-item-label caption>Uuid</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>{{ results.tags }}</q-item-label>
-          <q-item-label caption>Tags</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>{{ results.percentage }}</q-item-label>
-          <q-item-label caption>Percentage</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item clickable v-ripple>
-        <q-item-section>
-          <q-item-label>{{ results.created_at }}</q-item-label>
-          <q-item-label caption>Dispatched At</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
+    <q-breadcrumbs>
+      <q-breadcrumbs-el icon="list" to="/jobs" label="Jobs"/>
+      <q-breadcrumbs-el :label="selectedRun.alias" icon="view_stream" :to="'/jobs/' + selectedRun.alias" />
+      <q-breadcrumbs-el :label="'Run #' + selectedRun.id" icon="visibility" :to="'/run/' + selectedRun.id"/>
+    </q-breadcrumbs>
 
-    <q-card>
-      <q-tabs v-model="tab"
-              class="text-teal"
-      >
-        <q-tab name="messages" icon="mail" label="Messages"/>
-        <q-tab name="signals" icon="alarm" label="Signals"/>
-        <q-tab name="statuses" icon="movie" label="Status History"/>
-      </q-tabs>
+    <div class="row" v-if="retryOptions.length > 1">
+      <div class="col-12 q-py-md">
 
-      <q-separator/>
+        <q-btn-toggle
+          @update:model-value="viewRun($event)"
+          :model-value="selectedRun?.id.toString()"
+          push
+          spread
+          no-caps
+          rounded
+          unelevated
+          glossy
+          toggle-color="primary"
+          :options="retryOptions"
+        />
 
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="messages">
-          <div class="text-h6">Messages</div>
-          <q-timeline color="secondary">
-            <q-timeline-entry
-              v-for="message in results.messages"
-              :key="message.id"
-              :title="message.type"
-              :subtitle="dayjs(message.created_at).format('L LTS')"
-            >
-              <div>
-                {{message.message}}
-              </div>
-            </q-timeline-entry>
-          </q-timeline>
-        </q-tab-panel>
+      </div>
+    </div>
 
-        <q-tab-panel name="signals">
-          <div class="text-h6">Signals</div>
-          <q-timeline color="secondary">
-            <q-timeline-entry
-              v-for="signal in results.signals"
-              :key="signal.id"
-              :title="signal.signal"
-              :subtitle="signal.cancel_job ? 'Job stopped' : 'Job continued'"
-            >
-              <div>
-                {{signal.parameters}}.
-                <q-list bordered separator>
-                  <q-item clickable v-ripple>
-                    <q-item-section>
-                      <q-item-label>{{ signal.parameters }}</q-item-label>
-                      <q-item-label caption>Parameters</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable v-ripple>
-                    <q-item-section>
-                      <q-item-label>{{ dayjs(signal.created_at).format('L LTS') }}</q-item-label>
-                      <q-item-label caption>Sent at</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable v-ripple>
-                    <q-item-section>
-                      <q-item-label>{{ dayjs(signal.handled_at).format('L LTS') }}</q-item-label>
-                      <q-item-label caption>Handled at</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </div>
-            </q-timeline-entry>
-          </q-timeline>
-        </q-tab-panel>
+    <div class="row">
+      <div class="col-12 q-py-md">
+        <q-list bordered separator>
+          <q-item v-ripple>
+            <q-item-section>
+              <q-item-label>{{ selectedRun.alias }}</q-item-label>
+              <q-item-label caption>Alias</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple>
+            <q-item-section>
+              <q-item-label>{{ selectedRun.class }}</q-item-label>
+              <q-item-label caption>Class</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple>
+            <q-item-section>
+              <q-item-label>{{ selectedRun.status }}</q-item-label>
+              <q-item-label caption>Status</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple>
+            <q-item-section>
+              <q-item-label>{{ selectedRun.uuid }}</q-item-label>
+              <q-item-label caption>Uuid</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple>
+            <q-item-section>
+              <q-item-label>{{ selectedRun.tags }}</q-item-label>
+              <q-item-label caption>Tags</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple>
+            <q-item-section>
+              <q-item-label>{{ selectedRun.percentage }}</q-item-label>
+              <q-item-label caption>Percentage</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple>
+            <q-item-section>
+              <q-item-label>{{ selectedRun.created_at }}</q-item-label>
+              <q-item-label caption>Dispatched At</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </div>
+    </div>
 
-        <q-tab-panel name="statuses">
-          <div class="text-h6">Statuses</div>
-          <q-timeline color="secondary">
-            <q-timeline-entry
-              v-for="status in results.statuses"
-              :key="status.id"
-              :title="status.status"
-              :subtitle="dayjs(status.created_at).format('L LTS')"
-            >
-              <div>
+    <div class="row">
+      <div class="col-12 q-py-md">
+        <q-card>
+          <q-tabs v-model="tab"
+                  class="text-teal"
+          >
+            <q-tab name="timeline" icon="timeline" label="Timeline"/>
+            <q-tab name="messages" icon="mail" label="Messages"/>
+            <q-tab name="signals" icon="alarm" label="Signals"/>
+            <q-tab name="statuses" icon="movie" label="Status History"/>
+          </q-tabs>
 
-              </div>
-            </q-timeline-entry>
-          </q-timeline>
-        </q-tab-panel>
-      </q-tab-panels>
-    </q-card>
+          <q-separator/>
+
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="timeline">
+              <job-run-timeline :run="selectedRun"></job-run-timeline>
+            </q-tab-panel>
+
+            <q-tab-panel name="messages">
+              <div class="text-h6">Messages</div>
+              <q-timeline color="secondary">
+                <q-timeline-entry
+                  v-for="message in selectedRun.messages"
+                  :key="message.id"
+                  :title="message.type"
+                  :subtitle="dayjs(message.created_at).format('L LTS')"
+                >
+                  <div>
+                    {{ message.message }}
+                  </div>
+                </q-timeline-entry>
+              </q-timeline>
+            </q-tab-panel>
+
+            <q-tab-panel name="signals">
+              <div class="text-h6">Signals</div>
+              <q-timeline color="secondary">
+                <q-timeline-entry
+                  v-for="signal in selectedRun.signals"
+                  :key="signal.id"
+                  :title="signal.signal"
+                  :subtitle="signal.cancel_job ? 'Job stopped' : 'Job continued'"
+                >
+                  <div>
+                    <q-list bordered separator>
+                      <q-item v-ripple>
+                        <q-item-section>
+                          <q-item-label>{{ signal.parameters }}</q-item-label>
+                          <q-item-label caption>Parameters</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <q-item v-ripple>
+                        <q-item-section>
+                          <q-item-label>{{ dayjs(signal.created_at).format('L LTS') }}</q-item-label>
+                          <q-item-label caption>Sent at</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <q-item v-ripple>
+                        <q-item-section>
+                          <q-item-label>{{ dayjs(signal.handled_at).format('L LTS') }}</q-item-label>
+                          <q-item-label caption>Handled at</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
+                </q-timeline-entry>
+              </q-timeline>
+            </q-tab-panel>
+
+            <q-tab-panel name="statuses">
+              <div class="text-h6">Statuses</div>
+              <q-timeline color="secondary">
+                <q-timeline-entry
+                  v-for="status in selectedRun.statuses"
+                  :key="status.id"
+                  :title="status.status"
+                  :subtitle="dayjs(status.created_at).format('L LTS')"
+                >
+                  <div>
+
+                  </div>
+                </q-timeline-entry>
+              </q-timeline>
+            </q-tab-panel>
+          </q-tab-panels>
+        </q-card>
+      </div>
+    </div>
   </q-page>
-  <q-page class="row items-center justify-evenly" v-else>
+  <q-page class="items-center justify-evenly" v-else>
     Loading
   </q-page>
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from 'vue';
+import {computed, reactive, ref} from 'vue';
 import api from 'src/utils/client/api';
 import {JobRun} from 'src/types/api';
 import {useApi} from "../compostables/useApi";
-import TrackedRunListItem from "components/TrackedRunListItem.vue";
 import dayjs from "dayjs";
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import JobRunTimeline from "components/JobRunTimeline.vue";
+
 dayjs.extend(localizedFormat);
 
 const results = ref<JobRun | null>(null);
 
-const tab = ref<string>('messages');
+const tab = ref<string>('timeline');
 
 const props = defineProps<{
   jobStatusId: number
@@ -160,9 +191,47 @@ const props = defineProps<{
 
 useApi((after) => {
   api.runShow(props.jobStatusId)
-    .then((response: JobRun) => results.value = response)
+    .then((response: JobRun) => {
+      results.value = response;
+    })
     .finally(after);
 })
+
+interface ButtonOption {
+  label?: string;
+  value: string;
+}
+
+const retryId = ref<number|null>(null)
+
+const selectedRun = computed((): JobRun|null => {
+  let jobRun: JobRun|null = results.value;
+  while(jobRun !== null && jobRun.id.toString() !== retryId.value?.toString()) {
+    jobRun = jobRun.parent;
+  }
+  return jobRun;
+})
+
+const retryOptions = computed((): ButtonOption[] => {
+  let jobs: JobRun[] = [];
+  let jobRun: JobRun|null  = results.value;
+  while(jobRun !== null) {
+    jobs.push(jobRun);
+    jobRun = jobRun.parent;
+  }
+  return jobs.reverse().map((job, index) => {
+    return {
+      label: 'Run #' + (index + 1).toString(),
+      value: job.id.toString()
+    }
+  });
+});
+
+function viewRun(runId: number) {
+  retryId.value = runId;
+}
+
+viewRun(props.jobStatusId);
 
 function getHash(jobRun: JobRun): string {
   return jobRun.uuid;

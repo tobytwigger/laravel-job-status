@@ -13,9 +13,12 @@
         <span class="text-weight-medium">{{ props.trackedJob.alias ?? props.trackedJob.class }}</span>
 <!--        <span class="text-grey-8"> - {{ finishedCount }} finished.</span>-->
       </q-item-label>
-      <q-item-label caption lines="2">
-        {{ failedCount }} failed
-        {{ queuedCount }} queued
+      <q-item-label caption lines="5">
+        <status-count :count="queuedCount" label="Queued" color="primary"></status-count>
+        <status-count :count="runningCount" label="Running" color="info"></status-count>
+        <status-count :count="cancelledCount" label="Cancelled" color="warning"></status-count>
+        <status-count :count="failedCount" label="Failed" color="negative"></status-count>
+        <status-count :count="succeededCount" label="Succeeded" color="positive"></status-count>
       </q-item-label>
     </q-item-section>
 
@@ -30,6 +33,7 @@
 <script setup lang="ts">
 import {computed, defineProps} from 'vue';
 import {TrackedJob, JobRun, Status} from 'src/types/api';
+import StatusCount from "components/StatusCount.vue";
 
 const props = defineProps<{
   trackedJob: TrackedJob
@@ -38,20 +42,24 @@ const props = defineProps<{
 
 // Counts
 
-const failedCount = computed(() => props.trackedJob.runs
+const failedCount = computed((): number => props.trackedJob.runs
   .filter((jobRun: JobRun) => jobRun.status === Status.Failed)
   .length
 );
-const runningCount = computed(() => props.trackedJob.runs
+const runningCount = computed((): number => props.trackedJob.runs
   .filter((jobRun: JobRun) => jobRun.status === Status.Started)
   .length
 );
-const queuedCount = computed(() => props.trackedJob.runs
+const queuedCount = computed((): number => props.trackedJob.runs
   .filter((jobRun: JobRun) => jobRun.status === Status.Queued)
   .length
 );
-const finishedCount = computed(() => props.trackedJob.runs
-  .filter((jobRun: JobRun) => jobRun.status === Status.Cancelled || jobRun.status === Status.Succeeded)
+const cancelledCount = computed((): number => props.trackedJob.runs
+  .filter((jobRun: JobRun) => jobRun.status === Status.Cancelled)
+  .length
+);
+const succeededCount = computed((): number => props.trackedJob.runs
+  .filter((jobRun: JobRun) => jobRun.status === Status.Succeeded)
   .length
 );
 

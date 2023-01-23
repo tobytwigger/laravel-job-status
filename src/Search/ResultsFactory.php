@@ -17,22 +17,34 @@ class ResultsFactory
 
     public static function fromQuery(Builder $query): Results
     {
-        $queryResult = $query->with('tags')->orderBy('created_at', 'DESC')->get()->groupBy(['job_class']);
+        /** @var Collection<string, Collection<JobStatus>> $queryResult */
+        $queryResult = $query->with('tags')
+            ->orderBy('created_at', 'DESC')
+            ->get()
+            ->groupBy(['job_alias'])
+            ->sortKeys();
 
         $trackedJobs = new Collection();
-        foreach($queryResult as $jobClass => $sameJobTypes) {
+        foreach($queryResult as $jobAlias => $sameJobTypes) {
             // Groups of the same run
             $exactJobGrouped = $sameJobTypes->groupBy('uuid');
-            $jobAlias = $sameJobTypes->filter(fn(JobStatus $jobStatus) => $jobStatus->job_alias !== null)
+            $jobClass = $sameJobTypes->filter(fn(JobStatus $jobStatus) => $jobStatus->job_alias !== null)
                 ->sortByDesc('created_at')
                 ->first()
-                ?->job_alias;
+                ?->job_class;
 
             $jobRuns = new Collection();
-            foreach($exactJobGrouped as $runs) {
-                $jobRuns->push($runs->sortBy('created_at')->reduce(
-                    fn(?JobRun $result, JobStatus $jobStatus) => new JobRun($jobStatus, $result)
-                ));
+            foreach($exactJobGrouped as $uuid => $runs) {
+                $runs = $runs->sortBy('created_at')->values();
+                if($uuid === null || $uuid === '') {
+                    foreach($runs as $run) {
+                        $jobRuns->push( new JobRun($run, null));
+                    }
+                } else {
+                    $jobRuns->push($runs->reduce(
+                        fn(?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
+                    ));
+                }
             }
             $trackedJobs->push(
                 new TrackedJob($jobClass, $jobRuns, $jobAlias)

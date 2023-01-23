@@ -2,8 +2,8 @@
 
 namespace JobStatus\Dashboard\Commands;
 
-use App\Jobs\JobOne;
-use App\Jobs\JobTwo;
+use App\Jobs\SendEmailToUser;
+use App\Jobs\CreateReport;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Console\VendorPublishCommand;
 use Illuminate\Support\Facades\Artisan;

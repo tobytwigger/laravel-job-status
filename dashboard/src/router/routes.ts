@@ -12,6 +12,12 @@ const routes: RouteRecordRaw[] = [
     children: [{path: '', component: () => import('pages/DashboardPage.vue')}],
   },
   {
+    path: '/history',
+    name: 'history',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{path: '', component:  () => import('pages/HistoryPage.vue')}]
+  },
+  {
     path: '/jobs',
     name: 'jobs.index',
     component: () => import('layouts/MainLayout.vue'),

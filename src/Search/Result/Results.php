@@ -4,6 +4,7 @@ namespace JobStatus\Search\Result;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use JobStatus\Models\JobStatus;
 
@@ -54,10 +55,21 @@ class Results implements Arrayable, Jsonable
      */
     public function runs(): Collection
     {
+        return $this->jobs()
+            ->map(fn(TrackedJob $sameJobList) => $sameJobList->runs())
+            ->flatten(1)
+            ->sortByDesc(fn(JobRun $run) => $run->jobStatus()->created_at->getPreciseTimestamp(3))
+            ->values();
+    }
+
+    /**
+     * @return Collection<JobRun>
+     */
+    public function runsAndRetries(): Collection
+    {
         $jobs = collect();
         /** @var JobRun $job */
-        foreach ($this->jobs()->map(fn(TrackedJob $sameJobList) => $sameJobList->runs())
-                     ->flatten(1) as $job) {
+        foreach ($this->runs() as $job) {
             do {
                 $jobs[] = $job;
                 $job = $job->parent();

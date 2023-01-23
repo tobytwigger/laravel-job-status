@@ -46,7 +46,7 @@ class JobRun implements Arrayable, Jsonable
             'messages' => $this->jobStatus->messages()->orderByDesc('created_at')->orderByDesc('id')->get(),
             'signals' => $this->jobStatus->signals()->orderByDesc('created_at')->orderByDesc('id')->get(),
             'id' => $this->jobStatus->id,
-            'statuses' => $this->jobStatus->statuses()->orderByDesc('created_at')->orderByDesc('id')->get()
+            'statuses' => $this->jobStatus->statuses()->orderByDesc('created_at')->orderByDesc('id')->get(),
         ];
     }
 

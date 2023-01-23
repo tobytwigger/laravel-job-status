@@ -1,7 +1,11 @@
 <template>
-  <q-page class="row items-center justify-evenly" v-if="results !== null">
+  <q-page class="justify-evenly" v-if="results !== null">
 
-    <q-list bordered class="rounded-borders" style="min-width: 85%">
+    <q-breadcrumbs>
+        <q-breadcrumbs-el icon="list" to="/jobs" label="Jobs"/>
+    </q-breadcrumbs>
+
+    <q-list class="rounded-borders q-pa-lg">
       <q-item-label header>All Jobs</q-item-label>
 
       <q-separator></q-separator>
@@ -13,7 +17,7 @@
     </q-list>
 
   </q-page>
-  <q-page class="row items-center justify-evenly" v-else>
+  <q-page class="items-center justify-evenly" v-else>
     Loading
   </q-page>
 </template>

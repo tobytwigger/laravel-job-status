@@ -21,8 +21,8 @@
 
     <q-item-section top>
       <q-item-label lines="1">
-        <span class="text-weight-medium">{{props.trackedRun.status}}</span>
-<!--        <span class="text-grey-8" v-if="Status.Failed && tryCount > 0"> - {{tryCount}} {{tryCount > 1 ? 'attempts' : 'attempt'}}</span>-->
+        <span class="text-weight-medium">{{props.trackedRun.alias}}</span>
+        <span class="text-grey-8"> - {{props.trackedRun.status}}</span>
       </q-item-label>
       <q-item-label caption>
         <span>

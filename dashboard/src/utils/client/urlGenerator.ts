@@ -14,4 +14,5 @@ const generateUrl = (path: string): string => {
 export const dashboard = generateUrl('dashboard');
 export const jobList = generateUrl('tracked-job');
 export const jobShow = (alias: string) => generateUrl('tracked-job/' + alias);
-export const runShow = (jobStatusId: string) => generateUrl('job-run/' + jobStatusId.toString());
+export const runShow = (jobStatusId: number) => generateUrl('job-run/' + jobStatusId.toString());
+export const history = generateUrl('history');

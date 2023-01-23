@@ -2,22 +2,19 @@
 
 namespace JobStatus\Dashboard\Http\Controllers\Api;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use JobStatus\Dashboard\Http\Controllers\Controller;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\JobRun;
 
-class RunController extends Controller
+class HistoryController extends Controller
 {
 
-    public function show(int $jobStatusId)
+    public function __invoke()
     {
-        $jobStatus = JobStatus::findOrFail($jobStatusId);
         return JobStatusSearcher::query()
-            ->whereUuid($jobStatus->uuid)
             ->get()
-            ->firstRun();
+            ->runs();
     }
 
 }

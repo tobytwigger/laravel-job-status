@@ -63,14 +63,20 @@ const linksList = [
   {
     title: 'Dashboard',
     caption: 'Job dashboard.',
-    icon: 'school',
+    icon: 'dashboard',
     route: {path: '/dashboard'}
   },
   {
     title: 'Jobs',
     caption: 'All tracked jobs.',
-    icon: 'school',
+    icon: 'list',
     route: {path: '/jobs'}
+  },
+  {
+    title: 'History',
+    caption: 'A list of all runs your queue worker has made.',
+    icon: 'manage_search',
+    route: {path: '/history'}
   },
 ];
 

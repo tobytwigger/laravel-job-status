@@ -36,7 +36,7 @@ export interface JobMessage {
   id: number,
   message: string
   created_at: Date
-  type: string
+  type: MessageType
 }
 
 export interface JobSignal {
@@ -60,6 +60,14 @@ export enum Status {
   Cancelled = 'cancelled',
   Failed = 'failed',
   Succeeded = 'succeeded',
+}
+
+export enum MessageType {
+  Success = 'success',
+  Error = 'error',
+  Info = 'info',
+  Warning = 'warning',
+  Debug = 'debug',
 }
 
 // export interface FullTrackedJob extends TrackedJob{

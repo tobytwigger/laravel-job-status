@@ -34,7 +34,6 @@ class JobProcessed extends BaseListener
             }
 
             if ($modifier->getJobStatus()->isRunning()) {
-                // If the job is manually released, it's been retried
                 if ($event->job->hasFailed()) {
                     $modifier->setStatus(Status::FAILED);
                 } else {
