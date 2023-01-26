@@ -34,4 +34,9 @@ class JobStatusStatusTest extends TestCase
             )
         );
     }
+
+    /** @test */
+    public function it_saves_timestamps_with_milliseconds(){
+        $this->markTestIncomplete();
+    }
 }

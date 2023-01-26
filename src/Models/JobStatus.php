@@ -11,7 +11,6 @@ use JobStatus\Concerns\Trackable;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
-use JobStatus\JobStatusCollection;
 use JobStatus\JobStatusModifier;
 
 /**
@@ -127,17 +126,6 @@ class JobStatus extends Model
         $query->whereIn('status', [
             Status::QUEUED, Status::STARTED
         ]);
-    }
-
-    /**
-     * Create a new Eloquent Collection instance.
-     *
-     * @param  array  $models
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function newCollection(array $models = [])
-    {
-        return new JobStatusCollection($models);
     }
 
     public function getStatus(): Status

@@ -94,62 +94,57 @@ class JobStatusModifier
         return $this;
     }
 
-    public function message(string $message, MessageType $type = MessageType::INFO, array $traces = []): static
+    public function message(string $message, MessageType $type = MessageType::INFO): static
     {
         if ($this->jobStatus !== null) {
             $message = $this->jobStatus->messages()->create([
                 'message' => $message, 'type' => $type,
             ]);
-            foreach($traces as $trace) {
-                $message->stackTraces()->create([
-                    'stack_trace' => $trace,
-                ]);
-            }
         }
         return $this;
     }
 
-    public function line(string $message, array $traces = []): static
+    public function line(string $message): static
     {
-        return $this->infoMessage($message, $traces);
+        return $this->infoMessage($message);
     }
 
-    public function warningMessage(string $message, array $traces = []): static
+    public function warningMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::WARNING, $traces);
+            $this->message($message, MessageType::WARNING);
         }
         return $this;
     }
 
-    public function successMessage(string $message, array $traces = []): static
+    public function successMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::SUCCESS, $traces);
+            $this->message($message, MessageType::SUCCESS);
         }
         return $this;
     }
 
-    public function infoMessage(string $message, array $traces = []): static
+    public function infoMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::INFO, $traces);
+            $this->message($message, MessageType::INFO);
         }
         return $this;
     }
 
-    public function debugMessage(string $message, array $traces = []): static
+    public function debugMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::DEBUG, $traces);
+            $this->message($message, MessageType::DEBUG);
         }
         return $this;
     }
 
-    public function errorMessage(string $message, array $traces = []): static
+    public function errorMessage(string $message): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::ERROR, $traces);
+            $this->message($message, MessageType::ERROR);
         }
         return $this;
     }
@@ -187,6 +182,15 @@ class JobStatusModifier
     {
         if ($this->jobStatus !== null) {
             $this->jobStatus->job_id = $jobId;
+            $this->jobStatus->save();
+        }
+        return $this;
+    }
+
+    public function setConnectionName(string $connectionName): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->connection_name = $connectionName;
             $this->jobStatus->save();
         }
         return $this;

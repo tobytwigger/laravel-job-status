@@ -4,6 +4,7 @@ namespace JobStatus\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use JobStatus\Database\Factories\JobStatusStatusFactory;
 use JobStatus\Enums\Status;
 
@@ -42,6 +43,24 @@ class JobException extends Model
     public function previous()
     {
         return $this->belongsTo(JobException::class, 'previous_id');
+    }
+
+    public function loadAllPrevious(): static
+    {
+        $currentException = $this;
+        $count = 1;
+        while($currentException->previous !== null) {
+            $string = '';
+            for($i = 0; $i<=$count;$i++) {
+                $string .= '.previous';
+            }
+            if(Str::startsWith($string, '.')) {
+                $string = Str::substr($string, 1);
+            }
+            $this->load($string);
+            $currentException = $currentException->previous;
+        }
+        return $this;
     }
 
     protected static function newFactory()

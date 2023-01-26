@@ -4,7 +4,6 @@ namespace JobStatus\Search;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use JobStatus\JobStatusCollection;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Search\Result\JobRun;

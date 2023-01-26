@@ -38,4 +38,5 @@ trait InteractsWithSignals
             throw JobCancelledException::for($signal);
         }
     }
+
 }

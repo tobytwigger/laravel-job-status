@@ -22,6 +22,8 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
+     * Get all the jobs that had runs matching the search
+     *
      * @return TrackedJob[]|Collection
      */
     public function jobs(): Collection
@@ -43,6 +45,8 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
+     * Get all the matching underlying database models
+     *
      * @return Collection<JobStatus>
      */
     public function raw(): Collection
@@ -51,6 +55,8 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
+     * Get all the runs that matched this search
+     *
      * @return Collection<JobRun>
      */
     public function runs(): Collection
@@ -63,6 +69,8 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
+     * Get all the runs without grouping retries together
+     *
      * @return Collection<JobRun>
      */
     public function runsAndRetries(): Collection
@@ -78,32 +86,44 @@ class Results implements Arrayable, Jsonable
         return $jobs;
     }
 
+    /**
+     * Get the first matching job
+     *
+     * @return TrackedJob|null
+     */
     public function first(): ?TrackedJob
     {
         return $this->jobs()->first();
     }
 
+    /**
+     * How many jobs are there?
+     *
+     * @return int
+     */
     public function count(): int
     {
         return $this->jobs()->count();
     }
 
+    /**
+     * How many runs are there?
+     *
+     * @return int
+     */
+    public function runCount(): int
+    {
+        return $this->runs()->count();
+    }
+
+    /**
+     * Get the first matching run
+     *
+     * @return JobRun|null
+     */
     public function firstRun(): ?JobRun
     {
         return $this->first()?->latest();
     }
 
-    public function jobOfTypeWithTags(string $jobType, array $jobTags): ?TrackedJob
-    {
-        return $this->jobs()
-            ->filter(function (TrackedJob $sameJobList) use ($jobType, $jobTags) {
-                foreach ($jobTags as $key => $value) {
-                    if (collect($sameJobList->tags())->has($key) === false || collect($sameJobList->tags())[$key] !== $value) {
-                        return false;
-                    }
-                }
-                return $sameJobList->jobClass() === $jobType;
-            })
-            ->first();
-    }
 }

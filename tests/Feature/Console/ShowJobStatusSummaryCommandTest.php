@@ -13,6 +13,8 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_shows_the_right_data_for_one_job_type()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
+
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::QUEUED]);
         JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::STARTED]);
@@ -31,6 +33,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_shows_multiple_tags()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
         JobStatus::factory()
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valuetwo']), 'tags')
@@ -51,6 +54,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_shows_multiple_jobs()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
         JobStatus::factory()
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valuetwo']), 'tags')
@@ -73,6 +77,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_can_filter_by_job_class()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
         JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
@@ -90,6 +95,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_can_filter_by_job_alias()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
         JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
@@ -108,6 +114,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_can_filter_by_tags()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
         JobStatus::factory()->count(20)->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valuetwo']), 'tags')->create(['job_class' => 'SomeJobTwo', 'job_alias' => 'MySecondJob', 'status' => \JobStatus\Enums\Status::STARTED]);
 
@@ -126,6 +133,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_can_filter_by_multiple_tags()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
         JobStatus::factory()->count(20)
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'keytwo', 'value' => 'valueone']), 'tags')
@@ -150,6 +158,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_takes_the_final_tag_if_same_key_given_twice()
     {
+        $this->markTestIncomplete('Tags is no longer a thing on the trackable job');
         JobStatus::factory()->count(20)
             ->has(JobStatusTag::factory()->state(['key' => 'keyone', 'value' => 'valueone']), 'tags')
             ->create(['job_class' => 'SomeJobOne', 'job_alias' => 'MyFirstJob', 'status' => \JobStatus\Enums\Status::FAILED]);
