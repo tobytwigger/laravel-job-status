@@ -36,7 +36,22 @@ export interface JobMessage {
   id: number,
   message: string
   created_at: Date
-  type: MessageType
+  type: MessageType,
+  stack_traces: StackTrace[]
+}
+
+export interface StackTrace {
+  id: number
+  job_message_id: number
+  stack_trace: StackTraceLine[]
+}
+
+export interface StackTraceLine {
+  file: string
+  line: number
+  function: string
+  class: string
+  type: string
 }
 
 export interface JobSignal {

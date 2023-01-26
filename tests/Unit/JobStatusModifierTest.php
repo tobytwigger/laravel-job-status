@@ -3,6 +3,7 @@
 namespace JobStatus\Tests\Unit;
 
 use Illuminate\Support\Str;
+use JobStatus\Enums\MessageType;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
@@ -226,6 +227,22 @@ class JobStatusModifierTest extends TestCase
             'signal' => 'custom-signal',
             'cancel_job' => true,
             'parameters' => json_encode(['param1' => 'value1']),
+        ]);
+    }
+
+    /** @test */
+    public function message_adds_a_stack_trace(){
+        $jobStatus = JobStatus::factory()->create();
+
+        $modifier = new JobStatusModifier($jobStatus);
+        $modifier->infoMessage('test', ['trace1', 'trace2']);
+
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
+            'message' => 'test',
+            'type' => MessageType::INFO->value,
+        ]);
+        $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_stack_traces'), [
+            'stack_trace' => json_encode(['trace1', 'trace2']),
         ]);
     }
 

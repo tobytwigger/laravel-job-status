@@ -46,57 +46,62 @@ class JobStatusModifier
         return $this;
     }
 
-    public function message(string $message, MessageType $type = MessageType::INFO): static
+    public function message(string $message, MessageType $type = MessageType::INFO, array $traces = []): static
     {
         if ($this->jobStatus !== null) {
-            $this->jobStatus->messages()->create([
+            $message = $this->jobStatus->messages()->create([
                 'message' => $message, 'type' => $type,
             ]);
+            foreach($traces as $trace) {
+                $message->stackTraces()->create([
+                    'stack_trace' => $trace,
+                ]);
+            }
         }
         return $this;
     }
 
-    public function line(string $message): static
+    public function line(string $message, array $traces = []): static
     {
-        return $this->infoMessage($message);
+        return $this->infoMessage($message, $traces);
     }
 
-    public function warningMessage(string $message): static
+    public function warningMessage(string $message, array $traces = []): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::WARNING);
+            $this->message($message, MessageType::WARNING, $traces);
         }
         return $this;
     }
 
-    public function successMessage(string $message): static
+    public function successMessage(string $message, array $traces = []): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::SUCCESS);
+            $this->message($message, MessageType::SUCCESS, $traces);
         }
         return $this;
     }
 
-    public function infoMessage(string $message): static
+    public function infoMessage(string $message, array $traces = []): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::INFO);
+            $this->message($message, MessageType::INFO, $traces);
         }
         return $this;
     }
 
-    public function debugMessage(string $message): static
+    public function debugMessage(string $message, array $traces = []): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::DEBUG);
+            $this->message($message, MessageType::DEBUG, $traces);
         }
         return $this;
     }
 
-    public function errorMessage(string $message): static
+    public function errorMessage(string $message, array $traces = []): static
     {
         if ($this->jobStatus !== null) {
-            $this->message($message, MessageType::ERROR);
+            $this->message($message, MessageType::ERROR, $traces);
         }
         return $this;
     }

@@ -41,4 +41,9 @@ class JobMessage extends Model
         return JobMessageFactory::new();
     }
 
+    public function stackTraces()
+    {
+        return $this->hasMany(JobStackTrace::class, 'job_message_id');
+    }
+
 }
