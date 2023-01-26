@@ -19,6 +19,7 @@ export interface JobRun {
   created_at: Date,
   messages: JobMessage[],
   signals: JobSignal[],
+  exception: JobException|null
   statuses: JobStatusStatus[]
   id: number,
   tags: {
@@ -37,12 +38,18 @@ export interface JobMessage {
   message: string
   created_at: Date
   type: MessageType,
-  stack_traces: StackTrace[]
 }
 
-export interface StackTrace {
+export interface JobException {
   id: number
-  job_message_id: number
+  created_at: Date
+  updated_at: Date
+  previous: JobException|null
+  message: string
+  job_status_id: number
+  line: number
+  file: string
+  code: number
   stack_trace: StackTraceLine[]
 }
 

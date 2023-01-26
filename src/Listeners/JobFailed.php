@@ -40,15 +40,8 @@ class JobFailed extends BaseListener
                     $modifier->setStatus(Status::CANCELLED);
                     $modifier->warningMessage('The job has been cancelled');
                 } else {
-                    $traces = [];
-                    $exception = $event->exception;
-                    while($exception !== null) {
-                        $traces[] = $exception->getTrace();
-                        $exception = $exception->getPrevious();
-                    }
-
                     $modifier->setStatus(Status::FAILED);
-                    $modifier->errorMessage($event->exception->getMessage(), $traces);
+                    $modifier->addException($event->exception);
                 }
             }
         }

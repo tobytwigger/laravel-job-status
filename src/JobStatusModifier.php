@@ -4,6 +4,7 @@ namespace JobStatus;
 
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
+use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobStatus;
 
@@ -33,6 +34,35 @@ class JobStatusModifier
             $this->jobStatus->status = $status;
             $this->jobStatus->save();
             $this->jobStatus->statuses()->create(['status' => $status]);
+        }
+        return $this;
+    }
+
+    public function addException(\Throwable $exception): static
+    {
+        if($this->jobStatus !== null) {
+            $exceptions = [];
+            $temporaryException = $exception;
+            while($temporaryException !== null) {
+                $exceptions[] = $temporaryException;
+                $temporaryException = $temporaryException->getPrevious();
+            }
+            $exceptionModel = null;
+            foreach(array_reverse($exceptions) as $exceptionToSave) {
+                $exceptionModel = JobException::create([
+                    'previous_id' => $exceptionModel?->id ?? null,
+                    'message' => $exceptionToSave->getMessage(),
+                    'line' => $exceptionToSave->getLine(),
+                    'file' => $exceptionToSave->getFile(),
+                    'code' => $exceptionToSave->getCode(),
+                    'stack_trace' => $exceptionToSave->getTrace(),
+                ]);
+            }
+            if($exceptionModel !== null) {
+                $this->jobStatus->update([
+                    'exception_id' => $exceptionModel->id
+                ]);
+            }
         }
         return $this;
     }

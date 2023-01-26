@@ -14,10 +14,14 @@ class RunController extends Controller
     public function show(int $jobStatusId)
     {
         $jobStatus = JobStatus::findOrFail($jobStatusId);
-        return JobStatusSearcher::query()
-            ->whereUuid($jobStatus->uuid)
-            ->get()
-            ->firstRun();
+        if($jobStatus->uuid) {
+            return JobStatusSearcher::query()
+                ->whereUuid($jobStatus->uuid)
+                ->get()
+                ->firstRun();
+        } else {
+            return new JobRun($jobStatus);
+        }
     }
 
 }

@@ -1,9 +1,5 @@
 <template>
   <div>
-    <q-dialog :model-value="stackTraceShouldBeVisible" @update:model-value="stackTracesToView = null">
-      <stack-trace-view :stack-traces="stackTracesToView"></stack-trace-view>
-    </q-dialog>
-
     <q-chat-message
       :text="entry.text"
       :sent="entry.from_app"
@@ -17,10 +13,6 @@
         <span v-else>{{ run.alias }}</span>
       </template>
       <template v-slot:stamp>
-        <a style="text-decoration: none; color: inherit;"
-           href="#"
-           @click.prevent="stackTracesToView = entry.stack_traces"
-           v-if="entry.stack_traces.length > 0">View stack trace - </a>
         <span>{{ Math.round(entry.time_into_job.asSeconds() * 10) / 10 }} seconds</span></template>
       <template v-slot:avatar>
         <q-avatar color="teal" class="q-ma-sm" text-color="white" v-if="entry.from_app" :icon="entry.icon"></q-avatar>
@@ -31,11 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import {computed, defineProps, ref} from 'vue';
-import {JobRun, MessageType, StackTrace} from 'src/types/api';
+import {computed, defineProps} from 'vue';
+import {JobRun, MessageType, JobException} from 'src/types/api';
 import duration, {Duration} from 'dayjs/plugin/duration';
 import dayjs from "dayjs";
-import StackTraceView from "components/StackTraceView.vue";
 
 dayjs.extend(duration);
 
@@ -49,8 +40,7 @@ interface TimelineEntry {
   from_app: boolean
   time_into_job: Duration,
   color: string | null,
-  icon: string,
-  stack_traces: StackTrace[]
+  icon: string
 }
 
 function calculateTimeIntoJob(time: Date): Duration {
@@ -74,14 +64,6 @@ function getColourFromMessageType(type: MessageType): string {
   }
 }
 
-const stackTracesToView = ref<StackTrace[]|null>();
-stackTracesToView.value = null;
-const stackTraceShouldBeVisible = computed((): boolean => {
-  return stackTracesToView.value !== null
-    && stackTracesToView.value !== undefined
-    && stackTracesToView.value.length > 0;
-})
-
 const entries = computed((): TimelineEntry[] => {
   let rawEntries: TimelineEntry[] = [];
   for (let message of props.run.messages) {
@@ -92,7 +74,16 @@ const entries = computed((): TimelineEntry[] => {
       time_into_job: calculateTimeIntoJob(message.created_at),
       color: getColourFromMessageType(message.type),
       icon: 'chat',
-      stack_traces: message.stack_traces
+    });
+  }
+  if(props.run.exception !== null) {
+    rawEntries.push({
+      from_app: false,
+      id: 'exception-' + props.run.exception.id.toString(),
+      text: ['An exception occurred', props.run.exception.message],
+      time_into_job: calculateTimeIntoJob(props.run.exception.created_at),
+      color: 'negative',
+      icon: 'error',
     });
   }
   for (let status of props.run.statuses) {
@@ -104,8 +95,7 @@ const entries = computed((): TimelineEntry[] => {
       ],
       time_into_job: calculateTimeIntoJob(status.created_at),
       color: null,
-      icon: 'move_down',
-      stack_traces: []
+      icon: 'move_down'
     });
   }
   for (let signal of props.run.signals) {
@@ -122,8 +112,7 @@ const entries = computed((): TimelineEntry[] => {
       ),
       time_into_job: calculateTimeIntoJob(signal.created_at),
       color: null,
-      icon: 'connect_without_contact',
-      stack_traces: []
+      icon: 'connect_without_contact'
     });
     rawEntries.push({
       from_app: false,
@@ -133,8 +122,7 @@ const entries = computed((): TimelineEntry[] => {
       ].concat(signal.cancel_job ? ['This caused the job to be cancelled.'] : []),
       time_into_job: calculateTimeIntoJob(signal.handled_at),
       color: signal.cancel_job ? 'warning' : null,
-      icon: 'connect_without_contact',
-      stack_traces: []
+      icon: 'connect_without_contact'
     });
   }
   rawEntries.sort((a, b) => {

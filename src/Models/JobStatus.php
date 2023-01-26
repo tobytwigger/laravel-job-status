@@ -26,7 +26,7 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration'
+        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id'
     ];
 
     protected $casts = [
@@ -61,6 +61,11 @@ class JobStatus extends Model
     public function messages()
     {
         return $this->hasMany(JobMessage::class);
+    }
+
+    public function exception()
+    {
+        return $this->belongsTo(JobException::class, 'exception_id');
     }
 
     public function signals()

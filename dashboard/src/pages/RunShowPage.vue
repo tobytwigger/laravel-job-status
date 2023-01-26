@@ -83,8 +83,9 @@
           >
             <q-tab name="timeline" icon="timeline" label="Timeline"/>
             <q-tab name="messages" icon="mail" label="Messages"/>
-            <q-tab name="signals" icon="alarm" label="Signals"/>
-            <q-tab name="statuses" icon="movie" label="Status History"/>
+            <q-tab name="signals" icon="connect_without_contact" label="Signals"/>
+            <q-tab name="statuses" icon="move_down" label="Status History"/>
+            <q-tab name="exception" icon="error" label="Exception"/>
           </q-tabs>
 
           <q-separator/>
@@ -160,6 +161,13 @@
                 </q-timeline-entry>
               </q-timeline>
             </q-tab-panel>
+
+            <q-tab-panel name="exception">
+              <div class="text-h6">Exception</div>
+              <div v-if="!selectedRun.exception">No exceptions were detected in this job</div>
+              <exception-view v-else :exceptions="exceptions"></exception-view>
+            </q-tab-panel>
+
           </q-tab-panels>
         </q-card>
       </div>
@@ -173,11 +181,12 @@
 <script setup lang="ts">
 import {computed, reactive, ref} from 'vue';
 import api from 'src/utils/client/api';
-import {JobRun} from 'src/types/api';
+import {JobException, JobRun} from 'src/types/api';
 import {useApi} from "../compostables/useApi";
 import dayjs from "dayjs";
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import JobRunTimeline from "components/JobRunTimeline.vue";
+import ExceptionView from "components/ExceptionView.vue";
 
 dayjs.extend(localizedFormat);
 
@@ -195,6 +204,16 @@ useApi((after) => {
       results.value = response;
     })
     .finally(after);
+})
+
+const exceptions = computed((): JobException[] => {
+  let tempException = selectedRun.value?.exception
+  let exs = []
+  while(tempException !== null && tempException !== undefined) {
+    exs.push(tempException)
+    tempException = tempException.previous
+  }
+  return exs;
 })
 
 interface ButtonOption {
