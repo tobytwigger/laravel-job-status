@@ -3,7 +3,7 @@
 
     <q-breadcrumbs>
       <q-breadcrumbs-el icon="list" to="/jobs" label="Jobs"/>
-      <q-breadcrumbs-el :label="selectedRun.alias" icon="view_stream" :to="'/jobs/' + selectedRun.alias" />
+      <q-breadcrumbs-el :label="selectedRun.alias" icon="view_stream" :to="'/jobs/' + selectedRun.alias"/>
       <q-breadcrumbs-el :label="'Run #' + selectedRun.id" icon="visibility" :to="'/run/' + selectedRun.id"/>
     </q-breadcrumbs>
 
@@ -26,49 +26,95 @@
       </div>
     </div>
 
+    <div class="row"
+         v-if="(selectedRun.status === 'started' || selectedRun.status === 'queued') && hasUnfinishedCancel">
+      <div class="col-12">
+        <q-banner class="bg-warning text-black">
+          A cancel signal has been sent to this job, but the job has not yet handled it.
+        </q-banner>
+      </div>
+    </div>
+    <div class="row q-pa-md">
+      <div class="col-12 text-right">
+        <q-btn-group rounded>
+          <q-btn
+            rounded
+            push
+            v-if="selectedRun.alias !== null"
+            :to="{path: '/jobs/' + selectedRun.alias}"
+            icon-right="arrow_back"
+            label="Go to job"/>
+
+          <q-btn
+            v-if="selectedRun.status === 'started' || selectedRun.status === 'queued'"
+            rounded
+            :disable="hasUnfinishedCancel"
+            :loading="cancelling"
+            push
+            icon-right="cancel"
+            label="Cancel"
+            @click="cancel"/>
+        </q-btn-group>
+      </div>
+    </div>
+
     <div class="row">
       <div class="col-12 q-py-md">
         <q-list bordered separator>
-          <q-item v-ripple>
+          <q-item>
             <q-item-section>
               <q-item-label>{{ selectedRun.alias }}</q-item-label>
               <q-item-label caption>Alias</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-ripple>
+          <q-item>
             <q-item-section>
               <q-item-label>{{ selectedRun.class }}</q-item-label>
               <q-item-label caption>Class</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-ripple>
+          <q-item>
             <q-item-section>
               <q-item-label>{{ selectedRun.status }}</q-item-label>
               <q-item-label caption>Status</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-ripple>
+          <q-item>
             <q-item-section>
               <q-item-label>{{ selectedRun.uuid }}</q-item-label>
               <q-item-label caption>Uuid</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-ripple>
+          <q-item>
             <q-item-section>
               <q-item-label>{{ selectedRun.tags }}</q-item-label>
               <q-item-label caption>Tags</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-ripple>
+          <q-item>
             <q-item-section>
               <q-item-label>{{ selectedRun.percentage }}</q-item-label>
               <q-item-label caption>Percentage</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-ripple>
+          <q-item>
             <q-item-section>
               <q-item-label>{{ selectedRun.created_at }}</q-item-label>
               <q-item-label caption>Dispatched At</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              <q-item-label v-if="queueTime === null">N/A</q-item-label>
+              <q-item-label v-else>{{ queueTime }} s</q-item-label>
+              <q-item-label caption>Queue time</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              <q-item-label v-if="runTime === null">N/A</q-item-label>
+              <q-item-label v-else>{{ runTime }} s</q-item-label>
+              <q-item-label caption>Runtime</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -122,19 +168,19 @@
                 >
                   <div>
                     <q-list bordered separator>
-                      <q-item v-ripple>
+                      <q-item>
                         <q-item-section>
                           <q-item-label>{{ signal.parameters }}</q-item-label>
                           <q-item-label caption>Parameters</q-item-label>
                         </q-item-section>
                       </q-item>
-                      <q-item v-ripple>
+                      <q-item>
                         <q-item-section>
                           <q-item-label>{{ dayjs(signal.created_at).format('L LTS') }}</q-item-label>
                           <q-item-label caption>Sent at</q-item-label>
                         </q-item-section>
                       </q-item>
-                      <q-item v-ripple>
+                      <q-item>
                         <q-item-section>
                           <q-item-label>{{ dayjs(signal.handled_at).format('L LTS') }}</q-item-label>
                           <q-item-label caption>Handled at</q-item-label>
@@ -181,7 +227,7 @@
 <script setup lang="ts">
 import {computed, reactive, ref} from 'vue';
 import api from 'src/utils/client/api';
-import {JobException, JobRun} from 'src/types/api';
+import {JobException, JobRun, JobSignal, JobStatusStatus} from 'src/types/api';
 import {useApi} from "../compostables/useApi";
 import dayjs from "dayjs";
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -198,6 +244,13 @@ const props = defineProps<{
   jobStatusId: number
 }>();
 
+const hasUnfinishedCancel = computed((): boolean => {
+  if (selectedRun.value === null) {
+    return false;
+  }
+  return selectedRun.value?.signals.filter((signal: JobSignal) => signal.cancel_job && signal.handled_at === null).length > 0;
+});
+
 useApi((after) => {
   api.runShow(props.jobStatusId)
     .then((response: JobRun) => {
@@ -206,10 +259,18 @@ useApi((after) => {
     .finally(after);
 })
 
+const cancelling = ref(false);
+
+function cancel() {
+  cancelling.value = true;
+  api.signal(props.jobStatusId, 'cancel', true, {})
+    .finally(() => cancelling.value = false);
+}
+
 const exceptions = computed((): JobException[] => {
   let tempException = selectedRun.value?.exception
   let exs = []
-  while(tempException !== null && tempException !== undefined) {
+  while (tempException !== null && tempException !== undefined) {
     exs.push(tempException)
     tempException = tempException.previous
   }
@@ -221,20 +282,47 @@ interface ButtonOption {
   value: string;
 }
 
-const retryId = ref<number|null>(null)
+const retryId = ref<number | null>(null)
 
-const selectedRun = computed((): JobRun|null => {
-  let jobRun: JobRun|null = results.value;
-  while(jobRun !== null && jobRun.id.toString() !== retryId.value?.toString()) {
+const selectedRun = computed((): JobRun | null => {
+  let jobRun: JobRun | null = results.value;
+  while (jobRun !== null && jobRun.id.toString() !== retryId.value?.toString()) {
     jobRun = jobRun.parent;
   }
   return jobRun;
 })
 
+const runTime = computed((): number => {
+  if (selectedRun.value === null || selectedRun.value.started_at === null) {
+    return 0;
+  }
+  if (selectedRun.value.finished_at === null) {
+    return getDuration(selectedRun.value?.started_at, new Date(), false);
+  }
+  return getDuration(selectedRun.value.started_at, selectedRun.value.finished_at, true)
+});
+
+const queueTime = computed((): number => {
+  if (selectedRun.value === null || selectedRun.value.created_at === null) {
+    return 0;
+  }
+  if (selectedRun.value.started_at === null) {
+    return getDuration(selectedRun.value?.created_at, new Date(), false);
+  }
+  return getDuration(selectedRun.value?.created_at, selectedRun.value.started_at, true)
+})
+
+function getDuration(startedAt: Date, finishedAt: Date | null | undefined = null, withDecimals: boolean = false): number {
+  if (finishedAt === null || finishedAt === undefined) {
+    finishedAt = new Date();
+  }
+  return Math.round(dayjs(finishedAt).diff(startedAt, 'seconds', withDecimals) * 10) / 10;
+}
+
 const retryOptions = computed((): ButtonOption[] => {
   let jobs: JobRun[] = [];
-  let jobRun: JobRun|null  = results.value;
-  while(jobRun !== null) {
+  let jobRun: JobRun | null = results.value;
+  while (jobRun !== null) {
     jobs.push(jobRun);
     jobRun = jobRun.parent;
   }

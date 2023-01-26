@@ -36,6 +36,7 @@ class JobFailed extends BaseListener
 
             // This is only the case if JobExceptionOccurred has not been ran
             if($modifier->getJobStatus()->status !== Status::FAILED && $modifier->getJobStatus()->status !== Status::CANCELLED) {
+                $modifier->setFinishedAt(now());
                 if($event->exception instanceof JobCancelledException) {
                     $modifier->setStatus(Status::CANCELLED);
                     $modifier->warningMessage('The job has been cancelled');

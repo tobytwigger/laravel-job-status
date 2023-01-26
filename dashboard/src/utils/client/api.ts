@@ -1,4 +1,4 @@
-import {get} from 'src/utils/client/requestHandler';
+import {get, post} from 'src/utils/client/requestHandler';
 import {DashboardResponse, JobRun, Results, TrackedJob} from 'src/types/api';
 import {
   dashboard as dashboardUrl,
@@ -6,6 +6,7 @@ import {
   jobShow as jobShowUrl,
   runShow as runShowUrl,
   history as historyUrl,
+  signal as signalUrl
 } from 'src/utils/client/urlGenerator';
 
 const dashboard = (): Promise<DashboardResponse> => {
@@ -45,4 +46,15 @@ const history = (): Promise<JobRun[]> => {
     })
 }
 
-export default {dashboard, jobList, jobShow, runShow, history};
+const signal = (jobStatusId: number, signal: string, cancel: boolean, parameters: {[key: string]: any}): Promise<void> => {
+  return post(signalUrl(jobStatusId), {
+    signal: signal,
+    cancel_job: cancel ? '1' : '0',
+    parameters: parameters
+  })
+    .then((response): void => {
+      return;
+    })
+}
+
+export default {dashboard, jobList, jobShow, runShow, history, signal};

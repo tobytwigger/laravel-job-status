@@ -26,6 +26,7 @@ class JobProcessing extends BaseListener
 
             if ($modifier !== null) {
                 $modifier->setStatus(Status::STARTED);
+                $modifier->setStartedAt(now());
             }
         }
     }

@@ -38,6 +38,24 @@ class JobStatusModifier
         return $this;
     }
 
+    public function setStartedAt(\Carbon\Carbon $startedAt): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->started_at = $startedAt;
+            $this->jobStatus->save();
+        }
+        return $this;
+    }
+
+    public function setFinishedAt(\Carbon\Carbon $startedAt): static
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->finished_at = $startedAt;
+            $this->jobStatus->save();
+        }
+        return $this;
+    }
+
     public function addException(\Throwable $exception): static
     {
         if($this->jobStatus !== null) {

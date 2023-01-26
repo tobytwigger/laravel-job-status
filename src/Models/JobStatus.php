@@ -26,7 +26,8 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id'
+        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
+        'started_at', 'finished_at'
     ];
 
     protected $casts = [
@@ -34,8 +35,12 @@ class JobStatus extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'status' => Status::class,
-        'configuration' => 'array'
+        'configuration' => 'array',
+        'started_at' => 'datetime',
+        'finished_at' => 'datetime'
     ];
+
+    protected $dateFormat = 'Y-m-d H:i:s.v';
 
     public function __construct(array $attributes = [])
     {

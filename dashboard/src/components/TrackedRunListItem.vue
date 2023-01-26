@@ -1,3 +1,4 @@
+
 <template>
   <q-item clickable :to="{path: '/run/' + props.trackedRun.id}">
     <q-item-section avatar top>

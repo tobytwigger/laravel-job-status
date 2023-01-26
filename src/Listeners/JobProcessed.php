@@ -34,6 +34,7 @@ class JobProcessed extends BaseListener
             }
 
             if ($modifier->getJobStatus()->isRunning()) {
+                $modifier->setFinishedAt(now());
                 if ($event->job->hasFailed()) {
                     $modifier->setStatus(Status::FAILED);
                 } else {

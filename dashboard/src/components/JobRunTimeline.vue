@@ -114,16 +114,18 @@ const entries = computed((): TimelineEntry[] => {
       color: null,
       icon: 'connect_without_contact'
     });
-    rawEntries.push({
-      from_app: false,
-      id: 'signal-handled-' + signal.id.toString(),
-      text: [
-        'Handled signal ' + signal.signal + ' (#' + signal.id + ')'
-      ].concat(signal.cancel_job ? ['This caused the job to be cancelled.'] : []),
-      time_into_job: calculateTimeIntoJob(signal.handled_at),
-      color: signal.cancel_job ? 'warning' : null,
-      icon: 'connect_without_contact'
-    });
+    if(signal.handled_at !== null) {
+      rawEntries.push({
+        from_app: false,
+        id: 'signal-handled-' + signal.id.toString(),
+        text: [
+          'Handled signal ' + signal.signal + ' (#' + signal.id + ')'
+        ].concat(signal.cancel_job ? ['This caused the job to be cancelled.'] : []),
+        time_into_job: calculateTimeIntoJob(signal.handled_at),
+        color: signal.cancel_job ? 'warning' : null,
+        icon: 'connect_without_contact'
+      });
+    }
   }
   rawEntries.sort((a, b) => {
     return a.time_into_job.asMilliseconds() - b.time_into_job.asMilliseconds()

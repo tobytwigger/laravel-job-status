@@ -21,6 +21,8 @@ export interface JobRun {
   signals: JobSignal[],
   exception: JobException|null
   statuses: JobStatusStatus[]
+  started_at: Date|null,
+  finished_at: Date|null,
   id: number,
   tags: {
     [key: string]: string;
