@@ -83,6 +83,11 @@ class Results implements Arrayable, Jsonable
         return $this->jobs()->first();
     }
 
+    public function count(): int
+    {
+        return $this->jobs()->count();
+    }
+
     public function firstRun(): ?JobRun
     {
         return $this->first()?->latest();

@@ -55,6 +55,11 @@ class TrackedJob implements Arrayable, Jsonable
 
     public function alias(): string
     {
+        return $this->jobAlias();
+    }
+
+    public function jobAlias(): string
+    {
         return $this->alias;
     }
 
@@ -62,4 +67,10 @@ class TrackedJob implements Arrayable, Jsonable
     {
         return $this->runs()->first();
     }
+
+    public function numberOfRuns(): int
+    {
+        return $this->runs()->count();
+    }
+
 }

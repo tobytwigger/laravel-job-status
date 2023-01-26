@@ -14,6 +14,8 @@ This is the basic class returned by the searcher, which contains the result of y
 - `$result->jobs()` - Get an array of jobs that were tracked.
 - `$result->first()` - Get the first job.
 - `$result->count()` - Get the number of jobs in the result.
+- `$result->firstRun()` - 
+- `$result->runs()` - 
 
 ## Tracked Jobs
 
@@ -27,7 +29,6 @@ This represents a specific job that is being tracked and that matched your searc
 - `$trackedJob->numberOfRuns()` - Get how many runs there have been.
 
 ### Job information
-- `$trackedJob->tags()` - Get the tags in this job.
 - `$trackedJob->jobClass()` - Get the class of the actual job.
 - `$trackedJob->jobAlias()` - Get the alias of the job.
 
@@ -73,5 +74,4 @@ If the run was retried, you can access its parent. This is the run that failed a
 
 - `$jobRun->hasParent()` - Check if the job has a parent.
 - `$jobRun->isARetry()` - Check if the job is a retry of a failed job.
-- `$jobRun->hasBeenRetried()` - Check if the job was retried.
 - `$jobRun->parent()` - Get the parent of this job.

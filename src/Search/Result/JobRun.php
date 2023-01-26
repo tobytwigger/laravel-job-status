@@ -5,6 +5,7 @@ namespace JobStatus\Search\Result;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Str;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
 
@@ -55,7 +56,7 @@ class JobRun implements Arrayable, Jsonable
         ];
     }
 
-    private function getException(): ?JobException
+    public function getException(): ?JobException
     {
         $exception = $this->jobStatus->exception()->with('previous')->first();
         if($exception === null) {
@@ -85,6 +86,73 @@ class JobRun implements Arrayable, Jsonable
     public function jobStatus(): JobStatus
     {
         return $this->jobStatus;
+    }
+
+    public function isARetry(): bool
+    {
+        return $this->hasParent();
+    }
+
+    public function signals()
+    {
+        return $this->jobStatus->signals;
+    }
+
+    public function messagesOfType(string $type)
+    {
+        return $this->jobStatus->messagesOfType($type);
+    }
+
+    public function mostRecentMessage(bool $includeDebug = true)
+    {
+        return $this->jobStatus->mostRecentMessage($includeDebug);
+    }
+
+    public function messages(): array
+    {
+        return $this->jobStatus->messages;
+    }
+
+    public function hasFinished(): bool
+    {
+        return $this->jobStatus->status === Status::SUCCEEDED
+            || $this->jobStatus->status === Status::FAILED
+            || $this->jobStatus->status === Status::CANCELLED;
+    }
+
+    public function hasFailed(): bool
+    {
+        return $this->jobStatus->status === Status::FAILED;
+    }
+
+    public function hasBeenCancelled(): bool
+    {
+        return $this->jobStatus->status === Status::CANCELLED;
+    }
+
+    public function isQueued(): bool
+    {
+        return $this->jobStatus->status === Status::QUEUED;
+    }
+
+    public function isRunning(): bool
+    {
+        return $this->jobStatus->status === Status::STARTED;
+    }
+
+    public function isSuccessful(): bool
+    {
+        return $this->jobStatus->status === Status::SUCCEEDED;
+    }
+
+    public function getPercentage(): float
+    {
+        return $this->jobStatus->percentage;
+    }
+
+    public function getStatus(): Status
+    {
+        return $this->jobStatus->status;
     }
 
 }
