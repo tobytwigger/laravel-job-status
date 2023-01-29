@@ -34,10 +34,7 @@ class JobSignalController
         $userId = $this->resolveAuth();
         $jobRun = new JobRun($jobStatus);
 
-        if(
-            ($userId === null && !$jobStatus->public)
-            || $userId !== null && !$jobRun->accessibleBy($userId)
-        ) {
+        if(!$jobRun->accessibleBy($userId)) {
             throw new AuthorizationException('You cannot access this job status', 403);
         }
     }
