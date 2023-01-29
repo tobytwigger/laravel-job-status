@@ -14,13 +14,13 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function a_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
-
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->setCallback(static::class . '@a_run_is_handled_callback')
             ->dispatch();
+
+        $this->assertNull(JobStatus::first()->exception, JobStatus::first()->exception?->message ?? 'An error occured');
     }
 
 
@@ -43,8 +43,11 @@ class DatabaseQueueTest extends TestCase
 
         Assert::assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
-        Assert::assertCount(1, $jobStatus->statuses);
-        Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[0]->status);
+        Assert::assertNull($jobStatus->exception);
+
+        Assert::assertCount(2, $jobStatus->statuses);
+        Assert::assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
+        Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
     }
 
 
@@ -61,7 +64,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function a_successful_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -85,6 +87,7 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
+        $this->assertNull($jobStatus->exception);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -100,7 +103,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function a_cancelled_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -127,6 +129,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
         $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
+        $this->assertNull($jobStatus->exception);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -150,7 +153,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function a_cancelled_custom_signal_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -180,6 +182,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
         $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
+        $this->assertNull($jobStatus->exception);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -212,7 +215,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function a_failed_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -237,11 +239,10 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->markTestIncomplete('It should add an exception not a message');
+        $this->assertNotNull($jobStatus->exception);
+        $this->assertEquals('Test', $jobStatus->exception->message);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -264,7 +265,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function a_failed_and_retry_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -274,8 +274,6 @@ class DatabaseQueueTest extends TestCase
             ->dispatch();
 
         Assert::assertCount(2, JobStatus::all());
-
-        $this->markTestIncomplete('It should add an exception not a message');
 
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
@@ -292,9 +290,10 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertNotNull($jobStatus->exception);
+        $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -316,6 +315,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatusRetry->tags[0]->value);
         $this->assertEquals('my-second-tag', $jobStatusRetry->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatusRetry->tags[1]->value);
+
+
+        $this->assertNull($jobStatusRetry->exception);
 
         $this->assertCount(0, $jobStatusRetry->messages()->orderBy('id')->get());
 
@@ -342,7 +344,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function a_failed_and_retry_run_is_handled_after_a_rerun(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -352,7 +353,6 @@ class DatabaseQueueTest extends TestCase
             ->dispatch(2);
 
         Assert::assertCount(2, JobStatus::all());
-        $this->markTestIncomplete('It should add an exception not a message');
 
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFake::class, $jobStatus->job_class);
@@ -369,9 +369,10 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertNotNull($jobStatus->exception);
+        $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -394,9 +395,10 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatusRetry->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatusRetry->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertNotNull($jobStatus->exception);
+        $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatusRetry->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->statuses[0]->status);
@@ -419,7 +421,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function it_does_not_track_a_new_job_when_failed_and_retried_and_already_manually_released(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -444,11 +445,11 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->tags[0]->value);
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
-        $this->markTestIncomplete('It should add an exception not a message');
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertNotNull($jobStatus->exception);
+        $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -475,7 +476,6 @@ class DatabaseQueueTest extends TestCase
 
     /** @test */
     public function it_does_track_a_new_job_when_succeeded_and_retried_and_already_manually_released(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
        $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -502,6 +502,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
+        $this->assertNull($jobStatus->exception);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);

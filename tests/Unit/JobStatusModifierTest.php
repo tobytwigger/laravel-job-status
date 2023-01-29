@@ -2,9 +2,12 @@
 
 namespace JobStatus\Tests\Unit;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use JobStatus\Enums\MessageType;
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
+use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
 
@@ -33,33 +36,126 @@ class JobStatusModifierTest extends TestCase
 
         $modifier->setStatus(\JobStatus\Enums\Status::STARTED);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->refresh()->status);
+        $this->assertDatabaseCount('job_status_job_status_statuses', 1);
+        $this->assertDatabaseHas('job_status_job_status_statuses', ['status' => Status::STARTED->value]);
+
         $modifier->setStatus(\JobStatus\Enums\Status::FAILED);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->refresh()->status);
+        $this->assertDatabaseCount('job_status_job_status_statuses', 2);
+        $this->assertDatabaseHas('job_status_job_status_statuses', ['status' => Status::STARTED->value]);
+        $this->assertDatabaseHas('job_status_job_status_statuses', ['status' => Status::FAILED->value]);
+
         $modifier->setStatus(\JobStatus\Enums\Status::CANCELLED);
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->refresh()->status);
-
-        $this->markTestIncomplete('Needs to check it has also created status rows alongside updating the job status model');
+        $this->assertDatabaseCount('job_status_job_status_statuses', 3);
+        $this->assertDatabaseHas('job_status_job_status_statuses', ['status' => Status::STARTED->value]);
+        $this->assertDatabaseHas('job_status_job_status_statuses', ['status' => Status::FAILED->value]);
+        $this->assertDatabaseHas('job_status_job_status_statuses', ['status' => Status::CANCELLED->value]);
     }
 
     /** @test */
     public function the_started_at_can_be_set(){
-        $this->markTestIncomplete();
+        $jobStatus = JobStatus::factory()->create();
+        $now = Carbon::now();
+        $now2 = Carbon::now()->addMinute();
+
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $this->assertNull($jobStatus->refresh()->started_at);
+
+        $modifier->setStartedAt($now);
+        $this->assertEquals($now->format('d-m-Y H:i:s.v'), $jobStatus->refresh()->started_at->format('d-m-Y H:i:s.v'));
+
+        $modifier->setStartedAt($now2);
+        $this->assertEquals($now2->format('d-m-Y H:i:s.v'), $jobStatus->refresh()->started_at->format('d-m-Y H:i:s.v'));
     }
 
     /** @test */
     public function the_finished_at_can_be_set(){
-        $this->markTestIncomplete();
+        $jobStatus = JobStatus::factory()->create();
+        $now = Carbon::now();
+        $now2 = Carbon::now()->addMinute();
+
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $this->assertNull($jobStatus->refresh()->finished_at);
+
+        $modifier->setFinishedAt($now);
+        $this->assertEquals($now->format('d-m-Y H:i:s.v'), $jobStatus->refresh()->finished_at->format('d-m-Y H:i:s.v'));
+
+        $modifier->setFinishedAt($now2);
+        $this->assertEquals($now2->format('d-m-Y H:i:s.v'), $jobStatus->refresh()->finished_at->format('d-m-Y H:i:s.v'));
     }
 
     /** @test */
     public function add_exception_adds_an_exception_without_previous(){
-        // And also saved exception id on job status
-        $this->markTestIncomplete();
+        $rawException = new \Exception('My exception message', 502, null);
+
+        $jobStatus = JobStatus::factory()->create();
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $modifier->addException($rawException);
+
+        $exception = $jobStatus->refresh()->exception;
+        $this->assertInstanceOf(JobException::class, $exception);
+
+        $this->assertEquals('My exception message', $exception->message);
+        $this->assertEquals($rawException->getLine(), $exception->line);
+        $this->assertEquals($rawException->getCode(), $exception->code);
+        $this->assertEquals($rawException->getFile(), $exception->file);
+        $this->assertEquals(json_decode(json_encode($rawException->getTrace()), true), $exception->stack_trace);
+        $this->assertNotNull($exception->created_at);
+        $this->assertNotNull($exception->updated_at);
+        $this->assertNull($exception->previous_id);
     }
 
     /** @test */
     public function add_exception_adds_an_exception_with_previous(){
-        $this->markTestIncomplete();
+        $previousException2 = new \Exception('Even more previous exception message', 400, null);
+        $previousException = new \Exception('Previous exception message', 400, $previousException2);
+        $rawException = new \Exception('My exception message', 502, $previousException);
+
+        $jobStatus = JobStatus::factory()->create();
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $modifier->addException($rawException);
+
+        $exception = $jobStatus->refresh()->exception;
+        $this->assertInstanceOf(JobException::class, $exception);
+
+        $this->assertEquals('My exception message', $exception->message);
+        $this->assertEquals($rawException->getLine(), $exception->line);
+        $this->assertEquals($rawException->getCode(), $exception->code);
+        $this->assertEquals($rawException->getFile(), $exception->file);
+        $this->assertEquals(json_decode(json_encode($rawException->getTrace()), true), $exception->stack_trace);
+        $this->assertNotNull($exception->created_at);
+        $this->assertNotNull($exception->updated_at);
+        $this->assertNotNull($exception->previous_id);
+
+        $exceptionTwo = $exception->previous;
+        $this->assertInstanceOf(JobException::class, $exceptionTwo);
+
+        $this->assertEquals('Previous exception message', $exceptionTwo->message);
+        $this->assertEquals($previousException->getLine(), $exceptionTwo->line);
+        $this->assertEquals($previousException->getCode(), $exceptionTwo->code);
+        $this->assertEquals($previousException->getFile(), $exceptionTwo->file);
+        $this->assertEquals(json_decode(json_encode($previousException->getTrace()), true), $exceptionTwo->stack_trace);
+        $this->assertNotNull($exceptionTwo->created_at);
+        $this->assertNotNull($exceptionTwo->updated_at);
+        $this->assertNotNull($exceptionTwo->previous_id);
+
+
+        $exceptionThree = $exceptionTwo->previous;
+        $this->assertInstanceOf(JobException::class, $exceptionThree);
+
+        $this->assertEquals('Even more previous exception message', $exceptionThree->message);
+        $this->assertEquals($previousException2->getLine(), $exceptionThree->line);
+        $this->assertEquals($previousException2->getCode(), $exceptionThree->code);
+        $this->assertEquals($previousException2->getFile(), $exceptionThree->file);
+        $this->assertEquals(json_decode(json_encode($previousException2->getTrace()), true), $exceptionThree->stack_trace);
+        $this->assertNotNull($exceptionThree->created_at);
+        $this->assertNotNull($exceptionThree->updated_at);
+        $this->assertNull($exceptionThree->previous_id);
     }
 
     /** @test */
@@ -77,29 +173,25 @@ class JobStatusModifierTest extends TestCase
 
     /** @test */
     public function the_job_id_can_be_set(){
-        $this->markTestIncomplete('failing');
-
         $jobStatus = JobStatus::factory()->create(['job_id' => 1, 'connection_name' => 'testqueue']);
 
         $modifier = new JobStatusModifier($jobStatus);
 
         $modifier->setJobId(2);
         $this->assertEquals(2, $jobStatus->refresh()->job_id);
-        $this->assertEquals('testqueue', $jobStatus->refresh()->job_id);
+        $this->assertEquals('testqueue', $jobStatus->refresh()->connection_name);
     }
 
 
     /** @test */
     public function the_connection_name_can_be_set(){
-        $this->markTestIncomplete('Copied from elsewhere');
-
         $jobStatus = JobStatus::factory()->create(['job_id' => 1, 'connection_name' => 'testqueue']);
 
         $modifier = new JobStatusModifier($jobStatus);
 
-        $modifier->setJobId(2);
-        $this->assertEquals(2, $jobStatus->refresh()->job_id);
-        $this->assertEquals('testqueue', $jobStatus->refresh()->job_id);
+        $modifier->setConnectionName('testqueue-two');
+        $this->assertEquals(1, $jobStatus->refresh()->job_id);
+        $this->assertEquals('testqueue-two', $jobStatus->refresh()->connection_name);
     }
 
     /** @test */

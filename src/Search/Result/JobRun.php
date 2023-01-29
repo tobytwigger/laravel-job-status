@@ -4,10 +4,13 @@ namespace JobStatus\Search\Result;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
+use JobStatus\Models\JobStatusTag;
 
 class JobRun implements Arrayable, Jsonable
 {
@@ -20,6 +23,12 @@ class JobRun implements Arrayable, Jsonable
         $this->jobStatus = $jobStatus;
         $this->parent = $parent;
     }
+
+    public function getTagsAsArray()
+    {
+        return $this->jobStatus->tags->mapWithKeys(fn (JobStatusTag $tag) => [$tag->key => $tag->value])->toArray();
+    }
+
 
     public function hasParent(): bool
     {
@@ -44,7 +53,7 @@ class JobRun implements Arrayable, Jsonable
             'uuid' => $this->jobStatus->uuid,
             'has_parent' => $this->hasParent(),
             'parent' => $this->parent()?->toArray(),
-            'tags' => $this->jobStatus->getTagsAsArray(),
+            'tags' => $this->getTagsAsArray(),
             'created_at' => $this->jobStatus->created_at,
             'exception' => $this->getException(),
             'messages' => $this->jobStatus->messages()->orderByDesc('created_at')->orderByDesc('id')->get(),
@@ -85,14 +94,22 @@ class JobRun implements Arrayable, Jsonable
         return $this->jobStatus->signals;
     }
 
-    public function messagesOfType(string $type)
+    public function messagesOfType(MessageType $type)
     {
-        return $this->jobStatus->messagesOfType($type);
+        return $this->jobStatus->messages()
+            ->where('type', $type)
+            ->latest()
+            ->pluck('message');
     }
 
-    public function mostRecentMessage(bool $includeDebug = true)
+    public function mostRecentMessage(bool $includeDebug = false): ?string
     {
-        return $this->jobStatus->mostRecentMessage($includeDebug);
+        return $this->jobStatus->messages()
+            ->when($includeDebug === false, fn (Builder $query) => $query->where('type', '!=', MessageType::DEBUG))
+            ->latest()
+            ->orderBy('id', 'DESC')
+            ->first()
+            ?->message;
     }
 
     public function messages(): array
@@ -100,19 +117,24 @@ class JobRun implements Arrayable, Jsonable
         return $this->jobStatus->messages;
     }
 
-    public function hasFinished(): bool
+    public function isFinished(): bool
     {
         return $this->jobStatus->status === Status::SUCCEEDED
             || $this->jobStatus->status === Status::FAILED
             || $this->jobStatus->status === Status::CANCELLED;
     }
 
-    public function hasFailed(): bool
+    public function isSuccessful(): bool
+    {
+        return $this->jobStatus->status === Status::SUCCEEDED;
+    }
+
+    public function isFailed(): bool
     {
         return $this->jobStatus->status === Status::FAILED;
     }
 
-    public function hasBeenCancelled(): bool
+    public function isCancelled(): bool
     {
         return $this->jobStatus->status === Status::CANCELLED;
     }
@@ -125,11 +147,6 @@ class JobRun implements Arrayable, Jsonable
     public function isRunning(): bool
     {
         return $this->jobStatus->status === Status::STARTED;
-    }
-
-    public function isSuccessful(): bool
-    {
-        return $this->jobStatus->status === Status::SUCCEEDED;
     }
 
     public function getPercentage(): float

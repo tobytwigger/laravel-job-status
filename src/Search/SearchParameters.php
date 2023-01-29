@@ -2,6 +2,7 @@
 
 namespace JobStatus\Search;
 
+use Carbon\Carbon;
 use JobStatus\Enums\Status;
 
 class SearchParameters
@@ -14,6 +15,8 @@ class SearchParameters
     private TagsSearchParameters $tagsSearchParameters;
 
     private ?string $uuid = null;
+
+    private ?Carbon $updatedBefore = null;
 
     /**
      * @var array|Status[]
@@ -122,6 +125,24 @@ class SearchParameters
     public function setExcludeStatus(array $excludeStatus): SearchParameters
     {
         $this->excludeStatus = $excludeStatus;
+        return $this;
+    }
+
+    /**
+     * @return Carbon|null
+     */
+    public function getUpdatedBefore(): ?Carbon
+    {
+        return $this->updatedBefore;
+    }
+
+    /**
+     * @param Carbon|null $updatedBefore
+     * @return SearchParameters
+     */
+    public function setUpdatedBefore(?Carbon $updatedBefore): SearchParameters
+    {
+        $this->updatedBefore = $updatedBefore;
         return $this;
     }
 

@@ -5,7 +5,7 @@ namespace JobStatus\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use JobStatus\Database\Factories\JobStatusStatusFactory;
+use JobStatus\Database\Factories\JobExceptionFactory;
 use JobStatus\Enums\Status;
 
 class JobException extends Model
@@ -49,10 +49,11 @@ class JobException extends Model
     {
         $currentException = $this;
         $count = 1;
-        while($currentException->previous !== null) {
+        $this->load('previous');
+        while($currentException->previous_id !== null) {
             $string = '';
             for($i = 0; $i<=$count;$i++) {
-                $string .= '.previous';
+                $string .= '.previous.previous';
             }
             if(Str::startsWith($string, '.')) {
                 $string = Str::substr($string, 1);
@@ -65,7 +66,7 @@ class JobException extends Model
 
     protected static function newFactory()
     {
-        return JobStatusStatusFactory::new();
+        return JobExceptionFactory::new();
     }
 
 }

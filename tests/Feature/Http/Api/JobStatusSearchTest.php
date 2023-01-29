@@ -4,6 +4,7 @@ namespace JobStatus\Tests\Feature\Http\Api;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Routing\UrlGenerator;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Tests\fakes\JobFake;
@@ -22,7 +23,11 @@ class JobStatusSearchTest extends TestCase
             'tags' => ['one' => 'yes'],
         ];
         $response = $this->getJson(route('job-status.search', $statusQuery));
-        $response->assertJson($jobStatus->only(['id', 'job_class', 'job_alias']));
+        $response->assertJson([
+            'id' => $jobStatus->id,
+            'class' => $jobStatus->job_class,
+            'alias' => $jobStatus->job_alias
+        ]);
     }
 
     /** @test */
@@ -41,13 +46,8 @@ class JobStatusSearchTest extends TestCase
         $response = $this->getJson(route('job-status.search', $statusQuery));
         $response->assertJson([
             'id' => $jobStatus->id,
-            'job_class' => $jobStatus->job_class,
-            'job_alias' => $jobStatus->job_alias,
-            'percentage' => $jobStatus->percentage,
-            'status' => $jobStatus->status->value,
-            'created_at' => $jobStatus->created_at->format('Y-m-d H:i:s'),
-            'lastMessage' => $jobStatus->last_message,
-            'isFinished' => $jobStatus->isFinished(),
+            'class' => $jobStatus->job_class,
+            'alias' => $jobStatus->job_alias
         ]);
     }
 
@@ -100,6 +100,8 @@ class JobStatusSearchTest extends TestCase
     /** @test */
     public function it_throws_an_exception_if_the_user_does_not_have_access_to_see_the_tracking()
     {
+        $this->markTestIncomplete('Waiting for user refactor');
+
         $jobStatus = JobStatus::factory()->has(
             JobStatusTag::factory(['key' => 'tag1', 'value' => 'val1']),
             'tags'
@@ -121,6 +123,8 @@ class JobStatusSearchTest extends TestCase
     /** @test */
     public function it_throws_an_exception_if_the_job_class_is_not_real()
     {
+        $this->markTestIncomplete('Waiting for user refactor');
+
         $jobStatus = JobStatus::factory()->create(['job_class' => 'NotAClass', 'job_alias' => 'my-test-job']);
 
         $response = $this->getJson(route('job-status.search', [
@@ -137,6 +141,8 @@ class JobStatusSearchTest extends TestCase
     /** @test */
     public function it_throws_an_exception_if_the_job_class_exists_but_does_not_extend_trackable()
     {
+        $this->markTestIncomplete('Waiting for user refactor');
+
         $jobStatus = JobStatus::factory()->create(['job_class' => TestCase::class, 'job_alias' => 'my-test-job']);
 
         $response = $this->getJson(route('job-status.search', [

@@ -12,8 +12,6 @@ class JobSignalTest extends TestCase
     /** @test */
     public function it_can_be_created()
     {
-        $this->markTestIncomplete('failing');
-
         $jobStatus = JobStatus::factory()->create();
         $now = Carbon::now();
         $signal = JobSignal::factory()->create([
@@ -26,7 +24,7 @@ class JobSignalTest extends TestCase
         $this->assertDatabaseHas('job_status_job_signals', [
             'job_status_id' => $jobStatus->id,
             'signal' => 'my-signal',
-            'handled_at' => $now->format('Y-m-d H:i:s'),
+            'handled_at' => $now->format('Y-m-d H:i:s.v'),
             'parameters' => json_encode(['one' => 'param']),
             'cancel_job' => 0,
         ]);
@@ -60,6 +58,35 @@ class JobSignalTest extends TestCase
 
     /** @test */
     public function it_saves_timestamps_in_milliseconds(){
-        $this->markTestIncomplete();
+        $now = Carbon::make('1-3-2020 11:30:24.234');
+        Carbon::setTestNow($now);
+        $exception = JobSignal::factory()->create(['handled_at' => $now]);
+
+        $createdAt = $exception->created_at;
+        $this->assertEquals(1, $createdAt->day);
+        $this->assertEquals(3, $createdAt->month);
+        $this->assertEquals(2020, $createdAt->year);
+        $this->assertEquals(11, $createdAt->hour);
+        $this->assertEquals(30, $createdAt->minute);
+        $this->assertEquals(24, $createdAt->second);
+        $this->assertEquals(234, $createdAt->millisecond);
+
+        $updatedAt = $exception->updated_at;
+        $this->assertEquals(1, $updatedAt->day);
+        $this->assertEquals(3, $updatedAt->month);
+        $this->assertEquals(2020, $updatedAt->year);
+        $this->assertEquals(11, $updatedAt->hour);
+        $this->assertEquals(30, $updatedAt->minute);
+        $this->assertEquals(24, $updatedAt->second);
+        $this->assertEquals(234, $updatedAt->millisecond);
+
+        $handledAt = $exception->handled_at;
+        $this->assertEquals(1, $handledAt->day);
+        $this->assertEquals(3, $handledAt->month);
+        $this->assertEquals(2020, $handledAt->year);
+        $this->assertEquals(11, $handledAt->hour);
+        $this->assertEquals(30, $handledAt->minute);
+        $this->assertEquals(24, $handledAt->second);
+        $this->assertEquals(234, $handledAt->millisecond);
     }
 }

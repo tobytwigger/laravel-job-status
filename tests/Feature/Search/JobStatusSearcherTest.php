@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Feature\Search;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use JobStatus\Database\Factories\JobStatusTagFactory;
 use JobStatus\JobStatusRepository;
@@ -110,6 +111,21 @@ class JobStatusSearcherTest extends TestCase
         $results = (new JobStatusSearcher())->whereStatusNotIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get()->raw();
         $this->assertCount(6, $results);
         $this->assertEquals($results->pluck('id')->sort(), $set1->pluck('id')->sort());
+    }
+
+
+    /** @test */
+    public function it_filters_by_updated_before(){
+        $set1 = JobStatus::factory()->count(3)->create(['updated_at' => Carbon::now()->subHours(5)]);
+        $set2 = JobStatus::factory()->count(4)->create(['updated_at' => Carbon::now()->subHours(3)]);
+
+        $results = (new JobStatusSearcher())
+            ->whereUpdatedBefore(Carbon::now()->subHours(4))
+            ->get()
+            ->raw();
+
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
     }
 
     /** @test */

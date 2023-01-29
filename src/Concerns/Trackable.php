@@ -55,6 +55,9 @@ trait Trackable
 
     public function status(): JobStatusModifier
     {
+        if($this->getJobStatus() === null) {
+            throw new \Exception('Could not get the status of the job');
+        }
         return new JobStatusModifier($this->getJobStatus());
     }
 

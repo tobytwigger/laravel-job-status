@@ -96,4 +96,10 @@ class JobStatusSearcher
         return $this;
     }
 
+    public function whereUpdatedBefore(\Carbon\Carbon $updatedBefore): JobStatusSearcher
+    {
+        $this->searchParameters->setUpdatedBefore($updatedBefore);
+        return $this;
+    }
+
 }

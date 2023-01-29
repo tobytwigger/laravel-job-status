@@ -21,8 +21,7 @@ class ShowJobStatusSummaryCommand  extends Command
      */
     protected $signature = 'job-status:summary
                             {--class= : The class of the job to show}
-                            {--alias= : The alias of the job to show}
-                            {--tag=* : Any tags to filter by. Separate the key and the value with a colon.}';
+                            {--alias= : The alias of the job to show}';
 
     /**
      * The console command description.
@@ -53,16 +52,10 @@ class ShowJobStatusSummaryCommand  extends Command
         if($this->option('alias')) {
             $search->whereJobAlias($this->option('alias'));
         }
-        if($this->hasTags()) {
-            foreach($this->getTags() as $key => $value) {
-                $search->whereTag($key, $value);
-            }
-        }
         $statuses = $search->get();
 
         $data = $statuses->jobs()->map(fn(TrackedJob $sameJobList) => [
             $sameJobList->jobClass(),
-            collect($sameJobList->tags())->reduce(fn($string, $value, $key) => sprintf('%s%s = %s', $string !== null ? $string . ', ' : '', $key, $value)),
             $this->getStatusCount($sameJobList, Status::QUEUED),
             $this->getStatusCount($sameJobList, Status::STARTED),
             $this->getStatusCount($sameJobList, Status::SUCCEEDED),
@@ -70,7 +63,7 @@ class ShowJobStatusSummaryCommand  extends Command
             $this->getStatusCount($sameJobList, Status::CANCELLED),
         ]);
         $this->table([
-            'Job', 'Tags', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+            'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
         ], $data);
 
         return static::SUCCESS;
@@ -78,22 +71,7 @@ class ShowJobStatusSummaryCommand  extends Command
 
     private function getStatusCount(TrackedJob $sameJobList, Status $status): int
     {
-        return $sameJobList->runs()->filter(fn(JobRun $jobStatusResult) => $jobStatusResult->jobStatus()->status === $status)->count();
-    }
-
-    private function hasTags(): bool
-    {
-        return $this->option('tag') && count($this->option('tag')) > 0;
-    }
-
-    private function getTags(): array
-    {
-        $tags = [];
-        foreach($this->option('tag') as $tagString) {
-            $tagData = explode(':', $tagString);
-            $tags[$tagData[0]] = $tagData[1];
-        }
-        return $tags;
+        return $sameJobList->runs()->filter(fn(JobRun $jobStatusResult) => $jobStatusResult->getStatus() === $status)->count();
     }
 
 }

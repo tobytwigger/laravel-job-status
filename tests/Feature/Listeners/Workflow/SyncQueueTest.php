@@ -15,13 +15,13 @@ class SyncQueueTest extends TestCase
 
     /** @test */
     public function a_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
-
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->setCallback(static::class . '@a_run_is_handled_callback')
             ->dispatchSync();
+
+        $this->assertNull(JobStatus::first()->exception, JobStatus::first()->exception?->message ?? 'An error occured');
     }
 
 
@@ -45,6 +45,8 @@ class SyncQueueTest extends TestCase
 
         Assert::assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
+        Assert::assertNull($jobStatus->exception);
+
         Assert::assertCount(2, $jobStatus->statuses);
         Assert::assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
@@ -64,7 +66,6 @@ class SyncQueueTest extends TestCase
 
     /** @test */
     public function a_successful_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -88,6 +89,7 @@ class SyncQueueTest extends TestCase
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
+        $this->assertNull($jobStatus->exception);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -103,7 +105,6 @@ class SyncQueueTest extends TestCase
 
     /** @test */
     public function a_cancelled_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $exceptionThrown = false;
         try {
             $job = (new JobFakeFactory())
@@ -139,6 +140,7 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
         $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
+        $this->assertNull($jobStatus->exception);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -162,7 +164,6 @@ class SyncQueueTest extends TestCase
 
     /** @test */
     public function a_cancelled_custom_signal_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $exceptionThrown = false;
         try {
             $job = (new JobFakeFactory())
@@ -200,6 +201,7 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
         $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
 
+        $this->assertNull($jobStatus->exception);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -232,7 +234,6 @@ class SyncQueueTest extends TestCase
 
     /** @test */
     public function a_failed_run_is_handled(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $exceptionThrown = false;
         try {
 
@@ -267,9 +268,10 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertNotNull($jobStatus->exception);
+        $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -292,7 +294,6 @@ class SyncQueueTest extends TestCase
 
     /** @test */
     public function a_failed_and_retry_run_is_handled_without_retrying_as_sync_cannot_retry(){
-        $this->markTestIncomplete('May need to change from messages to exceptions, and add timestamp checking in');
         $exceptionThrown = false;
         try {
             $job = (new JobFakeFactory())
@@ -326,9 +327,10 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('Test', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::ERROR, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertNotNull($jobStatus->exception);
+        $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);

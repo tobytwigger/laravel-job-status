@@ -15,7 +15,7 @@ return new class() extends Migration {
             $table->id();
             $table->uuid('uuid')->nullable();
             $table->text('job_class');
-            $table->string('job_alias')->nullable();
+            $table->string('job_alias');
             $table->float('percentage')->default(0.0);
             $table->string('status')->default('queued');
             $table->timestamp('started_at', 3)->nullable();
@@ -23,7 +23,7 @@ return new class() extends Migration {
             $table->string('job_id');
             $table->text('configuration')->nullable();
             $table->string('connection_name');
-            $table->timestamps();
+            $table->timestamps(3);
         });
     }
 
