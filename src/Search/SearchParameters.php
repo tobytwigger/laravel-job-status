@@ -15,6 +15,8 @@ class SearchParameters
 
     private ?string $uuid = null;
 
+    private array $users = [];
+
     private ?Carbon $updatedBefore = null;
 
     /**
@@ -149,5 +151,17 @@ class SearchParameters
         $this->updatedBefore = $updatedBefore;
 
         return $this;
+    }
+
+    public function pushUser(int $userId): SearchParameters
+    {
+        $this->users[] = $userId;
+
+        return $this;
+    }
+
+    public function getUsers(): array
+    {
+        return $this->users;
     }
 }

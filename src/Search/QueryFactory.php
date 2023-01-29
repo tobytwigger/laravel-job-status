@@ -16,6 +16,7 @@ class QueryFactory
         $query = static::addStatuses($query, $parameters);
         $query = static::addUuid($query, $parameters);
         $query = static::addUpdatedBefore($query, $parameters);
+        $query = static::addUserIds($query, $parameters);
 
         return $query;
     }
@@ -75,6 +76,20 @@ class QueryFactory
         if ($parameters->getUpdatedBefore() !== null) {
             $query->where('updated_at', '<', $parameters->getUpdatedBefore());
         }
+
+        return $query;
+    }
+
+    private static function addUserIds(Builder $query, SearchParameters $parameters): Builder
+    {
+        $query->where(function(Builder $query) use ($parameters) {
+            foreach($parameters->getUsers() as $userId) {
+                $query->orWhereHas('users', function(Builder $query) use ($userId) {
+                    $query->where('user_id', $userId);
+                });
+            }
+        });
+
 
         return $query;
     }

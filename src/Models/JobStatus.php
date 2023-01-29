@@ -83,6 +83,11 @@ class JobStatus extends Model
         return $this->hasMany(JobStatusStatus::class);
     }
 
+    public function users()
+    {
+        return $this->hasMany(JobStatusUser::class);
+    }
+
     public static function newFactory()
     {
         return JobStatusFactory::new();

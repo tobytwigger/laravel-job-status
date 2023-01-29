@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
+use JobStatus\Models\JobStatusUser;
 use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Tests\TestCase;
 
@@ -172,5 +173,27 @@ class JobStatusSearcherTest extends TestCase
         $this->assertEquals($jobStatus5->id, $results[0]->jobStatus()->id);
         $this->assertEquals($jobStatus3->id, $results[1]->jobStatus()->id);
         $this->assertEquals($jobStatus2->id, $results[2]->jobStatus()->id);
+    }
+
+    /** @test */
+    public function it_filters_by_connected_users()
+    {
+        $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
+            ->count(3)->create();
+        $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
+            ->count(7)->create();
+
+        $results = (new JobStatusSearcher())->forUser(1)->get()->raw();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = (new JobStatusSearcher())->forUser(2)->get()->raw();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+
+
+        $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->get()->raw();
+        $this->assertCount(10, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->pluck('id')->sort()->values());
     }
 }
