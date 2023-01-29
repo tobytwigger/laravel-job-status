@@ -1,0 +1,1 @@
+const o=()=>{if(window.JobStatusConfig===void 0)throw new Error("Job status configuratino not found in the window. Have you loaded the package correctly?");return window.JobStatusConfig};var t={get:o};export{t as C};

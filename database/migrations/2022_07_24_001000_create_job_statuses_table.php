@@ -13,12 +13,17 @@ return new class() extends Migration {
     {
         Schema::create(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->nullable();
             $table->text('job_class');
-            $table->string('job_alias')->nullable();
-            $table->unsignedBigInteger('run_count')->default(1);
+            $table->string('job_alias');
             $table->float('percentage')->default(0.0);
-            $table->enum('status', ['queued', 'started', 'cancelled', 'failed', 'succeeded'])->default('queued');
-            $table->timestamps();
+            $table->string('status')->default('queued');
+            $table->timestamp('started_at', 3)->nullable();
+            $table->timestamp('finished_at', 3)->nullable();
+            $table->string('job_id');
+            $table->text('configuration')->nullable();
+            $table->string('connection_name');
+            $table->timestamps(3);
         });
     }
 

@@ -3,13 +3,11 @@
 namespace JobStatus\Search;
 
 use JobStatus\Enums\Status;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Results;
 use JobStatus\Search\Result\TrackedJob;
 
 class JobStatusSearcher
 {
-
     private SearchParameters $searchParameters;
 
     public function __construct()
@@ -22,49 +20,63 @@ class JobStatusSearcher
         return new static();
     }
 
+    public function whereUuid(string $uuid): JobStatusSearcher
+    {
+        $this->searchParameters->setUuid($uuid);
+
+        return $this;
+    }
+
     public function whereJobClass(string $jobClass): JobStatusSearcher
     {
         $this->searchParameters->setJobClass($jobClass);
+
         return $this;
     }
 
     public function whereJobAlias(string $jobAlias): JobStatusSearcher
     {
         $this->searchParameters->setJobAlias($jobAlias);
+
         return $this;
     }
 
     public function whereTag(string $key, mixed $value): JobStatusSearcher
     {
         $this->searchParameters->tags()->include($key, $value);
+
         return $this;
     }
 
     public function whereStatusIn(array $statuses): JobStatusSearcher
     {
         $this->searchParameters->setIncludeStatus($statuses);
+
         return $this;
     }
 
     public function whereStatusNotIn(array $statuses): JobStatusSearcher
     {
         $this->searchParameters->setExcludeStatus($statuses);
+
         return $this;
     }
 
     public function whereFinished(): JobStatusSearcher
     {
         $this->whereStatusIn([
-            Status::FAILED, Status::SUCCEEDED, Status::CANCELLED
+            Status::FAILED, Status::SUCCEEDED, Status::CANCELLED,
         ]);
+
         return $this;
     }
 
     public function whereNotFinished(): JobStatusSearcher
     {
         $this->whereStatusIn([
-            Status::QUEUED, Status::STARTED
+            Status::QUEUED, Status::STARTED,
         ]);
+
         return $this;
     }
 
@@ -84,10 +96,17 @@ class JobStatusSearcher
 
     public function whereTags(array $tags): JobStatusSearcher
     {
-        foreach($tags as $key => $value) {
+        foreach ($tags as $key => $value) {
             $this->whereTag($key, $value);
         }
+
         return $this;
     }
 
+    public function whereUpdatedBefore(\Carbon\Carbon $updatedBefore): JobStatusSearcher
+    {
+        $this->searchParameters->setUpdatedBefore($updatedBefore);
+
+        return $this;
+    }
 }

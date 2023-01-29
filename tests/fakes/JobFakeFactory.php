@@ -4,15 +4,11 @@ namespace JobStatus\Tests\fakes;
 
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Events\QueuedClosure;
-use Illuminate\Queue\DatabaseQueue;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
-use Opis\Closure\SerializableClosure;
 
 class JobFakeFactory
 {
-
     private ?string $alias = null;
 
     private ?array $tags = [];
@@ -42,6 +38,7 @@ class JobFakeFactory
     public function maxTries(int $tries): JobFakeFactory
     {
         $this->tries = $tries;
+
         return $this;
     }
 
@@ -60,6 +57,7 @@ class JobFakeFactory
     public function setAlias(?string $alias): JobFakeFactory
     {
         $this->alias = $alias;
+
         return $this;
     }
 
@@ -78,6 +76,7 @@ class JobFakeFactory
     public function setTags(?array $tags): JobFakeFactory
     {
         $this->tags = $tags;
+
         return $this;
     }
 
@@ -96,6 +95,7 @@ class JobFakeFactory
     public function setCallback(\Closure|string|null $callback): JobFakeFactory
     {
         $this->callback = $callback;
+
         return $this;
     }
 
@@ -114,6 +114,7 @@ class JobFakeFactory
     public function setCanSeeTracking(?\Closure $canSeeTracking): JobFakeFactory
     {
         $this->canSeeTracking = $canSeeTracking;
+
         return $this;
     }
 
@@ -122,15 +123,15 @@ class JobFakeFactory
         $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals);
         $job->maxExceptions = $this->maxExceptions;
         $job->tries = $this->tries;
-        if($this->canSeeTracking) {
+        if ($this->canSeeTracking) {
             $job::$canSeeTracking = $this->canSeeTracking;
         }
+
         return $job;
     }
 
     public function fakeCallback(): void
     {
-        return;
     }
 
     public function dispatch(int $jobsToRun = 1): JobFake
@@ -139,9 +140,10 @@ class JobFakeFactory
         $job->onConnection('database');
         $this->createJobsTable();
         app(Dispatcher::class)->dispatch($job);
-        for($i = 0; $i < $jobsToRun; $i++) {
+        for ($i = 0; $i < $jobsToRun; $i++) {
             Artisan::call('queue:work database --once');
         }
+
         return $job;
     }
 
@@ -149,18 +151,20 @@ class JobFakeFactory
     {
         $job = $this->create();
         app(Dispatcher::class)->dispatchSync($job);
+
         return $job;
     }
 
     public function handleSignal(string $signal, string $method): static
     {
         $this->signals[$signal] = $method;
+
         return $this;
     }
 
     private function createJobsTable()
     {
-        if(!Schema::hasTable('jobs')) {
+        if (!Schema::hasTable('jobs')) {
             Schema::create('jobs', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('queue')->index();
@@ -176,7 +180,7 @@ class JobFakeFactory
     public function maxExceptions(int $maxExceptions): JobFakeFactory
     {
         $this->maxExceptions = $maxExceptions;
+
         return $this;
     }
-
 }

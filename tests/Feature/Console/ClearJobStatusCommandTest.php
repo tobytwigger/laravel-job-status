@@ -11,10 +11,9 @@ use JobStatus\Tests\TestCase;
 
 class ClearJobStatusCommandTest extends TestCase
 {
-
     /** @test */
-    public function it_deletes_the_job_statuses(){
-
+    public function it_deletes_the_job_statuses()
+    {
         JobStatus::factory()->count(3)->create(['updated_at' => now()->subHour(), 'status' => \JobStatus\Enums\Status::SUCCEEDED]);
 
         $this->artisan('job-status:clear')
@@ -24,8 +23,8 @@ class ClearJobStatusCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_only_deletes_old_job_statuses(){
-
+    public function it_only_deletes_old_job_statuses()
+    {
         $preservedJobs1 = JobStatus::factory()->count(3)->create(['updated_at' => now()->subHour(), 'status' => \JobStatus\Enums\Status::SUCCEEDED]);
         $preservedJobs2 = JobStatus::factory()->count(3)->create(['updated_at' => now()->subHours(2)->addMinutes(20), 'status' => \JobStatus\Enums\Status::SUCCEEDED]);
         JobStatus::factory()->count(3)->create(['updated_at' => now()->subHours(4), 'status' => \JobStatus\Enums\Status::SUCCEEDED]);
@@ -45,8 +44,8 @@ class ClearJobStatusCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_only_deletes_finished_job_statuses(){
-
+    public function it_only_deletes_finished_job_statuses()
+    {
         JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
         JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
@@ -67,17 +66,22 @@ class ClearJobStatusCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_deletes_a_job_status_with_all_its_relationships(){
+    public function it_deletes_a_job_status_with_all_its_relationships()
+    {
         JobStatus::factory()->has(
-            JobStatusStatus::factory()->count(3), 'statuses'
+            JobStatusStatus::factory()->count(3),
+            'statuses'
         )->has(
-            JobStatusTag::factory()->count(3), 'tags'
+            JobStatusTag::factory()->count(3),
+            'tags'
         )->has(
-            JobSignal::factory()->count(3), 'signals'
+            JobSignal::factory()->count(3),
+            'signals'
         )->has(
-            JobMessage::factory()->count(3), 'messages'
+            JobMessage::factory()->count(3),
+            'messages'
         )->count(3)->create([
-            'status' => \JobStatus\Enums\Status::SUCCEEDED
+            'status' => \JobStatus\Enums\Status::SUCCEEDED,
         ]);
 
         $this->artisan('job-status:clear')
@@ -89,5 +93,4 @@ class ClearJobStatusCommandTest extends TestCase
         $this->assertCount(0, JobSignal::all());
         $this->assertCount(0, JobMessage::all());
     }
-
 }

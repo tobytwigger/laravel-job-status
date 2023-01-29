@@ -4,40 +4,49 @@ namespace JobStatus\Search;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use JobStatus\JobStatusCollection;
 use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusTag;
 use JobStatus\Search\Result\JobRun;
-use JobStatus\Search\Result\TrackedJob;
-use JobStatus\Search\Result\SameJobTypeList;
 use JobStatus\Search\Result\Results;
+use JobStatus\Search\Result\TrackedJob;
 
 class ResultsFactory
 {
-
     public static function fromQuery(Builder $query): Results
     {
-        $queryResult = $query->with('tags')->get()->groupBy(['job_class']);
+        /** @var Collection<string, Collection<JobStatus>> $queryResult */
+        $queryResult = $query->with('tags')
+            ->orderBy('created_at', 'DESC')
+            ->get()
+            ->groupBy(['job_alias'])
+            ->sortKeys();
 
-        $sameJobType = new Collection();
-        foreach($queryResult as $jobClass => $sameJobTypes) {
-            $sameJobs = $sameJobTypes->groupBy(function(JobStatus $item) {
-                return $item->tags->sortBy('key')->mapWithKeys(fn(JobStatusTag $tag) => [$tag->key => $tag->value]);
-            });
-            foreach($sameJobs as $tags => $sameJob) {
-                $sameJobGrouped = $sameJob->groupBy('uuid')->sortBy('created_at')->sortBy('id', descending: true);
-                $jobStatuses = $sameJobGrouped->map(function(JobStatusCollection $jobs) {
-                    return $jobs->reduce(
-                        fn(?JobRun $result, JobStatus $jobStatus) => new JobRun($jobStatus, $result)
-                    );
-                })->sortBy(fn(JobRun $result) => $result->jobStatus()->created_at)->values();
-                $sameJobType->push(
-                    new TrackedJob($jobClass, json_decode($tags, true), $jobStatuses)
-                );
+        $trackedJobs = new Collection();
+        foreach ($queryResult as $jobAlias => $sameJobTypes) {
+            // Groups of the same run
+            $exactJobGrouped = $sameJobTypes->groupBy('uuid');
+            $jobClass = $sameJobTypes->filter(fn (JobStatus $jobStatus) => $jobStatus->job_alias !== null)
+                ->sortByDesc('created_at')
+                ->first()
+                ?->job_class;
+
+            $jobRuns = new Collection();
+            foreach ($exactJobGrouped as $uuid => $runs) {
+                $runs = $runs->sortBy('created_at')->values();
+                if ($uuid === null || $uuid === '') {
+                    foreach ($runs as $run) {
+                        $jobRuns->push(new JobRun($run, null));
+                    }
+                } else {
+                    $jobRuns->push($runs->reduce(
+                        fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
+                    ));
+                }
             }
+            $trackedJobs->push(
+                new TrackedJob($jobClass, $jobRuns, $jobAlias)
+            );
         }
 
-        return new Results($sameJobType);
+        return new Results($trackedJobs);
     }
-
 }

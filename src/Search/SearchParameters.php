@@ -2,16 +2,20 @@
 
 namespace JobStatus\Search;
 
+use Carbon\Carbon;
 use JobStatus\Enums\Status;
 
 class SearchParameters
 {
-
     private ?string $jobClass = null;
 
     private ?string $jobAlias = null;
 
     private TagsSearchParameters $tagsSearchParameters;
+
+    private ?string $uuid = null;
+
+    private ?Carbon $updatedBefore = null;
 
     /**
      * @var array|Status[]
@@ -37,12 +41,32 @@ class SearchParameters
     }
 
     /**
+     * @return string|null
+     */
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param string|null $uuid
+     * @return SearchParameters
+     */
+    public function setUuid(?string $uuid): SearchParameters
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    /**
      * @param string|null $jobClass
      * @return SearchParameters
      */
     public function setJobClass(?string $jobClass): SearchParameters
     {
         $this->jobClass = $jobClass;
+
         return $this;
     }
 
@@ -61,6 +85,7 @@ class SearchParameters
     public function setJobAlias(?string $jobAlias): SearchParameters
     {
         $this->jobAlias = $jobAlias;
+
         return $this;
     }
 
@@ -84,6 +109,7 @@ class SearchParameters
     public function setIncludeStatus(array $includeStatus): SearchParameters
     {
         $this->includeStatus = $includeStatus;
+
         return $this;
     }
 
@@ -102,7 +128,26 @@ class SearchParameters
     public function setExcludeStatus(array $excludeStatus): SearchParameters
     {
         $this->excludeStatus = $excludeStatus;
+
         return $this;
     }
 
+    /**
+     * @return Carbon|null
+     */
+    public function getUpdatedBefore(): ?Carbon
+    {
+        return $this->updatedBefore;
+    }
+
+    /**
+     * @param Carbon|null $updatedBefore
+     * @return SearchParameters
+     */
+    public function setUpdatedBefore(?Carbon $updatedBefore): SearchParameters
+    {
+        $this->updatedBefore = $updatedBefore;
+
+        return $this;
+    }
 }

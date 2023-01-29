@@ -10,7 +10,6 @@ use JobStatus\Models\JobStatus;
 
 trait InteractsWithSignals
 {
-
     abstract public function getJobStatus(): ?JobStatus;
 
     public function checkForSignals(): void

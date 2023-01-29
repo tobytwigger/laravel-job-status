@@ -20,8 +20,10 @@ class JobStatusStatus extends Model
     ];
 
     protected $casts = [
-        'status' => Status::class
+        'status' => Status::class,
     ];
+
+    protected $dateFormat = 'Y-m-d H:i:s.v';
 
     public function __construct(array $attributes = [])
     {

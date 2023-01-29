@@ -9,7 +9,6 @@ use JobStatus\Tests\TestCase;
 
 class MessagesTest extends TestCase
 {
-
     /** @test */
     public function messages_can_be_sent()
     {
@@ -17,14 +16,14 @@ class MessagesTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@messagesCanBeSentCallback')
             ->dispatch();
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'This is a test message',
-            'type' => \JobStatus\Enums\MessageType::INFO
+            'type' => \JobStatus\Enums\MessageType::INFO,
         ]);
     }
 
@@ -37,19 +36,20 @@ class MessagesTest extends TestCase
 
 
     /** @test */
-    public function the_message_type_can_be_set(){
+    public function the_message_type_can_be_set()
+    {
         (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@theMessageTypeCanBeSetCallback')
             ->dispatch();
 
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'This is a test message',
-            'type' => \JobStatus\Enums\MessageType::SUCCESS
+            'type' => \JobStatus\Enums\MessageType::SUCCESS,
         ]);
     }
 
@@ -57,5 +57,4 @@ class MessagesTest extends TestCase
     {
         JobStatusModifier::forJobStatus($job->getJobStatus())->message('This is a test message', \JobStatus\Enums\MessageType::SUCCESS);
     }
-
 }

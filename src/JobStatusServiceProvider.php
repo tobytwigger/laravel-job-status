@@ -2,6 +2,13 @@
 
 namespace JobStatus;
 
+use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Events\JobQueued;
+use Illuminate\Queue\Events\JobReleasedAfterException;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use JobStatus\Console\ClearJobStatusCommand;
@@ -21,9 +28,8 @@ class JobStatusServiceProvider extends ServiceProvider
     {
         $this->commands([
             ClearJobStatusCommand::class,
-            ShowJobStatusSummaryCommand::class
+            ShowJobStatusSummaryCommand::class,
         ]);
-        $this->app->register(JobStatusEventServiceProvider::class);
     }
 
     /**
@@ -37,6 +43,7 @@ class JobStatusServiceProvider extends ServiceProvider
     {
         $this->publishAssets();
         $this->mapRoutes();
+        $this->bindListeners();
     }
 
     /**
@@ -67,5 +74,15 @@ class JobStatusServiceProvider extends ServiceProvider
                 ->middleware(config('laravel-job-status.routes.api.middleware', []))
                 ->group(__DIR__ . '/../routes/api.php');
         }
+    }
+
+    private function bindListeners()
+    {
+        Event::listen(JobQueued::class, \JobStatus\Listeners\JobQueued::class);
+        Event::listen(JobProcessing::class, \JobStatus\Listeners\JobProcessing::class);
+        Event::listen(JobFailed::class, \JobStatus\Listeners\JobFailed::class);
+        Event::listen(JobProcessed::class, \JobStatus\Listeners\JobProcessed::class);
+        Event::listen(JobReleasedAfterException::class, \JobStatus\Listeners\JobReleasedAfterException::class);
+        Event::listen(JobExceptionOccurred::class, \JobStatus\Listeners\JobExceptionOccurred::class);
     }
 }

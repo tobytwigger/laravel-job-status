@@ -2,14 +2,11 @@
 
 namespace JobStatus\Listeners;
 
-use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Queue;
-use JobStatus\Concerns\Trackable;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
-use JobStatus\Tests\fakes\JobFake;
 
 /**
  * Occurs when a job is pushed to an asynchronous queue.
@@ -18,16 +15,13 @@ use JobStatus\Tests\fakes\JobFake;
  */
 class JobQueued extends BaseListener
 {
-
     /**
      * @param \Illuminate\Queue\Events\JobQueued $event
      * @return void|bool
      */
     public function handle(\Illuminate\Queue\Events\JobQueued $event)
     {
-        if($this->isTrackingEnabled()) {
-
-
+        if ($this->isTrackingEnabled()) {
             $job = $event->job;
 
             if ($this->validateJob($job) === false) {
@@ -42,7 +36,7 @@ class JobQueued extends BaseListener
                 'uuid' => null,
                 'job_id' => $event->id,
                 'connection_name' => $event->connectionName,
-                'configuration' => $job->getJobStatusConfiguration()
+                'configuration' => $job->getJobStatusConfiguration(),
             ]);
 
             $modifier = JobStatusModifier::forJobStatus($jobStatus);
@@ -60,5 +54,4 @@ class JobQueued extends BaseListener
             }
         }
     }
-
 }

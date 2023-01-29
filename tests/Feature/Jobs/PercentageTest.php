@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Feature\Jobs;
 
 use Illuminate\Testing\Assert;
-use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
@@ -21,7 +20,7 @@ class PercentageTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@percentagesCanBeUpdatedCallback')
             ->dispatch();
@@ -39,5 +38,4 @@ class PercentageTest extends TestCase
         Assert::assertFalse(JobStatus::where('percentage', 52.6)->exists());
         static::$calledPercentagesCanBeUpdatedCallback = true;
     }
-
 }

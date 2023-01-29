@@ -1,0 +1,11 @@
+name: Test & Code Coverage
+
+on:
+    push:
+        branches:
+            - 'main'
+    workflow_dispatch:
+
+jobs:
+    run-tests:
+        uses: ./.github/workflows/build_docs.yml

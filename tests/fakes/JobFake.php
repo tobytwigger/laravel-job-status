@@ -47,7 +47,7 @@ class JobFake implements ShouldQueue
 
     public function handleSignalCallback(string $signal, array $arguments)
     {
-        if(array_key_exists($signal, $this->signals)) {
+        if (array_key_exists($signal, $this->signals)) {
             app()->call($this->signals[$signal], ['job' => $this, 'parameters' => $arguments]);
         }
     }

@@ -13,3 +13,4 @@ composer.lock export-ignore
 mkdocs.yml export-ignore
 docs-requirements.txt export-ignore
 phpstan.neon export-ignore
+dashboard export-ignore

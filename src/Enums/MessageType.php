@@ -4,7 +4,6 @@ namespace JobStatus\Enums;
 
 enum MessageType: string
 {
-
     case SUCCESS = 'success';
 
     case ERROR = 'error';
@@ -14,5 +13,4 @@ enum MessageType: string
     case WARNING = 'warning';
 
     case DEBUG = 'debug';
-
 }

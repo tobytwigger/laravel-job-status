@@ -2,125 +2,308 @@
 
 namespace JobStatus\Tests\Feature\Search;
 
-use Illuminate\Support\Str;
-use JobStatus\Database\Factories\JobStatusTagFactory;
-use JobStatus\JobStatusRepository;
+use Carbon\Carbon;
 use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusTag;
-use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\JobRun;
+use JobStatus\Search\Result\Results;
 use JobStatus\Search\Result\TrackedJob;
-use JobStatus\Search\Result\SameJobTypeList;
-use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
 class JobStatusResultsTest extends TestCase
 {
-
-    /************************************************************************
-     * Full run through when you have multiple types of a job (e.g. haven't filtered tight enough)
-     ************************************************************************/
-
     /** @test */
-    public function i_can_filter_by_type_and_tags(){
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val2']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->create(['job_class' => 'JobClass1']);
+    public function it_gets_the_first_tracked_job_when_first_called_directly_from_the_searcher()
+    {
+        $results = new Results(collect([
+            $trackedJob1 = new TrackedJob('Class1', collect(), 'alias1'),
+            $trackedJob2 = new TrackedJob('Class2', collect(), 'alias2'),
+            $trackedJob3 = new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = (new JobStatusSearcher())->get()->jobOfTypeWithTags('JobClass1', ['key1' => 'val1']);
-        $this->assertInstanceOf(TrackedJob::class, $result);
-        $this->assertEquals(['key1' => 'val1'], $result->tags());
+        $this->assertEquals($trackedJob1, $results->first());
     }
 
     /** @test */
-    public function i_can_shortcut_getting_the_first_job(){
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val2']), 'tags')->create(['job_class' => 'JobClass1']);
+    public function it_returns_all_jobs()
+    {
+        $results = new Results(collect([
+            $trackedJob1 = new TrackedJob('Class1', collect(), 'alias1'),
+            $trackedJob2 = new TrackedJob('Class2', collect(), 'alias2'),
+            $trackedJob3 = new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = (new JobStatusSearcher())->get()->first();
-        $this->assertInstanceOf(TrackedJob::class, $result);
+        $this->assertCount(3, $results->jobs());
+        $this->assertEquals($trackedJob1, $results->jobs()[0]);
+        $this->assertEquals($trackedJob2, $results->jobs()[1]);
+        $this->assertEquals($trackedJob3, $results->jobs()[2]);
     }
 
     /** @test */
-    public function i_can_go_through_trackable(){
-        $jobStatus = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => JobFake::class]);
+    public function raw_returns_the_job_status_models()
+    {
+        $results = new Results(collect([
+            new TrackedJob('Class1', collect([
+                new JobRun(
+                    $jobStatus1 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(1)]),
+                    new JobRun(
+                        $jobStatus2 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)]),
+                        new JobRun(
+                            $jobStatus3 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)])
+                        ),
+                    )
+                ),
+                new JobRun(
+                    $jobStatus4 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(4)]),
+                    new JobRun(
+                        $jobStatus5 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
+                    )
+                ),
+            ]), 'alias1'),
+            new TrackedJob('Class2', collect([
+                new JobRun(
+                    $jobStatus6 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+            ]), 'alias2'),
+            new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = JobFake::search()->whereTags(['key1' => 'val1'])->get()->first();
-        $this->assertInstanceOf(TrackedJob::class, $result);
-        $this->assertCount(1, $result->runs());
-        $this->assertEquals($jobStatus->id, $result->latest()->jobStatus()->id);
+        $this->assertCount(6, $results->raw());
+        $this->assertTrue($jobStatus1->is($results->raw()[0]));
+        $this->assertTrue($jobStatus2->is($results->raw()[1]));
+        $this->assertTrue($jobStatus3->is($results->raw()[2]));
+        $this->assertTrue($jobStatus4->is($results->raw()[3]));
+        $this->assertTrue($jobStatus5->is($results->raw()[4]));
+        $this->assertTrue($jobStatus6->is($results->raw()[5]));
     }
 
     /** @test */
-    public function i_can_go_through_trackable_with_a_job_instance(){
-        $jobStatus = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => JobFake::class]);
+    public function runs_returns_all_the_runs_ordered_by_created_at_of_the_most_recent_run()
+    {
+        $results = new Results(collect([
+            new TrackedJob('Class1', collect([
+                new JobRun(
+                    $jobStatus1 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)]),
+                    new JobRun(
+                        $jobStatus2 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)]),
+                        new JobRun(
+                            $jobStatus3 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)])
+                        ),
+                    )
+                ),
+                new JobRun(
+                    $jobStatus4 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(1)]),
+                    new JobRun(
+                        $jobStatus5 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
+                    )
+                ),
+            ]), 'alias1'),
+            new TrackedJob('Class2', collect([
+                new JobRun(
+                    $jobStatus6 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)])
+                ),
+            ]), 'alias2'),
+            new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $job = new JobFake('alias', ['key1' => 'val1']);
-        $result = $job->history();
-        $this->assertInstanceOf(TrackedJob::class, $result);
-        $this->assertCount(1, $result->runs());
-        $this->assertEquals($jobStatus->id, $result->latest()->jobStatus()->id);
+        $this->assertCount(3, $results->runs());
+        $this->assertTrue($jobStatus4->is($results->runs()[0]->jobStatus()));
+        $this->assertTrue($jobStatus6->is($results->runs()[1]->jobStatus()));
+        $this->assertTrue($jobStatus1->is($results->runs()[2]->jobStatus()));
     }
 
     /** @test */
-    public function i_can_get_the_first_actual_job(){
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
+    public function runs_and_retries_gets_the_runs_and_retries_not_grouped()
+    {
+        $results = new Results(collect([
+            new TrackedJob('Class1', collect([
+                $jobRun1 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(1)]),
+                    $jobRun2 = new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)]),
+                        $jobRun3 = new JobRun(
+                            $jobStatus3 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)])
+                        ),
+                    )
+                ),
+                $jobRun4 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(4)]),
+                    $jobRun5 = new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
+                    )
+                ),
+            ]), 'alias1'),
+            new TrackedJob('Class2', collect([
+                $jobRun6 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+            ]), 'alias2'),
+            new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = (new JobStatusSearcher())->get()->jobOfTypeWithTags('JobClass1', ['key1' => 'val1']);
-
-        $this->assertCount(2, $result->runs());
-        $this->assertInstanceOf(JobRun::class, $result->latest());
+        $this->assertCount(6, $results->runsAndRetries());
+        $this->assertEquals($jobRun1, $results->runsAndRetries()[0]);
+        $this->assertEquals($jobRun2, $results->runsAndRetries()[1]);
+        $this->assertEquals($jobRun3, $results->runsAndRetries()[2]);
+        $this->assertEquals($jobRun4, $results->runsAndRetries()[3]);
+        $this->assertEquals($jobRun5, $results->runsAndRetries()[4]);
+        $this->assertEquals($jobRun6, $results->runsAndRetries()[5]);
     }
 
     /** @test */
-    public function i_can_shortcut_getting_the_first_job_result(){
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
+    public function first_returns_the_first_matching_job()
+    {
+        $results = new Results(collect([
+            $trackedJob1 = new TrackedJob('Class1', collect([
+                new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(1)]),
+                    new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)]),
+                        new JobRun(
+                            JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)])
+                        ),
+                    )
+                ),
+                new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(4)]),
+                    new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
+                    )
+                ),
+            ]), 'alias1'),
+            $trackedJob2 = new TrackedJob('Class2', collect([
+                new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+            ]), 'alias2'),
+            $trackedJob3 = new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = (new JobStatusSearcher())->get()->firstRun();
-        $this->assertInstanceOf(JobRun::class, $result);
+        $this->assertEquals($trackedJob1, $results->first());
     }
 
     /** @test */
-    public function i_can_shortcut_getting_the_first_job_result_from_the_query_builder(){
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
+    public function count_returns_the_number_of_jobs()
+    {
+        $results = new Results(collect([
+            new TrackedJob('Class1', collect([
+                $jobRun1 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(1)]),
+                    $jobRun2 = new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)]),
+                        $jobRun3 = new JobRun(
+                            $jobStatus3 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)])
+                        ),
+                    )
+                ),
+                $jobRun4 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(4)]),
+                    $jobRun5 = new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
+                    )
+                ),
+            ]), 'alias1'),
+            new TrackedJob('Class2', collect([
+                $jobRun6 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+                $jobRun7 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+            ]), 'alias2'),
+            new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = (new JobStatusSearcher())->first();
-        $this->assertInstanceOf(TrackedJob::class, $result);
+        $this->assertEquals(3, $results->count());
     }
 
-
-    /*****************************************************************************************************
-     * Playing with jobs themselves
-     *******************************************************************************************************/
-
     /** @test */
-    public function i_can_see_the_parent_of_a_job(){
-        $uuid = Str::uuid();
-        JobStatus::factory()->create([
-            'job_class' => 'JobClass1'
-        ]);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
+    public function run_count_returns_the_number_of_runs_excluding_retries()
+    {
+        $results = new Results(collect([
+            new TrackedJob('Class1', collect([
+                $jobRun1 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(1)]),
+                    $jobRun2 = new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)]),
+                        $jobRun3 = new JobRun(
+                            $jobStatus3 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)])
+                        ),
+                    )
+                ),
+                $jobRun4 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(4)]),
+                    $jobRun5 = new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
+                    )
+                ),
+            ]), 'alias1'),
+            new TrackedJob('Class2', collect([
+                $jobRun6 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+                $jobRun7 = new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+            ]), 'alias2'),
+            new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = (new JobStatusSearcher())->get()->firstRun();
-
-
-        $this->assertInstanceOf(JobRun::class, $result);
+        $this->assertEquals(4, $results->runCount());
     }
 
-    /********************************************************************************************************
-     * More adhoc tests
-     **********************************************************************************************************/
+    /** @test */
+    public function first_run_gets_the_first_matching_run()
+    {
+        $results = new Results(collect([
+            new TrackedJob('Class1', collect([
+                new JobRun(
+                    $jobStatus1 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(1)]),
+                    new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)]),
+                        new JobRun(
+                            JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(3)])
+                        ),
+                    )
+                ),
+                new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(4)]),
+                    new JobRun(
+                        JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
+                    )
+                ),
+            ]), 'alias1'),
+            new TrackedJob('Class2', collect([
+                new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+            ]), 'alias2'),
+            new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
+        $this->assertTrue($jobStatus1->is($results->firstRun()->jobStatus()));
+    }
 
     /** @test */
-    public function different_tags_separate_jobs_into_different_job_lists(){
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val2']), 'tags')->create(['job_class' => 'JobClass1']);
-        JobStatus::factory()->create(['job_class' => 'JobClass1']);
+    public function it_can_convert_to_an_array_and_json()
+    {
+        $results = new Results(collect([
+            $trackedJob1 = new TrackedJob('Class2', collect([
+                new JobRun(
+                    JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
+                ),
+            ]), 'alias2'),
+            $trackedJob2 = new TrackedJob('Class3', collect(), 'alias3'),
+        ]));
 
-        $result = (new JobStatusSearcher())->get();
-        $this->assertCount(3, $result->jobs());
+        $array = [
+            'count' => 2,
+            'jobs' => [
+                $trackedJob1->toArray(),
+                $trackedJob2->toArray(),
+            ],
+        ];
+
+        $this->assertEquals($array, $results->toArray());
+
+        $this->assertEquals(collect($array)->toJson(), $results->toJson());
     }
 }

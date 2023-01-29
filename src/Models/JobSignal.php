@@ -24,6 +24,8 @@ class JobSignal extends Model
         'handled_at' => 'datetime',
     ];
 
+    protected $dateFormat = 'Y-m-d H:i:s.v';
+
     public function __construct(array $attributes = [])
     {
         $this->table = sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_signals');
