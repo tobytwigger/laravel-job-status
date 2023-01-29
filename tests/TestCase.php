@@ -37,9 +37,4 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ]);
     }
 
-    protected function tearDown(): void
-    {
-        JobFake::$canSeeTracking = null;
-        parent::tearDown();
-    }
 }

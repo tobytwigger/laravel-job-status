@@ -15,13 +15,14 @@ class JobFakeFactory
 
     private \Closure|string|null $callback = null;
 
-    private ?\Closure $canSeeTracking = null;
-
     private array $signals = [];
 
     private int $maxExceptions = 3;
 
     private int $tries = 3;
+
+    private array $users = [];
+    private bool $public = true;
 
     /**
      * @return int
@@ -99,33 +100,24 @@ class JobFakeFactory
         return $this;
     }
 
-    /**
-     * @return \Closure|null
-     */
-    public function getCanSeeTracking(): ?\Closure
+    public function setPublic(bool $public): JobFakeFactory
     {
-        return $this->canSeeTracking;
+        $this->public = $public;
+
+        return $this;
     }
 
-    /**
-     * @param \Closure|null $canSeeTracking
-     * @return JobFakeFactory
-     */
-    public function setCanSeeTracking(?\Closure $canSeeTracking): JobFakeFactory
+    public function setUsers(array $users): JobFakeFactory
     {
-        $this->canSeeTracking = $canSeeTracking;
-
+        $this->users = $users;
         return $this;
     }
 
     public function create(): JobFake
     {
-        $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals);
+        $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals, $this->users, $this->public);
         $job->maxExceptions = $this->maxExceptions;
         $job->tries = $this->tries;
-        if ($this->canSeeTracking) {
-            $job::$canSeeTracking = $this->canSeeTracking;
-        }
 
         return $job;
     }

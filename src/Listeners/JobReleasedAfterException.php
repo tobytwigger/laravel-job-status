@@ -31,7 +31,9 @@ class JobReleasedAfterException extends BaseListener
                 'uuid' => $event->job->uuid(),
                 'connection_name' => $event->job->getConnectionName(),
                 'job_id' => $event->job->getJobId(),
+                'public' => $modifier->getJobStatus()?->public
             ]);
+
 
             JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
 
@@ -39,6 +41,12 @@ class JobReleasedAfterException extends BaseListener
                 $jobStatus->tags()->create([
                     'key' => $tag->key,
                     'value' => $tag->value,
+                ]);
+            }
+
+            foreach ($modifier->getJobStatus()->users()->get() as $user) {
+                $jobStatus->users()->create([
+                    'user_id' => $user->user_id,
                 ]);
             }
         }

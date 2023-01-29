@@ -3,8 +3,11 @@
 namespace JobStatus\Tests\Feature\Http\Api;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
+use JobStatus\Models\JobStatusUser;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
@@ -103,58 +106,98 @@ class JobSignalStoreTest extends TestCase
         ])->assertOk();
     }
 
-    /** @test */
-    public function it_throws_an_exception_if_the_user_does_not_have_access_to_see_the_tracking()
-    {
-        $this->markTestIncomplete('Waiting on auth stuff');
-        $jobStatus = JobStatus::factory()->has(
-            JobStatusTag::factory(['key' => 'tag1', 'value' => 'val1']),
-            'tags'
-        )->create(['job_class' => JobFake::class]);
 
-        JobFake::$canSeeTracking = fn ($user, $tags) => false;
-        $response = $this->postJson(route('job-status.job-signal.store', $jobStatus->id), [
-            'signal' => 'custom-signal',
-            'cancel_job' => true,
-            'parameters' => ['param1' => 'value1'],
-        ]);
-        $this->assertInstanceOf(AuthorizationException::class, $response->exception);
-        $this->assertEquals('You cannot access this job status', $response->exception->getMessage());
 
-        $response->assertStatus(403);
-    }
+
 
     /** @test */
-    public function it_throws_an_exception_if_the_job_class_is_not_real()
+    public function it_gives_access_to_a_user_with_access_to_the_private_job()
     {
-        $this->markTestIncomplete('Waiting on auth stuff');
-        $jobStatus = JobStatus::factory()->create(['job_class' => 'NotAClass']);
+        $jobStatus = JobStatus::factory()->create(['public' => false]);
+        JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
+        $user = $this->prophesize(Authenticatable::class);
+        $userRevealed = $user->reveal();
+        $userRevealed->id = 1;
+        $this->be($userRevealed);
 
         $response = $this->postJson(route('job-status.job-signal.store', $jobStatus->id), [
             'signal' => 'custom-signal',
             'cancel_job' => true,
             'parameters' => ['param1' => 'value1'],
         ]);
-        $this->assertInstanceOf(\Exception::class, $response->exception);
-        $this->assertEquals('No job of type NotAClass found.', $response->exception->getMessage());
-
-        $response->assertStatus(500);
+        $response->assertOk();
     }
 
+
     /** @test */
-    public function it_throws_an_exception_if_the_job_class_exists_but_does_not_extend_trackable()
+    public function it_denies_access_to_a_user_without_access_to_the_private_job()
     {
-        $this->markTestIncomplete('Waiting on auth stuff');
-        $jobStatus = JobStatus::factory()->create(['job_class' => TestCase::class]);
+        $jobStatus = JobStatus::factory()->create(['public' => false]);
+        JobStatusUser::factory()->create(['user_id' => 2, 'job_status_id' => $jobStatus->id]);
+        $user = $this->prophesize(Authenticatable::class);
+        $userRevealed = $user->reveal();
+        $userRevealed->id = 1;
+        $this->be($userRevealed);
 
         $response = $this->postJson(route('job-status.job-signal.store', $jobStatus->id), [
             'signal' => 'custom-signal',
             'cancel_job' => true,
             'parameters' => ['param1' => 'value1'],
         ]);
-        $this->assertInstanceOf(\Exception::class, $response->exception);
-        $this->assertEquals('Job JobStatus\Tests\TestCase is not trackable.', $response->exception->getMessage());
-
-        $response->assertStatus(500);
+        $response->assertForbidden();
     }
+
+    /** @test */
+    public function it_gives_access_to_a_user_to_the_public_job()
+    {
+        $jobStatus = JobStatus::factory()->create(['public' => true]);
+
+        $user = $this->prophesize(Authenticatable::class);
+        $userRevealed = $user->reveal();
+        $userRevealed->id = 1;
+        $this->be($userRevealed);
+
+        $response = $this->postJson(route('job-status.job-signal.store', $jobStatus->id), [
+            'signal' => 'custom-signal',
+            'cancel_job' => true,
+            'parameters' => ['param1' => 'value1'],
+        ]);
+        $response->assertOk();
+    }
+
+    /** @test */
+    public function it_gives_access_to_a_connected_user_to_the_public_job()
+    {
+        $jobStatus = JobStatus::factory()->create(['public' => true]);
+        JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
+
+        $user = $this->prophesize(Authenticatable::class);
+        $userRevealed = $user->reveal();
+        $userRevealed->id = 1;
+        $this->be($userRevealed);
+
+        $response = $this->postJson(route('job-status.job-signal.store', $jobStatus->id), [
+            'signal' => 'custom-signal',
+            'cancel_job' => true,
+            'parameters' => ['param1' => 'value1'],
+        ]);
+        $response->assertOk();
+    }
+
+
+    /** @test */
+    public function it_gives_access_to_an_anonymous_user_to_the_public_job()
+    {
+        $jobStatus = JobStatus::factory()->create(['public' => true]);
+        JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
+
+        $response = $this->postJson(route('job-status.job-signal.store', $jobStatus->id), [
+            'signal' => 'custom-signal',
+            'cancel_job' => true,
+            'parameters' => ['param1' => 'value1'],
+        ]);
+        $response->assertOk();
+    }
+
+
 }

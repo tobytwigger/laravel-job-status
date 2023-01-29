@@ -21,10 +21,11 @@ class JobStatus extends Model
 
     protected $fillable = [
         'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
-        'started_at', 'finished_at',
+        'started_at', 'finished_at', 'public'
     ];
 
     protected $casts = [
+        'public' => 'boolean',
         'percentage' => 'float',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',

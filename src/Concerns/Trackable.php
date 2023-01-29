@@ -64,11 +64,6 @@ trait Trackable
         return new JobStatusModifier($this->getJobStatus());
     }
 
-    public static function canSeeTracking($user = null, array $tags = []): bool
-    {
-        return true;
-    }
-
     public function alias(): ?string
     {
         return get_class($this);
@@ -77,5 +72,15 @@ trait Trackable
     public function tags(): array
     {
         return [];
+    }
+
+    public function users(): array
+    {
+        return [];
+    }
+
+    public function public(): bool
+    {
+        return true;
     }
 }

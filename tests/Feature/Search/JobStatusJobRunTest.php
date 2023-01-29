@@ -11,6 +11,7 @@ use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
+use JobStatus\Models\JobStatusUser;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Tests\TestCase;
 
@@ -382,5 +383,28 @@ class JobStatusJobRunTest extends TestCase
             'material'=> 'Aluminium',
             'pedals'=> 'spd',
         ], (new JobRun($status))->getTagsAsArray());
+    }
+
+    /** @test */
+    public function accessible_by_returns_true_if_the_user_can_see_the_job(){
+        $status = JobStatus::factory()->create();
+        JobStatusUser::factory()->create(['job_status_id' => $status->id, 'user_id' => 1]);
+
+        $this->assertTrue((new JobRun($status))->accessibleBy(1));
+    }
+
+    /** @test */
+    public function accessible_by_returns_false_if_the_user_can_see_the_job(){
+        $status = JobStatus::factory()->create();
+        JobStatusUser::factory()->create(['job_status_id' => $status->id, 'user_id' => 2]);
+
+        $this->assertFalse((new JobRun($status))->accessibleBy(1));
+    }
+
+    /** @test */
+    public function accessible_by_returns_true_if_there_are_no_entries(){
+        $status = JobStatus::factory()->create();
+
+        $this->assertFalse((new JobRun($status))->accessibleBy(1));
     }
 }
