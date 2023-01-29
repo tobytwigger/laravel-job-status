@@ -45,14 +45,16 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
-     * Get all the matching underlying database models
+     * Get all the matching underlying database models, including retrues
      *
      * @return Collection<JobStatus>
      */
     public function raw(): Collection
     {
-        return $this->runs()->map(fn(JobRun $jobStatus) => $jobStatus->jobStatus());
+        return $this->runsAndRetries()
+            ->map(fn(JobRun $jobStatus) => $jobStatus->jobStatus());
     }
+
 
     /**
      * Get all the runs that matched this search
@@ -83,7 +85,7 @@ class Results implements Arrayable, Jsonable
                 $job = $job->parent();
             } while ($job !== null);
         }
-        return $jobs;
+        return $jobs->sortByDesc(fn(JobRun $jobRun) => $jobRun->jobStatus()->created_at);
     }
 
     /**

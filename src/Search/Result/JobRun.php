@@ -5,11 +5,15 @@ namespace JobStatus\Search\Result;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobException;
+use JobStatus\Models\JobMessage;
+use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
+use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
 
 class JobRun implements Arrayable, Jsonable
@@ -55,13 +59,16 @@ class JobRun implements Arrayable, Jsonable
             'parent' => $this->parent()?->toArray(),
             'tags' => $this->getTagsAsArray(),
             'created_at' => $this->jobStatus->created_at,
-            'exception' => $this->getException(),
-            'messages' => $this->jobStatus->messages()->orderByDesc('created_at')->orderByDesc('id')->get(),
-            'signals' => $this->jobStatus->signals()->orderByDesc('created_at')->orderByDesc('id')->get(),
+            'exception' => $this->getException()?->toArray(),
+            'messages' => $this->jobStatus->messages()->orderByDesc('created_at')->orderByDesc('id')->get()
+                ->map(fn(JobMessage $message) => $message->toArray()),
+            'signals' => $this->jobStatus->signals()->orderByDesc('created_at')->orderByDesc('id')->get()
+                ->map(fn(JobSignal $signal) => $signal->toArray()),
             'started_at' => $this->jobStatus->started_at,
             'finished_at' => $this->jobStatus->finished_at,
             'id' => $this->jobStatus->id,
-            'statuses' => $this->jobStatus->statuses()->orderByDesc('created_at')->orderByDesc('id')->get(),
+            'statuses' => $this->jobStatus->statuses()->orderByDesc('created_at')->orderByDesc('id')->get()
+                ->map(fn(JobStatusStatus $status) => $status->toArray()),
         ];
     }
 
@@ -76,7 +83,7 @@ class JobRun implements Arrayable, Jsonable
 
     public function toJson($options = 0)
     {
-        return json_encode($this->toArray(), $options);
+        return collect($this->toArray())->toJson($options);
     }
 
     public function jobStatus(): JobStatus
@@ -89,7 +96,7 @@ class JobRun implements Arrayable, Jsonable
         return $this->hasParent();
     }
 
-    public function signals()
+    public function signals(): Collection
     {
         return $this->jobStatus->signals;
     }
@@ -112,7 +119,7 @@ class JobRun implements Arrayable, Jsonable
             ?->message;
     }
 
-    public function messages(): array
+    public function messages(): Collection
     {
         return $this->jobStatus->messages;
     }

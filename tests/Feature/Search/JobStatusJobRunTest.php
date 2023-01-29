@@ -2,56 +2,119 @@
 
 namespace JobStatus\Tests\Feature\Search;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use JobStatus\Database\Factories\JobStatusTagFactory;
 use JobStatus\Enums\MessageType;
+use JobStatus\Enums\Status;
 use JobStatus\JobStatusRepository;
+use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
+use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
+use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
+use function Symfony\Component\Translation\t;
 
 class JobStatusJobRunTest extends TestCase
 {
 
     /** @test */
     public function hasParent_returns_true_if_a_parent_is_set(){
-        $this->markTestIncomplete('Not implemented yet');
+        $mainJobStatus = JobStatus::factory()->create();
+        $parentJobStatus = JobStatus::factory()->create();
+
+        $run = new JobRun($mainJobStatus, new JobRun($parentJobStatus));
+
+        $this->assertTrue($run->hasParent());
     }
 
     /** @test */
     public function hasParent_returns_false_if_a_parent_is_not_set(){
-        $this->markTestIncomplete('Not implemented yet');
+        $mainJobStatus = JobStatus::factory()->create();
+
+        $run = new JobRun($mainJobStatus, null);
+
+        $this->assertFalse($run->hasParent());
     }
 
     /** @test */
     public function parent_returns_the_parent(){
-        $this->markTestIncomplete('Not implemented yet');
+        $mainJobStatus = JobStatus::factory()->create();
+        $parentJobStatus = JobStatus::factory()->create();
+
+        $run = new JobRun($mainJobStatus, new JobRun($parentJobStatus));
+
+        $this->assertTrue($parentJobStatus->is($run->parent()->jobStatus()));
     }
 
     /** @test */
     public function parent_returns_null_if_no_parent(){
-        $this->markTestIncomplete('Not implemented yet');
+        $mainJobStatus = JobStatus::factory()->create();
+        $parentJobStatus = JobStatus::factory()->create();
+
+        $run = new JobRun($mainJobStatus);
+
+        $this->assertNull($run->parent());
     }
 
     /** @test */
     public function getException_gets_the_exception_all_loaded(){
-        $this->markTestIncomplete('Not implemented yet');
+        $previous1 = JobException::factory()->create();
+        $previous2 = JobException::factory()->create(['previous_id' => $previous1->id]);
+        $previous3 = JobException::factory()->create(['previous_id' => $previous2->id]);
+        $rawException = JobException::factory()->create(['previous_id' => $previous3->id]);
+
+        $jobStatus = JobStatus::factory()->create(['exception_id' => $rawException->id]);
+
+        $run = new JobRun($jobStatus);
+
+        $exception = $run->getException();
+
+        $this->assertInstanceOf(JobException::class, $exception);
+        $array = $exception->toArray();
+        $this->assertEquals($exception->id, $array['id']);
+
+        $this->assertArrayHasKey('previous', $array);
+        $this->assertIsArray($array['previous']);
+        $this->assertEquals($previous3->id, $array['previous']['id']);
+
+        $this->assertArrayHasKey('previous', $array['previous']);
+        $this->assertIsArray($array['previous']['previous']);
+        $this->assertEquals($previous2->id, $array['previous']['previous']['id']);
+
+
+        $this->assertArrayHasKey('previous', $array['previous']['previous']);
+        $this->assertIsArray($array['previous']['previous']['previous']);
+        $this->assertEquals($previous1->id, $array['previous']['previous']['previous']['id']);
+
+        $this->assertArrayHasKey('previous', $array['previous']['previous']['previous']);
+        $this->assertNull($array['previous']['previous']['previous']['previous']);
     }
 
     /** @test */
     public function jobStatus_gets_the_underlying_job_status_model(){
-        $this->markTestIncomplete('Not implemented yet');
+        $jobStatus = JobStatus::factory()->create();
+
+        $run = new JobRun($jobStatus);
+
+        $this->assertTrue($jobStatus->is($run->jobStatus()));
     }
 
     /** @test */
     public function signals_gets_all_signals(){
-        $this->markTestIncomplete('Not implemented yet');
+        $jobStatus = JobStatus::factory()->create();
+        $signal1 = JobSignal::factory()->create(['signal' => 'one', 'job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
+        $signal2 = JobSignal::factory()->create(['signal' => 'two', 'job_status_id' => $jobStatus->id]);
+        $run = new JobRun($jobStatus);
+        $this->assertCount(2, $run->signals());
+        $this->assertTrue($signal1->is($run->signals()[0]));
+        $this->assertTrue($signal2->is($run->signals()[1]));
     }
 
     /** @test */
@@ -113,7 +176,13 @@ class JobStatusJobRunTest extends TestCase
 
     /** @test */
     public function messages_gets_all_messages(){
-        $this->markTestIncomplete('Not implemented yet');
+        $jobStatus = JobStatus::factory()->create();
+        $message1 = JobMessage::factory()->create(['message' => 'one', 'job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
+        $message2 = JobMessage::factory()->create(['message' => 'two', 'job_status_id' => $jobStatus->id]);
+        $run = new JobRun($jobStatus);
+        $this->assertCount(2, $run->messages());
+        $this->assertTrue($message1->is($run->messages()[0]));
+        $this->assertTrue($message2->is($run->messages()[1]));
     }
 
     /** @test */
@@ -216,12 +285,74 @@ class JobStatusJobRunTest extends TestCase
 
     /** @test */
     public function getStatus_returns_the_status(){
-        $this->markTestIncomplete('Not implemented yet');
+        $jobStatus = JobStatus::factory()->create(['status' => Status::QUEUED]);
+        $run = new JobRun($jobStatus);
+        $this->assertEquals(Status::QUEUED, $run->getStatus());
     }
 
     /** @test */
     public function it_can_be_casted_to_an_array_or_json(){
-        $this->markTestIncomplete('Not implemented yet');
+        $uuid = Str::uuid();
+
+        $createdAt = Carbon::now()->subHour()->setMicroseconds(0);
+        $startedAt = Carbon::now()->subHours(6)->setMicroseconds(0);
+        $finishedAt = Carbon::now()->subHours(4)->setMicroseconds(0);
+
+        $exception = JobException::factory()->create();
+        $jobStatus = JobStatus::factory()->create([
+            'job_alias' => 'my-job-alias',
+            'job_class' => 'My_Fake_Class',
+            'percentage' => 30.2,
+            'status' => Status::CANCELLED,
+            'uuid' => $uuid,
+            'created_at' => $createdAt,
+            'started_at' => $startedAt,
+            'finished_at' => $finishedAt,
+            'exception_id' => $exception->id
+        ]);
+        $message1 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
+        $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subHour()]);
+        $signal1 = JobSignal::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
+        $signal2 = JobSignal::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subHour()]);
+        $status1 = JobStatusStatus::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
+        $status2 = JobStatusStatus::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subHour()]);
+
+        JobStatusTag::factory()->create(['key' => 'key1', 'value' => 'value1', 'job_status_id' => $jobStatus->id]);
+        JobStatusTag::factory()->create(['key' => 'key2', 'value' => 'value2', 'job_status_id' => $jobStatus->id]);
+
+        $parentJob = JobStatus::factory()->create();
+
+        $run = new JobRun($jobStatus, new JobRun($parentJob));
+
+        $array = [
+            'alias' => 'my-job-alias',
+            'class' => 'My_Fake_Class',
+            'percentage' => 30.2,
+            'status' => Status::CANCELLED,
+            'uuid' => $uuid,
+            'has_parent' => true,
+            'parent' => (new JobRun($parentJob))->toArray(),
+            'tags' => [
+                'key1' => 'value1',
+                'key2' => 'value2'
+            ],
+            'created_at' => $createdAt,
+            'exception' => $exception->loadAllPrevious()->toArray(),
+            'messages' => collect([
+                $message1->toArray(), $message2->toArray()
+            ]),
+            'signals' => collect([
+                $signal1->toArray(), $signal2->toArray()
+            ]),
+            'started_at' => $startedAt,
+            'finished_at' => $finishedAt,
+            'id' => $jobStatus->id,
+            'statuses' => collect([
+                $status1->toArray(), $status2->toArray()
+            ])
+        ];
+        $this->assertEquals($array, $run->toArray());
+        $this->assertIsString($run->toJson());
     }
 
     /** @test */
