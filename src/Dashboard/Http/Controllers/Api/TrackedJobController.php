@@ -7,7 +7,6 @@ use JobStatus\Search\JobStatusSearcher;
 
 class TrackedJobController extends Controller
 {
-
     public function index()
     {
         return JobStatusSearcher::query()
@@ -21,5 +20,4 @@ class TrackedJobController extends Controller
             ->get()
             ->first();
     }
-
 }

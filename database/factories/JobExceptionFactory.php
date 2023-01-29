@@ -3,10 +3,7 @@
 namespace JobStatus\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JobStatus\Enums\Status;
 use JobStatus\Models\JobException;
-use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusStatus;
 
 class JobExceptionFactory extends Factory
 {
@@ -25,7 +22,7 @@ class JobExceptionFactory extends Factory
             'previous_id' => null,
             'line' => $this->faker->numberBetween(1, 100),
             'file' => $this->faker->filePath(),
-            'code' => $this->faker->sentence
+            'code' => $this->faker->sentence,
         ];
     }
 }

@@ -2,11 +2,7 @@
 
 namespace JobStatus\Dashboard\Commands;
 
-use App\Jobs\SendEmailToUser;
-use App\Jobs\CreateReport;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Console\VendorPublishCommand;
-use Illuminate\Support\Facades\Artisan;
 use JobStatus\Dashboard\Utils\Assets;
 
 class InstallAssets extends Command
@@ -34,19 +30,19 @@ class InstallAssets extends Command
      */
     public function handle(Assets $assets)
     {
-        $this->output(fn() => $this->line('Clearing old assets'));
+        $this->output(fn () => $this->line('Clearing old assets'));
 
         if ($assets->clear()) {
-            $this->output(fn() => $this->info('Old assets cleared'));
+            $this->output(fn () => $this->info('Old assets cleared'));
         } else {
-            $this->output(fn() => $this->warn('No assets need clearing.'));
+            $this->output(fn () => $this->warn('No assets need clearing.'));
         }
 
-        $this->output(fn() => $this->line('Installing assets'));
+        $this->output(fn () => $this->line('Installing assets'));
 
         $assets->publish();
 
-        $this->output(fn() => $this->info('Installing assets'));
+        $this->output(fn () => $this->info('Installing assets'));
 
         return Command::SUCCESS;
     }
@@ -57,5 +53,4 @@ class InstallAssets extends Command
             $write();
         }
     }
-
 }

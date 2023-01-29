@@ -23,18 +23,20 @@ trait Trackable
     public static function search(array $tags = []): JobStatusSearcher
     {
         $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
-        foreach($tags as $key => $value) {
+        foreach ($tags as $key => $value) {
             $search->whereTag($key, $value);
         }
+
         return $search;
     }
 
     public function history(): ?TrackedJob
     {
         $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
-        foreach($this->tags() as $key => $value) {
+        foreach ($this->tags() as $key => $value) {
             $search->whereTag($key, $value);
         }
+
         return $search->get()->first();
     }
 
@@ -42,10 +44,10 @@ trait Trackable
     {
         if (!isset($this->jobStatus)) {
             $this->jobStatus = null;
-            if($this->job?->getJobId()) {
+            if ($this->job?->getJobId()) {
                 $this->jobStatus = app(JobStatusRepository::class)->getLatestByQueueReference($this->job->getJobId(), $this->job->getConnectionName());
             }
-            if($this->jobStatus === null && $this->job?->uuid()) {
+            if ($this->jobStatus === null && $this->job?->uuid()) {
                 $this->jobStatus = app(JobStatusRepository::class)->getLatestByUuid($this->job->uuid());
             }
         }
@@ -55,9 +57,10 @@ trait Trackable
 
     public function status(): JobStatusModifier
     {
-        if($this->getJobStatus() === null) {
+        if ($this->getJobStatus() === null) {
             throw new \Exception('Could not get the status of the job');
         }
+
         return new JobStatusModifier($this->getJobStatus());
     }
 
@@ -75,5 +78,4 @@ trait Trackable
     {
         return [];
     }
-
 }

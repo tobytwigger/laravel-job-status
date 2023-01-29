@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use JobStatus\Database\Factories\JobExceptionFactory;
-use JobStatus\Enums\Status;
 
 class JobException extends Model
 {
@@ -18,13 +17,13 @@ class JobException extends Model
         'previous_id',
         'line',
         'file',
-        'code'
+        'code',
     ];
 
     protected $casts = [
         'stack_trace' => 'array',
         'line' => 'integer',
-        'code' => 'integer'
+        'code' => 'integer',
     ];
 
     protected $dateFormat = 'Y-m-d H:i:s.v';
@@ -50,17 +49,18 @@ class JobException extends Model
         $currentException = $this;
         $count = 1;
         $this->load('previous');
-        while($currentException->previous_id !== null) {
+        while ($currentException->previous_id !== null) {
             $string = '';
-            for($i = 0; $i<=$count;$i++) {
+            for ($i = 0; $i<=$count;$i++) {
                 $string .= '.previous.previous';
             }
-            if(Str::startsWith($string, '.')) {
+            if (Str::startsWith($string, '.')) {
                 $string = Str::substr($string, 1);
             }
             $this->load($string);
             $currentException = $currentException->previous;
         }
+
         return $this;
     }
 
@@ -68,5 +68,4 @@ class JobException extends Model
     {
         return JobExceptionFactory::new();
     }
-
 }

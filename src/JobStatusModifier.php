@@ -5,12 +5,10 @@ namespace JobStatus;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobException;
-use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobStatus;
 
 class JobStatusModifier
 {
-
     private ?JobStatus $jobStatus;
 
     public static function forJobStatus(?JobStatus $jobStatus): JobStatusModifier
@@ -35,6 +33,7 @@ class JobStatusModifier
             $this->jobStatus->save();
             $this->jobStatus->statuses()->create(['status' => $status]);
         }
+
         return $this;
     }
 
@@ -44,6 +43,7 @@ class JobStatusModifier
             $this->jobStatus->started_at = $startedAt;
             $this->jobStatus->save();
         }
+
         return $this;
     }
 
@@ -53,20 +53,21 @@ class JobStatusModifier
             $this->jobStatus->finished_at = $startedAt;
             $this->jobStatus->save();
         }
+
         return $this;
     }
 
     public function addException(\Throwable $exception): static
     {
-        if($this->jobStatus !== null) {
+        if ($this->jobStatus !== null) {
             $exceptions = [];
             $temporaryException = $exception;
-            while($temporaryException !== null) {
+            while ($temporaryException !== null) {
                 $exceptions[] = $temporaryException;
                 $temporaryException = $temporaryException->getPrevious();
             }
             $exceptionModel = null;
-            foreach(array_reverse($exceptions) as $exceptionToSave) {
+            foreach (array_reverse($exceptions) as $exceptionToSave) {
                 $exceptionModel = JobException::create([
                     'previous_id' => $exceptionModel?->id ?? null,
                     'message' => $exceptionToSave->getMessage(),
@@ -76,12 +77,13 @@ class JobStatusModifier
                     'stack_trace' => $exceptionToSave->getTrace(),
                 ]);
             }
-            if($exceptionModel !== null) {
+            if ($exceptionModel !== null) {
                 $this->jobStatus->update([
-                    'exception_id' => $exceptionModel->id
+                    'exception_id' => $exceptionModel->id,
                 ]);
             }
         }
+
         return $this;
     }
 
@@ -91,6 +93,7 @@ class JobStatusModifier
             $this->jobStatus->percentage = $percentage;
             $this->jobStatus->save();
         }
+
         return $this;
     }
 
@@ -101,6 +104,7 @@ class JobStatusModifier
                 'message' => $message, 'type' => $type,
             ]);
         }
+
         return $this;
     }
 
@@ -114,6 +118,7 @@ class JobStatusModifier
         if ($this->jobStatus !== null) {
             $this->message($message, MessageType::WARNING);
         }
+
         return $this;
     }
 
@@ -122,6 +127,7 @@ class JobStatusModifier
         if ($this->jobStatus !== null) {
             $this->message($message, MessageType::SUCCESS);
         }
+
         return $this;
     }
 
@@ -130,6 +136,7 @@ class JobStatusModifier
         if ($this->jobStatus !== null) {
             $this->message($message, MessageType::INFO);
         }
+
         return $this;
     }
 
@@ -138,6 +145,7 @@ class JobStatusModifier
         if ($this->jobStatus !== null) {
             $this->message($message, MessageType::DEBUG);
         }
+
         return $this;
     }
 
@@ -146,6 +154,7 @@ class JobStatusModifier
         if ($this->jobStatus !== null) {
             $this->message($message, MessageType::ERROR);
         }
+
         return $this;
     }
 
@@ -154,6 +163,7 @@ class JobStatusModifier
         if ($this->jobStatus !== null) {
             return $this->sendSignal('cancel', $parameters, true);
         }
+
         return $this;
     }
 
@@ -166,6 +176,7 @@ class JobStatusModifier
                 'parameters' => $parameters,
             ]);
         }
+
         return $this;
     }
 
@@ -175,6 +186,7 @@ class JobStatusModifier
             $this->jobStatus->uuid = $uuid;
             $this->jobStatus->save();
         }
+
         return $this;
     }
 
@@ -184,6 +196,7 @@ class JobStatusModifier
             $this->jobStatus->job_id = $jobId;
             $this->jobStatus->save();
         }
+
         return $this;
     }
 
@@ -193,7 +206,7 @@ class JobStatusModifier
             $this->jobStatus->connection_name = $connectionName;
             $this->jobStatus->save();
         }
+
         return $this;
     }
-
 }

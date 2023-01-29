@@ -7,7 +7,6 @@ use JobStatus\Dashboard\Utils\Assets;
 
 class DashboardVariables
 {
-
     public function compose(\Illuminate\View\View  $view)
     {
         try {
@@ -20,8 +19,7 @@ class DashboardVariables
             'path' => config('laravel-job-status.dashboard.path', 'job-status'),
             'domain' => config('laravel-job-status.dashboard.domain', null),
             'version' => $version,
-            'assets_in_date' => app(Assets::class)->inDate()
+            'assets_in_date' => app(Assets::class)->inDate(),
         ]);
     }
-
 }

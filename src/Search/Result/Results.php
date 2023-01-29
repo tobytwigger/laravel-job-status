@@ -4,13 +4,11 @@ namespace JobStatus\Search\Result;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use JobStatus\Models\JobStatus;
 
 class Results implements Arrayable, Jsonable
 {
-
     private Collection $results;
 
     /**
@@ -22,7 +20,7 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
-     * Get all the jobs that had runs matching the search
+     * Get all the jobs that had runs matching the search.
      *
      * @return TrackedJob[]|Collection
      */
@@ -35,7 +33,7 @@ class Results implements Arrayable, Jsonable
     {
         return [
             'count' => $this->results->count(),
-            'jobs' => $this->jobs()->toArray()
+            'jobs' => $this->jobs()->toArray(),
         ];
     }
 
@@ -45,33 +43,33 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
-     * Get all the matching underlying database models, including retrues
+     * Get all the matching underlying database models, including retrues.
      *
      * @return Collection<JobStatus>
      */
     public function raw(): Collection
     {
         return $this->runsAndRetries()
-            ->map(fn(JobRun $jobStatus) => $jobStatus->jobStatus());
+            ->map(fn (JobRun $jobStatus) => $jobStatus->jobStatus());
     }
 
 
     /**
-     * Get all the runs that matched this search
+     * Get all the runs that matched this search.
      *
      * @return Collection<JobRun>
      */
     public function runs(): Collection
     {
         return $this->jobs()
-            ->map(fn(TrackedJob $sameJobList) => $sameJobList->runs())
+            ->map(fn (TrackedJob $sameJobList) => $sameJobList->runs())
             ->flatten(1)
-            ->sortByDesc(fn(JobRun $run) => $run->jobStatus()->created_at->getPreciseTimestamp(3))
+            ->sortByDesc(fn (JobRun $run) => $run->jobStatus()->created_at->getPreciseTimestamp(3))
             ->values();
     }
 
     /**
-     * Get all the runs without grouping retries together
+     * Get all the runs without grouping retries together.
      *
      * @return Collection<JobRun>
      */
@@ -85,11 +83,12 @@ class Results implements Arrayable, Jsonable
                 $job = $job->parent();
             } while ($job !== null);
         }
-        return $jobs->sortByDesc(fn(JobRun $jobRun) => $jobRun->jobStatus()->created_at);
+
+        return $jobs->sortByDesc(fn (JobRun $jobRun) => $jobRun->jobStatus()->created_at);
     }
 
     /**
-     * Get the first matching job
+     * Get the first matching job.
      *
      * @return TrackedJob|null
      */
@@ -119,7 +118,7 @@ class Results implements Arrayable, Jsonable
     }
 
     /**
-     * Get the first matching run
+     * Get the first matching run.
      *
      * @return JobRun|null
      */
@@ -127,5 +126,4 @@ class Results implements Arrayable, Jsonable
     {
         return $this->first()?->latest();
     }
-
 }

@@ -4,7 +4,6 @@ namespace JobStatus\Tests\Feature\Listeners\Workflow;
 
 use Illuminate\Testing\Assert;
 use JobStatus\Exception\JobCancelledException;
-use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
@@ -12,9 +11,9 @@ use JobStatus\Tests\TestCase;
 
 class SyncQueueTest extends TestCase
 {
-
     /** @test */
-    public function a_run_is_handled(){
+    public function a_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -27,7 +26,6 @@ class SyncQueueTest extends TestCase
 
     public static function a_run_is_handled_callback(JobFake $job)
     {
-
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
         Assert::assertEquals(JobFake::class, $jobStatus->job_class);
@@ -65,7 +63,8 @@ class SyncQueueTest extends TestCase
 
 
     /** @test */
-    public function a_successful_run_is_handled(){
+    public function a_successful_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -104,8 +103,10 @@ class SyncQueueTest extends TestCase
 
 
     /** @test */
-    public function a_cancelled_run_is_handled(){
+    public function a_cancelled_run_is_handled()
+    {
         $exceptionThrown = false;
+
         try {
             $job = (new JobFakeFactory())
                 ->setAlias('my-fake-job')
@@ -163,8 +164,10 @@ class SyncQueueTest extends TestCase
 
 
     /** @test */
-    public function a_cancelled_custom_signal_run_is_handled(){
+    public function a_cancelled_custom_signal_run_is_handled()
+    {
         $exceptionThrown = false;
+
         try {
             $job = (new JobFakeFactory())
                 ->setAlias('my-fake-job')
@@ -209,7 +212,7 @@ class SyncQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
     }
 
-    static bool $calledCancelledCustomSignal = false;
+    public static bool $calledCancelledCustomSignal = false;
 
     public static function a_cancelled_custom_signal_run_is_handled_callback(JobFake $job)
     {
@@ -233,10 +236,11 @@ class SyncQueueTest extends TestCase
 
 
     /** @test */
-    public function a_failed_run_is_handled(){
+    public function a_failed_run_is_handled()
+    {
         $exceptionThrown = false;
-        try {
 
+        try {
             $job = (new JobFakeFactory())
                 ->setAlias('my-fake-job')
                 ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -293,8 +297,10 @@ class SyncQueueTest extends TestCase
 
 
     /** @test */
-    public function a_failed_and_retry_run_is_handled_without_retrying_as_sync_cannot_retry(){
+    public function a_failed_and_retry_run_is_handled_without_retrying_as_sync_cannot_retry()
+    {
         $exceptionThrown = false;
+
         try {
             $job = (new JobFakeFactory())
                 ->setAlias('my-fake-job')
@@ -343,14 +349,4 @@ class SyncQueueTest extends TestCase
     {
         throw new \Exception('Test');
     }
-
-
-
-
-
-
-
-
-
-
 }

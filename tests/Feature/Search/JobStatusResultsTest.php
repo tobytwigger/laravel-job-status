@@ -3,21 +3,14 @@
 namespace JobStatus\Tests\Feature\Search;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
-use JobStatus\Database\Factories\JobStatusTagFactory;
-use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusTag;
-use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Results;
 use JobStatus\Search\Result\TrackedJob;
-use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
 class JobStatusResultsTest extends TestCase
 {
-
     /** @test */
     public function it_gets_the_first_tracked_job_when_first_called_directly_from_the_searcher()
     {
@@ -31,7 +24,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_all_jobs(){
+    public function it_returns_all_jobs()
+    {
         $results = new Results(collect([
             $trackedJob1 = new TrackedJob('Class1', collect(), 'alias1'),
             $trackedJob2 = new TrackedJob('Class2', collect(), 'alias2'),
@@ -45,7 +39,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function raw_returns_the_job_status_models(){
+    public function raw_returns_the_job_status_models()
+    {
         $results = new Results(collect([
             new TrackedJob('Class1', collect([
                 new JobRun(
@@ -62,12 +57,12 @@ class JobStatusResultsTest extends TestCase
                     new JobRun(
                         $jobStatus5 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
                     )
-                )
+                ),
             ]), 'alias1'),
             new TrackedJob('Class2', collect([
                 new JobRun(
                     $jobStatus6 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
-                )
+                ),
             ]), 'alias2'),
             new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -82,7 +77,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function runs_returns_all_the_runs_ordered_by_created_at_of_the_most_recent_run(){
+    public function runs_returns_all_the_runs_ordered_by_created_at_of_the_most_recent_run()
+    {
         $results = new Results(collect([
             new TrackedJob('Class1', collect([
                 new JobRun(
@@ -99,12 +95,12 @@ class JobStatusResultsTest extends TestCase
                     new JobRun(
                         $jobStatus5 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
                     )
-                )
+                ),
             ]), 'alias1'),
             new TrackedJob('Class2', collect([
                 new JobRun(
                     $jobStatus6 = JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(2)])
-                )
+                ),
             ]), 'alias2'),
             new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -116,7 +112,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function runs_and_retries_gets_the_runs_and_retries_not_grouped(){
+    public function runs_and_retries_gets_the_runs_and_retries_not_grouped()
+    {
         $results = new Results(collect([
             new TrackedJob('Class1', collect([
                 $jobRun1 = new JobRun(
@@ -133,12 +130,12 @@ class JobStatusResultsTest extends TestCase
                     $jobRun5 = new JobRun(
                         JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
                     )
-                )
+                ),
             ]), 'alias1'),
             new TrackedJob('Class2', collect([
                 $jobRun6 = new JobRun(
                     JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
-                )
+                ),
             ]), 'alias2'),
             new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -153,7 +150,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function first_returns_the_first_matching_job(){
+    public function first_returns_the_first_matching_job()
+    {
         $results = new Results(collect([
             $trackedJob1 = new TrackedJob('Class1', collect([
                 new JobRun(
@@ -170,12 +168,12 @@ class JobStatusResultsTest extends TestCase
                     new JobRun(
                         JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
                     )
-                )
+                ),
             ]), 'alias1'),
             $trackedJob2 = new TrackedJob('Class2', collect([
                 new JobRun(
                     JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
-                )
+                ),
             ]), 'alias2'),
             $trackedJob3 = new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -184,7 +182,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function count_returns_the_number_of_jobs(){
+    public function count_returns_the_number_of_jobs()
+    {
         $results = new Results(collect([
             new TrackedJob('Class1', collect([
                 $jobRun1 = new JobRun(
@@ -201,7 +200,7 @@ class JobStatusResultsTest extends TestCase
                     $jobRun5 = new JobRun(
                         JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
                     )
-                )
+                ),
             ]), 'alias1'),
             new TrackedJob('Class2', collect([
                 $jobRun6 = new JobRun(
@@ -209,7 +208,7 @@ class JobStatusResultsTest extends TestCase
                 ),
                 $jobRun7 = new JobRun(
                     JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
-                )
+                ),
             ]), 'alias2'),
             new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -218,7 +217,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function runCount_returns_the_number_of_runs_excluding_retries(){
+    public function run_count_returns_the_number_of_runs_excluding_retries()
+    {
         $results = new Results(collect([
             new TrackedJob('Class1', collect([
                 $jobRun1 = new JobRun(
@@ -235,7 +235,7 @@ class JobStatusResultsTest extends TestCase
                     $jobRun5 = new JobRun(
                         JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
                     )
-                )
+                ),
             ]), 'alias1'),
             new TrackedJob('Class2', collect([
                 $jobRun6 = new JobRun(
@@ -243,7 +243,7 @@ class JobStatusResultsTest extends TestCase
                 ),
                 $jobRun7 = new JobRun(
                     JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
-                )
+                ),
             ]), 'alias2'),
             new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -252,7 +252,8 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function firstRun_gets_the_first_matching_run(){
+    public function first_run_gets_the_first_matching_run()
+    {
         $results = new Results(collect([
             new TrackedJob('Class1', collect([
                 new JobRun(
@@ -269,12 +270,12 @@ class JobStatusResultsTest extends TestCase
                     new JobRun(
                         JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(5)])
                     )
-                )
+                ),
             ]), 'alias1'),
             new TrackedJob('Class2', collect([
                 new JobRun(
                     JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
-                )
+                ),
             ]), 'alias2'),
             new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -282,13 +283,13 @@ class JobStatusResultsTest extends TestCase
     }
 
     /** @test */
-    public function it_can_convert_to_an_array_and_json(){
-
+    public function it_can_convert_to_an_array_and_json()
+    {
         $results = new Results(collect([
             $trackedJob1 = new TrackedJob('Class2', collect([
                 new JobRun(
                     JobStatus::factory()->create(['created_at' => Carbon::now()->subHours(6)])
-                )
+                ),
             ]), 'alias2'),
             $trackedJob2 = new TrackedJob('Class3', collect(), 'alias3'),
         ]));
@@ -297,13 +298,12 @@ class JobStatusResultsTest extends TestCase
             'count' => 2,
             'jobs' => [
                 $trackedJob1->toArray(),
-                $trackedJob2->toArray()
-            ]
+                $trackedJob2->toArray(),
+            ],
         ];
 
         $this->assertEquals($array, $results->toArray());
 
         $this->assertEquals(collect($array)->toJson(), $results->toJson());
     }
-
 }

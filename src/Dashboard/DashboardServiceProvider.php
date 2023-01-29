@@ -11,17 +11,16 @@ use JobStatus\Dashboard\Http\Composers\DashboardVariables;
 
 class DashboardServiceProvider extends ServiceProvider
 {
-
     public function register()
     {
         $this->commands([
-            InstallAssets::class
+            InstallAssets::class,
         ]);
     }
 
     public function boot()
     {
-        if(config('laravel-job-status.dashboard.enabled', false)) {
+        if (config('laravel-job-status.dashboard.enabled', false)) {
             $this->setupGates();
             $this->registerRoutes();
             $this->registerResources();
@@ -43,7 +42,7 @@ class DashboardServiceProvider extends ServiceProvider
 
     protected function registerResources()
     {
-        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'job-status');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'job-status');
     }
 
     protected function registerRoutes()
@@ -52,22 +51,21 @@ class DashboardServiceProvider extends ServiceProvider
             ->domain(config('laravel-job-status.dashboard.domain', null))
             ->middleware(config('laravel-job-status.dashboard.middleware', 'web'))
             ->group(function () {
-                $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+                $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
             });
 
         Route::prefix(config('laravel-job-status.dashboard.path', 'job-status') . '/api')
             ->domain(config('laravel-job-status.dashboard.domain', null))
             ->middleware(config('laravel-job-status.dashboard.middleware', 'api'))
             ->group(function () {
-                $this->loadRoutesFrom(__DIR__.'/../../routes/internal-api.php');
+                $this->loadRoutesFrom(__DIR__ . '/../../routes/internal-api.php');
             });
     }
 
     protected function setupGates()
     {
-        Gate::define('viewJobStatus', function() {
+        Gate::define('viewJobStatus', function () {
             return null;
         });
     }
-
 }

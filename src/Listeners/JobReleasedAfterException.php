@@ -7,21 +7,18 @@ use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 
 /**
- * When a job has finished processing but is going to be released to try again
+ * When a job has finished processing but is going to be released to try again.
  *
  * - Create a new job status.
  */
 class JobReleasedAfterException extends BaseListener
 {
-
     /**
      * @param \Illuminate\Queue\Events\JobReleasedAfterException $event
-     * @return void
      */
     public function handle(\Illuminate\Queue\Events\JobReleasedAfterException $event)
     {
-        if($this->isTrackingEnabled()) {
-
+        if ($this->isTrackingEnabled()) {
             $modifier = $this->getJobStatusModifier($event->job);
             if ($modifier === null) {
                 return;
@@ -33,7 +30,7 @@ class JobReleasedAfterException extends BaseListener
                 'status' => Status::QUEUED,
                 'uuid' => $event->job->uuid(),
                 'connection_name' => $event->job->getConnectionName(),
-                'job_id' => $event->job->getJobId()
+                'job_id' => $event->job->getJobId(),
             ]);
 
             JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
@@ -46,5 +43,4 @@ class JobReleasedAfterException extends BaseListener
             }
         }
     }
-
 }

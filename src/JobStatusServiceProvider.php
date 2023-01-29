@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use JobStatus\Console\ClearJobStatusCommand;
 use JobStatus\Console\ShowJobStatusSummaryCommand;
-use JobStatus\Dashboard\DashboardServiceProvider;
 
 /**
  * The service provider for loading Laravel Setting.
@@ -29,7 +28,7 @@ class JobStatusServiceProvider extends ServiceProvider
     {
         $this->commands([
             ClearJobStatusCommand::class,
-            ShowJobStatusSummaryCommand::class
+            ShowJobStatusSummaryCommand::class,
         ]);
     }
 

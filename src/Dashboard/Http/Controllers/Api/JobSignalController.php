@@ -2,17 +2,12 @@
 
 namespace JobStatus\Dashboard\Http\Controllers\Api;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use JobStatus\Dashboard\Http\Controllers\Controller;
-use JobStatus\Http\Requests\JobSignalStoreRequest;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\JobStatusSearcher;
-use JobStatus\Search\Result\JobRun;
 
 class JobSignalController extends Controller
 {
-
     public function store(Request $request, JobStatus $jobStatus)
     {
         $request->validate([
@@ -27,5 +22,4 @@ class JobSignalController extends Controller
             'parameters' => $request->input('parameters', []),
         ]);
     }
-
 }

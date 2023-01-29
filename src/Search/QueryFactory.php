@@ -7,7 +7,6 @@ use JobStatus\Models\JobStatus;
 
 class QueryFactory
 {
-
     public static function fromSearchParameters(SearchParameters $parameters): Builder
     {
         $query = JobStatus::query();
@@ -26,6 +25,7 @@ class QueryFactory
         if ($parameters->getJobAlias()) {
             $query->where('job_alias', $parameters->getJobAlias());
         }
+
         return $query;
     }
 
@@ -34,6 +34,7 @@ class QueryFactory
         if ($parameters->getUuid()) {
             $query->where('uuid', $parameters->getUuid());
         }
+
         return $query;
     }
 
@@ -42,6 +43,7 @@ class QueryFactory
         if ($parameters->getJobClass()) {
             $query->where('job_class', $parameters->getJobClass());
         }
+
         return $query;
     }
 
@@ -52,26 +54,28 @@ class QueryFactory
                 $query->where(['key' => $includeTag['key'], 'value' => $includeTag['value']]);
             });
         }
+
         return $query;
     }
 
     private static function addStatuses(Builder $query, SearchParameters $parameters): Builder
     {
-        if(count($parameters->getIncludeStatus()) > 0) {
+        if (count($parameters->getIncludeStatus()) > 0) {
             $query->whereIn('status', $parameters->getIncludeStatus());
         }
-        if(count($parameters->getExcludeStatus()) > 0) {
+        if (count($parameters->getExcludeStatus()) > 0) {
             $query->whereNotIn('status', $parameters->getExcludeStatus());
         }
+
         return $query;
     }
 
     private static function addUpdatedBefore(Builder $query, SearchParameters $parameters): Builder
     {
-        if($parameters->getUpdatedBefore() !== null) {
+        if ($parameters->getUpdatedBefore() !== null) {
             $query->where('updated_at', '<', $parameters->getUpdatedBefore());
         }
+
         return $query;
     }
-
 }

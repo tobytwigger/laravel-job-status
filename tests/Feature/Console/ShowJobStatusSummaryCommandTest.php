@@ -2,14 +2,11 @@
 
 namespace JobStatus\Tests\Feature\Console;
 
-use Illuminate\Support\Facades\Artisan;
 use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusTag;
 use JobStatus\Tests\TestCase;
 
 class ShowJobStatusSummaryCommandTest extends TestCase
 {
-
     /** @test */
     public function it_shows_the_right_data_for_one_job_type()
     {
@@ -20,11 +17,11 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
             ], [
                 [
-                    'MyFirstJob', 1, 1, 0, 20, 0
-                ]
+                    'MyFirstJob', 1, 1, 0, 20, 0,
+                ],
             ]);
     }
 
@@ -38,7 +35,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
             ], [
                 ['MyFirstJob', 1, 0, 0, 20, 0],
                 ['MySecondJob', 0, 1, 0, 0, 0],
@@ -54,7 +51,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary --class=MySecondJob')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
             ], [
                 ['MySecondJob', 0, 1, 0, 0, 0],
             ])
@@ -71,12 +68,11 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary --alias=MySecondJob')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled'
+                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
             ], [
                 ['SomeJobTwo', 0, 1, 0, 0, 0],
             ])
             // Test the table excludes any mention of MyFirstJob
             ->doesntExpectOutputToContain('SomeJobOne');
     }
-
 }

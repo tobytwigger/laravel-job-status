@@ -3,12 +3,10 @@
 namespace JobStatus\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\JobStatusSearcher;
 
-class ClearJobStatusCommand  extends Command
+class ClearJobStatusCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -44,12 +42,11 @@ class ClearJobStatusCommand  extends Command
 
         $statuses = JobStatusSearcher::query()
             ->whereFinished();
-        if($hours !== 0) {
+        if ($hours !== 0) {
             $statuses->whereUpdatedBefore(now()->subHours($hours));
         }
         $statuses = $statuses->get()->raw();
 
-        $this->withProgressBar($statuses, fn(JobStatus $jobStatus) => $jobStatus->delete());
+        $this->withProgressBar($statuses, fn (JobStatus $jobStatus) => $jobStatus->delete());
     }
-
 }

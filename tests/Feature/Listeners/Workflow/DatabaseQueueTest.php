@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Feature\Listeners\Workflow;
 
 use Illuminate\Testing\Assert;
-use JobStatus\Exception\JobCancelledException;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
@@ -11,9 +10,9 @@ use JobStatus\Tests\TestCase;
 
 class DatabaseQueueTest extends TestCase
 {
-
     /** @test */
-    public function a_run_is_handled(){
+    public function a_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -63,7 +62,8 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function a_successful_run_is_handled(){
+    public function a_successful_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -102,7 +102,8 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function a_cancelled_run_is_handled(){
+    public function a_cancelled_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -152,7 +153,8 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function a_cancelled_custom_signal_run_is_handled(){
+    public function a_cancelled_custom_signal_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -190,7 +192,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
     }
 
-    static bool $calledCancelledCustomSignal = false;
+    public static bool $calledCancelledCustomSignal = false;
 
     public static function a_cancelled_custom_signal_run_is_handled_callback(JobFake $job)
     {
@@ -214,7 +216,8 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function a_failed_run_is_handled(){
+    public function a_failed_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -264,7 +267,8 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function a_failed_and_retry_run_is_handled(){
+    public function a_failed_and_retry_run_is_handled()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -343,7 +347,8 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function a_failed_and_retry_run_is_handled_after_a_rerun(){
+    public function a_failed_and_retry_run_is_handled_after_a_rerun()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -420,7 +425,8 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function it_does_not_track_a_new_job_when_failed_and_retried_and_already_manually_released(){
+    public function it_does_not_track_a_new_job_when_failed_and_retried_and_already_manually_released()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -461,6 +467,7 @@ class DatabaseQueueTest extends TestCase
     public static function it_tracks_a_new_job_when_failed_and_retried_if_already_manually_released_callback(JobFake $job)
     {
         $job->release();
+
         throw new \Exception('Test');
     }
 
@@ -475,8 +482,9 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function it_does_track_a_new_job_when_succeeded_and_retried_and_already_manually_released(){
-       $job = (new JobFakeFactory())
+    public function it_does_track_a_new_job_when_succeeded_and_retried_and_already_manually_released()
+    {
+        $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->maxTries(2)
@@ -559,16 +567,4 @@ class DatabaseQueueTest extends TestCase
     {
         $job->release();
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }

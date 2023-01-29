@@ -1,0 +1,35 @@
+name: PHP Linting (Pint)
+
+on:
+    workflow_dispatch:
+    workflow_call:
+
+jobs:
+    phplint:
+        strategy:
+            matrix:
+                php: [ '8.1', '8.2' ]
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  token: ${{ secrets.PAT_ORG_TOKEN }}
+                  ref: ${{ github.head_ref }}
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+
+            - uses: "ramsey/composer-install@v2"
+              with:
+                  composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
+
+            -   name: Run cs fixer
+                run: ./vendor/bin/php-cs-fixer fix
+
+            - name: Commit changes
+              uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: '[CI - PHP Linting] Laravel Pint'
+                  skip_fetch: true

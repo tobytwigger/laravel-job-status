@@ -13,11 +13,10 @@ use JobStatus\Exception\JobCancelledException;
  */
 class JobExceptionOccurred extends BaseListener
 {
-
     public function handle(\Illuminate\Queue\Events\JobExceptionOccurred $event)
     {
-        if($this->isTrackingEnabled()) {
-// If the job is a cancelled job, we want to make sure the job doesn't run again. For this, we need to actually fail the job!
+        if ($this->isTrackingEnabled()) {
+            // If the job is a cancelled job, we want to make sure the job doesn't run again. For this, we need to actually fail the job!
             if ($event->exception instanceof JobCancelledException) {
                 $event->job->fail($event->exception);
             }
@@ -42,5 +41,4 @@ class JobExceptionOccurred extends BaseListener
             $modifier->setPercentage(100);
         }
     }
-
 }

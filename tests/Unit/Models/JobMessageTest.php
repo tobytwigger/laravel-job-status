@@ -36,7 +36,8 @@ class JobMessageTest extends TestCase
     }
 
     /** @test */
-    public function it_saves_timestamps_with_milliseconds(){
+    public function it_saves_timestamps_with_milliseconds()
+    {
         $now = Carbon::make('1-3-2020 11:30:24.234');
         Carbon::setTestNow($now);
         $exception = JobMessage::factory()->create();

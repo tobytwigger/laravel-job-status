@@ -57,7 +57,8 @@ class JobSignalTest extends TestCase
     }
 
     /** @test */
-    public function it_saves_timestamps_in_milliseconds(){
+    public function it_saves_timestamps_in_milliseconds()
+    {
         $now = Carbon::make('1-3-2020 11:30:24.234');
         Carbon::setTestNow($now);
         $exception = JobSignal::factory()->create(['handled_at' => $now]);

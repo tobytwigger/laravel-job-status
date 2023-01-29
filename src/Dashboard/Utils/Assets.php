@@ -4,12 +4,10 @@ namespace JobStatus\Dashboard\Utils;
 
 use Illuminate\Foundation\Console\VendorPublishCommand;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class Assets
 {
-
     public function clear(): bool
     {
         $path = public_path('vendor/job-status');
@@ -17,6 +15,7 @@ class Assets
             return false;
         }
         $this->deleteDirectory($path);
+
         return true;
     }
 
@@ -40,13 +39,14 @@ class Assets
     {
         $paths = [];
         $files = glob($path . '*', GLOB_MARK);
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if (is_dir($file)) {
                 $paths = array_merge($paths, $this->getFilesFromPath($file, $basePath ?? $path));
             } else {
                 $paths[] = Str::replace($basePath, '', $file);
             }
         }
+
         return $paths;
     }
 
@@ -70,5 +70,4 @@ class Assets
             rmdir($path);
         }
     }
-
 }

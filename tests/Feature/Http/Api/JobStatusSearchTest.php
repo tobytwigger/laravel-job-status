@@ -3,8 +3,6 @@
 namespace JobStatus\Tests\Feature\Http\Api;
 
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Contracts\Routing\UrlGenerator;
-use JobStatus\Enums\Status;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Tests\fakes\JobFake;
@@ -26,7 +24,7 @@ class JobStatusSearchTest extends TestCase
         $response->assertJson([
             'id' => $jobStatus->id,
             'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias
+            'alias' => $jobStatus->job_alias,
         ]);
     }
 
@@ -47,7 +45,7 @@ class JobStatusSearchTest extends TestCase
         $response->assertJson([
             'id' => $jobStatus->id,
             'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias
+            'alias' => $jobStatus->job_alias,
         ]);
     }
 
@@ -155,5 +153,4 @@ class JobStatusSearchTest extends TestCase
 
         $response->assertStatus(500);
     }
-
 }

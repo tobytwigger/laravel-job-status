@@ -2,7 +2,6 @@
 
 namespace JobStatus\Listeners;
 
-use Composer\XdebugHandler\Process;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
@@ -18,16 +17,12 @@ use JobStatus\Models\JobStatus;
  */
 class JobProcessed extends BaseListener
 {
-
     /**
      * @param \Illuminate\Queue\Events\JobProcessed $event
-     * @return void
      */
     public function handle(\Illuminate\Queue\Events\JobProcessed $event)
     {
-        if($this->isTrackingEnabled()) {
-
-
+        if ($this->isTrackingEnabled()) {
             $modifier = $this->getJobStatusModifier($event->job);
             if ($modifier === null) {
                 return;
@@ -50,7 +45,7 @@ class JobProcessed extends BaseListener
                     'status' => Status::QUEUED,
                     'uuid' => $event->job->uuid(),
                     'connection_name' => $event->job->getConnectionName(),
-                    'job_id' => $event->job->getJobId()
+                    'job_id' => $event->job->getJobId(),
                 ]);
 
                 JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
@@ -64,8 +59,6 @@ class JobProcessed extends BaseListener
             }
 
             $modifier->setPercentage(100);
-
         }
     }
-
 }

@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | If this package is disabled, no information will be stored in the database.
-    */
+     */
 
     'enabled' => true,
 
@@ -21,7 +21,7 @@ return [
     |
     | Warning: If this value changes, you will need to change the name of the database tables since the table name
     | will not be automatically updated.
-    */
+     */
 
     'table_prefix' => 'job_status',
 
@@ -32,7 +32,7 @@ return [
     |
     | Configuration around the routes this package publishes
     |
-    */
+     */
 
     'routes' => [
         'api' => [
@@ -52,7 +52,7 @@ return [
     |
     | Configuration around the dashboard to view job history
     |
-    */
+     */
 
     'dashboard' => [
         'enabled' => true,
@@ -64,7 +64,7 @@ return [
         'path' => 'job-status',
 
         // These middleware will get attached onto each route of laravel job status
-        'middleware' => ['web']
+        'middleware' => ['web'],
 
     ],
 

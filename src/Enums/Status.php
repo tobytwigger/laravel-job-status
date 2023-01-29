@@ -4,7 +4,6 @@ namespace JobStatus\Enums;
 
 enum Status: string
 {
-
     case QUEUED = 'queued';
 
     case STARTED = 'started';

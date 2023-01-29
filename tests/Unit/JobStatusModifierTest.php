@@ -4,7 +4,6 @@ namespace JobStatus\Tests\Unit;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobException;
@@ -13,9 +12,9 @@ use JobStatus\Tests\TestCase;
 
 class JobStatusModifierTest extends TestCase
 {
-
     /** @test */
-    public function the_job_status_can_be_set_and_got(){
+    public function the_job_status_can_be_set_and_got()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -29,7 +28,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function the_status_can_be_set(){
+    public function the_status_can_be_set()
+    {
         $jobStatus = JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]);
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -54,7 +54,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function the_started_at_can_be_set(){
+    public function the_started_at_can_be_set()
+    {
         $jobStatus = JobStatus::factory()->create();
         $now = Carbon::now();
         $now2 = Carbon::now()->addMinute();
@@ -71,7 +72,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function the_finished_at_can_be_set(){
+    public function the_finished_at_can_be_set()
+    {
         $jobStatus = JobStatus::factory()->create();
         $now = Carbon::now();
         $now2 = Carbon::now()->addMinute();
@@ -88,7 +90,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function add_exception_adds_an_exception_without_previous(){
+    public function add_exception_adds_an_exception_without_previous()
+    {
         $rawException = new \Exception('My exception message', 502, null);
 
         $jobStatus = JobStatus::factory()->create();
@@ -110,7 +113,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function add_exception_adds_an_exception_with_previous(){
+    public function add_exception_adds_an_exception_with_previous()
+    {
         $previousException2 = new \Exception('Even more previous exception message', 400, null);
         $previousException = new \Exception('Previous exception message', 400, $previousException2);
         $rawException = new \Exception('My exception message', 502, $previousException);
@@ -159,7 +163,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function the_uuid_can_be_set(){
+    public function the_uuid_can_be_set()
+    {
         $uuidOriginal = Str::uuid();
         $uuidUpdated = Str::uuid();
 
@@ -172,7 +177,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function the_job_id_can_be_set(){
+    public function the_job_id_can_be_set()
+    {
         $jobStatus = JobStatus::factory()->create(['job_id' => 1, 'connection_name' => 'testqueue']);
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -184,7 +190,8 @@ class JobStatusModifierTest extends TestCase
 
 
     /** @test */
-    public function the_connection_name_can_be_set(){
+    public function the_connection_name_can_be_set()
+    {
         $jobStatus = JobStatus::factory()->create(['job_id' => 1, 'connection_name' => 'testqueue']);
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -195,7 +202,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function a_percentage_can_be_set(){
+    public function a_percentage_can_be_set()
+    {
         $jobStatus = JobStatus::factory()->create(['percentage' => 0]);
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -209,7 +217,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function a_message_can_be_set(){
+    public function a_message_can_be_set()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -218,12 +227,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::INFO,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function the_message_type_can_be_controlled(){
+    public function the_message_type_can_be_controlled()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -232,12 +242,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::SUCCESS,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function line_sets_an_info_message(){
+    public function line_sets_an_info_message()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -246,12 +257,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::INFO,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function warningMessage_sets_a_warning_message(){
+    public function warning_message_sets_a_warning_message()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -260,12 +272,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::WARNING,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function successMessage_sets_a_success_message(){
+    public function success_message_sets_a_success_message()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -274,12 +287,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::SUCCESS,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function infoMessage_sets_an_info_message(){
+    public function info_message_sets_an_info_message()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -288,12 +302,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::INFO,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function debugMessage_sets_a_debug_message(){
+    public function debug_message_sets_a_debug_message()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -302,12 +317,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::DEBUG,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function errorMessage_sets_an_error_message(){
+    public function error_message_sets_an_error_message()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -316,12 +332,13 @@ class JobStatusModifierTest extends TestCase
         $this->assertDatabaseHas(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_messages'), [
             'message' => 'Test 123',
             'type' => \JobStatus\Enums\MessageType::ERROR,
-            'job_status_id' => $jobStatus->id
+            'job_status_id' => $jobStatus->id,
         ]);
     }
 
     /** @test */
-    public function cancel_sends_a_cancel_signal(){
+    public function cancel_sends_a_cancel_signal()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -335,7 +352,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function sendSignal_sends_a_signal(){
+    public function send_signal_sends_a_signal()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -349,7 +367,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function cancel_makes_the_signal_cancelable(){
+    public function cancel_makes_the_signal_cancelable()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $modifier = new JobStatusModifier($jobStatus);
@@ -361,5 +380,4 @@ class JobStatusModifierTest extends TestCase
             'parameters' => json_encode(['param1' => 'value1']),
         ]);
     }
-
 }

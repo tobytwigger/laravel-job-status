@@ -2,7 +2,6 @@
 
 namespace JobStatus\Listeners;
 
-use Illuminate\Queue\ManuallyFailedException;
 use JobStatus\Enums\Status;
 use JobStatus\Exception\JobCancelledException;
 
@@ -21,23 +20,21 @@ use JobStatus\Exception\JobCancelledException;
  */
 class JobFailed extends BaseListener
 {
-
     public function handle(\Illuminate\Queue\Events\JobFailed $event)
     {
-        if($this->isTrackingEnabled()) {
-
+        if ($this->isTrackingEnabled()) {
             $modifier = $this->getJobStatusModifier($event->job);
 
-            if($modifier === null) {
+            if ($modifier === null) {
                 return true;
             }
 
             $modifier->setPercentage(100);
 
             // This is only the case if JobExceptionOccurred has not been ran
-            if($modifier->getJobStatus()->status !== Status::FAILED && $modifier->getJobStatus()->status !== Status::CANCELLED) {
+            if ($modifier->getJobStatus()->status !== Status::FAILED && $modifier->getJobStatus()->status !== Status::CANCELLED) {
                 $modifier->setFinishedAt(now());
-                if($event->exception instanceof JobCancelledException) {
+                if ($event->exception instanceof JobCancelledException) {
                     $modifier->setStatus(Status::CANCELLED);
                     $modifier->warningMessage('The job has been cancelled');
                 } else {
@@ -47,5 +44,4 @@ class JobFailed extends BaseListener
             }
         }
     }
-
 }

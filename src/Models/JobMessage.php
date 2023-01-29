@@ -40,6 +40,4 @@ class JobMessage extends Model
     {
         return JobMessageFactory::new();
     }
-
-
 }

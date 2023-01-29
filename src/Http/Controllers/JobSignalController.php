@@ -2,11 +2,8 @@
 
 namespace JobStatus\Http\Controllers;
 
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Auth;
 use JobStatus\Http\Requests\JobSignalStoreRequest;
 use JobStatus\JobStatusModifier;
-use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobStatus;
 
 class JobSignalController
@@ -20,5 +17,4 @@ class JobSignalController
             cancel: $request->input('cancel_job'),
         );
     }
-
 }

@@ -8,7 +8,6 @@ use Illuminate\Support\Collection;
 
 class TrackedJob implements Arrayable, Jsonable
 {
-
     private string $jobClass;
 
     private ?string $alias;
@@ -44,7 +43,7 @@ class TrackedJob implements Arrayable, Jsonable
             'count' => $this->runs->count(),
             'alias' => $this->alias,
             'class' => $this->jobClass,
-            'runs' => $this->runs->toArray()
+            'runs' => $this->runs->toArray(),
         ];
     }
 
@@ -72,5 +71,4 @@ class TrackedJob implements Arrayable, Jsonable
     {
         return $this->runs()->count();
     }
-
 }

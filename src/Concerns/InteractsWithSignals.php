@@ -10,7 +10,6 @@ use JobStatus\Models\JobStatus;
 
 trait InteractsWithSignals
 {
-
     abstract public function getJobStatus(): ?JobStatus;
 
     public function checkForSignals(): void
@@ -38,5 +37,4 @@ trait InteractsWithSignals
             throw JobCancelledException::for($signal);
         }
     }
-
 }

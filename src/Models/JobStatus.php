@@ -2,16 +2,11 @@
 
 namespace JobStatus\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use JobStatus\Concerns\Trackable;
 use JobStatus\Database\Factories\JobStatusFactory;
-use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
-use JobStatus\JobStatusModifier;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
@@ -26,7 +21,7 @@ class JobStatus extends Model
 
     protected $fillable = [
         'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
-        'started_at', 'finished_at'
+        'started_at', 'finished_at',
     ];
 
     protected $casts = [
@@ -36,7 +31,7 @@ class JobStatus extends Model
         'status' => Status::class,
         'configuration' => 'array',
         'started_at' => 'datetime',
-        'finished_at' => 'datetime'
+        'finished_at' => 'datetime',
     ];
 
     protected $dateFormat = 'Y-m-d H:i:s.v';
@@ -49,15 +44,15 @@ class JobStatus extends Model
 
     protected static function booted()
     {
-        static::deleting(function(JobStatus $jobStatus) {
+        static::deleting(function (JobStatus $jobStatus) {
             $jobStatus->statuses()->delete();
             $jobStatus->tags()->delete();
             $jobStatus->signals()->delete();
             $jobStatus->messages()->delete();
         });
 
-        static::saving(function(JobStatus $jobStatus) {
-            if($jobStatus->job_alias === null) {
+        static::saving(function (JobStatus $jobStatus) {
+            if ($jobStatus->job_alias === null) {
                 $jobStatus->job_alias = $jobStatus->job_class;
             }
         });
@@ -92,5 +87,4 @@ class JobStatus extends Model
     {
         return JobStatusFactory::new();
     }
-
 }

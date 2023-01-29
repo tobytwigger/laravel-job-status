@@ -14,49 +14,49 @@ use JobStatus\Models\JobStatus;
 
 class BaseListener
 {
-
-    protected function getJobStatusModifier(\Illuminate\Contracts\Queue\Job $job): ?JobStatusModifier
+    protected function getJobStatusModifier(JobContract $job): ?JobStatusModifier
     {
-        if($this->validateJob($job) === false) {
+        if ($this->validateJob($job) === false) {
             return null;
         }
         $jobStatus = $this->getJobStatus($job);
-        if($jobStatus === null) {
+        if ($jobStatus === null) {
             return null;
         }
         $modifier = new JobStatusModifier($jobStatus);
         $this->checkJobUpToDate($modifier, $job);
+
         return $modifier;
     }
 
     protected function checkJobUpToDate(JobStatusModifier $jobStatusModifier, JobContract $job): void
     {
-        if($job->uuid() !== null && $jobStatusModifier->getJobStatus()->uuid !== $job->uuid()) {
+        if ($job->uuid() !== null && $jobStatusModifier->getJobStatus()->uuid !== $job->uuid()) {
             $jobStatusModifier->setUuid($job->uuid());
         }
-        if($job->getJobId() !== null && $jobStatusModifier->getJobStatus()->job_id !== $job->getJobId()) {
+        if ($job->getJobId() !== null && $jobStatusModifier->getJobStatus()->job_id !== $job->getJobId()) {
             $jobStatusModifier->setJobId($job->getJobId());
         }
     }
 
     protected function validateJob(mixed $job): bool
     {
-        if(is_string($job) || $job instanceof \Closure) {
+        if (is_string($job) || $job instanceof \Closure) {
             return false;
         }
-        if(!is_object($job)) {
+        if (!is_object($job)) {
             return false;
         }
 
-        if(method_exists($job, 'resolveName')) {
-            if(!$job->resolveName() || !class_exists($job->resolveName())) {
+        if (method_exists($job, 'resolveName')) {
+            if (!$job->resolveName() || !class_exists($job->resolveName())) {
                 return false;
             }
-            if(!in_array(Trackable::class, class_uses_recursive($job->resolveName()))) {
+            if (!in_array(Trackable::class, class_uses_recursive($job->resolveName()))) {
                 return false;
             }
         } else {
-            if(!in_array(Trackable::class, class_uses_recursive($job))) {
+            if (!in_array(Trackable::class, class_uses_recursive($job))) {
                 return false;
             }
         }
@@ -64,18 +64,18 @@ class BaseListener
         return true;
     }
 
-    protected function getJobStatus(\Illuminate\Contracts\Queue\Job $job): ?JobStatus
+    protected function getJobStatus(JobContract $job): ?JobStatus
     {
         $jobStatus = null;
 
         // Try to get the job status by job id and connection name, as this is the most reliable way.
-        if($job->getJobId()) {
+        if ($job->getJobId()) {
             $jobStatus = app(JobStatusRepository::class)->getLatestByQueueReference($job->getJobId(), $job->getConnectionName());
         }
-        if($jobStatus === null && $job->uuid()) {
+        if ($jobStatus === null && $job->uuid()) {
             $jobStatus = app(JobStatusRepository::class)->getLatestByUuid($job->uuid());
         }
-        if($jobStatus === null && $job->getConnectionName() === 'sync') {
+        if ($jobStatus === null && $job->getConnectionName() === 'sync') {
             if (str_starts_with($job->payload()['data']['command'], 'O:')) {
                 $command = unserialize($job->payload()['data']['command']);
             } elseif (App::bound(Encrypter::class)) {
@@ -91,7 +91,7 @@ class BaseListener
                 'uuid' => $job->uuid(),
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId(),
-                'configuration' => $command->getJobStatusConfiguration()
+                'configuration' => $command->getJobStatusConfiguration(),
             ]);
             JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
             foreach ($command->tags() as $key => $value) {
@@ -109,5 +109,4 @@ class BaseListener
     {
         return config('laravel-job-status.enabled', true);
     }
-
 }

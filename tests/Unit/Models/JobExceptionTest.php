@@ -4,7 +4,6 @@ namespace JobStatus\Tests\Unit\Models;
 
 use Carbon\Carbon;
 use JobStatus\Models\JobException;
-use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
 
@@ -17,24 +16,24 @@ class JobExceptionTest extends TestCase
             'message' => 'This was my error',
             'stack_trace' => [
                 'Stack 1',
-                'Stack 2'
+                'Stack 2',
             ],
             'previous_id' => null,
             'line' => 44,
             'file' => 'xxx.php',
-            'code' => 'getStatus'
+            'code' => 'getStatus',
         ]);
 
         $this->assertDatabaseHas('job_status_job_exceptions', [
             'message' => 'This was my error',
             'stack_trace' => json_encode([
                 'Stack 1',
-                'Stack 2'
+                'Stack 2',
             ]),
             'previous_id' => null,
             'line' => 44,
             'file' => 'xxx.php',
-            'code' => 'getStatus'
+            'code' => 'getStatus',
         ]);
     }
 
@@ -52,7 +51,8 @@ class JobExceptionTest extends TestCase
     }
 
     /** @test */
-    public function it_saves_timestamps_with_milliseconds(){
+    public function it_saves_timestamps_with_milliseconds()
+    {
         $now = Carbon::make('1-3-2020 11:30:24.234');
         Carbon::setTestNow($now);
         $exception = JobException::factory()->create();
@@ -77,7 +77,8 @@ class JobExceptionTest extends TestCase
     }
 
     /** @test */
-    public function it_has_a_relationship_with_itself_through_previous(){
+    public function it_has_a_relationship_with_itself_through_previous()
+    {
         $previous1 = JobException::factory()->create();
         $previous2 = JobException::factory()->create(['previous_id' => $previous1->id]);
         $exception = JobException::factory()->create(['previous_id' => $previous2->id]);
@@ -92,7 +93,8 @@ class JobExceptionTest extends TestCase
     }
 
     /** @test */
-    public function loadAllPrevious_returns_just_the_main_exception_if_previous_is_null(){
+    public function load_all_previous_returns_just_the_main_exception_if_previous_is_null()
+    {
         $exception = JobException::factory()->create(['previous_id' => null]);
 
         $exception = $exception->loadAllPrevious();
@@ -105,7 +107,8 @@ class JobExceptionTest extends TestCase
     }
 
     /** @test */
-    public function loadAllPrevious_returns_one_parent_if_only_one_parent(){
+    public function load_all_previous_returns_one_parent_if_only_one_parent()
+    {
         $previous1 = JobException::factory()->create();
         $exception = JobException::factory()->create(['previous_id' => $previous1->id]);
 
@@ -123,7 +126,8 @@ class JobExceptionTest extends TestCase
     }
 
     /** @test */
-    public function loadAllPrevious_returns_all_parents_loaded(){
+    public function load_all_previous_returns_all_parents_loaded()
+    {
         $previous1 = JobException::factory()->create();
         $previous2 = JobException::factory()->create(['previous_id' => $previous1->id]);
         $previous3 = JobException::factory()->create(['previous_id' => $previous2->id]);

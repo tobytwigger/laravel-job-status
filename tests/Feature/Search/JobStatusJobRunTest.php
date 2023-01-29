@@ -4,28 +4,21 @@ namespace JobStatus\Tests\Feature\Search;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use JobStatus\Database\Factories\JobStatusTagFactory;
-use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
-use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
-use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\JobRun;
-use JobStatus\Search\Result\TrackedJob;
-use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
-use function Symfony\Component\Translation\t;
 
 class JobStatusJobRunTest extends TestCase
 {
-
     /** @test */
-    public function hasParent_returns_true_if_a_parent_is_set(){
+    public function has_parent_returns_true_if_a_parent_is_set()
+    {
         $mainJobStatus = JobStatus::factory()->create();
         $parentJobStatus = JobStatus::factory()->create();
 
@@ -35,7 +28,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function hasParent_returns_false_if_a_parent_is_not_set(){
+    public function has_parent_returns_false_if_a_parent_is_not_set()
+    {
         $mainJobStatus = JobStatus::factory()->create();
 
         $run = new JobRun($mainJobStatus, null);
@@ -44,7 +38,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function parent_returns_the_parent(){
+    public function parent_returns_the_parent()
+    {
         $mainJobStatus = JobStatus::factory()->create();
         $parentJobStatus = JobStatus::factory()->create();
 
@@ -54,7 +49,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function parent_returns_null_if_no_parent(){
+    public function parent_returns_null_if_no_parent()
+    {
         $mainJobStatus = JobStatus::factory()->create();
         $parentJobStatus = JobStatus::factory()->create();
 
@@ -64,7 +60,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function getException_gets_the_exception_all_loaded(){
+    public function get_exception_gets_the_exception_all_loaded()
+    {
         $previous1 = JobException::factory()->create();
         $previous2 = JobException::factory()->create(['previous_id' => $previous1->id]);
         $previous3 = JobException::factory()->create(['previous_id' => $previous2->id]);
@@ -98,7 +95,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function jobStatus_gets_the_underlying_job_status_model(){
+    public function job_status_gets_the_underlying_job_status_model()
+    {
         $jobStatus = JobStatus::factory()->create();
 
         $run = new JobRun($jobStatus);
@@ -107,7 +105,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function signals_gets_all_signals(){
+    public function signals_gets_all_signals()
+    {
         $jobStatus = JobStatus::factory()->create();
         $signal1 = JobSignal::factory()->create(['signal' => 'one', 'job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
         $signal2 = JobSignal::factory()->create(['signal' => 'two', 'job_status_id' => $jobStatus->id]);
@@ -118,7 +117,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function messagesOfType_gets_all_messages_of_the_given_type(){
+    public function messages_of_type_gets_all_messages_of_the_given_type()
+    {
         $jobStatus = JobStatus::factory()->create();
         $message = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::INFO, 'message' => 'Message one', 'created_at' => Carbon::now()->subhours(1)]);
         $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'type' => \JobStatus\Enums\MessageType::SUCCESS, 'message' => 'Message two', 'created_at' => Carbon::now()->subhours(2)]);
@@ -175,7 +175,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function messages_gets_all_messages(){
+    public function messages_gets_all_messages()
+    {
         $jobStatus = JobStatus::factory()->create();
         $message1 = JobMessage::factory()->create(['message' => 'one', 'job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
         $message2 = JobMessage::factory()->create(['message' => 'two', 'job_status_id' => $jobStatus->id]);
@@ -186,7 +187,7 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function isFinished_returns_if_the_job_has_finished()
+    public function is_finished_returns_if_the_job_has_finished()
     {
         $queued = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]));
         $started = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]));
@@ -202,7 +203,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function isFailed_returns_if_the_job_has_failed(){
+    public function is_failed_returns_if_the_job_has_failed()
+    {
         $queued = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]));
         $started = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]));
         $failed = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]));
@@ -217,7 +219,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function isCancelled_returns_if_the_job_has_been_cancelled(){
+    public function is_cancelled_returns_if_the_job_has_been_cancelled()
+    {
         $queued = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]));
         $started = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]));
         $failed = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]));
@@ -232,7 +235,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function isQueued_returns_if_the_status_is_queued(){
+    public function is_queued_returns_if_the_status_is_queued()
+    {
         $queued = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]));
         $started = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]));
         $failed = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]));
@@ -247,7 +251,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function isRunning_returns_true_if_the_status_is_running(){
+    public function is_running_returns_true_if_the_status_is_running()
+    {
         $queued = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]));
         $started = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]));
         $failed = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]));
@@ -262,7 +267,8 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function isSuccessful_returns_true_of_the_status_is_successful(){
+    public function is_successful_returns_true_of_the_status_is_successful()
+    {
         $queued = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::QUEUED]));
         $started = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::STARTED]));
         $failed = new JobRun(JobStatus::factory()->create(['status' => \JobStatus\Enums\Status::FAILED]));
@@ -277,21 +283,24 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
-    public function getPercentage_returns_the_percentage(){
+    public function get_percentage_returns_the_percentage()
+    {
         $jobStatus = JobStatus::factory()->create(['percentage' => 55.7]);
 
         $this->assertEquals(55.7, (new JobRun($jobStatus))->getPercentage());
     }
 
     /** @test */
-    public function getStatus_returns_the_status(){
+    public function get_status_returns_the_status()
+    {
         $jobStatus = JobStatus::factory()->create(['status' => Status::QUEUED]);
         $run = new JobRun($jobStatus);
         $this->assertEquals(Status::QUEUED, $run->getStatus());
     }
 
     /** @test */
-    public function it_can_be_casted_to_an_array_or_json(){
+    public function it_can_be_casted_to_an_array_or_json()
+    {
         $uuid = Str::uuid();
 
         $createdAt = Carbon::now()->subHour()->setMicroseconds(0);
@@ -308,7 +317,7 @@ class JobStatusJobRunTest extends TestCase
             'created_at' => $createdAt,
             'started_at' => $startedAt,
             'finished_at' => $finishedAt,
-            'exception_id' => $exception->id
+            'exception_id' => $exception->id,
         ]);
         $message1 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
         $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subHour()]);
@@ -334,22 +343,22 @@ class JobStatusJobRunTest extends TestCase
             'parent' => (new JobRun($parentJob))->toArray(),
             'tags' => [
                 'key1' => 'value1',
-                'key2' => 'value2'
+                'key2' => 'value2',
             ],
             'created_at' => $createdAt,
             'exception' => $exception->loadAllPrevious()->toArray(),
             'messages' => collect([
-                $message1->toArray(), $message2->toArray()
+                $message1->toArray(), $message2->toArray(),
             ]),
             'signals' => collect([
-                $signal1->toArray(), $signal2->toArray()
+                $signal1->toArray(), $signal2->toArray(),
             ]),
             'started_at' => $startedAt,
             'finished_at' => $finishedAt,
             'id' => $jobStatus->id,
             'statuses' => collect([
-                $status1->toArray(), $status2->toArray()
-            ])
+                $status1->toArray(), $status2->toArray(),
+            ]),
         ];
         $this->assertEquals($array, $run->toArray());
         $this->assertIsString($run->toJson());
@@ -374,6 +383,4 @@ class JobStatusJobRunTest extends TestCase
             'pedals'=> 'spd',
         ], (new JobRun($status))->getTagsAsArray());
     }
-
-
 }

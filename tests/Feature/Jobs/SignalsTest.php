@@ -12,19 +12,17 @@ use JobStatus\Tests\TestCase;
 
 class SignalsTest extends TestCase
 {
-
-
-
     /** @test */
     public function it_cancels_a_job()
     {
         $caught = false;
+
         try {
             (new JobFakeFactory())
                 ->setAlias('my-fake-job')
                 ->setTags([
                     'my-first-tag' => 1,
-                    'my-second-tag' => 'mytag-value'
+                    'my-second-tag' => 'mytag-value',
                 ])
                 ->setCallback(static::class . '@itCancelsAJobCallback')
                 ->dispatchSync();
@@ -41,6 +39,7 @@ class SignalsTest extends TestCase
     {
         $job->status()->cancel();
         $job->checkForSignals();
+
         throw new \Exception('Check for signals did not stop the job');
     }
 
@@ -49,7 +48,7 @@ class SignalsTest extends TestCase
 
 
     /** @test */
-    public function it_runs_onCancel_when_a_job_is_cancelled()
+    public function it_runs_on_cancel_when_a_job_is_cancelled()
     {
         $this->expectExceptionMessage('The job has been cancelled');
 
@@ -57,7 +56,7 @@ class SignalsTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@itRunsOnCancelWhenAJobIsCancelled')
             ->handleSignal('cancel', static::class . '@itRunsOnCancelWhenAJobIsCancelledOnCancel')
@@ -68,6 +67,7 @@ class SignalsTest extends TestCase
     {
         $job->status()->cancel();
         $job->checkForSignals();
+
         throw new \Exception('Check for signals did not stop the job');
     }
 
@@ -91,7 +91,7 @@ class SignalsTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@theExceptionTypeCanBeOverriddenForASignal')
             ->handleSignal('cancel', static::class . '@theExceptionTypeCanBeOverriddenForASignalOnCancel')
@@ -127,7 +127,7 @@ class SignalsTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@ItCanHandleCustomSignalsCallback')
             ->handleSignal('customSignal', static::class . '@ItCanHandleCustomSignalsCustomSignal')
@@ -138,6 +138,7 @@ class SignalsTest extends TestCase
     {
         $job->status()->sendSignal('customSignal');
         $job->checkForSignals();
+
         throw new \Exception('Check for signals did not stop the job');
     }
 
@@ -162,7 +163,7 @@ class SignalsTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@itDoesNotCancelExecutionOnCustomSignalsCallback')
             ->dispatchSync();
@@ -172,6 +173,7 @@ class SignalsTest extends TestCase
     {
         $job->status()->sendSignal('custom_signal');
         $job->checkForSignals();
+
         throw new \Exception('Check for signals did not stop the job');
     }
 
@@ -195,7 +197,7 @@ class SignalsTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@ItCanBeMadeToCancelExecutionOnCustomSignalsCallback')
             ->dispatchSync();
@@ -205,6 +207,7 @@ class SignalsTest extends TestCase
     {
         $job->status()->sendSignal('custom_signal', cancel: true);
         $job->checkForSignals();
+
         throw new \Exception('Check for signals did not stop the job');
     }
 
@@ -226,7 +229,7 @@ class SignalsTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@ItOnlyCallsForASignalOnceCallback')
             ->handleSignal('CustomSignal', static::class . '@ItOnlyCallsForASignalOnceHandler')
@@ -243,6 +246,7 @@ class SignalsTest extends TestCase
         $job->checkForSignals();
         $job->checkForSignals();
         Assert::assertTrue(static::$itOnlyCallsForASignalOnceCalled);
+
         throw new \Exception('Check for signals did not stop the job');
     }
 
@@ -268,7 +272,7 @@ class SignalsTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags([
                 'my-first-tag' => 1,
-                'my-second-tag' => 'mytag-value'
+                'my-second-tag' => 'mytag-value',
             ])
             ->setCallback(static::class . '@ParametersCanBePassedCallback')
             ->handleSignal('custom-signal', static::class . '@ParametersCanBePassedHandler')
@@ -285,6 +289,4 @@ class SignalsTest extends TestCase
     {
         Assert::assertEquals(['param1' => 'one', 'param2' => 2], $parameters);
     }
-
-
 }

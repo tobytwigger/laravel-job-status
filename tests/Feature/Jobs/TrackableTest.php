@@ -3,10 +3,7 @@
 namespace JobStatus\Tests\Feature\Jobs;
 
 use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Queue\Jobs\DatabaseJob;
 use Illuminate\Support\Str;
-use Illuminate\Testing\Assert;
-use JobStatus\Database\Factories\JobStatusTagFactory;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
@@ -16,12 +13,9 @@ use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
 use JobStatus\Tests\fakes\NonTrackedJobFake;
 use JobStatus\Tests\TestCase;
-use PHPUnit\Framework\ExpectationFailedException;
-use Prophecy\Prophet;
 
 class TrackableTest extends TestCase
 {
-
     /** @test */
     public function search_returns_a_search_for_the_job()
     {
@@ -46,7 +40,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function history_gets_a_list_of_the_jobs(){
+    public function history_gets_a_list_of_the_jobs()
+    {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -62,11 +57,11 @@ class TrackableTest extends TestCase
         $jobs = $job->history();
         $this->assertInstanceOf(TrackedJob::class, $jobs);
         $this->assertCount(8, $jobs->runs());
-
     }
 
     /** @test */
-    public function getJobStatus_returns_null_if_no_job_callback(){
+    public function get_job_status_returns_null_if_no_job_callback()
+    {
         $jobFake = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -77,7 +72,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function getJobStatus_returns_a_job_searching_by_id_and_queue(){
+    public function get_job_status_returns_a_job_searching_by_id_and_queue()
+    {
         $jobFake = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -99,7 +95,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function getJobStatus_returns_a_job_searching_by_uuid(){
+    public function get_job_status_returns_a_job_searching_by_uuid()
+    {
         $jobFake = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -121,7 +118,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function getJobStatus_prefers_id_and_connection_over_uuid(){
+    public function get_job_status_prefers_id_and_connection_over_uuid()
+    {
         $jobFake = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -143,7 +141,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function getJobStatus_returns_null_if_no_job_id_or_uuid_found_in_database(){
+    public function get_job_status_returns_null_if_no_job_id_or_uuid_found_in_database()
+    {
         $jobFake = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -159,7 +158,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function getJobStatus_returns_null_if_no_job_id_or_uuid_found_in_job(){
+    public function get_job_status_returns_null_if_no_job_id_or_uuid_found_in_job()
+    {
         $jobFake = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -178,7 +178,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function status_gets_a_modifier_of_the_job_status(){
+    public function status_gets_a_modifier_of_the_job_status()
+    {
         $jobFake = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
@@ -199,7 +200,8 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function closure_jobs_still_run(){
+    public function closure_jobs_still_run()
+    {
         /** @var Dispatcher $dispatcher */
         $dispatcher = app(Dispatcher::class);
 
@@ -208,7 +210,7 @@ class TrackableTest extends TestCase
         $this->assertTrue(static::$closureJobRan);
     }
 
-    static $closureJobRan = false;
+    public static $closureJobRan = false;
 
     public function closure_jobs_still_run_callback()
     {
@@ -227,12 +229,12 @@ class TrackableTest extends TestCase
     }
 
     /** @test */
-    public function tags_gets_the_tags_from_the_job(){
+    public function tags_gets_the_tags_from_the_job()
+    {
         $jobFake = (new JobFakeFactory())
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->create();
 
         $this->assertEquals(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'], $jobFake->tags());
     }
-
 }

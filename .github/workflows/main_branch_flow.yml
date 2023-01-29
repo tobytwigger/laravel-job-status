@@ -1,0 +1,19 @@
+name: Test & Code Coverage
+
+on:
+    push:
+        branches:
+            - 'main'
+    workflow_dispatch:
+
+jobs:
+    run-tests:
+        uses: ./.github/workflows/build_docs.yml
+    static-analysis:
+        if: "!contains(github.event.head_commit.message, '[CI]')"
+        uses: ./.github/workflows/phpstan_analysis.yml
+    calculate-commit-code-cov:
+        if: "!contains(github.event.head_commit.message, '[CI]')"
+        needs: run-tests
+        uses: ./.github/workflows/calculate_commit_code_coverage.yml
+        secrets: inherit

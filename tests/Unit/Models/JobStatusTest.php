@@ -9,7 +9,6 @@ use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
-use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
 class JobStatusTest extends TestCase
@@ -95,12 +94,13 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_saves_the_timestamps_with_milliseconds(){
+    public function it_saves_the_timestamps_with_milliseconds()
+    {
         $now = Carbon::make('1-3-2020 11:30:24.234');
         Carbon::setTestNow($now);
         $exception = JobStatus::factory()->create([
             'started_at' => $now,
-            'finished_at' => $now
+            'finished_at' => $now,
         ]);
 
         $createdAt = $exception->created_at;
@@ -138,7 +138,5 @@ class JobStatusTest extends TestCase
         $this->assertEquals(30, $finishedAt->minute);
         $this->assertEquals(24, $finishedAt->second);
         $this->assertEquals(234, $finishedAt->millisecond);
-
-
     }
 }

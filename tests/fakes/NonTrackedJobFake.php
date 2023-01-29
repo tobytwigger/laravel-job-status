@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use JobStatus\Concerns\Trackable;
 
 class NonTrackedJobFake implements ShouldQueue
 {
@@ -14,8 +13,8 @@ class NonTrackedJobFake implements ShouldQueue
 
     public function __construct(
         private \Closure|string|null $callback = null,
-    )
-    {}
+    ) {
+    }
 
     public function handle()
     {
@@ -25,5 +24,4 @@ class NonTrackedJobFake implements ShouldQueue
 
         return app()->call($this->callback, ['job' => $this]);
     }
-
 }

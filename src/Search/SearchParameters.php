@@ -7,7 +7,6 @@ use JobStatus\Enums\Status;
 
 class SearchParameters
 {
-
     private ?string $jobClass = null;
 
     private ?string $jobAlias = null;
@@ -56,6 +55,7 @@ class SearchParameters
     public function setUuid(?string $uuid): SearchParameters
     {
         $this->uuid = $uuid;
+
         return $this;
     }
 
@@ -66,6 +66,7 @@ class SearchParameters
     public function setJobClass(?string $jobClass): SearchParameters
     {
         $this->jobClass = $jobClass;
+
         return $this;
     }
 
@@ -84,6 +85,7 @@ class SearchParameters
     public function setJobAlias(?string $jobAlias): SearchParameters
     {
         $this->jobAlias = $jobAlias;
+
         return $this;
     }
 
@@ -107,6 +109,7 @@ class SearchParameters
     public function setIncludeStatus(array $includeStatus): SearchParameters
     {
         $this->includeStatus = $includeStatus;
+
         return $this;
     }
 
@@ -125,6 +128,7 @@ class SearchParameters
     public function setExcludeStatus(array $excludeStatus): SearchParameters
     {
         $this->excludeStatus = $excludeStatus;
+
         return $this;
     }
 
@@ -143,7 +147,7 @@ class SearchParameters
     public function setUpdatedBefore(?Carbon $updatedBefore): SearchParameters
     {
         $this->updatedBefore = $updatedBefore;
+
         return $this;
     }
-
 }
