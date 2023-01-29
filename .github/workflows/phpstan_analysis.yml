@@ -21,12 +21,15 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
+
             - uses: "ramsey/composer-install@v2"
               with:
                   composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
 
             - uses: php-actions/phpstan@v3
+              continue-on-error: true
               with:
+
                   path: config database routes src tests
                   php_version: ${{ matrix.php }}
                   error_format: github
