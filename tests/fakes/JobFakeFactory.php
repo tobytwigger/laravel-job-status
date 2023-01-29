@@ -132,7 +132,6 @@ class JobFakeFactory
 
     public function fakeCallback(): void
     {
-        
     }
 
     public function dispatch(int $jobsToRun = 1): JobFake
