@@ -41,47 +41,47 @@ class JobStatusResultsTest extends TestCase
 
     /** @test */
     public function it_returns_all_jobs(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function raw_returns_the_job_status_models(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function runs_returns_all_the_runs_ordered_by_created_at_of_the_most_recent_run(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function runs_and_retries_gets_the_runs_and_retries_not_grouped(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function first_returns_the_first_matching_job(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function count_returns_the_number_of_jobs(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function runCount_returns_the_number_of_runs_excluding_retries(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function firstRun_gets_the_first_matching_run(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function it_can_convert_to_an_array_and_json(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
 

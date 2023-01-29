@@ -21,37 +21,37 @@ class JobStatusJobRunTest extends TestCase
 
     /** @test */
     public function hasParent_returns_true_if_a_parent_is_set(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function hasParent_returns_false_if_a_parent_is_not_set(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function parent_returns_the_parent(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function parent_returns_null_if_no_parent(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function getException_gets_the_exception_all_loaded(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function jobStatus_gets_the_underlying_job_status_model(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function signals_gets_all_signals(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
@@ -113,7 +113,7 @@ class JobStatusJobRunTest extends TestCase
 
     /** @test */
     public function messages_gets_all_messages(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
@@ -216,12 +216,12 @@ class JobStatusJobRunTest extends TestCase
 
     /** @test */
     public function getStatus_returns_the_status(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
     public function it_can_be_casted_to_an_array_or_json(){
-
+        $this->markTestIncomplete('Not implemented yet');
     }
 
     /** @test */
