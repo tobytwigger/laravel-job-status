@@ -3,8 +3,10 @@
 namespace JobStatus\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusRepository;
+use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 
@@ -41,22 +43,25 @@ class ShowJobStatusSummaryCommand extends Command
      */
     public function handle(JobStatusRepository $repository)
     {
-        $search = $repository->search();
-        if ($this->option('class')) {
-            $search->whereJobClass($this->option('class'));
-        }
-        if ($this->option('alias')) {
-            $search->whereJobAlias($this->option('alias'));
-        }
-        $statuses = $search->get();
+        $statuses = JobStatus
+            ::when(
+                $this->option('class'),
+                fn(Builder $query) => $query->where('job_class', $this->option('class'))
+            )
+            ->when(
+                $this->option('alias'),
+                fn(Builder $query) => $query->where('job_alias', $this->option('alias'))
+            )
+            ->orderBy('job_class')
+            ->get();
 
-        $data = $statuses->jobs()->map(fn (TrackedJob $sameJobList) => [
-            $sameJobList->jobClass(),
-            $this->getStatusCount($sameJobList, Status::QUEUED),
-            $this->getStatusCount($sameJobList, Status::STARTED),
-            $this->getStatusCount($sameJobList, Status::SUCCEEDED),
-            $this->getStatusCount($sameJobList, Status::FAILED),
-            $this->getStatusCount($sameJobList, Status::CANCELLED),
+        $data = $statuses->jobs()->map(fn (TrackedJob $trackedJob) => [
+            $trackedJob->jobClass(),
+            $this->getStatusCount($trackedJob, Status::QUEUED),
+            $this->getStatusCount($trackedJob, Status::STARTED),
+            $this->getStatusCount($trackedJob, Status::SUCCEEDED),
+            $this->getStatusCount($trackedJob, Status::FAILED),
+            $this->getStatusCount($trackedJob, Status::CANCELLED),
         ]);
         $this->table([
             'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
@@ -65,8 +70,8 @@ class ShowJobStatusSummaryCommand extends Command
         return static::SUCCESS;
     }
 
-    private function getStatusCount(TrackedJob $sameJobList, Status $status): int
+    private function getStatusCount(TrackedJob $trackedJob, Status $status): int
     {
-        return $sameJobList->runs()->filter(fn (JobRun $jobStatusResult) => $jobStatusResult->getStatus() === $status)->count();
+        return $trackedJob->runs()->filter(fn (JobRun $jobStatusResult) => $jobStatusResult->getStatus() === $status)->count();
     }
 }
