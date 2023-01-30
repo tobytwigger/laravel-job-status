@@ -61,5 +61,4 @@ class JobFake implements ShouldQueue
     {
         return $this->users;
     }
-
 }

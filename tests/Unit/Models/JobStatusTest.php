@@ -158,5 +158,4 @@ class JobStatusTest extends TestCase
         $this->assertTrue($status3->is($retrieved->shift()));
         $this->assertTrue($status4->is($retrieved->shift()));
     }
-
 }

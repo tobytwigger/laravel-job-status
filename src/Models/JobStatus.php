@@ -21,7 +21,7 @@ class JobStatus extends Model
 
     protected $fillable = [
         'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
-        'started_at', 'finished_at', 'public'
+        'started_at', 'finished_at', 'public',
     ];
 
     protected $casts = [

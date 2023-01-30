@@ -83,10 +83,10 @@ class QueryFactory
 
     private static function addUserIds(Builder $query, SearchParameters $parameters): Builder
     {
-        if(!Gate::allows('viewJobStatus')) {
-            $query->where(function(Builder $query) use ($parameters) {
+        if (!Gate::allows('viewJobStatus')) {
+            $query->where(function (Builder $query) use ($parameters) {
                 $users = $parameters->getUsers();
-                $query->whereHas('users', function(Builder $query) use ($users) {
+                $query->whereHas('users', function (Builder $query) use ($users) {
                     $query->whereIn('user_id', $users);
                 })
                     ->orWhere('public', true);

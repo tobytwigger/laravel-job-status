@@ -39,13 +39,13 @@ class JobQueued extends BaseListener
                 'job_id' => $event->id,
                 'connection_name' => $event->connectionName,
                 'configuration' => $job->getJobStatusConfiguration(),
-                'public' => $job->public()
+                'public' => $job->public(),
             ]);
 
             $modifier = JobStatusModifier::forJobStatus($jobStatus);
             $modifier->setStatus(Status::QUEUED);
 
-            foreach($job->users() as $user) {
+            foreach ($job->users() as $user) {
                 $modifier->grantAccessTo($user);
             }
 

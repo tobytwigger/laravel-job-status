@@ -2,8 +2,6 @@
 
 namespace JobStatus\Tests\Unit\Models;
 
-use Carbon\Carbon;
-use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusUser;
 use JobStatus\Tests\TestCase;
@@ -34,5 +32,4 @@ class JobStatusUserTest extends TestCase
             )
         );
     }
-
 }
