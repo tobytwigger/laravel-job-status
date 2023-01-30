@@ -3,7 +3,6 @@
 namespace JobStatus\Search;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Gate;
 use JobStatus\Models\JobStatus;
 
 class QueryFactory
@@ -83,8 +82,8 @@ class QueryFactory
 
     private static function addUserIds(Builder $query, SearchParameters $parameters): Builder
     {
-        if($parameters->isWithoutUserLimit() === false) {
-            $query->where(function(Builder $query) use ($parameters) {
+        if ($parameters->isWithoutUserLimit() === false) {
+            $query->where(function (Builder $query) use ($parameters) {
                 $users = $parameters->getUsers();
                 $query->whereHas('users', function (Builder $query) use ($users) {
                     $query->whereIn('user_id', $users);
