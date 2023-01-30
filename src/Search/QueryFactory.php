@@ -88,7 +88,7 @@ class QueryFactory
                 $query->whereHas('users', function (Builder $query) use ($users) {
                     $query->whereIn('user_id', $users);
                 })
-                        ->orWhere('public', true);
+                    ->orWhere('public', true);
             });
         }
 
