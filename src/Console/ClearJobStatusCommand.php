@@ -45,7 +45,7 @@ class ClearJobStatusCommand extends Command
         if ($hours !== 0) {
             $statuses->whereUpdatedBefore(now()->subHours($hours));
         }
-        $statuses = $statuses->get()->raw();
+        $statuses = $statuses->get();
 
         $this->withProgressBar($statuses, fn (JobStatus $jobStatus) => $jobStatus->delete());
     }

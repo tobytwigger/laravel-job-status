@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\Enums\Status;
+use JobStatus\Search\Collections\JobStatusCollection;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
@@ -92,5 +93,16 @@ class JobStatus extends Model
     public static function newFactory()
     {
         return JobStatusFactory::new();
+    }
+
+    /**
+     * Create a new Eloquent Collection instance.
+     *
+     * @param JobStatus[] $models
+     * @return JobStatusCollection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new JobStatusCollection($models);
     }
 }

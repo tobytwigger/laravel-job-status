@@ -21,11 +21,11 @@ class JobStatusSearcherTest extends TestCase
         $set1 = JobStatus::factory()->count(3)->create(['uuid' => $uuid1]);
         $set2 = JobStatus::factory()->count(12)->create(['uuid' => $uuid2]);
 
-        $results = (new JobStatusSearcher())->whereUuid($uuid1)->get()->raw();
+        $results = (new JobStatusSearcher())->whereUuid($uuid1)->get();
         $this->assertCount(3, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->whereUuid($uuid2)->get()->raw();
+        $results = (new JobStatusSearcher())->whereUuid($uuid2)->get();
         $this->assertCount(12, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
     }
@@ -36,11 +36,11 @@ class JobStatusSearcherTest extends TestCase
         $set1 = JobStatus::factory()->count(3)->create(['job_class' => 'MyJobClass']);
         $set2 = JobStatus::factory()->count(12)->create(['job_class' => 'NotMyJobClass']);
 
-        $results = (new JobStatusSearcher())->whereJobClass('MyJobClass')->get()->raw();
+        $results = (new JobStatusSearcher())->whereJobClass('MyJobClass')->get();
         $this->assertCount(3, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->whereJobClass('NotMyJobClass')->get()->raw();
+        $results = (new JobStatusSearcher())->whereJobClass('NotMyJobClass')->get();
         $this->assertCount(12, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
     }
@@ -51,11 +51,11 @@ class JobStatusSearcherTest extends TestCase
         $set1 = JobStatus::factory()->count(3)->create(['job_alias' => 'MyJobAlias']);
         $set2 = JobStatus::factory()->count(12)->create(['job_alias' => 'NotMyJobAlias']);
 
-        $results = (new JobStatusSearcher())->whereJobAlias('MyJobAlias')->get()->raw();
+        $results = (new JobStatusSearcher())->whereJobAlias('MyJobAlias')->get();
         $this->assertCount(3, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->whereJobAlias('NotMyJobAlias')->get()->raw();
+        $results = (new JobStatusSearcher())->whereJobAlias('NotMyJobAlias')->get();
         $this->assertCount(12, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
     }
@@ -66,11 +66,11 @@ class JobStatusSearcherTest extends TestCase
         $set1 = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->count(3)->create();
         $set2 = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val2']), 'tags')->count(7)->create();
 
-        $results = (new JobStatusSearcher())->whereTag('key1', 'val1')->get()->raw();
+        $results = (new JobStatusSearcher())->whereTag('key1', 'val1')->get();
         $this->assertCount(3, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->whereTag('key1', 'val2')->get()->raw();
+        $results = (new JobStatusSearcher())->whereTag('key1', 'val2')->get();
         $this->assertCount(7, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
     }
@@ -83,11 +83,11 @@ class JobStatusSearcherTest extends TestCase
         $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::FAILED])
             ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
 
-        $results = (new JobStatusSearcher())->whereStatusIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get();
         $this->assertCount(6, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->whereStatusIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get();
         $this->assertCount(8, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
     }
@@ -100,11 +100,11 @@ class JobStatusSearcherTest extends TestCase
         $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::FAILED])
             ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
 
-        $results = (new JobStatusSearcher())->whereStatusNotIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusNotIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get();
         $this->assertCount(8, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->whereStatusNotIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get()->raw();
+        $results = (new JobStatusSearcher())->whereStatusNotIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get();
         $this->assertCount(6, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
     }
@@ -119,7 +119,7 @@ class JobStatusSearcherTest extends TestCase
         $results = (new JobStatusSearcher())
             ->whereUpdatedBefore(Carbon::now()->subHours(4))
             ->get()
-            ->raw();
+        ;
 
         $this->assertCount(3, $results);
         $this->assertEquals($results->pluck('id')->sort()->values()->values(), $set1->pluck('id')->sort()->values()->values());
@@ -134,11 +134,11 @@ class JobStatusSearcherTest extends TestCase
         $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::QUEUED])
             ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::STARTED]));
 
-        $results = (new JobStatusSearcher())->whereFinished()->get()->raw();
+        $results = (new JobStatusSearcher())->whereFinished()->get();
         $this->assertCount(9, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->whereNotFinished()->get()->raw();
+        $results = (new JobStatusSearcher())->whereNotFinished()->get();
         $this->assertCount(8, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
     }
@@ -167,7 +167,7 @@ class JobStatusSearcherTest extends TestCase
             'updated_at' => now()->subMinutes(1), 'created_at' => now()->subMinutes(1),
         ]);
 
-        $results = (new JobStatusSearcher())->get()->first()->runs();
+        $results = (new JobStatusSearcher())->get()->runs();
 
         $this->assertCount(3, $results);
         $this->assertEquals($jobStatus5->id, $results[0]->jobStatus()->id);
@@ -184,16 +184,16 @@ class JobStatusSearcherTest extends TestCase
             ->count(7)->create(['public' => false]);
         $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
 
-        $results = (new JobStatusSearcher())->forUser(1)->get()->raw();
+        $results = (new JobStatusSearcher())->forUser(1)->get();
         $this->assertCount(7, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set1->merge($set3)->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->forUser(2)->get()->raw();
+        $results = (new JobStatusSearcher())->forUser(2)->get();
         $this->assertCount(11, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set3)->pluck('id')->sort()->values());
 
 
-        $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->get()->raw();
+        $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->get();
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
     }
@@ -207,19 +207,19 @@ class JobStatusSearcherTest extends TestCase
             ->count(7)->create(['public' => false]);
         $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
 
-        $results = (new JobStatusSearcher())->forUser(1)->withoutUserLimit()->get()->raw();
+        $results = (new JobStatusSearcher())->forUser(1)->withoutUserLimit()->get();
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->forUser(2)->withoutUserLimit()->get()->raw();
+        $results = (new JobStatusSearcher())->forUser(2)->withoutUserLimit()->get();
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->withoutUserLimit()->get()->raw();
+        $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->withoutUserLimit()->get();
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
 
-        $results = (new JobStatusSearcher())->withoutUserLimit()->get()->raw();
+        $results = (new JobStatusSearcher())->withoutUserLimit()->get();
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
     }

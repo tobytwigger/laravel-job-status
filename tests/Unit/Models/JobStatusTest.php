@@ -10,6 +10,7 @@ use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Models\JobStatusUser;
+use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Tests\TestCase;
 
 class JobStatusTest extends TestCase
@@ -157,5 +158,19 @@ class JobStatusTest extends TestCase
         $this->assertTrue($status2->is($retrieved->shift()));
         $this->assertTrue($status3->is($retrieved->shift()));
         $this->assertTrue($status4->is($retrieved->shift()));
+    }
+
+    /** @test */
+    public function it_creates_a_collection_with_job_statuses()
+    {
+        $status1 = JobStatus::factory()->create();
+        $status2 = JobStatus::factory()->create();
+        $status3 = JobStatus::factory()->create();
+        $status4 = JobStatus::factory()->create();
+
+        $collection = JobStatus::all();
+        $this->assertInstanceOf(JobStatusCollection::class, $collection);
+        $this->assertCount(4, $collection);
+        $this->assertContainsOnlyInstancesOf(JobStatus::class, $collection);
     }
 }

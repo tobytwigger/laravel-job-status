@@ -17,7 +17,8 @@ class RunController extends Controller
                 ->withoutUserLimit()
                 ->whereUuid($jobStatus->uuid)
                 ->get()
-                ->firstRun();
+                ->runs()
+                ->first();
         }
 
         return new JobRun($jobStatus);
