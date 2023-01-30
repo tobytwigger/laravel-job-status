@@ -395,7 +395,8 @@ class JobStatusModifierTest extends TestCase
     }
 
     /** @test */
-    public function cancel_does_nothing_if_no_job_status_set(){
+    public function cancel_does_nothing_if_no_job_status_set()
+    {
         $modifier = new JobStatusModifier(null);
         $modifier->cancel(['param1' => 'value1']);
 
