@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Feature\Search;
 
 use Carbon\Carbon;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Support\Str;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;

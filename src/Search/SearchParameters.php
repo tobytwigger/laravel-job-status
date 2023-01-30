@@ -179,5 +179,4 @@ class SearchParameters
     {
         return $this->withoutUserLimit;
     }
-
 }
