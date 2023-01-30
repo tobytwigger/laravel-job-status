@@ -148,6 +148,20 @@ class JobSignalStoreTest extends TestCase
     }
 
     /** @test */
+    public function it_denies_access_to_an_anonymous_user_to_the_private_job()
+    {
+        $jobStatus = JobStatus::factory()->create(['public' => false]);
+        JobStatusUser::factory()->create(['user_id' => 2, 'job_status_id' => $jobStatus->id]);
+
+        $response = $this->postJson(route('job-status.job-signal.store', $jobStatus->id), [
+            'signal' => 'custom-signal',
+            'cancel_job' => true,
+            'parameters' => ['param1' => 'value1'],
+        ]);
+        $response->assertForbidden();
+    }
+
+    /** @test */
     public function it_gives_access_to_a_user_to_the_public_job()
     {
         $jobStatus = JobStatus::factory()->create(['public' => true]);

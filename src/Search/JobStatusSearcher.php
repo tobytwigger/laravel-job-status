@@ -27,9 +27,11 @@ class JobStatusSearcher
         return $this;
     }
 
-    public function forUser(int $userId): JobStatusSearcher
+    public function forUser(?int $userId): JobStatusSearcher
     {
-        $this->searchParameters->pushUser($userId);
+        if($userId) {
+            $this->searchParameters->pushUser($userId);
+        }
 
         return $this;
     }

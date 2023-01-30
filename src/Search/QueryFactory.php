@@ -83,11 +83,11 @@ class QueryFactory
     private static function addUserIds(Builder $query, SearchParameters $parameters): Builder
     {
         $query->where(function(Builder $query) use ($parameters) {
-            foreach($parameters->getUsers() as $userId) {
-                $query->orWhereHas('users', function(Builder $query) use ($userId) {
-                    $query->where('user_id', $userId);
-                });
-            }
+            $users = $parameters->getUsers();
+            $query->whereHas('users', function(Builder $query) use ($users) {
+                $query->whereIn('user_id', $users);
+            })
+                ->orWhere('public', true);
         });
 
 

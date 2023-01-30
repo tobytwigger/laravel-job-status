@@ -179,21 +179,22 @@ class JobStatusSearcherTest extends TestCase
     public function it_filters_by_connected_users()
     {
         $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
-            ->count(3)->create();
+            ->count(3)->create(['public' => false]);
         $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
-            ->count(7)->create();
+            ->count(7)->create(['public' => false]);
+        $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
 
         $results = (new JobStatusSearcher())->forUser(1)->get()->raw();
-        $this->assertCount(3, $results);
-        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->merge($set3)->pluck('id')->sort()->values());
 
         $results = (new JobStatusSearcher())->forUser(2)->get()->raw();
-        $this->assertCount(7, $results);
-        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+        $this->assertCount(11, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set3)->pluck('id')->sort()->values());
 
 
         $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->get()->raw();
-        $this->assertCount(10, $results);
-        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->pluck('id')->sort()->values());
+        $this->assertCount(14, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
     }
 }
