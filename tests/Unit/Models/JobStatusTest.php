@@ -3,6 +3,7 @@
 namespace JobStatus\Tests\Unit\Models;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
@@ -173,4 +174,185 @@ class JobStatusTest extends TestCase
         $this->assertCount(4, $collection);
         $this->assertContainsOnlyInstancesOf(JobStatus::class, $collection);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** @test */
+    public function it_filters_by_uuid()
+    {
+        $uuid1 = Str::uuid();
+        $uuid2 = Str::uuid();
+
+        $set1 = JobStatus::factory()->count(3)->create(['uuid' => $uuid1]);
+        $set2 = JobStatus::factory()->count(12)->create(['uuid' => $uuid2]);
+
+        $results = JobStatus::whereUuid($uuid1)->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereUuid($uuid2)->get();
+        $this->assertCount(12, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_class()
+    {
+        $set1 = JobStatus::factory()->count(3)->create(['class' => 'MyJobClass']);
+        $set2 = JobStatus::factory()->count(12)->create(['class' => 'NotMyJobClass']);
+
+        $results = JobStatus::whereClass('MyJobClass')->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereClass('NotMyJobClass')->get();
+        $this->assertCount(12, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_alias()
+    {
+        $set1 = JobStatus::factory()->count(3)->create(['alias' => 'MyJobAlias']);
+        $set2 = JobStatus::factory()->count(12)->create(['alias' => 'NotMyJobAlias']);
+
+        $results = JobStatus::whereAlias('MyJobAlias')->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereAlias('NotMyJobAlias')->get();
+        $this->assertCount(12, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_tags()
+    {
+        $set1 = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->count(3)->create();
+        $set2 = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val2']), 'tags')->count(7)->create();
+
+        $results = JobStatus::whereTag('key1', 'val1')->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereTag('key1', 'val2')->get();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_statuses_in()
+    {
+        $set1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED])
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::QUEUED]));
+        $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::FAILED])
+            ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
+
+        $results = JobStatus::whereStatusIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get();
+        $this->assertCount(6, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereStatusIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get();
+        $this->assertCount(8, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_statuses_not_in()
+    {
+        $set1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED])
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::QUEUED]));
+        $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::FAILED])
+            ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
+
+        $results = JobStatus::whereStatusNotIn([\JobStatus\Enums\Status::SUCCEEDED, \JobStatus\Enums\Status::QUEUED])->get();
+        $this->assertCount(8, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereStatusNotIn([\JobStatus\Enums\Status::FAILED, \JobStatus\Enums\Status::CANCELLED])->get();
+        $this->assertCount(6, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+    }
+
+
+    /** @test */
+    public function it_filters_by_finished_and_not_finished()
+    {
+        $set1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED])
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::FAILED]))
+            ->merge(JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::CANCELLED]));
+        $set2 = JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::QUEUED])
+            ->merge(JobStatus::factory()->count(4)->create(['status' => \JobStatus\Enums\Status::STARTED]));
+
+        $results = JobStatus::whereFinished()->get();
+        $this->assertCount(9, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereNotFinished()->get();
+        $this->assertCount(8, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_connected_users()
+    {
+        $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
+            ->count(3)->create(['public' => false]);
+        $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
+            ->count(7)->create(['public' => false]);
+        $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
+
+        $results = JobStatus::forUsers(1)->get();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->merge($set3)->pluck('id')->sort()->values());
+
+        $results = JobStatus::forUsers(2)->get();
+        $this->assertCount(11, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set3)->pluck('id')->sort()->values());
+
+
+        $results = JobStatus::forUsers([1,2])->get();
+        $this->assertCount(14, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
+
+        $results = JobStatus::forUsers(3)->get();
+        $this->assertCount(4, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set3->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function without_user_limits_means_all_jobs_can_be_seen()
+    {
+        $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
+            ->count(3)->create(['public' => false]);
+        $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
+            ->count(7)->create(['public' => false]);
+        $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
+
+        $results = JobStatus::all();
+        $this->assertCount(14, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
+    }
+
 }

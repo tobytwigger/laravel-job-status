@@ -2,11 +2,11 @@
 
 namespace JobStatus\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\TrackedJob;
 
 trait Trackable
@@ -20,9 +20,9 @@ trait Trackable
         return [];
     }
 
-    public static function search(array $tags = []): JobStatusSearcher
+    public static function search(array $tags = []): Builder
     {
-        $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
+        $search = JobStatus::whereClass(static::class);
         foreach ($tags as $key => $value) {
             $search->whereTag($key, $value);
         }
@@ -32,12 +32,8 @@ trait Trackable
 
     public function history(): ?TrackedJob
     {
-        $search = app(JobStatusSearcher::class)->whereJobClass(static::class);
-        foreach ($this->tags() as $key => $value) {
-            $search->whereTag($key, $value);
-        }
-
-        return $search->get()->jobs()->first();
+        return static::search($this->tags())
+            ->get()->jobs()->first();
     }
 
     public function getJobStatus(): ?JobStatus

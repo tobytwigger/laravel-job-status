@@ -3,11 +3,11 @@
 namespace JobStatus\Tests\Feature\Jobs;
 
 use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Str;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
-use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
@@ -23,7 +23,7 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'anotherclass']);
 
         $search = JobFake::search();
-        $this->assertInstanceOf(JobStatusSearcher::class, $search);
+        $this->assertInstanceOf(Builder::class, $search);
         $this->assertCount(10, $search->get()->jobs()->first()->runs());
     }
 
@@ -35,7 +35,7 @@ class TrackableTest extends TestCase
             ->count(8)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
         JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'jobfake']);
         $search = JobFake::search(['key1' => 'val1']);
-        $this->assertInstanceOf(JobStatusSearcher::class, $search);
+        $this->assertInstanceOf(Builder::class, $search);
         $this->assertCount(8, $search->get()->jobs()->first()->runs());
     }
 

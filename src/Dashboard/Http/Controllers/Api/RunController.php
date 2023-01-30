@@ -4,7 +4,6 @@ namespace JobStatus\Dashboard\Http\Controllers\Api;
 
 use JobStatus\Dashboard\Http\Controllers\Controller;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\JobStatusSearcher;
 use JobStatus\Search\Result\JobRun;
 
 class RunController extends Controller
@@ -13,8 +12,7 @@ class RunController extends Controller
     {
         $jobStatus = JobStatus::findOrFail($jobStatusId);
         if ($jobStatus->uuid) {
-            return JobStatusSearcher::query()
-                ->withoutUserLimit()
+            return JobStatus::query()
                 ->whereUuid($jobStatus->uuid)
                 ->get()
                 ->runs()
