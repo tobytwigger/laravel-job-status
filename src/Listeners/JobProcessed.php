@@ -42,6 +42,7 @@ class JobProcessed extends BaseListener
                 $jobStatus = JobStatus::create([
                     'class' => $modifier->getJobStatus()?->class,
                     'alias' => $modifier->getJobStatus()?->alias,
+                    'batch_id' => $modifier->getJobStatus()->batch_id,
                     'percentage' => 0,
                     'status' => Status::QUEUED,
                     'uuid' => $event->job->uuid(),

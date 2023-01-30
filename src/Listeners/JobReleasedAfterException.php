@@ -27,6 +27,7 @@ class JobReleasedAfterException extends BaseListener
                 'class' => $modifier->getJobStatus()?->class,
                 'alias' => $modifier->getJobStatus()?->alias,
                 'percentage' => 0,
+                'batch_id' => $modifier->getJobStatus()->batch_id,
                 'status' => Status::QUEUED,
                 'uuid' => $event->job->uuid(),
                 'connection_name' => $event->job->getConnectionName(),

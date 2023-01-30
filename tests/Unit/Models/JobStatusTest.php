@@ -4,6 +4,7 @@ namespace JobStatus\Tests\Unit\Models;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
@@ -354,4 +355,21 @@ class JobStatusTest extends TestCase
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
     }
+
+    /** @test */
+    public function it_has_a_batch(){
+        $batch = JobBatch::factory()->create();
+        $status = JobStatus::factory()->create(['batch_id' => $batch->id]);
+
+        $this->assertInstanceOf(JobBatch::class, $status->batch);
+        $this->assertTrue($batch->is($status->batch));
+    }
+
+    /** @test */
+    public function batch_is_null_if_no_batch_id_set(){
+        $status = JobStatus::factory()->create(['batch_id' => null]);
+
+        $this->assertNull($status->batch);
+    }
+
 }

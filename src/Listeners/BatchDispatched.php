@@ -2,6 +2,7 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Bus\Events\BatchDispatched as BatchDispatchedEvent;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Queue;
 use JobStatus\Concerns\Trackable;
@@ -15,25 +16,35 @@ use JobStatus\Models\JobStatus;
  *
  * Create a new JobStatus and add the tags.
  */
-class JobQueued extends BaseListener
+class BatchDispatched extends BaseListener
 {
     /**
-     * @param \Illuminate\Queue\Events\JobQueued $event
+     * @param BatchDispatchedEvent $event
      * @return void|bool
      */
-    public function handle(\Illuminate\Queue\Events\JobQueued $event)
+    public function handle(BatchDispatchedEvent $event)
     {
+        dd($event->batch);
         if ($this->isTrackingEnabled()) {
-            /** @var Trackable $job */
-            $job = $event->job;
+            $batch = JobBatch::create([
+                'batch_id' => $event->batch->id,
+                'name' => $event->batch->name
+            ]);
 
             if ($this->validateJob($job) === false) {
                 return true;
             }
 
+            dd($job->batch());
+            $batch = $job->batch() === null ? null : JobBatch::firstOrCreate(
+                ['batch_id' => $job->batch()->id],
+                ['name' => $job->batch()->name]
+            );
+
             $jobStatus = JobStatus::create([
                 'class' => get_class($job),
                 'alias' => $job->alias(),
+                'batch_id' => $batch?->id,
                 'percentage' => 0,
                 'status' => Status::QUEUED,
                 'uuid' => null,

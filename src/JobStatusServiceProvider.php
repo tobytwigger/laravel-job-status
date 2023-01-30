@@ -2,6 +2,8 @@
 
 namespace JobStatus;
 
+use Illuminate\Bus\BatchRepository;
+use Illuminate\Bus\Events\BatchDispatched;
 use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use JobStatus\Console\ClearJobStatusCommand;
 use JobStatus\Console\ShowJobStatusSummaryCommand;
+use JobStatus\Listeners\BatchRepositoryDecorator;
 
 /**
  * The service provider for loading Laravel Setting.
@@ -84,5 +87,10 @@ class JobStatusServiceProvider extends ServiceProvider
         Event::listen(JobProcessed::class, \JobStatus\Listeners\JobProcessed::class);
         Event::listen(JobReleasedAfterException::class, \JobStatus\Listeners\JobReleasedAfterException::class);
         Event::listen(JobExceptionOccurred::class, \JobStatus\Listeners\JobExceptionOccurred::class);
+
+        $this->app->extend(BatchRepository::class, function(BatchRepository $service, $app) {
+            return new BatchRepositoryDecorator($service);
+        });
+        Event::listen(BatchDispatched::class, \JobStatus\Listeners\BatchDispatched::class);
     }
 }

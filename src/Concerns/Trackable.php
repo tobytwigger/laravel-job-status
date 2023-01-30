@@ -2,6 +2,7 @@
 
 namespace JobStatus\Concerns;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\JobStatusModifier;
@@ -11,7 +12,7 @@ use JobStatus\Search\Result\TrackedJob;
 
 trait Trackable
 {
-    use InteractsWithSignals, InteractsWithQueue;
+    use InteractsWithSignals, InteractsWithQueue, Batchable;
 
     public ?JobStatus $jobStatus = null;
 

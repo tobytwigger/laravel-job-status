@@ -2,7 +2,9 @@
 
 namespace JobStatus\Tests;
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use JobStatus\JobStatusServiceProvider;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -34,5 +36,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'database' => ':memory:',
             'prefix'   => '',
         ]);
+
     }
 }

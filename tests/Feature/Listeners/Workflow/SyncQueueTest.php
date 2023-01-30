@@ -4,6 +4,7 @@ namespace JobStatus\Tests\Feature\Listeners\Workflow;
 
 use Illuminate\Testing\Assert;
 use JobStatus\Exception\JobCancelledException;
+use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
@@ -53,6 +54,9 @@ class SyncQueueTest extends TestCase
         Assert::assertCount(2, $jobStatus->statuses);
         Assert::assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
     }
 
 
@@ -99,6 +103,9 @@ class SyncQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->statuses[2]->status);
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
     }
 
 
@@ -152,6 +159,9 @@ class SyncQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
     }
 
 
@@ -215,6 +225,9 @@ class SyncQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->statuses[2]->status);
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
     }
 
     public static bool $calledCancelledCustomSignal = false;
@@ -293,6 +306,9 @@ class SyncQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
     }
 
 
@@ -361,6 +377,9 @@ class SyncQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
     }
 
 
