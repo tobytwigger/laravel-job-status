@@ -693,10 +693,9 @@ class DatabaseQueueTest extends TestCase
         $realBatch = Bus::batch([
             $job1, $job2, $job3
         ])->name('My Batch Name');
-        JobFakeFactory::dispatchBatch($realBatch);
+        $realBatch = JobFakeFactory::dispatchBatch($realBatch);
 
 
-        dd(JobBatch::all()->toArray(), JobStatus::all()->toArray());
         $batch = JobBatch::all();
         $this->assertCount(1, $batch);
         $batch = $batch->first();

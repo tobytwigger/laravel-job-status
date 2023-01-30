@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\fakes;
 
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Database\Schema\Blueprint;
@@ -128,12 +129,12 @@ class JobFakeFactory
     {
     }
 
-    public static function dispatchBatch(PendingBatch $batch)
+    public static function dispatchBatch(PendingBatch $batch): Batch
     {
         $batch->onConnection('database');
         static::createJobsTable();
         static::createBatchesTable();
-        $batch->dispatch();
+        return $batch->dispatch();
 //        for ($i = 0; $i < $batch; $i++) {
 //            Artisan::call('queue:work database --once --stop-when-empty');
 //        }

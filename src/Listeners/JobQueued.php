@@ -31,10 +31,18 @@ class JobQueued extends BaseListener
                 return true;
             }
 
+            $batchModel = $job->batch() !== null
+                ? JobBatch::firstOrCreate(
+                    ['batch_id' => $job->batch()->id],
+                    ['name' => $job->batch()->name]
+                )
+                : null;
+
             $jobStatus = JobStatus::create([
                 'class' => get_class($job),
                 'alias' => $job->alias(),
                 'percentage' => 0,
+                'batch_id' => $batchModel?->id,
                 'status' => Status::QUEUED,
                 'uuid' => null,
                 'job_id' => $event->id,

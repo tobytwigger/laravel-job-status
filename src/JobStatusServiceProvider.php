@@ -3,7 +3,7 @@
 namespace JobStatus;
 
 use Illuminate\Bus\BatchRepository;
-use Illuminate\Bus\Events\BatchDispatched;
+use Illuminate\Queue\Connectors\DatabaseConnector;
 use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
@@ -11,6 +11,7 @@ use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Queue\Events\JobReleasedAfterException;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use JobStatus\Console\ClearJobStatusCommand;
@@ -88,9 +89,14 @@ class JobStatusServiceProvider extends ServiceProvider
         Event::listen(JobReleasedAfterException::class, \JobStatus\Listeners\JobReleasedAfterException::class);
         Event::listen(JobExceptionOccurred::class, \JobStatus\Listeners\JobExceptionOccurred::class);
 
-        $this->app->extend(BatchRepository::class, function(BatchRepository $service, $app) {
-            return new BatchRepositoryDecorator($service);
+//        $this->app->extend(BatchRepository::class, function(BatchRepository $service, $app) {
+//            return new BatchRepositoryDecorator($service);
+//        });
+
+        app()->booted(function() {
+            Queue::addConnector('database', function() {
+                return new DatabaseConnectorDecorator($this->app['db']);
+            });
         });
-        Event::listen(BatchDispatched::class, \JobStatus\Listeners\BatchDispatched::class);
     }
 }
