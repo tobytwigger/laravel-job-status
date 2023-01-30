@@ -9,6 +9,6 @@ class Authenticate
 {
     public function handle(Request $request, $next)
     {
-        return (app()->environment('test') || Gate::allows('viewJobStatus')) ? $next($request) : abort(403);
+        return (app()->environment('local') || Gate::allows('viewJobStatus')) ? $next($request) : abort(403);
     }
 }

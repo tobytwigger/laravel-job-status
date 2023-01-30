@@ -10,6 +10,7 @@ class HistoryController extends Controller
     public function __invoke()
     {
         return JobStatusSearcher::query()
+            ->withoutUserLimit()
             ->get()
             ->runs();
     }

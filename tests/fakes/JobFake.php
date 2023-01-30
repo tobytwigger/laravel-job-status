@@ -12,8 +12,6 @@ class JobFake implements ShouldQueue
 {
     use Dispatchable, Trackable, InteractsWithQueue, Queueable;
 
-    public static string|\Closure|null $canSeeTracking;
-
     public int $maxExceptions = 3;
 
     public int $tries = 3;
@@ -22,8 +20,15 @@ class JobFake implements ShouldQueue
         private ?string $alias = null,
         private array $tags = [],
         private \Closure|string|null $callback = null,
-        private array $signals = []
+        private array $signals = [],
+        private array $users = [],
+        private bool $public = true,
     ) {
+    }
+
+    public function public(): bool
+    {
+        return $this->public;
     }
 
     public function alias(): ?string
@@ -52,13 +57,8 @@ class JobFake implements ShouldQueue
         }
     }
 
-
-    public static function canSeeTracking($user = null, array $tags = []): bool
+    public function users(): array
     {
-        if (isset(static::$canSeeTracking)) {
-            return call_user_func(static::$canSeeTracking, $user, $tags);
-        }
-
-        return true;
+        return $this->users;
     }
 }

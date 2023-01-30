@@ -9,6 +9,7 @@ use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
+use JobStatus\Models\JobStatusUser;
 use JobStatus\Tests\TestCase;
 
 class JobStatusTest extends TestCase
@@ -138,5 +139,23 @@ class JobStatusTest extends TestCase
         $this->assertEquals(30, $finishedAt->minute);
         $this->assertEquals(24, $finishedAt->second);
         $this->assertEquals(234, $finishedAt->millisecond);
+    }
+
+    /** @test */
+    public function it_has_many_users()
+    {
+        $status = JobStatus::factory()->create();
+        $status1 = JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $status->id]);
+        $status2 = JobStatusUser::factory()->create(['user_id' => 2, 'job_status_id' => $status->id]);
+        $status3 = JobStatusUser::factory()->create(['user_id' => 3, 'job_status_id' => $status->id]);
+        $status4 = JobStatusUser::factory()->create(['user_id' => 4, 'job_status_id' => $status->id]);
+        JobStatusStatus::factory()->count(10)->create();
+
+        $this->assertEquals(4, $status->users()->count());
+        $retrieved = $status->users()->orderBy('id')->get();
+        $this->assertTrue($status1->is($retrieved->shift()));
+        $this->assertTrue($status2->is($retrieved->shift()));
+        $this->assertTrue($status3->is($retrieved->shift()));
+        $this->assertTrue($status4->is($retrieved->shift()));
     }
 }

@@ -8,6 +8,7 @@ use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
+use JobStatus\Models\JobStatusUser;
 use JobStatus\Tests\TestCase;
 
 class JobStatusModifierTest extends TestCase
@@ -379,5 +380,26 @@ class JobStatusModifierTest extends TestCase
             'cancel_job' => true,
             'parameters' => json_encode(['param1' => 'value1']),
         ]);
+    }
+
+    /** @test */
+    public function a_user_id_can_be_pushed()
+    {
+        $jobStatus = JobStatus::factory()->create();
+
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $this->assertFalse(JobStatusUser::where('user_id', 2)->where('job_status_id', $jobStatus->id)->exists());
+        $modifier->grantAccessTo(2);
+        $this->assertTrue(JobStatusUser::where('user_id', 2)->where('job_status_id', $jobStatus->id)->exists());
+    }
+
+    /** @test */
+    public function cancel_does_nothing_if_no_job_status_set()
+    {
+        $modifier = new JobStatusModifier(null);
+        $modifier->cancel(['param1' => 'value1']);
+
+        $this->assertDatabaseEmpty(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_signals'));
     }
 }

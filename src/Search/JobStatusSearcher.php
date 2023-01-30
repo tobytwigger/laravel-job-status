@@ -27,6 +27,15 @@ class JobStatusSearcher
         return $this;
     }
 
+    public function forUser(?int $userId): JobStatusSearcher
+    {
+        if ($userId) {
+            $this->searchParameters->pushUser($userId);
+        }
+
+        return $this;
+    }
+
     public function whereJobClass(string $jobClass): JobStatusSearcher
     {
         $this->searchParameters->setJobClass($jobClass);
@@ -106,6 +115,13 @@ class JobStatusSearcher
     public function whereUpdatedBefore(\Carbon\Carbon $updatedBefore): JobStatusSearcher
     {
         $this->searchParameters->setUpdatedBefore($updatedBefore);
+
+        return $this;
+    }
+
+    public function withoutUserLimit(): JobStatusSearcher
+    {
+        $this->searchParameters->setWithoutUserLimit(true);
 
         return $this;
     }

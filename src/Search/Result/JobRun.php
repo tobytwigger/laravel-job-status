@@ -163,4 +163,15 @@ class JobRun implements Arrayable, Jsonable
     {
         return $this->jobStatus->status;
     }
+
+    public function accessibleBy(?int $userId): bool
+    {
+        return $this->trackingIsPublic()
+            || $this->jobStatus->users()->where('user_id', $userId)->exists();
+    }
+
+    public function trackingIsPublic(): bool
+    {
+        return $this->jobStatus->public;
+    }
 }

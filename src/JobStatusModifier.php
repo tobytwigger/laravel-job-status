@@ -6,6 +6,7 @@ use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
+use JobStatus\Models\JobStatusUser;
 
 class JobStatusModifier
 {
@@ -204,6 +205,19 @@ class JobStatusModifier
     {
         if ($this->jobStatus !== null) {
             $this->jobStatus->connection_name = $connectionName;
+            $this->jobStatus->save();
+        }
+
+        return $this;
+    }
+
+    public function grantAccessTo(int $userId)
+    {
+        if ($this->jobStatus !== null) {
+            JobStatusUser::updateOrCreate([
+                'user_id' => $userId,
+                'job_status_id' => $this->jobStatus->id,
+            ]);
             $this->jobStatus->save();
         }
 

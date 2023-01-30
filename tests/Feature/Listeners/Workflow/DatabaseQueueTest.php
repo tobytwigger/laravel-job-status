@@ -17,6 +17,8 @@ class DatabaseQueueTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->setCallback(static::class . '@a_run_is_handled_callback')
+            ->setUsers([1, 2])
+            ->setPublic(true)
             ->dispatch();
 
         $this->assertNull(JobStatus::first()->exception, JobStatus::first()->exception?->message ?? 'An error occured');
@@ -33,6 +35,7 @@ class DatabaseQueueTest extends TestCase
         Assert::assertEquals(0, $jobStatus->percentage);
         Assert::assertEquals(1, $jobStatus->job_id);
         Assert::assertEquals('database', $jobStatus->connection_name);
+        Assert::assertEquals(true, $jobStatus->public);
 
         Assert::assertCount(2, $jobStatus->tags);
         Assert::assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -43,6 +46,10 @@ class DatabaseQueueTest extends TestCase
         Assert::assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         Assert::assertNull($jobStatus->exception);
+
+        Assert::assertCount(2, $jobStatus->users()->get());
+        Assert::assertEquals(1, $jobStatus->users()->get()[0]->user_id);
+        Assert::assertEquals(2, $jobStatus->users()->get()[1]->user_id);
 
         Assert::assertCount(2, $jobStatus->statuses);
         Assert::assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -223,6 +230,7 @@ class DatabaseQueueTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->setCallback(static::class . '@a_failed_run_is_handled_callback')
             ->maxTries(1)
+            ->setPublic(false)
             ->maxExceptions(1)
             ->dispatch();
 
@@ -235,6 +243,8 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
+
+        $this->assertEquals(false, $jobStatus->public);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -274,6 +284,8 @@ class DatabaseQueueTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->maxTries(2)
             ->maxExceptions(2)
+            ->setUsers([1, 2])
+            ->setPublic(false)
             ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_callback')
             ->dispatch();
 
@@ -287,6 +299,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
+        $this->assertEquals(false, $jobStatus->public);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -296,6 +309,10 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertNotNull($jobStatus->exception);
         $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(2, $jobStatus->users()->get());
+        $this->assertEquals(1, $jobStatus->users()->get()[0]->user_id);
+        $this->assertEquals(2, $jobStatus->users()->get()[1]->user_id);
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
@@ -313,6 +330,11 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatusRetry->job_id); // has not yet been changed to 2 since has not ran
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
+        $this->assertEquals(false, $jobStatus->public);
+
+        $this->assertCount(2, $jobStatusRetry->users()->get());
+        $this->assertEquals(1, $jobStatusRetry->users()->get()[0]->user_id);
+        $this->assertEquals(2, $jobStatusRetry->users()->get()[1]->user_id);
 
         $this->assertCount(2, $jobStatusRetry->tags);
         $this->assertEquals('my-first-tag', $jobStatusRetry->tags[0]->key);
@@ -354,6 +376,8 @@ class DatabaseQueueTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->maxTries(2)
             ->maxExceptions(2)
+            ->setUsers([1,2])
+            ->setPublic(true)
             ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_after_a_rerun_callback')
             ->dispatch(2);
 
@@ -367,6 +391,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
+        $this->assertEquals(true, $jobStatus->public);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -384,6 +409,9 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
 
+        $this->assertCount(2, $jobStatus->users()->get());
+        $this->assertEquals(1, $jobStatus->users()->get()[0]->user_id);
+        $this->assertEquals(2, $jobStatus->users()->get()[1]->user_id);
 
         $jobStatusRetry = JobStatus::all()[1];
         $this->assertEquals(JobFake::class, $jobStatusRetry->job_class);
@@ -393,6 +421,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
+        $this->assertEquals(true, $jobStatusRetry->public);
 
         $this->assertCount(2, $jobStatusRetry->tags);
         $this->assertEquals('my-first-tag', $jobStatusRetry->tags[0]->key);
@@ -402,6 +431,10 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertNotNull($jobStatus->exception);
         $this->assertEquals('Test', $jobStatus->exception->message);
+
+        $this->assertCount(2, $jobStatusRetry->users()->get());
+        $this->assertEquals(1, $jobStatusRetry->users()->get()[0]->user_id);
+        $this->assertEquals(2, $jobStatusRetry->users()->get()[1]->user_id);
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
@@ -445,6 +478,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
+        $this->assertEquals(true, $jobStatus->public);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -489,6 +523,8 @@ class DatabaseQueueTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->maxTries(2)
             ->maxExceptions(2)
+            ->setUsers([1,2])
+            ->setPublic(false)
             ->setCallback(static::class . '@it_does_track_a_new_job_when_succeeded_and_retried_and_already_manually_released_callback')
             ->dispatch(2);
 
@@ -511,11 +547,16 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
         $this->assertNull($jobStatus->exception);
+        $this->assertEquals(false, $jobStatus->public);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->statuses[2]->status);
+
+        $this->assertCount(2, $jobStatus->users()->get());
+        $this->assertEquals(1, $jobStatus->users()->get()[0]->user_id);
+        $this->assertEquals(2, $jobStatus->users()->get()[1]->user_id);
 
         $jobStatusRetry = JobStatus::all()[1];
         $this->assertEquals(JobFake::class, $jobStatusRetry->job_class);
@@ -525,6 +566,11 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
+        $this->assertEquals(false, $jobStatusRetry->public);
+
+        $this->assertCount(2, $jobStatusRetry->users()->get());
+        $this->assertEquals(1, $jobStatusRetry->users()->get()[0]->user_id);
+        $this->assertEquals(2, $jobStatusRetry->users()->get()[1]->user_id);
 
         $this->assertCount(2, $jobStatusRetry->tags);
         $this->assertEquals('my-first-tag', $jobStatusRetry->tags[0]->key);
@@ -549,6 +595,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(2, $jobStatusRetryNotRan->job_id);
         $this->assertEquals('database', $jobStatusRetryNotRan->connection_name);
         $this->assertNotNull($jobStatusRetryNotRan->uuid);
+        $this->assertEquals(false, $jobStatusRetryNotRan->public);
 
         $this->assertCount(2, $jobStatusRetryNotRan->tags);
         $this->assertEquals('my-first-tag', $jobStatusRetryNotRan->tags[0]->key);

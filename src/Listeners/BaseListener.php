@@ -92,13 +92,18 @@ class BaseListener
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId(),
                 'configuration' => $command->getJobStatusConfiguration(),
+                'public' => $command->public(),
             ]);
-            JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
+            $modifier = JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
             foreach ($command->tags() as $key => $value) {
                 $jobStatus->tags()->create([
                     'key' => $key,
                     'value' => $value,
                 ]);
+            }
+
+            foreach ($command->users() as $user) {
+                $modifier->grantAccessTo($user);
             }
         }
 

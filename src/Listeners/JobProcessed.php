@@ -30,6 +30,7 @@ class JobProcessed extends BaseListener
 
             if ($modifier->getJobStatus()->status === Status::STARTED) {
                 $modifier->setFinishedAt(now());
+                $modifier->setPercentage(100.0);
                 if ($event->job->hasFailed()) {
                     $modifier->setStatus(Status::FAILED);
                 } else {
@@ -46,15 +47,20 @@ class JobProcessed extends BaseListener
                     'uuid' => $event->job->uuid(),
                     'connection_name' => $event->job->getConnectionName(),
                     'job_id' => $event->job->getJobId(),
+                    'public' => $modifier->getJobStatus()?->public,
                 ]);
 
-                JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
+                $newModifier = JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
 
                 foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
                     $jobStatus->tags()->create([
                         'key' => $tag->key,
                         'value' => $tag->value,
                     ]);
+                }
+
+                foreach ($modifier->getJobStatus()?->users()->get() as $user) {
+                    $newModifier->grantAccessTo($user->user_id);
                 }
             }
 

@@ -15,6 +15,8 @@ class SearchParameters
 
     private ?string $uuid = null;
 
+    private array $users = [];
+
     private ?Carbon $updatedBefore = null;
 
     /**
@@ -26,6 +28,8 @@ class SearchParameters
      * @var array|Status[]
      */
     private array $excludeStatus = [];
+
+    private bool $withoutUserLimit = false;
 
     public function __construct()
     {
@@ -149,5 +153,30 @@ class SearchParameters
         $this->updatedBefore = $updatedBefore;
 
         return $this;
+    }
+
+    public function pushUser(int $userId): SearchParameters
+    {
+        $this->users[] = $userId;
+
+        return $this;
+    }
+
+    public function getUsers(): array
+    {
+        return $this->users;
+    }
+
+    public function setWithoutUserLimit(bool $withoutUserLimit)
+    {
+        $this->withoutUserLimit = $withoutUserLimit;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWithoutUserLimit(): bool
+    {
+        return $this->withoutUserLimit;
     }
 }
