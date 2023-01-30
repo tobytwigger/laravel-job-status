@@ -14,6 +14,7 @@ class RunController extends Controller
         $jobStatus = JobStatus::findOrFail($jobStatusId);
         if ($jobStatus->uuid) {
             return JobStatusSearcher::query()
+                ->withoutUserLimit()
                 ->whereUuid($jobStatus->uuid)
                 ->get()
                 ->firstRun();

@@ -199,31 +199,4 @@ class JobStatusSearcherTest extends TestCase
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
     }
-
-    /** @test */
-    public function if_the_gate_allows_the_current_user_all_jobs_can_be_seen()
-    {
-        $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
-            ->count(3)->create(['public' => false]);
-        $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
-            ->count(7)->create(['public' => false]);
-        $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
-
-        $gate = $this->prophesize(GateContract::class);
-        $gate->allows('viewJobStatus')->willReturn(true);
-        $this->app->instance(GateContract::class, $gate->reveal());
-
-        $results = (new JobStatusSearcher())->forUser(1)->get()->raw();
-        $this->assertCount(14, $results);
-        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
-
-        $results = (new JobStatusSearcher())->forUser(2)->get()->raw();
-        $this->assertCount(14, $results);
-        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
-
-
-        $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->get()->raw();
-        $this->assertCount(14, $results);
-        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
-    }
 }

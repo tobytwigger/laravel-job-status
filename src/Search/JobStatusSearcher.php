@@ -118,4 +118,11 @@ class JobStatusSearcher
 
         return $this;
     }
+
+    public function withoutUserLimit(): JobStatusSearcher
+    {
+        $this->searchParameters->setWithoutUserLimit(true);
+
+        return $this;
+    }
 }

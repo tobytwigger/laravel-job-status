@@ -29,6 +29,8 @@ class SearchParameters
      */
     private array $excludeStatus = [];
 
+    private bool $withoutUserLimit = false;
+
     public function __construct()
     {
         $this->tagsSearchParameters = new TagsSearchParameters();
@@ -164,4 +166,18 @@ class SearchParameters
     {
         return $this->users;
     }
+
+    public function setWithoutUserLimit(bool $withoutUserLimit)
+    {
+        $this->withoutUserLimit = $withoutUserLimit;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWithoutUserLimit(): bool
+    {
+        return $this->withoutUserLimit;
+    }
+
 }

@@ -83,7 +83,7 @@ class QueryFactory
 
     private static function addUserIds(Builder $query, SearchParameters $parameters): Builder
     {
-        if(!Gate::allows('viewJobStatus')) {
+        if($parameters->isWithoutUserLimit() === false) {
             $query->where(function(Builder $query) use ($parameters) {
                 $users = $parameters->getUsers();
                 $query->whereHas('users', function(Builder $query) use ($users) {
