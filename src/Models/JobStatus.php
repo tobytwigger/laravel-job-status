@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\Enums\Status;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Collections\JobStatusCollection;
 
 /**

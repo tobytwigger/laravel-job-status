@@ -13,9 +13,9 @@ use JobStatus\Tests\TestCase;
 
 class JobStatusCollectionTest extends TestCase
 {
-
     /** @test */
-    public function it_returns_all_runs_grouped(){
+    public function it_returns_all_runs_grouped()
+    {
         $uuid1 = Str::uuid();
         $uuid2 = Str::uuid();
         $uuid3 = Str::uuid();
@@ -48,11 +48,11 @@ class JobStatusCollectionTest extends TestCase
         $this->assertEquals('Class 3', $collection[2]->jobStatus()->job_class);
         $this->assertEquals($jobStatus3->id, $collection[2]->jobStatus()->id);
         $this->assertNull($collection[2]->parent());
-
     }
 
     /** @test */
-    public function it_returns_all_jobs_grouped(){
+    public function it_returns_all_jobs_grouped()
+    {
         $uuid1 = Str::uuid();
         $uuid2 = Str::uuid();
         $uuid3 = Str::uuid();
@@ -88,5 +88,4 @@ class JobStatusCollectionTest extends TestCase
         $this->assertEquals($jobStatus3->id, $collection[2]->runs()[0]->jobStatus()->id);
         $this->assertNull($collection[2]->runs()[0]->parent());
     }
-
 }

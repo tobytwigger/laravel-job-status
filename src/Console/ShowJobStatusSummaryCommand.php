@@ -43,14 +43,13 @@ class ShowJobStatusSummaryCommand extends Command
      */
     public function handle(JobStatusRepository $repository)
     {
-        $statuses = JobStatus
-            ::when(
+        $statuses = JobStatus::when(
                 $this->option('class'),
-                fn(Builder $query) => $query->where('job_class', $this->option('class'))
+                fn (Builder $query) => $query->where('job_class', $this->option('class'))
             )
             ->when(
                 $this->option('alias'),
-                fn(Builder $query) => $query->where('job_alias', $this->option('alias'))
+                fn (Builder $query) => $query->where('job_alias', $this->option('alias'))
             )
             ->orderBy('job_class')
             ->get();

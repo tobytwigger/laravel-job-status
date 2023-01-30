@@ -10,9 +10,7 @@ use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Models\JobStatusUser;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Collections\JobStatusCollection;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Tests\TestCase;
 
 class JobStatusTest extends TestCase
@@ -163,7 +161,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_creates_a_collection_with_job_statuses(){
+    public function it_creates_a_collection_with_job_statuses()
+    {
         $status1 = JobStatus::factory()->create();
         $status2 = JobStatus::factory()->create();
         $status3 = JobStatus::factory()->create();
@@ -174,5 +173,4 @@ class JobStatusTest extends TestCase
         $this->assertCount(4, $collection);
         $this->assertContainsOnlyInstancesOf(JobStatus::class, $collection);
     }
-
 }

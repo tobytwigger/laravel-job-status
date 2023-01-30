@@ -9,7 +9,6 @@ use JobStatus\Search\Result\TrackedJob;
 
 class JobStatusCollection extends Collection
 {
-
     public function runs(): JobRunCollection
     {
         $queryResult = $this
@@ -67,5 +66,4 @@ class JobStatusCollection extends Collection
 
         return $trackedJobs;
     }
-
 }

@@ -3,11 +3,7 @@
 namespace JobStatus\Search;
 
 use JobStatus\Enums\Status;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Collections\JobStatusCollection;
-use JobStatus\Search\Collections\TrackedJobCollection;
-use JobStatus\Search\Result\Results;
-use JobStatus\Search\Result\TrackedJob;
 
 class JobStatusSearcher
 {

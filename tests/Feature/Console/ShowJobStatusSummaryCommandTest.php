@@ -7,7 +7,6 @@ use JobStatus\Tests\TestCase;
 
 class ShowJobStatusSummaryCommandTest extends TestCase
 {
-
     /** @test */
     public function it_shows_the_right_data_for_one_job_type()
     {

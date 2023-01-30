@@ -119,7 +119,7 @@ class JobStatusSearcherTest extends TestCase
         $results = (new JobStatusSearcher())
             ->whereUpdatedBefore(Carbon::now()->subHours(4))
             ->get()
-            ;
+        ;
 
         $this->assertCount(3, $results);
         $this->assertEquals($results->pluck('id')->sort()->values()->values(), $set1->pluck('id')->sort()->values()->values());
