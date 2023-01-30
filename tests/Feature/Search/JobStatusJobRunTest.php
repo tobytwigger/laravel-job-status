@@ -331,8 +331,8 @@ class JobStatusJobRunTest extends TestCase
 
         $exception = JobException::factory()->create();
         $jobStatus = JobStatus::factory()->create([
-            'job_alias' => 'my-job-alias',
-            'job_class' => 'My_Fake_Class',
+            'alias' => 'my-job-alias',
+            'class' => 'My_Fake_Class',
             'percentage' => 30.2,
             'status' => Status::CANCELLED,
             'uuid' => $uuid,

@@ -31,8 +31,8 @@ class JobQueued extends BaseListener
             }
 
             $jobStatus = JobStatus::create([
-                'job_class' => get_class($job),
-                'job_alias' => $job->alias(),
+                'class' => get_class($job),
+                'alias' => $job->alias(),
                 'percentage' => 0,
                 'status' => Status::QUEUED,
                 'uuid' => null,

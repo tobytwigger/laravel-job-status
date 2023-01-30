@@ -24,8 +24,8 @@ class JobReleasedAfterException extends BaseListener
                 return;
             }
             $jobStatus = JobStatus::create([
-                'job_class' => $modifier->getJobStatus()?->job_class,
-                'job_alias' => $modifier->getJobStatus()?->job_alias,
+                'class' => $modifier->getJobStatus()?->class,
+                'alias' => $modifier->getJobStatus()?->alias,
                 'percentage' => 0,
                 'status' => Status::QUEUED,
                 'uuid' => $event->job->uuid(),

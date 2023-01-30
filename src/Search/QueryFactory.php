@@ -24,7 +24,7 @@ class QueryFactory
     private static function addJobAlias(Builder $query, SearchParameters $parameters): Builder
     {
         if ($parameters->getJobAlias()) {
-            $query->where('job_alias', $parameters->getJobAlias());
+            $query->where('alias', $parameters->getJobAlias());
         }
 
         return $query;
@@ -42,7 +42,7 @@ class QueryFactory
     private static function addJobClass(Builder $query, SearchParameters $parameters): Builder
     {
         if ($parameters->getJobClass()) {
-            $query->where('job_class', $parameters->getJobClass());
+            $query->where('class', $parameters->getJobClass());
         }
 
         return $query;

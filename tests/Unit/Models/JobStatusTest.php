@@ -19,8 +19,8 @@ class JobStatusTest extends TestCase
     public function it_creates_a_model()
     {
         $attributes = [
-            'job_class' => 'MyJobClass',
-            'job_alias' => 'my-job-alias',
+            'class' => 'MyJobClass',
+            'alias' => 'my-job-alias',
             'percentage' => 55.3,
         ];
 

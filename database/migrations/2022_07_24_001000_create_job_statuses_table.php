@@ -14,8 +14,8 @@ return new class() extends Migration {
         Schema::create(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->nullable();
-            $table->text('job_class');
-            $table->string('job_alias');
+            $table->text('class');
+            $table->string('alias');
             $table->float('percentage')->default(0.0);
             $table->string('status')->default('queued');
             $table->timestamp('started_at', 3)->nullable();

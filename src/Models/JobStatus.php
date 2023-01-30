@@ -12,8 +12,8 @@ use JobStatus\Search\Collections\JobStatusCollection;
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
  * @property Status $status The status of the job
- * @property string $job_class The class of the job
- * @property string $job_alias The alias of the job
+ * @property string $class The class of the job
+ * @property string $alias The alias of the job
  * @property float $percentage The percentage of the way through the job we are
  */
 class JobStatus extends Model
@@ -21,7 +21,7 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_class', 'job_alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
+        'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
         'started_at', 'finished_at', 'public',
     ];
 
@@ -54,8 +54,8 @@ class JobStatus extends Model
         });
 
         static::saving(function (JobStatus $jobStatus) {
-            if ($jobStatus->job_alias === null) {
-                $jobStatus->job_alias = $jobStatus->job_class;
+            if ($jobStatus->alias === null) {
+                $jobStatus->alias = $jobStatus->class;
             }
         });
     }

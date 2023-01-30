@@ -19,8 +19,8 @@ class TrackableTest extends TestCase
     /** @test */
     public function search_returns_a_search_for_the_job()
     {
-        JobStatus::factory()->count(10)->create(['job_class' => JobFake::class, 'job_alias' => 'jobfake']);
-        JobStatus::factory()->count(15)->create(['job_class' => 'AnotherClass', 'job_alias' => 'anotherclass']);
+        JobStatus::factory()->count(10)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
+        JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'anotherclass']);
 
         $search = JobFake::search();
         $this->assertInstanceOf(JobStatusSearcher::class, $search);
@@ -30,10 +30,10 @@ class TrackableTest extends TestCase
     /** @test */
     public function search_returns_a_search_for_the_job_and_tags()
     {
-        JobStatus::factory()->count(6)->create(['job_class' => JobFake::class, 'job_alias' => 'jobfake']);
+        JobStatus::factory()->count(6)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
         JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')
-            ->count(8)->create(['job_class' => JobFake::class, 'job_alias' => 'jobfake']);
-        JobStatus::factory()->count(15)->create(['job_class' => 'AnotherClass', 'job_alias' => 'jobfake']);
+            ->count(8)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
+        JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'jobfake']);
         $search = JobFake::search(['key1' => 'val1']);
         $this->assertInstanceOf(JobStatusSearcher::class, $search);
         $this->assertCount(8, $search->get()->jobs()->first()->runs());
@@ -47,12 +47,12 @@ class TrackableTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->create();
 
-        JobStatus::factory()->count(6)->create(['job_class' => JobFake::class, 'job_alias' => 'my-fake-job']);
+        JobStatus::factory()->count(6)->create(['class' => JobFake::class, 'alias' => 'my-fake-job']);
         JobStatus::factory()
             ->has(JobStatusTag::factory()->state(['key' => 'my-first-tag', 'value' => 1]), 'tags')
             ->has(JobStatusTag::factory()->state(['key' => 'my-second-tag', 'value' => 'mytag-value']), 'tags')
-            ->count(8)->create(['job_class' => JobFake::class, 'job_alias' => 'my-fake-job']);
-        JobStatus::factory()->count(15)->create(['job_class' => 'AnotherClass', 'job_alias' => 'my-other-fake-job']);
+            ->count(8)->create(['class' => JobFake::class, 'alias' => 'my-fake-job']);
+        JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'my-other-fake-job']);
 
         $jobs = $job->history();
         $this->assertInstanceOf(TrackedJob::class, $jobs);
