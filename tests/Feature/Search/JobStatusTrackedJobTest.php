@@ -31,17 +31,10 @@ class JobStatusTrackedJobTest extends TestCase
     }
 
     /** @test */
-    public function job_class_returns_the_alias()
+    public function class_returns_the_alias()
     {
         $job = new TrackedJob('JobClass', collect(), 'job-alias');
         $this->assertEquals('JobClass', $job->jobClass());
-    }
-
-    /** @test */
-    public function job_alias_returns_the_alias()
-    {
-        $job = new TrackedJob('JobClass', collect(), 'job-alias');
-        $this->assertEquals('job-alias', $job->jobAlias());
     }
 
     /** @test */

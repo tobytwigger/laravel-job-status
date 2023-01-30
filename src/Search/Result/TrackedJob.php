@@ -54,11 +54,6 @@ class TrackedJob implements Arrayable, Jsonable
 
     public function alias(): string
     {
-        return $this->jobAlias();
-    }
-
-    public function jobAlias(): string
-    {
         return $this->alias;
     }
 

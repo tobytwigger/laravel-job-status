@@ -45,13 +45,13 @@ class ShowJobStatusSummaryCommand extends Command
     {
         $statuses = JobStatus::when(
                 $this->option('class'),
-                fn (Builder $query) => $query->where('job_class', $this->option('class'))
+                fn (Builder $query) => $query->where('class', $this->option('class'))
             )
             ->when(
                 $this->option('alias'),
-                fn (Builder $query) => $query->where('job_alias', $this->option('alias'))
+                fn (Builder $query) => $query->where('alias', $this->option('alias'))
             )
-            ->orderBy('job_class')
+            ->orderBy('class')
             ->get();
 
         $data = $statuses->jobs()->map(fn (TrackedJob $trackedJob) => [

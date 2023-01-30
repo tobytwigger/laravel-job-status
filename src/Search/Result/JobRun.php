@@ -48,8 +48,8 @@ class JobRun implements Arrayable, Jsonable
     public function toArray()
     {
         return [
-            'alias' => $this->jobStatus->job_alias,
-            'class' => $this->jobStatus->job_class,
+            'alias' => $this->jobStatus->alias,
+            'class' => $this->jobStatus->class,
             'percentage' => $this->jobStatus->percentage,
             'status' => $this->jobStatus->status,
             'uuid' => $this->jobStatus->uuid,

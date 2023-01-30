@@ -84,8 +84,8 @@ class BaseListener
                 throw new \RuntimeException('Unable to extract job payload.');
             }
             $jobStatus = JobStatus::create([
-                'job_class' => get_class($command),
-                'job_alias' => $command->alias(),
+                'class' => get_class($command),
+                'alias' => $command->alias(),
                 'percentage' => 0,
                 'status' => Status::QUEUED,
                 'uuid' => $job->uuid(),

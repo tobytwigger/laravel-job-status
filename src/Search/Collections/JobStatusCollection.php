@@ -35,16 +35,16 @@ class JobStatusCollection extends Collection
     public function jobs(): TrackedJobCollection
     {
         $queryResult = $this
-            ->groupBy(['job_alias']);
+            ->groupBy(['alias']);
 
         $trackedJobs = new TrackedJobCollection();
         foreach ($queryResult as $jobAlias => $sameJobTypes) {
             // Groups of the same run
             $exactJobGrouped = $sameJobTypes->groupBy('uuid');
-            $jobClass = $sameJobTypes->filter(fn (JobStatus $jobStatus) => $jobStatus->job_alias !== null)
+            $jobClass = $sameJobTypes->filter(fn (JobStatus $jobStatus) => $jobStatus->alias !== null)
                 ->sortByDesc('created_at')
                 ->first()
-                ?->job_class;
+                ?->class;
 
             $jobRuns = new JobRunCollection();
             foreach ($exactJobGrouped as $uuid => $runs) {

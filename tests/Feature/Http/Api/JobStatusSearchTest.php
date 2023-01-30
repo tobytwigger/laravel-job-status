@@ -13,7 +13,7 @@ class JobStatusSearchTest extends TestCase
     /** @test */
     public function it_gets_a_requested_job_status()
     {
-        $jobStatus = JobStatus::factory()->has(JobStatusTag::factory(['key' => 'one', 'value' => 'yes']), 'tags')->create(['job_alias' => 'mystatus']);
+        $jobStatus = JobStatus::factory()->has(JobStatusTag::factory(['key' => 'one', 'value' => 'yes']), 'tags')->create(['alias' => 'mystatus']);
         JobStatus::factory()->count(10)->create();
 
         $statusQuery = [
@@ -23,8 +23,8 @@ class JobStatusSearchTest extends TestCase
         $response = $this->getJson(route('job-status.search', $statusQuery));
         $response->assertJson([
             'id' => $jobStatus->id,
-            'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
         ]);
     }
 
@@ -34,7 +34,7 @@ class JobStatusSearchTest extends TestCase
         $jobStatus = JobStatus::factory()->has(
             JobStatusTag::factory(['key' => 'one', 'value' => 'yes']),
             'tags'
-        )->create(['job_alias' => 'mystatus', 'status' => \JobStatus\Enums\Status::STARTED]);
+        )->create(['alias' => 'mystatus', 'status' => \JobStatus\Enums\Status::STARTED]);
         JobStatus::factory()->count(10)->create();
 
         $statusQuery = [
@@ -44,8 +44,8 @@ class JobStatusSearchTest extends TestCase
         $response = $this->getJson(route('job-status.search', $statusQuery));
         $response->assertJson([
             'id' => $jobStatus->id,
-            'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
         ]);
     }
 
@@ -106,12 +106,12 @@ class JobStatusSearchTest extends TestCase
         $userRevealed->id = 1;
         $this->be($userRevealed);
 
-        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->job_alias]));
+        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->alias]));
         $response->assertOk();
         $response->assertJson([
             'id' => $jobStatus->id,
-            'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
         ]);
     }
 
@@ -126,7 +126,7 @@ class JobStatusSearchTest extends TestCase
         $userRevealed->id = 1;
         $this->be($userRevealed);
 
-        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->job_alias]));
+        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->alias]));
         $response->assertNotFound();
     }
 
@@ -136,7 +136,7 @@ class JobStatusSearchTest extends TestCase
         $jobStatus = JobStatus::factory()->create(['public' => false]);
         JobStatusUser::factory()->create(['user_id' => 2, 'job_status_id' => $jobStatus->id]);
 
-        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->job_alias]));
+        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->alias]));
         $response->assertNotFound();
     }
 
@@ -150,12 +150,12 @@ class JobStatusSearchTest extends TestCase
         $userRevealed->id = 1;
         $this->be($userRevealed);
 
-        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->job_alias]));
+        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->alias]));
         $response->assertOk();
         $response->assertJson([
             'id' => $jobStatus->id,
-            'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
         ]);
     }
 
@@ -170,12 +170,12 @@ class JobStatusSearchTest extends TestCase
         $userRevealed->id = 1;
         $this->be($userRevealed);
 
-        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->job_alias]));
+        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->alias]));
         $response->assertOk();
         $response->assertJson([
             'id' => $jobStatus->id,
-            'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
         ]);
     }
 
@@ -186,12 +186,12 @@ class JobStatusSearchTest extends TestCase
         $jobStatus = JobStatus::factory()->create(['public' => true]);
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
 
-        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->job_alias]));
+        $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->alias]));
         $response->assertOk();
         $response->assertJson([
             'id' => $jobStatus->id,
-            'class' => $jobStatus->job_class,
-            'alias' => $jobStatus->job_alias,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
         ]);
     }
 }

@@ -31,10 +31,10 @@ class JobStatusSearcherTest extends TestCase
     }
 
     /** @test */
-    public function it_filters_by_job_class()
+    public function it_filters_by_class()
     {
-        $set1 = JobStatus::factory()->count(3)->create(['job_class' => 'MyJobClass']);
-        $set2 = JobStatus::factory()->count(12)->create(['job_class' => 'NotMyJobClass']);
+        $set1 = JobStatus::factory()->count(3)->create(['class' => 'MyJobClass']);
+        $set2 = JobStatus::factory()->count(12)->create(['class' => 'NotMyJobClass']);
 
         $results = (new JobStatusSearcher())->whereJobClass('MyJobClass')->get();
         $this->assertCount(3, $results);
@@ -46,10 +46,10 @@ class JobStatusSearcherTest extends TestCase
     }
 
     /** @test */
-    public function it_filters_by_job_alias()
+    public function it_filters_by_alias()
     {
-        $set1 = JobStatus::factory()->count(3)->create(['job_alias' => 'MyJobAlias']);
-        $set2 = JobStatus::factory()->count(12)->create(['job_alias' => 'NotMyJobAlias']);
+        $set1 = JobStatus::factory()->count(3)->create(['alias' => 'MyJobAlias']);
+        $set2 = JobStatus::factory()->count(12)->create(['alias' => 'NotMyJobAlias']);
 
         $results = (new JobStatusSearcher())->whereJobAlias('MyJobAlias')->get();
         $this->assertCount(3, $results);
@@ -147,23 +147,23 @@ class JobStatusSearcherTest extends TestCase
     public function it_orders_runs_by_run_date()
     {
         $jobStatus1 = JobStatus::factory()->create([
-            'job_class' => 'class1', 'job_alias' => 'class1-alias', 'uuid' => '123',
+            'class' => 'class1', 'alias' => 'class1-alias', 'uuid' => '123',
             'updated_at' => now()->subMinutes(5), 'created_at' => now()->subMinutes(5),
         ]);
         $jobStatus2 = JobStatus::factory()->create([
-            'job_class' => 'class1', 'job_alias' => 'class1-alias', 'uuid' => '456',
+            'class' => 'class1', 'alias' => 'class1-alias', 'uuid' => '456',
             'updated_at' => now()->subMinutes(4), 'created_at' => now()->subMinutes(4),
         ]);
         $jobStatus3 = JobStatus::factory()->create([
-            'job_class' => 'class1', 'job_alias' => 'class1-alias', 'uuid' => '123',
+            'class' => 'class1', 'alias' => 'class1-alias', 'uuid' => '123',
             'updated_at' => now()->subMinutes(3), 'created_at' => now()->subMinutes(3),
         ]);
         $jobStatus4 = JobStatus::factory()->create([
-            'job_class' => 'class1', 'job_alias' => 'class1-alias', 'uuid' => '789',
+            'class' => 'class1', 'alias' => 'class1-alias', 'uuid' => '789',
             'updated_at' => now()->subMinutes(2), 'created_at' => now()->subMinutes(2),
         ]);
         $jobStatus5 = JobStatus::factory()->create([
-            'job_class' => 'class1', 'job_alias' => 'class1-alias', 'uuid' => '789',
+            'class' => 'class1', 'alias' => 'class1-alias', 'uuid' => '789',
             'updated_at' => now()->subMinutes(1), 'created_at' => now()->subMinutes(1),
         ]);
 
