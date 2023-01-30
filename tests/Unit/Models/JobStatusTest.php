@@ -354,5 +354,4 @@ class JobStatusTest extends TestCase
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
     }
-
 }
