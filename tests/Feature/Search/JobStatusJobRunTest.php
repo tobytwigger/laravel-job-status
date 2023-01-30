@@ -39,6 +39,27 @@ class JobStatusJobRunTest extends TestCase
     }
 
     /** @test */
+    public function is_a_retry_returns_true_if_a_parent_is_set()
+    {
+        $mainJobStatus = JobStatus::factory()->create();
+        $parentJobStatus = JobStatus::factory()->create();
+
+        $run = new JobRun($mainJobStatus, new JobRun($parentJobStatus));
+
+        $this->assertTrue($run->isARetry());
+    }
+
+    /** @test */
+    public function is_a_retry_returns_false_if_a_parent_is_not_set()
+    {
+        $mainJobStatus = JobStatus::factory()->create();
+
+        $run = new JobRun($mainJobStatus, null);
+
+        $this->assertFalse($run->isARetry());
+    }
+
+    /** @test */
     public function parent_returns_the_parent()
     {
         $mainJobStatus = JobStatus::factory()->create();

@@ -13,7 +13,7 @@ class JobStatusController extends Controller
     public function search(JobStatusSearchRequest $request)
     {
         $searcher = JobStatusSearcher::query()
-            ->forUser(Auth::user()?->id)
+            ->forUser($this->resolveAuth())
             ->whereJobAlias($request->input('alias'));
 
         if ($request->has('tags')) {

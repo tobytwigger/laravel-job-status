@@ -197,4 +197,30 @@ class JobStatusSearcherTest extends TestCase
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
     }
+
+    /** @test */
+    public function without_user_limits_means_all_jobs_can_be_seen()
+    {
+        $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
+            ->count(3)->create(['public' => false]);
+        $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
+            ->count(7)->create(['public' => false]);
+        $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
+
+        $results = (new JobStatusSearcher())->forUser(1)->withoutUserLimit()->get()->raw();
+        $this->assertCount(14, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
+
+        $results = (new JobStatusSearcher())->forUser(2)->withoutUserLimit()->get()->raw();
+        $this->assertCount(14, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
+
+        $results = (new JobStatusSearcher())->forUser(1)->forUser(2)->withoutUserLimit()->get()->raw();
+        $this->assertCount(14, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
+
+        $results = (new JobStatusSearcher())->withoutUserLimit()->get()->raw();
+        $this->assertCount(14, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
+    }
 }
