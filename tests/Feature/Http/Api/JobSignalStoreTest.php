@@ -2,13 +2,9 @@
 
 namespace JobStatus\Tests\Feature\Http\Api;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Auth;
 use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusTag;
 use JobStatus\Models\JobStatusUser;
-use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
 class JobSignalStoreTest extends TestCase
@@ -212,6 +208,4 @@ class JobSignalStoreTest extends TestCase
         ]);
         $response->assertOk();
     }
-
-
 }

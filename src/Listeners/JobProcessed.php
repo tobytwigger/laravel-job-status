@@ -47,7 +47,7 @@ class JobProcessed extends BaseListener
                     'uuid' => $event->job->uuid(),
                     'connection_name' => $event->job->getConnectionName(),
                     'job_id' => $event->job->getJobId(),
-                    'public' => $modifier->getJobStatus()?->public
+                    'public' => $modifier->getJobStatus()?->public,
                 ]);
 
                 $newModifier = JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
@@ -59,7 +59,7 @@ class JobProcessed extends BaseListener
                     ]);
                 }
 
-                foreach($modifier->getJobStatus()?->users()->get() as $user) {
+                foreach ($modifier->getJobStatus()?->users()->get() as $user) {
                     $newModifier->grantAccessTo($user->user_id);
                 }
             }

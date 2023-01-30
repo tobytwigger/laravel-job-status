@@ -110,6 +110,7 @@ class JobFakeFactory
     public function setUsers(array $users): JobFakeFactory
     {
         $this->users = $users;
+
         return $this;
     }
 

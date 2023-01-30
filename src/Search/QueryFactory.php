@@ -86,7 +86,7 @@ class QueryFactory
         if($parameters->isWithoutUserLimit() === false) {
             $query->where(function(Builder $query) use ($parameters) {
                 $users = $parameters->getUsers();
-                $query->whereHas('users', function(Builder $query) use ($users) {
+                $query->whereHas('users', function (Builder $query) use ($users) {
                     $query->whereIn('user_id', $users);
                 })
                     ->orWhere('public', true);

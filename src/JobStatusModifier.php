@@ -216,7 +216,7 @@ class JobStatusModifier
         if ($this->jobStatus !== null) {
             JobStatusUser::updateOrCreate([
                 'user_id' => $userId,
-                'job_status_id' => $this->jobStatus->id
+                'job_status_id' => $this->jobStatus->id,
             ]);
             $this->jobStatus->save();
         }

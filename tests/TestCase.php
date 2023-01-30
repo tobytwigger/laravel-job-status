@@ -4,7 +4,6 @@ namespace JobStatus\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JobStatus\JobStatusServiceProvider;
-use JobStatus\Tests\fakes\JobFake;
 use Prophecy\PhpUnit\ProphecyTrait;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -36,5 +35,4 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'prefix'   => '',
         ]);
     }
-
 }

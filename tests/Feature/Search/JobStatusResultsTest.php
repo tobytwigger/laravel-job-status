@@ -306,5 +306,4 @@ class JobStatusResultsTest extends TestCase
 
         $this->assertEquals(collect($array)->toJson(), $results->toJson());
     }
-
 }

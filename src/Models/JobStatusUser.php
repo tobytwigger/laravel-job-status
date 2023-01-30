@@ -4,7 +4,6 @@ namespace JobStatus\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use JobStatus\Database\Factories\JobStatusTagFactory;
 use JobStatus\Database\Factories\JobStatusUserFactory;
 
 /**
@@ -36,5 +35,4 @@ class JobStatusUser extends Model
     {
         return new JobStatusUserFactory();
     }
-
 }
