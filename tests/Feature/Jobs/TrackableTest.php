@@ -24,7 +24,7 @@ class TrackableTest extends TestCase
 
         $search = JobFake::search();
         $this->assertInstanceOf(JobStatusSearcher::class, $search);
-        $this->assertCount(10, $search->get()->first()->runs());
+        $this->assertCount(10, $search->get()->jobs()->first()->runs());
     }
 
     /** @test */
@@ -36,7 +36,7 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['job_class' => 'AnotherClass', 'job_alias' => 'jobfake']);
         $search = JobFake::search(['key1' => 'val1']);
         $this->assertInstanceOf(JobStatusSearcher::class, $search);
-        $this->assertCount(8, $search->get()->first()->runs());
+        $this->assertCount(8, $search->get()->jobs()->first()->runs());
     }
 
     /** @test */

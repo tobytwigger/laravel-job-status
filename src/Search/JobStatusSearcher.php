@@ -3,6 +3,9 @@
 namespace JobStatus\Search;
 
 use JobStatus\Enums\Status;
+use JobStatus\Search\Collections\JobRunCollection;
+use JobStatus\Search\Collections\JobStatusCollection;
+use JobStatus\Search\Collections\TrackedJobCollection;
 use JobStatus\Search\Result\Results;
 use JobStatus\Search\Result\TrackedJob;
 
@@ -89,18 +92,11 @@ class JobStatusSearcher
         return $this;
     }
 
-    public function get(): Results
+    public function get(): JobStatusCollection
     {
         return ResultsFactory::fromQuery(
             QueryFactory::fromSearchParameters($this->searchParameters)
         );
-    }
-
-    public function first(): ?TrackedJob
-    {
-        return ResultsFactory::fromQuery(
-            QueryFactory::fromSearchParameters($this->searchParameters)
-        )->first();
     }
 
     public function whereTags(array $tags): JobStatusSearcher

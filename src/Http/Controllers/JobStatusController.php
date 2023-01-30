@@ -20,7 +20,7 @@ class JobStatusController extends Controller
             $searcher->whereTags($request->input('tags'));
         }
 
-        $result = $searcher->first()?->latest();
+        $result = $searcher->get()->runs()->latest();
         if ($result === null) {
             abort(404, 'Could not find a matching job status');
         }

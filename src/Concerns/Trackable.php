@@ -37,7 +37,7 @@ trait Trackable
             $search->whereTag($key, $value);
         }
 
-        return $search->get()->first();
+        return $search->get()->jobs()->first();
     }
 
     public function getJobStatus(): ?JobStatus

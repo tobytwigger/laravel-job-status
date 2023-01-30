@@ -20,6 +20,7 @@ class TrackedJobController extends Controller
             ->withoutUserLimit()
             ->whereJobAlias($alias)
             ->get()
+            ->jobs()
             ->first();
     }
 }
