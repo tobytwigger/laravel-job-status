@@ -6,15 +6,15 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use JobStatus\Http\Requests\JobStatusSearchRequest;
 use JobStatus\JobStatusServiceProvider;
-use JobStatus\Search\JobStatusSearcher;
+use JobStatus\Models\JobStatus;
 
 class JobStatusController extends Controller
 {
     public function search(JobStatusSearchRequest $request)
     {
-        $searcher = JobStatusSearcher::query()
-            ->forUser($this->resolveAuth())
-            ->whereJobAlias($request->input('alias'));
+        $searcher = JobStatus::query()
+            ->forUsers($this->resolveAuth())
+            ->whereAlias($request->input('alias'));
 
         if ($request->has('tags')) {
             $searcher->whereTags($request->input('tags'));

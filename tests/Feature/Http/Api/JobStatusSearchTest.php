@@ -187,6 +187,7 @@ class JobStatusSearchTest extends TestCase
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
 
         $response = $this->getJson(route('job-status.search', ['alias' => $jobStatus->alias]));
+
         $response->assertOk();
         $response->assertJson([
             'id' => $jobStatus->id,

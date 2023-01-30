@@ -1,6 +1,6 @@
 <?php
 
-namespace JobStatus\Tests\Feature\Search;
+namespace JobStatus\Tests\Unit\Search\Result;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -15,7 +15,7 @@ use JobStatus\Models\JobStatusUser;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Tests\TestCase;
 
-class JobStatusJobRunTest extends TestCase
+class JobRunTest extends TestCase
 {
     /** @test */
     public function has_parent_returns_true_if_a_parent_is_set()

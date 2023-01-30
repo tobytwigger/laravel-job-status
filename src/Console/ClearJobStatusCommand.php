@@ -4,7 +4,6 @@ namespace JobStatus\Console;
 
 use Illuminate\Console\Command;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\JobStatusSearcher;
 
 class ClearJobStatusCommand extends Command
 {
@@ -40,10 +39,9 @@ class ClearJobStatusCommand extends Command
     {
         $hours = (int) $this->option('preserve') ?? 0;
 
-        $statuses = JobStatusSearcher::query()
-            ->whereFinished();
+        $statuses = JobStatus::whereFinished();
         if ($hours !== 0) {
-            $statuses->whereUpdatedBefore(now()->subHours($hours));
+            $statuses->where('updated_at', '<', now()->subHours($hours));
         }
         $statuses = $statuses->get();
 

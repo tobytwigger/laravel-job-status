@@ -2,8 +2,10 @@
 
 namespace JobStatus\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\Enums\Status;
@@ -15,6 +17,10 @@ use JobStatus\Search\Collections\JobStatusCollection;
  * @property string $class The class of the job
  * @property string $alias The alias of the job
  * @property float $percentage The percentage of the way through the job we are
+ *
+ * whereUuid($uuid)
+ * whereClass($class)
+ *
  */
 class JobStatus extends Model
 {
@@ -88,6 +94,76 @@ class JobStatus extends Model
     public function users()
     {
         return $this->hasMany(JobStatusUser::class);
+    }
+
+
+    public function scopeWhereUuid(Builder $query, string $uuid)
+    {
+        $query->where('uuid', $uuid);
+    }
+
+    public function scopeWhereClass(Builder $query, string $class)
+    {
+        $query->where('class', $class);
+    }
+
+    public function scopeWhereAlias(Builder $query, string $alias)
+    {
+        $query->where('alias', $alias);
+    }
+
+    public function scopeWhereTag(Builder $query, string $key, mixed $value)
+    {
+        $query->whereHas('tags', function (Builder $query) use ($key, $value) {
+            $query->where(['key' => $key, 'value' => $value]);
+        });
+    }
+
+    public function scopeWhereStatusIn(Builder $query, array $statuses)
+    {
+        $query->whereIn('status', $statuses);
+    }
+
+    public function scopeWhereStatusNotIn(Builder $query, array $statuses)
+    {
+        $query->whereNotIn('status', $statuses);
+    }
+
+    public function scopeWhereFinished(Builder $query)
+    {
+        $query->whereStatusIn([
+            Status::FAILED, Status::SUCCEEDED, Status::CANCELLED,
+        ]);
+    }
+
+    public function scopeWhereNotFinished(Builder $query)
+    {
+        $query->whereStatusIn([
+            Status::QUEUED, Status::STARTED,
+        ]);
+    }
+
+    public function scopeWhereTags(Builder $query, array $tags)
+    {
+        foreach ($tags as $key => $value) {
+            $query->whereTag($key, $value);
+        }
+    }
+
+    public function scopeForUsers(Builder $query, int|array|null $userIds)
+    {
+        if ($userIds === null) {
+            $query->where('public', true);
+        } else {
+            $userIds = Arr::wrap($userIds);
+
+            $query->where(function (Builder $query) use ($userIds) {
+                $query->whereHas('users', function (Builder $query) use ($userIds) {
+                    $query->whereIn('user_id', $userIds);
+                })
+                    ->orWhere('public', true);
+            });
+        }
     }
 
     public static function newFactory()

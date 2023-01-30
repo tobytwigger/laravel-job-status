@@ -1,13 +1,13 @@
 <?php
 
-namespace JobStatus\Tests\Feature\Search;
+namespace JobStatus\Tests\Unit\Search\Result;
 
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Tests\TestCase;
 
-class JobStatusTrackedJobTest extends TestCase
+class TrackedJobTest extends TestCase
 {
     /** @test */
     public function runs_returns_the_runs()

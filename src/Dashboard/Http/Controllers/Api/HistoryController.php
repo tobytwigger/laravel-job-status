@@ -3,15 +3,13 @@
 namespace JobStatus\Dashboard\Http\Controllers\Api;
 
 use JobStatus\Dashboard\Http\Controllers\Controller;
-use JobStatus\Search\JobStatusSearcher;
+use JobStatus\Models\JobStatus;
 
 class HistoryController extends Controller
 {
     public function __invoke()
     {
-        return JobStatusSearcher::query()
-            ->withoutUserLimit()
-            ->get()
+        return JobStatus::all()
             ->runs();
     }
 }
