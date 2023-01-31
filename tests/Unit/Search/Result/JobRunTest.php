@@ -385,7 +385,7 @@ class JobRunTest extends TestCase
                 $status1->toArray(), $status2->toArray(),
             ]),
             'batch_id' => $batch->id,
-            'batch_id_uuid' => $batch->batch_id
+            'batch_id_uuid' => $batch->batch_id,
         ];
         $this->assertEquals($array, $run->toArray());
         $this->assertIsString($run->toJson());

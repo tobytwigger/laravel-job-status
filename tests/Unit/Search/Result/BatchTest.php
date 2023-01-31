@@ -60,7 +60,6 @@ class BatchTest extends TestCase
 
         $this->assertEquals($attributes, $batch->toArray());
         $this->assertEquals(json_encode($attributes), $batch->toJson());
-
     }
 
     /** @test */
