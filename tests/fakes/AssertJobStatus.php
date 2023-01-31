@@ -8,7 +8,6 @@ use JobStatus\Models\JobStatus;
 
 class AssertJobStatus
 {
-
     private JobStatus $jobStatus;
 
     public function __construct(JobStatus $jobStatus)
@@ -30,7 +29,7 @@ class AssertJobStatus
         return $this;
     }
 
-    public function hasStatus(\JobStatus\Enums\Status $status)
+    public function hasStatus(Status $status)
     {
         Assert::assertEquals($status, $this->jobStatus->status);
 
@@ -83,7 +82,7 @@ class AssertJobStatus
     {
         Assert::assertCount(count($tags), $this->jobStatus->tags);
         $i = 0;
-        foreach($tags as $key => $value) {
+        foreach ($tags as $key => $value) {
             Assert::assertEquals($key, $this->jobStatus->tags[$i]->key);
             Assert::assertEquals($value, $this->jobStatus->tags[$i]->value);
             $i++;
@@ -103,7 +102,7 @@ class AssertJobStatus
     {
         Assert::assertCount(count($messages), $this->jobStatus->messages);
         $i = 0;
-        foreach($messages as $index => $messageArray) {
+        foreach ($messages as $index => $messageArray) {
             Assert::assertEquals($messageArray['message'], $this->jobStatus->messages[$i]->message);
             Assert::assertEquals($messageArray['type'], $this->jobStatus->messages[$i]->type);
             $i++;
@@ -128,7 +127,7 @@ class AssertJobStatus
     {
         Assert::assertCount(count($statuses), $this->jobStatus->statuses);
         $i = 0;
-        foreach($statuses as $status) {
+        foreach ($statuses as $status) {
             Assert::assertEquals($status, $this->jobStatus->statuses[$i]->status);
             $i++;
         }
@@ -140,7 +139,7 @@ class AssertJobStatus
     {
         Assert::assertCount(count($users), $this->jobStatus->users);
         $i = 0;
-        foreach($users as $user) {
+        foreach ($users as $user) {
             Assert::assertEquals($user, $this->jobStatus->users[$i]->user_id);
             $i++;
         }
@@ -161,6 +160,4 @@ class AssertJobStatus
 
         return $this;
     }
-
-
 }

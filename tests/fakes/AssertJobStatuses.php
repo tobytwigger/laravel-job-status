@@ -7,11 +7,9 @@ use JobStatus\Models\JobStatus;
 
 class AssertJobStatuses
 {
-
-
     public function hasCountInDatabase(int $count): AssertJobStatuses
     {
-       Assert::assertCount($count, JobStatus::all());
+        Assert::assertCount($count, JobStatus::all());
 
         return $this;
     }

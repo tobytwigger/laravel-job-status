@@ -3,11 +3,9 @@
 namespace JobStatus;
 
 use Illuminate\Queue\Connectors\DatabaseConnector;
-use Illuminate\Queue\DatabaseQueue;
 
 class DatabaseConnectorDecorator extends DatabaseConnector
 {
-
     /**
      * Establish a queue connection.
      *
@@ -24,5 +22,4 @@ class DatabaseConnectorDecorator extends DatabaseConnector
             $config['after_commit'] ?? null
         );
     }
-
 }

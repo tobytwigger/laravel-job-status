@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Feature\Listeners\Workflow;
 
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\Assert;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
@@ -422,87 +421,95 @@ class SyncQueueTest extends TestCase
 
         $realBatch = JobFakeFactory::dispatchBatchSync(
             Bus::batch([
-                $job1, $job2, $job3
+                $job1, $job2, $job3,
             ])->name('My Batch Name')
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
-            ->withIndex(0, fn(AssertBatch $batch) => $batch
-                ->hasName('My Batch Name')
-                ->hasBatchId($realBatch->id)
+            ->withIndex(
+                0,
+                fn (AssertBatch $batch) => $batch
+                    ->hasName('My Batch Name')
+                    ->hasBatchId($realBatch->id)
             );
 
         $this->assertJobs()
             ->hasCountInDatabase(3)
-            ->withIndex(0, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-one')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'one',
-                    'my-second-tag' => 'one'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                0,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-one')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'one',
+                        'my-second-tag' => 'one',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(1, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-two')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'two',
-                    'my-second-tag' => 'two'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                1,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-two')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'two',
+                        'my-second-tag' => 'two',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(2, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-three')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'three',
-                    'my-second-tag' => 'three'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                2,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-three')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'three',
+                        'my-second-tag' => 'three',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             );
     }
 
@@ -537,7 +544,7 @@ class SyncQueueTest extends TestCase
         try {
             $realBatch = JobFakeFactory::dispatchBatchSync(
                 Bus::batch([
-                    $job1, $job2, $job3
+                    $job1, $job2, $job3,
                 ])->name('My Batch Name')
             );
         } catch (\Exception $e) {
@@ -597,7 +604,7 @@ class SyncQueueTest extends TestCase
         try {
             $realBatch = JobFakeFactory::dispatchBatchSync(
                 Bus::batch([
-                    $job1, $job2, $job3
+                    $job1, $job2, $job3,
                 ])->name('My Batch Name')
             );
         } catch (\Exception $e) {
@@ -647,92 +654,100 @@ class SyncQueueTest extends TestCase
 
         $realBatch = JobFakeFactory::dispatchBatchSync(
             Bus::batch([
-                $job1, $job2, $job3
+                $job1, $job2, $job3,
             ])->name('My Batch Name')
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
-            ->withIndex(0, fn(AssertBatch $batch) => $batch
-                ->hasName('My Batch Name')
-                ->hasBatchId($realBatch->id)
+            ->withIndex(
+                0,
+                fn (AssertBatch $batch) => $batch
+                    ->hasName('My Batch Name')
+                    ->hasBatchId($realBatch->id)
             );
 
         $this->assertJobs()
             ->hasCountInDatabase(3)
-            ->withIndex(0, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-one')
-                ->hasStatus(Status::CANCELLED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'one',
-                    'my-second-tag' => 'one'
-                ])
-                ->withMessages([
-                    ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING]
-                ])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::CANCELLED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                0,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-one')
+                    ->hasStatus(Status::CANCELLED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'one',
+                        'my-second-tag' => 'one',
+                    ])
+                    ->withMessages([
+                        ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
+                    ])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::CANCELLED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(1, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-two')
-                ->hasStatus(Status::CANCELLED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'two',
-                    'my-second-tag' => 'two'
-                ])
-                ->withMessages([
-                    ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING]
-                ])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::CANCELLED,
-                ])
-                ->withUsers([])
-            )->withIndex(2, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasStatus(Status::CANCELLED)
-                ->hasAlias('my-fake-job-three')
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'three',
-                    'my-second-tag' => 'three'
-                ])
-                ->withMessages([
-                    ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING]
-                ])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::CANCELLED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                1,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-two')
+                    ->hasStatus(Status::CANCELLED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'two',
+                        'my-second-tag' => 'two',
+                    ])
+                    ->withMessages([
+                        ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
+                    ])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::CANCELLED,
+                    ])
+                    ->withUsers([])
+            )->withIndex(
+                2,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasStatus(Status::CANCELLED)
+                    ->hasAlias('my-fake-job-three')
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'three',
+                        'my-second-tag' => 'three',
+                    ])
+                    ->withMessages([
+                        ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
+                    ])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::CANCELLED,
+                    ])
+                    ->withUsers([])
             );
     }
 
@@ -777,7 +792,7 @@ class SyncQueueTest extends TestCase
         try {
             $realBatch = JobFakeFactory::dispatchBatchSync(
                 Bus::batch([
-                    $job1, $job2, $job3
+                    $job1, $job2, $job3,
                 ])->name('My Batch Name')
             );
         } catch (\Exception $e) {
@@ -830,135 +845,147 @@ class SyncQueueTest extends TestCase
 
         $realBatch = JobFakeFactory::dispatchBatchSync(
             Bus::batch([
-                $job1, $job2, $job3
+                $job1, $job2, $job3,
             ])->name('My Batch Name'),
             5
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
-            ->withIndex(0, fn(AssertBatch $batch) => $batch
-                ->hasName('My Batch Name')
-                ->hasBatchId($realBatch->id)
+            ->withIndex(
+                0,
+                fn (AssertBatch $batch) => $batch
+                    ->hasName('My Batch Name')
+                    ->hasBatchId($realBatch->id)
             );
 
         $this->assertJobs()
             ->hasCountInDatabase(5)
-            ->withIndex(0, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-one')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'one',
-                    'my-second-tag' => 'one'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                0,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-one')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'one',
+                        'my-second-tag' => 'one',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(1, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-four')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'four',
-                    'my-second-tag' => 'four'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                1,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-four')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'four',
+                        'my-second-tag' => 'four',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(2, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-five')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'five',
-                    'my-second-tag' => 'five'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                2,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-five')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'five',
+                        'my-second-tag' => 'five',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(3, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-two')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'two',
-                    'my-second-tag' => 'two'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                3,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-two')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'two',
+                        'my-second-tag' => 'two',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(4, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-three')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'three',
-                    'my-second-tag' => 'three'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
-            );;
+            ->withIndex(
+                4,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-three')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'three',
+                        'my-second-tag' => 'three',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
+            );
 
         // Check the batch updates to manage it
     }
@@ -989,7 +1016,6 @@ class SyncQueueTest extends TestCase
     /** @test */
     public function it_handles_chained_jobs_within_a_batch()
     {
-
         $job1 = (new JobFakeFactory())
             ->setAlias('my-fake-job-one')
             ->setTags(['my-first-tag' => 'one', 'my-second-tag' => 'one'])
@@ -1020,111 +1046,121 @@ class SyncQueueTest extends TestCase
 
         $realBatch = JobFakeFactory::dispatchBatchSync(
             Bus::batch([
-                [$job1, $job2], [$job3, $job4]
+                [$job1, $job2], [$job3, $job4],
             ])->name('My Batch Name'),
             4
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
-            ->withIndex(0, fn(AssertBatch $batch) => $batch
-                ->hasName('My Batch Name')
-                ->hasBatchId($realBatch->id)
+            ->withIndex(
+                0,
+                fn (AssertBatch $batch) => $batch
+                    ->hasName('My Batch Name')
+                    ->hasBatchId($realBatch->id)
             );
 
         $this->assertJobs()
             ->hasCountInDatabase(4)
-            ->withIndex(0, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-one')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'one',
-                    'my-second-tag' => 'one'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                0,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-one')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'one',
+                        'my-second-tag' => 'one',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(1, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-two')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'two',
-                    'my-second-tag' => 'two'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                1,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-two')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'two',
+                        'my-second-tag' => 'two',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(2, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-three')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'three',
-                    'my-second-tag' => 'three'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                2,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-three')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'three',
+                        'my-second-tag' => 'three',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             )
-            ->withIndex(3, fn(AssertJobStatus $jobStatus) => $jobStatus
-                ->hasClass(JobFake::class)
-                ->hasAlias('my-fake-job-four')
-                ->hasStatus(Status::SUCCEEDED)
-                ->hasPercentage(100)
-                ->hasJobId('')
-                ->hasConnectionName('sync')
-                ->hasBatchId($realBatch->id)
-                ->hasNonNullUuid()
-                ->isPublic(true)
-                ->withTags([
-                    'my-first-tag' => 'four',
-                    'my-second-tag' => 'four'
-                ])
-                ->withMessages([])
-                ->withNoException()
-                ->withPastStatuses([
-                    \JobStatus\Enums\Status::QUEUED,
-                    \JobStatus\Enums\Status::STARTED,
-                    \JobStatus\Enums\Status::SUCCEEDED,
-                ])
-                ->withUsers([])
+            ->withIndex(
+                3,
+                fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasClass(JobFake::class)
+                    ->hasAlias('my-fake-job-four')
+                    ->hasStatus(Status::SUCCEEDED)
+                    ->hasPercentage(100)
+                    ->hasJobId('')
+                    ->hasConnectionName('sync')
+                    ->hasBatchId($realBatch->id)
+                    ->hasNonNullUuid()
+                    ->isPublic(true)
+                    ->withTags([
+                        'my-first-tag' => 'four',
+                        'my-second-tag' => 'four',
+                    ])
+                    ->withMessages([])
+                    ->withNoException()
+                    ->withPastStatuses([
+                        \JobStatus\Enums\Status::QUEUED,
+                        \JobStatus\Enums\Status::STARTED,
+                        \JobStatus\Enums\Status::SUCCEEDED,
+                    ])
+                    ->withUsers([])
             );
     }
 }

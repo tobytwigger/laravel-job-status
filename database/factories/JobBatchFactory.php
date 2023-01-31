@@ -2,10 +2,8 @@
 
 namespace JobStatus\Database\Factories;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use JobStatus\Models\JobBatch;
-use JobStatus\Models\JobStatus;
 
 class JobBatchFactory extends Factory
 {
@@ -20,8 +18,7 @@ class JobBatchFactory extends Factory
     {
         return [
             'batch_id' => $this->faker->bothify('##??##??##??##??#'),
-            'name' => $this->faker->word
+            'name' => $this->faker->word,
         ];
     }
-
 }

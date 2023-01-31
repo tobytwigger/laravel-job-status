@@ -4,7 +4,6 @@ namespace JobStatus;
 
 use Illuminate\Bus\BatchRepository;
 use Illuminate\Bus\Events\BatchDispatched;
-use Illuminate\Queue\Connectors\DatabaseConnector;
 use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
@@ -96,8 +95,8 @@ class JobStatusServiceProvider extends ServiceProvider
 //        });
 
 
-        app()->booted(function() {
-            Queue::addConnector('database', function() {
+        app()->booted(function () {
+            Queue::addConnector('database', function () {
                 return new DatabaseConnectorDecorator($this->app['db']);
             });
         });

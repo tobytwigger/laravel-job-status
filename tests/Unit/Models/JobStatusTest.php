@@ -357,7 +357,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_has_a_batch(){
+    public function it_has_a_batch()
+    {
         $batch = JobBatch::factory()->create();
         $status = JobStatus::factory()->create(['batch_id' => $batch->id]);
 
@@ -366,10 +367,10 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function batch_is_null_if_no_batch_id_set(){
+    public function batch_is_null_if_no_batch_id_set()
+    {
         $status = JobStatus::factory()->create(['batch_id' => null]);
 
         $this->assertNull($status->batch);
     }
-
 }

@@ -2,11 +2,9 @@
 
 namespace JobStatus\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use JobStatus\Database\Factories\JobBatchFactory;
-use JobStatus\Database\Factories\JobSignalFactory;
 
 /**
  * @property string $signal The signal that was sent to the job
@@ -16,7 +14,7 @@ class JobBatch extends Model
     use HasFactory;
 
     protected $fillable = [
-        'batch_id', 'name'
+        'batch_id', 'name',
     ];
 
     public function __construct(array $attributes = [])

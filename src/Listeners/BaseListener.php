@@ -85,7 +85,7 @@ class BaseListener
                 throw new \RuntimeException('Unable to extract job payload.');
             }
             $batchId = null;
-            if(method_exists($command, 'batch') && $command->batch() !== null) {
+            if (method_exists($command, 'batch') && $command->batch() !== null) {
                 $batchId = JobBatch::firstOrCreate(
                     ['batch_id' => $command->batch()->id],
                     ['name' => $command->batch()->name]

@@ -204,7 +204,7 @@ class JobFakeFactory
 
     private static function createBatchesTable()
     {
-        if(!Schema::hasTable('job_batches')) {
+        if (!Schema::hasTable('job_batches')) {
             Schema::create('job_batches', function (Blueprint $table) {
                 $table->string('id')->primary();
                 $table->string('name');
@@ -222,7 +222,7 @@ class JobFakeFactory
 
     private static function createFailedJobsTable()
     {
-        if(!Schema::hasTable('failed_jobs')) {
+        if (!Schema::hasTable('failed_jobs')) {
             Schema::create('failed_jobs', function (Blueprint $table) {
                 $table->id();
                 $table->string('uuid')->unique();
