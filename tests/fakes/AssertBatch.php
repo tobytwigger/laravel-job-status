@@ -7,7 +7,6 @@ use JobStatus\Models\JobBatch;
 
 class AssertBatch
 {
-
     private JobBatch $jobBatch;
 
     public function __construct(JobBatch $jobBatch)
@@ -28,5 +27,4 @@ class AssertBatch
 
         return $this;
     }
-
 }

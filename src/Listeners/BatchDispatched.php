@@ -6,7 +6,6 @@ use JobStatus\Models\JobBatch;
 
 class BatchDispatched
 {
-
     public function handle(\Illuminate\Bus\Events\BatchDispatched $event)
     {
         JobBatch::firstOrCreate(
@@ -14,5 +13,4 @@ class BatchDispatched
             ['name' => $event->batch->name]
         );
     }
-
 }

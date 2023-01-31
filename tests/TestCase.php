@@ -2,9 +2,7 @@
 
 namespace JobStatus\Tests;
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Schema;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;

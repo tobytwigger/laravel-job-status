@@ -7,7 +7,6 @@ use JobStatus\Models\JobBatch;
 
 class AssertBatches
 {
-
     public function hasCountInDatabase(int $count): AssertBatches
     {
         Assert::assertCount($count, JobBatch::all());
@@ -23,5 +22,4 @@ class AssertBatches
 
         return $this;
     }
-
 }

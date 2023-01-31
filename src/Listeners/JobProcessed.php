@@ -76,7 +76,7 @@ class JobProcessed extends BaseListener
         }
     }
 
-    private function batchIsCancelled(?\JobStatus\Models\JobStatus $jobStatus): bool
+    private function batchIsCancelled(?JobStatus $jobStatus): bool
     {
         if ($jobStatus === null) {
             return false;
@@ -85,6 +85,7 @@ class JobProcessed extends BaseListener
         if ($batchId !== null) {
             /** @var Batch|null $batch */
             $batch = app(BatchRepository::class)->find($batchId);
+
             return $batch?->cancelled() ?? false;
         }
 

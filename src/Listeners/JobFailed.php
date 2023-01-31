@@ -56,11 +56,10 @@ class JobFailed extends BaseListener
         if ($batchId !== null) {
             /** @var Batch|null $batch */
             $batch = app(BatchRepository::class)->find($batchId);
+
             return $batch?->cancelled() ?? false;
         }
 
         return false;
     }
-
-
 }

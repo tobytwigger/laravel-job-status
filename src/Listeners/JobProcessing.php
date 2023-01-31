@@ -5,7 +5,6 @@ namespace JobStatus\Listeners;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\BatchRepository;
 use JobStatus\Enums\Status;
-use JobStatus\Models\JobBatch;
 
 /**
  * Fired when a job is processing. This happens when the queue worker picks up the job.
@@ -27,10 +26,10 @@ class JobProcessing extends BaseListener
                 $modifier->setStartedAt(now());
 
                 $batchId = $modifier->getJobStatus()?->batch?->batch_id;
-                if($batchId !== null) {
+                if ($batchId !== null) {
                     /** @var Batch|null $batch */
                     $batch = app(BatchRepository::class)->find($batchId);
-                    if($batch?->cancelled()) {
+                    if ($batch?->cancelled()) {
                         if ($modifier !== null) {
                             $modifier->setFinishedAt(now());
                             $modifier->setPercentage(100.0);
@@ -40,7 +39,6 @@ class JobProcessing extends BaseListener
                     }
                 }
             }
-
         }
     }
 }
