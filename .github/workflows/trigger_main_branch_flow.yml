@@ -16,4 +16,4 @@ jobs:
     build-docs:
         uses: ./.github/workflows/build_docs.yml
     build-js:
-        uses: ./github/workflows/build_javascript.yml
+        uses: ./.github/workflows/build_javascript.yml
