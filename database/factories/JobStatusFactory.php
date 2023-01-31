@@ -28,7 +28,6 @@ class JobStatusFactory extends Factory
             'connection_name' => 'database',
             'status' => Status::QUEUED,
             'public' => true,
-            'configuration' => [],
         ];
     }
 }
