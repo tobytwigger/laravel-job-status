@@ -4,12 +4,10 @@ namespace JobStatus\Search\Result;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Collection;
 use JobStatus\Search\Collections\JobRunCollection;
 
 class Batch implements Arrayable, Jsonable
 {
-
     private Batch $batch;
 
     private JobRunCollection $runs;
@@ -45,5 +43,4 @@ class Batch implements Arrayable, Jsonable
     {
         return $this->runs()->first();
     }
-
 }

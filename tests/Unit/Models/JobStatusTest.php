@@ -352,20 +352,22 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_deletes_with_no_related_models(){
+    public function it_deletes_with_no_related_models()
+    {
         $jobStatus = JobStatus::factory()->create();
         $jobStatus->delete();
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_statuses');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_statuses');
     }
 
     /** @test */
-    public function it_deletes_related_models_when_deleted(){
+    public function it_deletes_related_models_when_deleted()
+    {
         $exception = JobException::factory()->create();
         $batch = JobBatch::factory()->create();
 
         $jobStatus = JobStatus::factory()->create([
             'exception_id' => $exception->id,
-            'batch_id' => $batch->id
+            'batch_id' => $batch->id,
         ]);
 
         JobMessage::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
@@ -375,13 +377,12 @@ class JobStatusTest extends TestCase
 
         $jobStatus->delete();
 
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_statuses');
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_exceptions');
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_batches');
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_messages');
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_signals');
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_status_statuses');
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix'). '_job_status_tags');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_statuses');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_exceptions');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_batches');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_messages');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_signals');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_statuses');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_tags');
     }
-
 }
