@@ -2,6 +2,9 @@
 
 namespace JobStatus\Tests\Feature\Console;
 
+use JobStatus\Enums\Status;
+use JobStatus\Models\JobBatch;
+use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
@@ -92,5 +95,61 @@ class ClearJobStatusCommandTest extends TestCase
         $this->assertCount(0, JobStatusTag::all());
         $this->assertCount(0, JobSignal::all());
         $this->assertCount(0, JobMessage::all());
+    }
+
+    /** @test */
+    public function trim_only_removes_relationships_excluding_exception_and_batch()
+    {
+        $exception = JobException::factory()->create();
+        $batch = JobBatch::factory()->create();
+
+        $jobStatus = JobStatus::factory()->create(['updated_at' => now()->subHours(7), 'status' => Status::SUCCEEDED]);
+
+        JobMessage::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+        JobSignal::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+        JobStatusStatus::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+        JobStatusTag::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_statuses', 1);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_exceptions', 1);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_batches', 1);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_messages', 5);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_signals', 5);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_status_statuses', 5);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_status_tags', 5);
+
+        $this->artisan('job-status:clear --preserve=2 --trim')
+            ->assertOk();
+
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_statuses', 1);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_exceptions', 1);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_batches', 1);
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_messages');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_signals');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_statuses');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_tags');
+    }
+
+    /** @test */
+    public function keepFailed_keeps_all_failed_jobs(){
+        JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
+        $preservedJobs3 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::FAILED]);
+        JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        $preservedJobs1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        $preservedJobs2 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::STARTED]);
+
+        $this->artisan('job-status:clear --keep-failed')
+            ->assertOk();
+
+        $this->assertCount(9, JobStatus::all());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs1[0]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs1[1]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs1[2]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs2[0]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs2[1]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs2[2]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs3[0]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs3[1]->id)->exists());
+        $this->assertTrue(JobStatus::where('id', $preservedJobs3[2]->id)->exists());
     }
 }
