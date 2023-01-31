@@ -1,18 +1,9 @@
 import {get, post} from 'src/utils/client/requestHandler';
-import {Batch, DashboardResponse, JobRun, TrackedJob} from 'src/types/api';
-import {
-  dashboard as dashboardUrl,
-  jobList as jobListUrl,
-  jobShow as jobShowUrl,
-  runShow as runShowUrl,
-  history as historyUrl,
-  signal as signalUrl,
-  batchShow as batchShowUrl,
-  batchList as batchListUrl
-} from 'src/utils/client/urlGenerator';
+import {Batch, DashboardResponse, JobFailureReason, JobRun, TrackedJob} from 'src/types/api';
+import {generateUrl} from 'src/utils/client/urlGenerator';
 
 const dashboard = (): Promise<DashboardResponse> => {
-  return get(dashboardUrl)
+  return get(generateUrl('dashboard'))
     .then(response => {
       return {
         test: ''
@@ -21,35 +12,35 @@ const dashboard = (): Promise<DashboardResponse> => {
 }
 
 const jobList = (): Promise<TrackedJob[]> => {
-  return get(jobListUrl)
+  return get(generateUrl('tracked-job'))
     .then(response => {
       return response.data as TrackedJob[];
     });
 }
 
 const jobShow = (alias: string): Promise<TrackedJob> => {
-  return get(jobShowUrl(alias))
+  return get(generateUrl('tracked-job/' + alias))
     .then(response => {
       return response.data as TrackedJob
     })
 }
 
 const runShow = (jobStatusId: number): Promise<JobRun> => {
-  return get(runShowUrl(jobStatusId))
+  return get(generateUrl('job-run/' + jobStatusId.toString()))
     .then(response => {
       return response.data as JobRun
     })
 }
 
 const history = (): Promise<JobRun[]> => {
-  return get(historyUrl)
+  return get(generateUrl('history'))
     .then(response => {
         return response.data as JobRun[]
     })
 }
 
 const signal = (jobStatusId: number, signal: string, cancel: boolean, parameters: {[key: string]: any}): Promise<void> => {
-  return post(signalUrl(jobStatusId), {
+  return post(generateUrl('signal/' + jobStatusId.toString()), {
     signal: signal,
     cancel_job: cancel ? '1' : '0',
     parameters: parameters
@@ -60,17 +51,24 @@ const signal = (jobStatusId: number, signal: string, cancel: boolean, parameters
 }
 
 const batchList = (): Promise<Batch[]> => {
-  return get(batchListUrl)
+  return get(generateUrl('batch'))
     .then(response => {
       return response.data as Batch[]
     })
 }
 
 const batchShow = (batchId: number): Promise<Batch> => {
-  return get(batchShowUrl(batchId))
+  return get(generateUrl('batch/' + batchId.toString()))
     .then(response => {
       return response.data as Batch
     })
 }
 
-export default {dashboard, jobList, jobShow, runShow, history, signal, batchList, batchShow};
+const jobFailureReasons = (alias: string): Promise<JobFailureReason[]> => {
+  return get(generateUrl('tracked-job/' + alias + '/failures'))
+    .then(response => {
+      return response.data as JobFailureReason[]
+    })
+}
+
+export default {dashboard, jobList, jobShow, runShow, history, signal, batchList, batchShow, jobFailureReasons};
