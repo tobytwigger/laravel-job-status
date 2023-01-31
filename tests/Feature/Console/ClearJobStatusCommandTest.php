@@ -131,7 +131,8 @@ class ClearJobStatusCommandTest extends TestCase
     }
 
     /** @test */
-    public function keepFailed_keeps_all_failed_jobs(){
+    public function keep_failed_keeps_all_failed_jobs()
+    {
         JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
         $preservedJobs3 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
