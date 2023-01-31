@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\fakes;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -10,7 +11,7 @@ use JobStatus\Concerns\Trackable;
 
 class JobFake implements ShouldQueue
 {
-    use Dispatchable, Trackable, InteractsWithQueue, Queueable;
+    use Dispatchable, Trackable, InteractsWithQueue, Queueable, Batchable;
 
     public int $maxExceptions = 3;
 

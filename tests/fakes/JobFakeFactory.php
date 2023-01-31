@@ -2,6 +2,8 @@
 
 namespace JobStatus\Tests\fakes;
 
+use Illuminate\Bus\Batch;
+use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
@@ -127,18 +129,48 @@ class JobFakeFactory
     {
     }
 
+    public static function dispatchBatch(PendingBatch $batch, ?int $jobCount = null): Batch
+    {
+        $jobCount = $jobCount ?? $batch->jobs->count();
+
+        $batch->onConnection('database');
+        static::createJobsTable();
+        static::createBatchesTable();
+        static::createFailedJobsTable();
+        $realBatch = $batch->dispatch();
+        for ($i = 0; $i < $jobCount; $i++) {
+            Artisan::call('queue:work database --once --stop-when-empty');
+        }
+
+        return $realBatch;
+    }
+
+    public static function dispatchBatchSync(PendingBatch $batch, ?int $jobCount = null)
+    {
+        $jobCount = $jobCount ?? $batch->jobs->count();
+
+        $batch->onConnection('sync');
+        static::createJobsTable();
+        static::createBatchesTable();
+        static::createFailedJobsTable();
+        $realBatch = $batch->dispatch();
+
+        return $realBatch;
+    }
+
     public function dispatch(int $jobsToRun = 1): JobFake
     {
         $job = $this->create();
         $job->onConnection('database');
-        $this->createJobsTable();
+        static::createJobsTable();
         app(Dispatcher::class)->dispatch($job);
         for ($i = 0; $i < $jobsToRun; $i++) {
-            Artisan::call('queue:work database --once');
+            Artisan::call('queue:work database --once --stop-when-empty');
         }
 
         return $job;
     }
+
 
     public function dispatchSync(): JobFake
     {
@@ -155,7 +187,7 @@ class JobFakeFactory
         return $this;
     }
 
-    private function createJobsTable()
+    private static function createJobsTable()
     {
         if (!Schema::hasTable('jobs')) {
             Schema::create('jobs', function (Blueprint $table) {
@@ -166,6 +198,39 @@ class JobFakeFactory
                 $table->unsignedInteger('reserved_at')->nullable();
                 $table->unsignedInteger('available_at');
                 $table->unsignedInteger('created_at');
+            });
+        }
+    }
+
+    private static function createBatchesTable()
+    {
+        if (!Schema::hasTable('job_batches')) {
+            Schema::create('job_batches', function (Blueprint $table) {
+                $table->string('id')->primary();
+                $table->string('name');
+                $table->integer('total_jobs');
+                $table->integer('pending_jobs');
+                $table->integer('failed_jobs');
+                $table->longText('failed_job_ids');
+                $table->mediumText('options')->nullable();
+                $table->integer('cancelled_at')->nullable();
+                $table->integer('created_at');
+                $table->integer('finished_at')->nullable();
+            });
+        }
+    }
+
+    private static function createFailedJobsTable()
+    {
+        if (!Schema::hasTable('failed_jobs')) {
+            Schema::create('failed_jobs', function (Blueprint $table) {
+                $table->id();
+                $table->string('uuid')->unique();
+                $table->text('connection');
+                $table->text('queue');
+                $table->longText('payload');
+                $table->longText('exception');
+                $table->timestamp('failed_at')->useCurrent();
             });
         }
     }

@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Feature\Console;
 
+use Carbon\Carbon;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
 
@@ -28,9 +29,9 @@ class ShowJobStatusSummaryCommandTest extends TestCase
     /** @test */
     public function it_shows_multiple_jobs()
     {
-        JobStatus::factory()->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::QUEUED]);
-        JobStatus::factory()->count(20)->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::FAILED]);
-        JobStatus::factory()->create(['class' => 'MySecondJob', 'alias' => 'my-second-job', 'status' => \JobStatus\Enums\Status::STARTED]);
+        JobStatus::factory()->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::QUEUED, 'created_at' => Carbon::now()->subHour()]);
+        JobStatus::factory()->count(20)->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::FAILED, 'created_at' => Carbon::now()->subHour()]);
+        JobStatus::factory()->create(['class' => 'MySecondJob', 'alias' => 'my-second-job', 'status' => \JobStatus\Enums\Status::STARTED, 'created_at' => Carbon::now()->subHours(4)]);
 
         $response = $this->artisan('job-status:summary')
             ->assertOk()

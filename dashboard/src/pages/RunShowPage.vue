@@ -117,6 +117,19 @@
               <q-item-label caption>Runtime</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item v-if="selectedRun.batch_id === null">
+            <q-item-section>
+              <q-item-label>N/A</q-item-label>
+              <q-item-label caption>Batch</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-else clickable :to="{path: '/batch/' + selectedRun.batch_id}">
+            <q-item-section>
+              <q-item-label>{{ selectedRun.batch_id_uuid }}</q-item-label>
+              <q-item-label caption>Batch</q-item-label>
+            </q-item-section>
+          </q-item>
         </q-list>
       </div>
     </div>

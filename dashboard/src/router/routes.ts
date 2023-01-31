@@ -36,6 +36,19 @@ const routes: RouteRecordRaw[] = [
     children: [{path: '', props: true, component: () => import('pages/RunShowPage.vue')}],
   },
 
+  {
+    path: '/batch',
+    name: 'batch.index',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{path: '', component:  () => import('pages/BatchListPage.vue')}]
+  },
+  {
+    path: '/batch/:batchId',
+    name: 'batch.show',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{path: '', props: true, component:  () => import('pages/BatchShowPage.vue')}],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

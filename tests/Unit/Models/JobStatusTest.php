@@ -4,6 +4,7 @@ namespace JobStatus\Tests\Unit\Models;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
@@ -175,29 +176,6 @@ class JobStatusTest extends TestCase
         $this->assertContainsOnlyInstancesOf(JobStatus::class, $collection);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /** @test */
     public function it_filters_by_uuid()
     {
@@ -353,5 +331,58 @@ class JobStatusTest extends TestCase
         $results = JobStatus::all();
         $this->assertCount(14, $results);
         $this->assertEquals($results->pluck('id')->sort()->values(), $set2->merge($set1)->merge($set3)->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_has_a_batch()
+    {
+        $batch = JobBatch::factory()->create();
+        $status = JobStatus::factory()->create(['batch_id' => $batch->id]);
+
+        $this->assertInstanceOf(JobBatch::class, $status->batch);
+        $this->assertTrue($batch->is($status->batch));
+    }
+
+    /** @test */
+    public function batch_is_null_if_no_batch_id_set()
+    {
+        $status = JobStatus::factory()->create(['batch_id' => null]);
+
+        $this->assertNull($status->batch);
+    }
+
+    /** @test */
+    public function it_deletes_with_no_related_models()
+    {
+        $jobStatus = JobStatus::factory()->create();
+        $jobStatus->delete();
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_statuses');
+    }
+
+    /** @test */
+    public function it_deletes_related_models_when_deleted()
+    {
+        $exception = JobException::factory()->create();
+        $batch = JobBatch::factory()->create();
+
+        $jobStatus = JobStatus::factory()->create([
+            'exception_id' => $exception->id,
+            'batch_id' => $batch->id,
+        ]);
+
+        JobMessage::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+        JobSignal::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+        JobStatusStatus::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+        JobStatusTag::factory()->count(5)->create(['job_status_id' => $jobStatus->id]);
+
+        $jobStatus->delete();
+
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_statuses');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_exceptions');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_batches');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_messages');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_signals');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_statuses');
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_tags');
     }
 }

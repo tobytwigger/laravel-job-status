@@ -28,7 +28,7 @@ class JobStatus extends Model
 
     protected $fillable = [
         'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
-        'started_at', 'finished_at', 'public',
+        'started_at', 'finished_at', 'public', 'batch_id',
     ];
 
     protected $casts = [
@@ -57,6 +57,8 @@ class JobStatus extends Model
             $jobStatus->tags()->delete();
             $jobStatus->signals()->delete();
             $jobStatus->messages()->delete();
+            $jobStatus->exception()->delete();
+            $jobStatus->batch()->delete();
         });
 
         static::saving(function (JobStatus $jobStatus) {
@@ -180,5 +182,10 @@ class JobStatus extends Model
     public function newCollection(array $models = [])
     {
         return new JobStatusCollection($models);
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(JobBatch::class, 'batch_id');
     }
 }
