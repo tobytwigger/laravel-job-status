@@ -10,6 +10,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
+                  token: ${{ secrets.PAT_ORG_TOKEN }}
                   ref: ${{ github.head_ref }}
 
             - name: Setup PHP
@@ -27,5 +28,5 @@ jobs:
             - name: Commit changes
               uses: stefanzweifel/git-auto-commit-action@v4
               with:
-                  commit_message: 'PHP Cs Fixer'
+                  commit_message: '[CI - PHP Linting] Run CS Fixer'
                   skip_fetch: true
