@@ -6,7 +6,7 @@
     </q-breadcrumbs>
 
     <div class="row">
-      <div class="col-12 q-py-md">
+      <div class="col-12 col-sm-6 q-py-md">
         <q-list bordered separator>
           <q-item v-ripple><q-item-section>
             <q-item-label>{{ results.alias }}</q-item-label>
@@ -18,6 +18,13 @@
           </q-item-section></q-item>
         </q-list>
       </div>
+
+      <div class="col-12 col-sm-6 q-py-md">
+        <job-failure-reasons :alias="props.alias"></job-failure-reasons>
+      </div>
+
+    </div>
+    <div class="row">
 
       <div class="col-12">
         <q-list bordered class="rounded-borders" style="min-width: 85%" >
@@ -45,6 +52,7 @@ import api from 'src/utils/client/api';
 import {JobRun, TrackedJob} from 'src/types/api';
 import {useApi} from "../compostables/useApi";
 import TrackedRunListItem from "components/TrackedRunListItem.vue";
+import JobFailureReasons from "components/JobFailureReasons.vue";
 
 const results = ref<TrackedJob|null>(null);
 

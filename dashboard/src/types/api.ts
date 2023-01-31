@@ -27,6 +27,11 @@ export interface JobRun {
   }
 }
 
+export interface JobFailureReason {
+  message: string,
+  count: number
+}
+
 export interface JobStatusStatus {
   id: number,
   status: Status
