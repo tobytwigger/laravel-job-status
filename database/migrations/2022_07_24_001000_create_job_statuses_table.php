@@ -22,7 +22,6 @@ return new class() extends Migration {
             $table->timestamp('finished_at', 3)->nullable();
             $table->string('job_id');
             $table->boolean('public')->default(true);
-            $table->text('configuration')->nullable();
             $table->string('connection_name');
             $table->timestamps(3);
         });

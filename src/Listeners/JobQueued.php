@@ -47,7 +47,6 @@ class JobQueued extends BaseListener
                 'uuid' => null,
                 'job_id' => $event->id,
                 'connection_name' => $event->connectionName,
-                'configuration' => $job->getJobStatusConfiguration(),
                 'public' => $job->public(),
             ]);
 

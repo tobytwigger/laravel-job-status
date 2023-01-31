@@ -27,7 +27,7 @@ class JobStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'configuration', 'exception_id',
+        'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'exception_id',
         'started_at', 'finished_at', 'public', 'batch_id',
     ];
 
@@ -37,7 +37,6 @@ class JobStatus extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'status' => Status::class,
-        'configuration' => 'array',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
     ];

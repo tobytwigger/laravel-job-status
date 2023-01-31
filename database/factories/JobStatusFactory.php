@@ -27,8 +27,7 @@ class JobStatusFactory extends Factory
             'job_id' => $this->faker->numberBetween(1, 10000000),
             'connection_name' => 'database',
             'status' => Status::QUEUED,
-            'public' => true,
-            'configuration' => [],
+            'public' => true
         ];
     }
 }

@@ -100,7 +100,6 @@ class BaseListener
                 'batch_id' => $batchId,
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId(),
-                'configuration' => $command->getJobStatusConfiguration(),
                 'public' => $command->public(),
             ]);
             $modifier = JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
