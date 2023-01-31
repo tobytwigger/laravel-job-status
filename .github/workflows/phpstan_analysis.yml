@@ -31,7 +31,7 @@ jobs:
                 with:
                     composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
 
-            -   run: npm install
+            -   run: npm install --prefix dashboard
                 name: Install js dependencies
 
             -   run: npm install -g @quasar/cli
@@ -46,5 +46,5 @@ jobs:
                     error_format: github
                     memory_limit: 1G
 
-            -   run: npm run lint
+            -   run: npm run lint --prefix dashboard
                 name: Run the js linter
