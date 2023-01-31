@@ -1,12 +1,14 @@
 import {get, post} from 'src/utils/client/requestHandler';
-import {DashboardResponse, JobRun, Results, TrackedJob} from 'src/types/api';
+import {Batch, DashboardResponse, JobRun, Results, TrackedJob} from 'src/types/api';
 import {
   dashboard as dashboardUrl,
   jobList as jobListUrl,
   jobShow as jobShowUrl,
   runShow as runShowUrl,
   history as historyUrl,
-  signal as signalUrl
+  signal as signalUrl,
+  batchShow as batchShowUrl,
+  batchList as batchListUrl
 } from 'src/utils/client/urlGenerator';
 
 const dashboard = (): Promise<DashboardResponse> => {
@@ -57,4 +59,18 @@ const signal = (jobStatusId: number, signal: string, cancel: boolean, parameters
     })
 }
 
-export default {dashboard, jobList, jobShow, runShow, history, signal};
+const batchList = (): Promise<Batch[]> => {
+  return get(batchListUrl)
+    .then(response => {
+      return response.data as Batch[]
+    })
+}
+
+const batchShow = (batchId: number): Promise<Batch> => {
+  return get(batchShowUrl(batchId))
+    .then(response => {
+      return response.data as Batch
+    })
+}
+
+export default {dashboard, jobList, jobShow, runShow, history, signal, batchList, batchShow};

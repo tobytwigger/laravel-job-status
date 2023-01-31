@@ -7,3 +7,6 @@ Route::get('tracked-job/{alias}', [\JobStatus\Dashboard\Http\Controllers\Api\Tra
 Route::get('job-run/{job_status_id}', [\JobStatus\Dashboard\Http\Controllers\Api\RunController::class, 'show']);
 Route::get('history', \JobStatus\Dashboard\Http\Controllers\Api\HistoryController::class);
 Route::post('signal/{job_status}', [\JobStatus\Dashboard\Http\Controllers\Api\JobSignalController::class, 'store']);
+
+Route::get('batch', [\JobStatus\Dashboard\Http\Controllers\Api\BatchController::class, 'index']);
+Route::get('batch/{batch}', [\JobStatus\Dashboard\Http\Controllers\Api\BatchController::class, 'show']);

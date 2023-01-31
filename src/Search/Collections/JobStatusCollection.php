@@ -3,7 +3,9 @@
 namespace JobStatus\Search\Collections;
 
 use Illuminate\Database\Eloquent\Collection;
+use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\Result\Batch;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 
@@ -12,6 +14,7 @@ class JobStatusCollection extends Collection
     public function runs(): JobRunCollection
     {
         $queryResult = $this
+            ->sortByDesc('created_at')
             ->groupBy(['uuid']);
 
         $jobRuns = new JobRunCollection();
@@ -65,5 +68,41 @@ class JobStatusCollection extends Collection
         }
 
         return $trackedJobs;
+    }
+
+    public function batches(): BatchCollection
+    {
+        $queryResult = $this
+            ->groupBy(['batch_id']);
+
+        $batches = new BatchCollection();
+        foreach ($queryResult as $batchId => $sameJobTypes) {
+            if($batchId === null || $batchId === '') {
+                // Remove any results without a batch ID
+                continue;
+            }
+
+            // Groups of the same run
+            $exactJobGrouped = $sameJobTypes->groupBy('uuid');
+
+            $jobRuns = new JobRunCollection();
+            foreach ($exactJobGrouped as $uuid => $runs) {
+                $runs = $runs->sortBy('created_at')->values();
+                if ($uuid === null || $uuid === '') {
+                    foreach ($runs as $run) {
+                        $jobRuns->push(new JobRun($run, null));
+                    }
+                } else {
+                    $jobRuns->push($runs->reduce(
+                        fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
+                    ));
+                }
+            }
+            $batches->push(
+                new Batch(JobBatch::findOrFail($batchId), $jobRuns)
+            );
+        }
+
+        return $batches;
     }
 }

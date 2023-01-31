@@ -35,6 +35,20 @@ export interface JobStatusStatus {
   created_at: Date,
 }
 
+export interface Batch {
+  id: number,
+  count: number,
+  runs: JobRun[],
+  batch_id: string,
+  name: string|null,
+  created_at: Date,
+  queued: number,
+  started: number,
+  failed: number,
+  succeeded: number,
+  cancelled: number
+}
+
 export interface JobMessage {
   id: number,
   message: string

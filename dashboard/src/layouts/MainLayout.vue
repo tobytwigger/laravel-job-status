@@ -78,6 +78,12 @@ const linksList = [
     icon: 'manage_search',
     route: {path: '/history'}
   },
+  {
+    title: 'Batches',
+    caption: 'A list of all the batches in your system.',
+    icon: 'manage_search',
+    route: {path: '/batch'}
+  },
 ];
 
 export default defineComponent({
