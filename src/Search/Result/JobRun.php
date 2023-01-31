@@ -65,6 +65,8 @@ class JobRun implements Arrayable, Jsonable
             'started_at' => $this->jobStatus->started_at,
             'finished_at' => $this->jobStatus->finished_at,
             'id' => $this->jobStatus->id,
+            'batch_id' => $this->jobStatus->batch_id,
+            'batch_id_uuid' => $this->jobStatus->batch?->batch_id,
             'statuses' => $this->jobStatus->statuses()->orderByDesc('created_at')->orderByDesc('id')->get()
                 ->map(fn (JobStatusStatus $status) => $status->toArray()),
         ];

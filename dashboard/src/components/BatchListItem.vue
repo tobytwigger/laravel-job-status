@@ -1,11 +1,11 @@
 <template>
   <q-item clickable :to="{path: '/batch/' + props.batch.id}">
     <q-item-section avatar top>
-      <q-icon name="account_tree" color="black" size="34px" />
+      <q-icon name="group_work" color="black" size="34px" />
     </q-item-section>
 
     <q-item-section top class="col-2 gt-sm">
-      <q-item-label class="q-mt-sm">Batch</q-item-label>
+      <q-item-label class="q-mt-sm">{{ timeAgo }}</q-item-label>
     </q-item-section>
 
     <q-item-section top>
@@ -36,11 +36,16 @@ import {JobRun, Status, Batch} from 'src/types/api';
 import StatusCount from "components/StatusCount.vue";
 import dayjs from "dayjs";
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 dayjs.extend(localizedFormat)
 
 const props = defineProps<{
   batch: Batch
 }>();
+
+const timeAgo = computed(() => dayjs().to(props.batch.created_at))
 
 const batchName = computed((): string => {
   if(props.batch.name !== null && props.batch.name !== '') {

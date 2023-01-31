@@ -1,7 +1,3 @@
-export interface Results {
-  jobs: TrackedJob[];
-}
-
 export interface TrackedJob {
   class: string;
   alias: string;
@@ -23,6 +19,8 @@ export interface JobRun {
   statuses: JobStatusStatus[]
   started_at: Date|null,
   finished_at: Date|null,
+  batch_id: number,
+  batch_id_uuid: string,
   id: number,
   tags: {
     [key: string]: string;

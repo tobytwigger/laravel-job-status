@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import api from 'src/utils/client/api';
-import {Batch, Results as ResultsType} from 'src/types/api';
+import {Batch} from 'src/types/api';
 import TrackedJobListItem from "../components/TrackedJobListItem.vue";
 import {useApi} from "../compostables/useApi";
 import BatchListItem from "components/BatchListItem.vue";

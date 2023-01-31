@@ -5,6 +5,7 @@ namespace JobStatus\Tests\Unit\Search\Result;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use JobStatus\Enums\Status;
+use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
@@ -329,9 +330,11 @@ class JobRunTest extends TestCase
         $startedAt = Carbon::now()->subHours(6)->setMicroseconds(0);
         $finishedAt = Carbon::now()->subHours(4)->setMicroseconds(0);
 
+        $batch = JobBatch::factory()->create();
         $exception = JobException::factory()->create();
         $jobStatus = JobStatus::factory()->create([
             'alias' => 'my-job-alias',
+            'batch_id' => $batch->id,
             'class' => 'My_Fake_Class',
             'percentage' => 30.2,
             'status' => Status::CANCELLED,
@@ -381,6 +384,8 @@ class JobRunTest extends TestCase
             'statuses' => collect([
                 $status1->toArray(), $status2->toArray(),
             ]),
+            'batch_id' => $batch->id,
+            'batch_id_uuid' => $batch->batch_id
         ];
         $this->assertEquals($array, $run->toArray());
         $this->assertIsString($run->toJson());

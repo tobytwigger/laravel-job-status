@@ -1,5 +1,5 @@
 import {get, post} from 'src/utils/client/requestHandler';
-import {Batch, DashboardResponse, JobRun, Results, TrackedJob} from 'src/types/api';
+import {Batch, DashboardResponse, JobRun, TrackedJob} from 'src/types/api';
 import {
   dashboard as dashboardUrl,
   jobList as jobListUrl,
@@ -20,10 +20,10 @@ const dashboard = (): Promise<DashboardResponse> => {
     });
 }
 
-const jobList = (): Promise<Results> => {
+const jobList = (): Promise<TrackedJob[]> => {
   return get(jobListUrl)
     .then(response => {
-      return response.data as Results;
+      return response.data as TrackedJob[];
     });
 }
 

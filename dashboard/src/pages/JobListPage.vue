@@ -9,7 +9,7 @@
       <q-item-label header>All Jobs</q-item-label>
 
       <q-separator></q-separator>
-      <div v-for="result in results.jobs" :key="getHash(result)">
+      <div v-for="result in results" :key="getHash(result)">
         <tracked-job-list-item  :tracked-job="result">
         </tracked-job-list-item>
         <q-separator></q-separator>
@@ -25,15 +25,15 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import api from 'src/utils/client/api';
-import {Results as ResultsType} from 'src/types/api';
 import TrackedJobListItem from "../components/TrackedJobListItem.vue";
 import {useApi} from "../compostables/useApi";
+import {TrackedJob} from "src/types/api";
 
-const results = ref<ResultsType|null>(null);
+const results = ref<TrackedJob[]|null>(null);
 
 useApi((after) => {
   api.jobList()
-    .then((response: ResultsType) => results.value = response)
+    .then((response: TrackedJob[]) => results.value = response)
     .finally(after);
 })
 

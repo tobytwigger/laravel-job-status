@@ -66,7 +66,7 @@ dayjs.extend(relativeTime);
 const props = defineProps<{
   trackedRun: JobRun
 }>();
-console.log(props);
+
 const timeAgo = computed(() => dayjs().to(props.trackedRun.created_at))
 
 const tryCount = computed(() => {

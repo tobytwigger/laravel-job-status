@@ -38,6 +38,7 @@ class JobStatusCollection extends Collection
     public function jobs(): TrackedJobCollection
     {
         $queryResult = $this
+            ->sortByDesc('created_at')
             ->groupBy(['alias']);
 
         $trackedJobs = new TrackedJobCollection();
@@ -73,6 +74,7 @@ class JobStatusCollection extends Collection
     public function batches(): BatchCollection
     {
         $queryResult = $this
+            ->sortByDesc('created_at')
             ->groupBy(['batch_id']);
 
         $batches = new BatchCollection();
