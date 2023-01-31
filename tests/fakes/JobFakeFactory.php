@@ -129,19 +129,34 @@ class JobFakeFactory
     {
     }
 
-    public static function dispatchBatch(PendingBatch $batch): Batch
+    public static function dispatchBatch(PendingBatch $batch, ?int $jobCount = null): Batch
     {
+        $jobCount = $jobCount ?? $batch->jobs->count();
+
         $batch->onConnection('database');
         static::createJobsTable();
         static::createBatchesTable();
-        return $batch->dispatch();
-//        for ($i = 0; $i < $batch; $i++) {
-//            Artisan::call('queue:work database --once --stop-when-empty');
-//        }
-//
-//        return $job;
+        static::createFailedJobsTable();
+        $realBatch = $batch->dispatch();
+        for ($i = 0; $i < $jobCount; $i++) {
+            Artisan::call('queue:work database --once --stop-when-empty');
+        }
+
+        return $realBatch;
     }
 
+    public static function dispatchBatchSync(PendingBatch $batch, ?int $jobCount = null)
+    {
+        $jobCount = $jobCount ?? $batch->jobs->count();
+
+        $batch->onConnection('sync');
+        static::createJobsTable();
+        static::createBatchesTable();
+        static::createFailedJobsTable();
+        $realBatch = $batch->dispatch();
+
+        return $realBatch;
+    }
 
     public function dispatch(int $jobsToRun = 1): JobFake
     {
@@ -155,6 +170,7 @@ class JobFakeFactory
 
         return $job;
     }
+
 
     public function dispatchSync(): JobFake
     {
@@ -200,6 +216,21 @@ class JobFakeFactory
                 $table->integer('cancelled_at')->nullable();
                 $table->integer('created_at');
                 $table->integer('finished_at')->nullable();
+            });
+        }
+    }
+
+    private static function createFailedJobsTable()
+    {
+        if(!Schema::hasTable('failed_jobs')) {
+            Schema::create('failed_jobs', function (Blueprint $table) {
+                $table->id();
+                $table->string('uuid')->unique();
+                $table->text('connection');
+                $table->text('queue');
+                $table->longText('payload');
+                $table->longText('exception');
+                $table->timestamp('failed_at')->useCurrent();
             });
         }
     }

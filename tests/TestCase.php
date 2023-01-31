@@ -6,6 +6,12 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use JobStatus\JobStatusServiceProvider;
+use JobStatus\Models\JobBatch;
+use JobStatus\Models\JobStatus;
+use JobStatus\Tests\fakes\AssertBatch;
+use JobStatus\Tests\fakes\AssertBatches;
+use JobStatus\Tests\fakes\AssertJobStatus;
+use JobStatus\Tests\fakes\AssertJobStatuses;
 use Prophecy\PhpUnit\ProphecyTrait;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -36,6 +42,25 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'database' => ':memory:',
             'prefix'   => '',
         ]);
+    }
 
+    public function assertJob(JobStatus $jobStatus): AssertJobStatus
+    {
+        return new AssertJobStatus($jobStatus);
+    }
+
+    public function assertJobs(): AssertJobStatuses
+    {
+        return new AssertJobStatuses();
+    }
+
+    public function assertBatch(JobBatch $batch): AssertBatch
+    {
+        return new AssertBatch($batch);
+    }
+
+    public function assertBatches(): AssertBatches
+    {
+        return new AssertBatches();
     }
 }

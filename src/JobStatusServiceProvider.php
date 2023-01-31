@@ -3,6 +3,7 @@
 namespace JobStatus;
 
 use Illuminate\Bus\BatchRepository;
+use Illuminate\Bus\Events\BatchDispatched;
 use Illuminate\Queue\Connectors\DatabaseConnector;
 use Illuminate\Queue\Events\JobExceptionOccurred;
 use Illuminate\Queue\Events\JobFailed;
@@ -88,10 +89,12 @@ class JobStatusServiceProvider extends ServiceProvider
         Event::listen(JobProcessed::class, \JobStatus\Listeners\JobProcessed::class);
         Event::listen(JobReleasedAfterException::class, \JobStatus\Listeners\JobReleasedAfterException::class);
         Event::listen(JobExceptionOccurred::class, \JobStatus\Listeners\JobExceptionOccurred::class);
+        Event::listen(BatchDispatched::class, \JobStatus\Listeners\BatchDispatched::class);
 
 //        $this->app->extend(BatchRepository::class, function(BatchRepository $service, $app) {
 //            return new BatchRepositoryDecorator($service);
 //        });
+
 
         app()->booted(function() {
             Queue::addConnector('database', function() {

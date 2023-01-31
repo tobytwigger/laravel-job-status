@@ -2,6 +2,8 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Bus\Batch;
+use Illuminate\Bus\BatchRepository;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
@@ -24,6 +26,7 @@ class JobProcessed extends BaseListener
     {
         if ($this->isTrackingEnabled()) {
             $modifier = $this->getJobStatusModifier($event->job);
+
             if ($modifier === null) {
                 return;
             }
@@ -31,8 +34,12 @@ class JobProcessed extends BaseListener
             if ($modifier->getJobStatus()->status === Status::STARTED) {
                 $modifier->setFinishedAt(now());
                 $modifier->setPercentage(100.0);
+
                 if ($event->job->hasFailed()) {
                     $modifier->setStatus(Status::FAILED);
+                } elseif ($this->batchIsCancelled($modifier->getJobStatus())) {
+                    $modifier->setStatus(Status::CANCELLED);
+                    $modifier->warningMessage('The batch that the job is a part of has been cancelled');
                 } else {
                     $modifier->setStatus(Status::SUCCEEDED);
                 }
@@ -67,5 +74,20 @@ class JobProcessed extends BaseListener
 
             $modifier->setPercentage(100);
         }
+    }
+
+    private function batchIsCancelled(?\JobStatus\Models\JobStatus $jobStatus): bool
+    {
+        if ($jobStatus === null) {
+            return false;
+        }
+        $batchId = $jobStatus->batch?->batch_id;
+        if ($batchId !== null) {
+            /** @var Batch|null $batch */
+            $batch = app(BatchRepository::class)->find($batchId);
+            return $batch?->cancelled() ?? false;
+        }
+
+        return false;
     }
 }

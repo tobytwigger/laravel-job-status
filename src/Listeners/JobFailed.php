@@ -2,6 +2,8 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Bus\Batch;
+use Illuminate\Bus\BatchRepository;
 use JobStatus\Enums\Status;
 use JobStatus\Exception\JobCancelledException;
 
@@ -24,7 +26,6 @@ class JobFailed extends BaseListener
     {
         if ($this->isTrackingEnabled()) {
             $modifier = $this->getJobStatusModifier($event->job);
-
             if ($modifier === null) {
                 return true;
             }
@@ -34,6 +35,7 @@ class JobFailed extends BaseListener
             // This is only the case if JobExceptionOccurred has not been ran
             if ($modifier->getJobStatus()->status !== Status::FAILED && $modifier->getJobStatus()->status !== Status::CANCELLED) {
                 $modifier->setFinishedAt(now());
+
                 if ($event->exception instanceof JobCancelledException) {
                     $modifier->setStatus(Status::CANCELLED);
                     $modifier->warningMessage('The job has been cancelled');
@@ -44,4 +46,21 @@ class JobFailed extends BaseListener
             }
         }
     }
+
+    private function batchIsCancelled(?\JobStatus\Models\JobStatus $jobStatus): bool
+    {
+        if ($jobStatus === null) {
+            return false;
+        }
+        $batchId = $jobStatus->batch?->batch_id;
+        if ($batchId !== null) {
+            /** @var Batch|null $batch */
+            $batch = app(BatchRepository::class)->find($batchId);
+            return $batch?->cancelled() ?? false;
+        }
+
+        return false;
+    }
+
+
 }

@@ -10,6 +10,7 @@ use JobStatus\Concerns\Trackable;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
+use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 
 class BaseListener
@@ -83,12 +84,20 @@ class BaseListener
             } else {
                 throw new \RuntimeException('Unable to extract job payload.');
             }
+            $batchId = null;
+            if(method_exists($command, 'batch') && $command->batch() !== null) {
+                $batchId = JobBatch::firstOrCreate(
+                    ['batch_id' => $command->batch()->id],
+                    ['name' => $command->batch()->name]
+                )->id;
+            }
             $jobStatus = JobStatus::create([
                 'class' => get_class($command),
                 'alias' => $command->alias(),
                 'percentage' => 0,
                 'status' => Status::QUEUED,
                 'uuid' => $job->uuid(),
+                'batch_id' => $batchId,
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId(),
                 'configuration' => $command->getJobStatusConfiguration(),
