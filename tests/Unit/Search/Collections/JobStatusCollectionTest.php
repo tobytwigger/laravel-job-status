@@ -131,6 +131,5 @@ class JobStatusCollectionTest extends TestCase
         $this->assertEquals($batch4->batch_id, $collection[3]->batchId());
         $this->assertCount(1, $collection[3]->runs());
         $this->assertEquals($jobStatus4->id, $collection[3]->runs()[0]->jobStatus()->id);
-
     }
 }

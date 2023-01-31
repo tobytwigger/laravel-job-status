@@ -51,14 +51,14 @@ class Batch implements Arrayable, Jsonable
             'succeeded' => $this->countRunsWithStatus(Status::SUCCEEDED),
             'cancelled' => $this->countRunsWithStatus(Status::CANCELLED),
             'created_at' => $this->batch->created_at,
-            'id' => $this->batch->id
+            'id' => $this->batch->id,
         ];
     }
 
     public function countRunsWithStatus(Status $status): int
     {
         return $this->runs()
-            ->filter(fn(JobRun $jobRun) => $jobRun->getStatus() === $status)
+            ->filter(fn (JobRun $jobRun) => $jobRun->getStatus() === $status)
             ->count();
     }
 

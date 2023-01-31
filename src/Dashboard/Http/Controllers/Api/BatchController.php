@@ -8,7 +8,6 @@ use JobStatus\Models\JobStatus;
 
 class BatchController extends Controller
 {
-
     public function index()
     {
         return JobStatus::all()

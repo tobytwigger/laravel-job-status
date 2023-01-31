@@ -77,7 +77,7 @@ class JobStatusCollection extends Collection
 
         $batches = new BatchCollection();
         foreach ($queryResult as $batchId => $sameJobTypes) {
-            if($batchId === null || $batchId === '') {
+            if ($batchId === null || $batchId === '') {
                 // Remove any results without a batch ID
                 continue;
             }
