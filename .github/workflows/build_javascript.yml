@@ -19,11 +19,11 @@ jobs:
                 with:
                     node-version: 18
 
-            -   run: npm install
+            -   run: npm install --prefix dashboard
                 name: Install js dependencies
 
             -   run: npm install -g @quasar/cli
                 name: Install the Quasar CLI
 
-            -   run: quasar build
+            -   run: quasar build --prefix dashboard
                 name: Build the JS files

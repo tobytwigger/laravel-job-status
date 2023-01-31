@@ -1,4 +1,4 @@
-name: Deploy documentation
+name: Release assets and final test
 
 on:
     push:
