@@ -91,11 +91,6 @@ class JobStatusServiceProvider extends ServiceProvider
         Event::listen(JobExceptionOccurred::class, \JobStatus\Listeners\JobExceptionOccurred::class);
         Event::listen(BatchDispatched::class, \JobStatus\Listeners\BatchDispatched::class);
 
-//        $this->app->extend(BatchRepository::class, function(BatchRepository $service, $app) {
-//            return new BatchRepositoryDecorator($service);
-//        });
-
-
         app()->booted(function() {
             Queue::addConnector('database', function() {
                 return new DatabaseConnectorDecorator($this->app['db']);

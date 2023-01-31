@@ -57,6 +57,8 @@ class JobStatus extends Model
             $jobStatus->tags()->delete();
             $jobStatus->signals()->delete();
             $jobStatus->messages()->delete();
+            $jobStatus->exception()->delete();
+            $jobStatus->batch()->delete();
         });
 
         static::saving(function (JobStatus $jobStatus) {
