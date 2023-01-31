@@ -44,7 +44,7 @@ class ClearJobStatusCommand extends Command
 
                           
                           
-                          $statuses = JobStatus::query();
+        $statuses = JobStatus::query();
         if ($this->option('keep-failed')) {
             $statuses->whereStatusIn([Status::SUCCEEDED, Status::CANCELLED]);
         } else {
