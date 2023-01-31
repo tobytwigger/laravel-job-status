@@ -5,14 +5,11 @@ on:
 
 jobs:
     php-linter:
-        if: "!contains(github.event.head_commit.message, '[CI - PHP Linting]')"
         uses: ./.github/workflows/linting.yml
         secrets: inherit
     run-tests:
-        if: "!contains(github.event.head_commit.message, '[CI]')"
         uses: ./.github/workflows/phpunit_tests.yml
         needs: [php-linter]
     static-analysis:
-        if: "!contains(github.event.head_commit.message, '[CI]')"
         uses: ./.github/workflows/phpstan_analysis.yml
         needs: [php-linter]
