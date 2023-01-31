@@ -7,11 +7,13 @@ on:
     workflow_dispatch:
 
 jobs:
-  run-tests:
-    if: "!contains(github.event.head_commit.message, '[CI]')"
-    uses: ./.github/workflows/phpunit_tests.yml
-  static-analysis:
-    if: "!contains(github.event.head_commit.message, '[CI]')"
-    uses: ./.github/workflows/phpstan_analysis.yml
-  build-docs:
-    uses: ./.github/workflows/build_docs.yml
+    run-tests:
+        if: "!contains(github.event.head_commit.message, '[CI]')"
+        uses: ./.github/workflows/phpunit_tests.yml
+    static-analysis:
+        if: "!contains(github.event.head_commit.message, '[CI]')"
+        uses: ./.github/workflows/phpstan_analysis.yml
+    build-docs:
+        uses: ./.github/workflows/build_docs.yml
+    build-js:
+        uses: ./github/workflows/build_javascript.yml

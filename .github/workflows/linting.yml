@@ -1,4 +1,4 @@
-name: PHP Linting (Pint)
+name: PHP & JS linting
 
 on:
     workflow_dispatch:
@@ -8,25 +8,43 @@ jobs:
     phplint:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-              with:
-                  token: ${{ secrets.PAT_TOKEN }}
-                  ref: ${{ github.head_ref }}
+            -   uses: actions/checkout@v2
+                with:
+                    token: ${{ secrets.PAT_TOKEN }}
+                    ref: ${{ github.head_ref }}
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 8.1
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.1
 
-            - uses: "ramsey/composer-install@v2"
-              with:
-                  composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
+            -   name: Setup Node
+                uses: actions/setup-node@v3
+                with:
+                    node-version: 18
+                    cache: 'npm'
+                    cache-dependency-path: './package-lock.json'
+
+            -   uses: "ramsey/composer-install@v2"
+                with:
+                    composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
+
+            -   run: npm install
+                name: Inzstall js dependencies
+
+            -   run: npm install -g @quasar/cli
+                name: Install the Quasar CLI
 
             -   name: Run cs fixer
                 run: ./vendor/bin/php-cs-fixer fix
 
-            - name: Commit changes
-              uses: stefanzweifel/git-auto-commit-action@v4
-              with:
-                  commit_message: '[CI - PHP Linting] Run CS Fixer'
-                  skip_fetch: true
+            -   run: npm run format
+                name: Run the js linter
+
+            -   name: Commit changes
+                uses: stefanzweifel/git-auto-commit-action@v4
+                with:
+                    commit_message: '[CI - Linting] Run cs-fixer and eslint'
+                    skip_fetch: true
+
+

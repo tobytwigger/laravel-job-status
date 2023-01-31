@@ -1,0 +1,31 @@
+name: Build JS
+
+on:
+    workflow_dispatch:
+    workflow_call:
+
+jobs:
+    build-js:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  ref: ${{ github.ref }}
+                  token: ${{ secrets.PAT_TOKEN }}
+
+            -   name: Setup Node
+                uses: actions/setup-node@v3
+                with:
+                    node-version: 18
+                    cache: 'npm'
+                    cache-dependency-path: './package-lock.json'
+
+            -   run: npm install
+                name: Install js dependencies
+
+            -   run: npm install -g @quasar/cli
+                name: Install the Quasar CLI
+
+            -   run: quasar build
+                name: Build the JS files
