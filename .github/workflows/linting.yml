@@ -10,7 +10,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
-                  token: ${{ secrets.PAT_ORG_TOKEN }}
+                  token: ${{ secrets.PAT_TOKEN }}
                   ref: ${{ github.head_ref }}
 
             - name: Setup PHP
