@@ -14,6 +14,8 @@ jobs:
         if: "!contains(github.event.head_commit.message, '[CI]')"
         uses: ./.github/workflows/phpstan_analysis.yml
     build-docs:
+        if: "!contains(github.event.head_commit.message, '[CI - JS Files]')"
         uses: ./.github/workflows/build_docs.yml
     build-js:
+        if: "!contains(github.event.head_commit.message, '[CI - JS Files]')"
         uses: ./.github/workflows/build_javascript.yml
