@@ -4,18 +4,21 @@ repo_url: https://github.com/tobytwigger/laravel-job-status
 
 nav:
     -   Getting Started: 'index.md'
-    -   Enable Tracking: 'tracking-jobs.md'
-    -   Tracking Tools:
-            -   Progress: 'progress.md'
-            -   Sending messages: 'messages.md'
-            -   Signals: 'signals.md'
-    -   Job History:
-            -   Finding Jobs: 'searching.md'
-            -   Reading the history: 'reading-jobs.md'
-    -   Securing Jobs: 'auth.md'
-    - Frontend:
-          - Javascript Integration: 'custom-frontend.md'
-          - Vue Integration: 'vue.md'
+    -   Tracking Jobs:
+            -   Enabling: 'enable-tracking.md'
+            -   Enhancing Jobs:
+                    -   Progress: 'features/progress.md'
+                    -   Sending messages: 'features/messages.md'
+                    -   Signals: 'features/signals.md'
+            -   Security: 'auth.md'
+            -   Pruning: 'clearing.md'
+    -   Job Dashboard:
+            -   Intro: 'dashboard/intro.md'
+    -   Frontend:
+            -   Javascript Integration: 'js/custom-frontend.md'
+            -   Vue Integration: 'js/vue.md'
+    -   Advanced:
+            -   Interacting with history programmatically: 'php-history.md'
 theme:
     name: material
     custom_dir: overrides
@@ -41,9 +44,9 @@ plugins:
     - git-authors
 markdown_extensions:
     - admonition
-    - codehilite:
-          guess_lang: true
-          use_pygments: false
+    -   codehilite:
+            guess_lang: true
+            use_pygments: false
     - pymdownx.details
     - pymdownx.superfences
 extra_css:

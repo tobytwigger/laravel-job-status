@@ -11,4 +11,5 @@
 
 
 
-
+- Installing assets
+- Config

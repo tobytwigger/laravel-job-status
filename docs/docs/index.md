@@ -16,7 +16,8 @@ after the queue execution.
 - Pass messages between a job and your app/users.
 - Cancel running jobs.
 - Integrate with your frontend for seamless feedback from jobs.
-
+- Supports Laravel batches.
+- 
 ## Installation
 
 All you need to do to use this project is pull it into an existing Laravel app using composer.
@@ -71,6 +72,6 @@ Show feedback to the user on the frontend
 
 ## What's next?
 
-- See how to [enable tracking](./tracking-jobs.md) for a job.
-- [Share the job progress](./custom-frontend.md) with your users.
-- Make use of the tracking tools like [percentage progress](./progress.md), [messages](./messages.md) and [signals](./signals.md).
+- See how to [enable tracking](./enable-tracking.md) for a job.
+- [Share the job progress](./js/custom-frontend.md) with your users.
+- Make use of the tracking tools like [percentage progress](./features/progress.md), [messages](./features/messages.md) and [signals](./features/signals.md).
