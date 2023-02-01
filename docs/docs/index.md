@@ -29,6 +29,10 @@ Laravel provides job batches, which can provide feedback for users. However you 
   <figcaption>Instant user feedback</figcaption>
 </figure>
 
+<figure markdown>
+![In depth tracking](./assets/images/dashboard/run-timeline.png)
+  <figcaption>In depth tracking</figcaption>
+</figure>
 
 
 ## Installation
