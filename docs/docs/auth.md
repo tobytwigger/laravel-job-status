@@ -1,27 +1,48 @@
-# Auth
+# Securing Jobs
 
-Having got tracking set up on your jobs, you need to make sure only those who should be able to see the job can see it. For a job that checks the price of a users books, we only want that user to be able to see the job information.
+To prevent users accessing jobs they shouldn't be able to track, you can limit the history to only a select few users.
 
 ## Limiting job access
 
-Add a `canSeeTracking` method to your job. This method will be given a user and the tags for the job, and should return whether the user can see the tracking information for the job.
+Add a `users` method into your job that returns an array of user IDs. These users will be able to see the job status
 
 ```php
-    public static function canSeeTracking($user = null, array $tags = []): bool
-    {
-        // Using the tags and the user, return true if the user can access the job and false if they can't
-        return $tags['user_id'] ?? null === $user?->id;
-    }
+public function users(): array
+{
+    return [$this->user->id];
+}
 ```
+
+## Public jobs
+
+If a user is not specified in `users`, they cannot view the job. By default, any user can view the job.
+
+!!! Note
+    If you have access to the job dashboard, you can see information about every job. 
+
+    The `users` array only controls who can access the job through your app, not through the dashboard.
+
+If a job should only be viewable to users granted access, it must be made private. Add a `public` method to return false.
+
+```php
+public function public(): bool
+{
+    return false;
+}
+```
+
+By default, a job is public.
 
 ## Resolving the current user
 
-If you are using our frontend component, you need to make sure the current user can be retrieved so our API can check their access to job tracking.
+When determining which jobs the user can view, we get the current user with `Auth::user()`.
 
-By default, we use `Auth::user()`. If you retrieve your user differently, add a callback to retrieve the user in your service provider.
+If your app is set up differently, you can change how we resolve the current user.
+
+In a service provider, add the following snippet.
 
 ```php
-    \JobStatus\JobStatusServiceProvider::$resolveAuthWith = function() {
-        return Auth::user(); // Resolve the user however you'd like
+\JobStatus\JobStatusServiceProvider::$resolveAuthWith = function() {
+    return Auth::user(); // Resolve the user however you'd like
     }
 ```

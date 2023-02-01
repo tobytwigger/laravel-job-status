@@ -13,12 +13,17 @@ nav:
             -   Security: 'auth.md'
             -   Pruning: 'clearing.md'
     -   Job Dashboard:
-            -   Intro: 'dashboard/intro.md'
-    -   Frontend:
-            -   Javascript Integration: 'js/custom-frontend.md'
-            -   Vue Integration: 'js/vue.md'
+            -   Installing: 'dashboard/installing.md'
+            -   Viewing Jobs: 'dashboard/jobs.md'
+            -   Viewing Runs: 'dashboard/runs.md'
+            -   Viewing Batches: 'dashboard/batches.md'
+            -   Security: 'dashboard/security.md'
+#    -   Frontend:
+#            -   Javascript Integration: 'js/custom-frontend.md'
+#            -   Vue Integration: 'js/vue.md'
+    -   Configuration: 'config.md'
     -   Advanced:
-            -   Interacting with history programmatically: 'php-history.md'
+            -   Interacting with history programmatically: 'advanced/php-history.md'
 theme:
     name: material
     custom_dir: overrides
@@ -49,6 +54,8 @@ markdown_extensions:
             use_pygments: false
     - pymdownx.details
     - pymdownx.superfences
+    - attr_list
+    - md_in_html
 extra_css:
     - assets/highlight.css
     - assets/a11y-dark.css

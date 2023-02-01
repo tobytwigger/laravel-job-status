@@ -1,23 +1,36 @@
 # Laravel Job Status
 
-## Introduction
+## What does this package do?
 
-In Laravel, we often run code in the **background** so a user doesn't have to wait for it. These are usually things like
-sending an email, making some API calls or processing a file.
+This package saves information about the jobs running in your Laravel application and lets you view realtime and historic data on what's going on in your queue.
 
-However, this has the downside that it often leaves the user **not knowing what's going on**.
+It also enhances jobs with two-way communication with your app, the ability to cancel jobs, and to save debug information.
 
-The aim of this package is to give you a way to be able to **track jobs** and show your users **instant feedback** during and
-after the queue execution.
+The frontend plugin provides users with instant feedback on background operations, with minimal configuration required.
 
-## Features
+## When should you use this package?
 
-- Track and retrieve information about your jobs.
-- Pass messages between a job and your app/users.
-- Cancel running jobs.
-- Integrate with your frontend for seamless feedback from jobs.
-- Supports Laravel batches.
-- 
+If you would like an insight into your jobs and how they are performing, either for debugging or observation.
+
+If you need the ability to cancel jobs.
+
+If your users need real-time feedback on background jobs.
+
+## Why should I use this package?
+
+This package shares a lot of features with Laravel Horizon, however Horizon is also a queue runner. This is excellent for a powerful no-fuss queue solution, but it means Horizon doesn't provide as much insight into your jobs. This package works well alongside Laravel Horizon, providing debugging on the jobs passing through Horizon and letting it handle the queue worker.
+
+Laravel provides job batches, which can provide feedback for users. However you have to scaffold this from scratch for every app you work on, and the information you can receive is limited and without the depth this package provides.
+
+## Screenshots
+
+<figure markdown>
+![Instant user feedback](./assets/images/podcast.gif)
+  <figcaption>Instant user feedback</figcaption>
+</figure>
+
+
+
 ## Installation
 
 All you need to do to use this project is pull it into an existing Laravel app using composer.
@@ -34,44 +47,8 @@ php artisan vendor:publish --provider="JobStatus\JobStatusServiceProvider"
 
 This will publish the configuration file and migrations.
 
-## Basic Usage
+## Quick-start guide
 
-To enable tracking on your jobs, include the `\JobStatus\Concerns\Trackable` trait.;
-
-```php
-use \JobStatus\Concerns\Trackable;
-
-class ProcessPodcast implements ShouldQueue
-{
-    use Queueable, Trackable;
-
-    public function handle()
-    {
-        // Process your job as normal
-    }
-    
-}
-```
-
-Find the job in the database
-```php
-$jobStatus = \App\Jobs\ProcessPodcast::search()->first()
-```
-
-Show feedback to the user on the frontend
-
-```php
-@if($jobStatus->latest()->isFinished())
-    <div>Your podcast has been uploaded</div>
-@elseif($jobStatus->latest()->isRunning())
-    <div>Your podcast is being uploaded</div>
-@else
-    <div>Your podcast is in the queue</div>
-@endof    
-```
-
-## What's next?
-
-- See how to [enable tracking](./enable-tracking.md) for a job.
-- [Share the job progress](./js/custom-frontend.md) with your users.
-- Make use of the tracking tools like [percentage progress](./features/progress.md), [messages](./features/messages.md) and [signals](./features/signals.md).
+- [Step 1](./enable-tracking.md) - Enable tracking for at least one job.
+- [Step 2](./dashboard/installing.md) - View the history of the job.
+- [Step 3](./js/custom-frontend.md) - Give your users instant feedback.
