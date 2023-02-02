@@ -23,7 +23,7 @@ To make it easier, we've provided some scopes.
 - `whereUuid($uuid)` - Filter to jobs with a matching uuid
 - `forUsers(1)` - Filter to jobs that allows the given use to access it. This will also match all public jobs.
 
-!!! note
+!!! Index-less
     If you use index-less tags, omit the value in `whereTag` and pass the value into `whereHasTag`;
     ```php
         ->whereTag('long-running')

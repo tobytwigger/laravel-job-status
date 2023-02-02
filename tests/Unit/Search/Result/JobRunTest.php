@@ -400,6 +400,10 @@ class JobRunTest extends TestCase
         JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'wheels', 'value' => '32"']);
         JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'material', 'value' => 'Aluminium']);
         JobStatusTag::factory()->create(['job_status_id' => $status->id, 'key' => 'pedals', 'value' => 'spd']);
+        JobStatusTag::factory()->indexless('bicycle')->create(['job_status_id' => $status->id]);
+        JobStatusTag::factory()->indexless('new')->create(['job_status_id' => $status->id]);
+        JobStatusTag::factory()->indexless('road')->create(['job_status_id' => $status->id]);
+        JobStatusTag::factory()->indexless('dispatched')->create(['job_status_id' => $status->id]);
         JobStatusTag::factory()->count(10)->create();
 
         $this->assertEquals([
@@ -408,6 +412,10 @@ class JobRunTest extends TestCase
             'wheels'=> '32"',
             'material'=> 'Aluminium',
             'pedals'=> 'spd',
+            'bicycle',
+            'new',
+            'road',
+            'dispatched'
         ], (new JobRun($status))->getTagsAsArray());
     }
 

@@ -60,7 +60,10 @@ public function tags(): array
         'user_id' => $this->user->id
     ]);
 }
-
-If you use Horizon, using index-less tags will let you continue to use the Horizon job tagging system.
-
 ```
+
+If you use Horizon, using index-less tags will let you continue to use the Horizon job tagging system. 
+
+!!! warning
+    Make sure your tags are different, `['podcast', 'podcast' => 1]` is invalid.
+

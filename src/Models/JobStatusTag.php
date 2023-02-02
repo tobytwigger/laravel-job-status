@@ -15,10 +15,12 @@ class JobStatusTag extends Model
     use HasFactory;
 
     protected $fillable = [
-        'key', 'value',
+        'key', 'value', 'is_indexless'
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_indexless' => 'boolean'
+    ];
 
     public function __construct(array $attributes = [])
     {

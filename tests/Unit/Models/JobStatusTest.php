@@ -240,6 +240,92 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
+    public function it_filters_by_indexless_tags()
+    {
+        $set1 = JobStatus::factory()->has(JobStatusTag::factory()->indexless('key1'), 'tags')->count(3)->create();
+        $set2 = JobStatus::factory()->has(JobStatusTag::factory()->indexless('key2'), 'tags')->count(7)->create();
+
+        $results = JobStatus::whereTag('key1')->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereTag('key2')->get();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_index_and_indexless_tags()
+    {
+        $set1 = JobStatus::factory()
+            ->has(JobStatusTag::factory()->indexless('key1-indexless'), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')
+            ->count(3)->create();
+        $set2 = JobStatus::factory()
+            ->has(JobStatusTag::factory()->indexless('key2-indexless'), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'key2', 'value' => 'val1']), 'tags')
+            ->count(7)->create();
+
+        $results = JobStatus::whereTag('key1', 'val1')->whereTag('key1-indexless')->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereTag('key2', 'val1')->whereTag('key2-indexless')->get();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_index_and_indexless_tags_in_one_method()
+    {
+        $set1 = JobStatus::factory()
+            ->has(JobStatusTag::factory()->indexless('key1-indexless'), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')
+            ->count(3)->create();
+        $set2 = JobStatus::factory()
+            ->has(JobStatusTag::factory()->indexless('key2-indexless'), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val2']), 'tags')
+            ->count(7)->create();
+
+        $results = JobStatus::whereTags(['key1' => 'val1', 'key1-indexless'])->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereTags(['key1' => 'val2', 'key2-indexless'])->get();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
+    public function it_filters_by_has_index_and_indexless_tags_in_one_method()
+    {
+        $set1 = JobStatus::factory()
+            ->has(JobStatusTag::factory()->indexless('key1-indexless'), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')
+            ->count(3)->create();
+        $set2 = JobStatus::factory()
+            ->has(JobStatusTag::factory()->indexless('key2-indexless'), 'tags')
+            ->has(JobStatusTag::factory()->state(['key' => 'key2', 'value' => 'val1']), 'tags')
+            ->count(7)->create();
+
+        $results = JobStatus::whereHasTags(['key1', 'key1-indexless'])->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereHasTag('key1')->whereHasTag('key1-indexless')->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereHasTags(['key2', 'key2-indexless'])->get();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereHasTag('key2')->whereHasTag('key2-indexless')->get();
+        $this->assertCount(7, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
     public function it_filters_by_statuses_in()
     {
         $set1 = JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED])

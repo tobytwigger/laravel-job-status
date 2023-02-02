@@ -26,6 +26,7 @@ class JobStatus extends Model
 {
     use HasFactory;
 
+    const INDEXLESS_VALUE = 'JOB_STATUS_MODEL_INDEXLESS';
     protected $fillable = [
         'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'exception_id',
         'started_at', 'finished_at', 'public', 'batch_id',
@@ -113,10 +114,21 @@ class JobStatus extends Model
         $query->where('alias', $alias);
     }
 
-    public function scopeWhereTag(Builder $query, string $key, mixed $value)
+    public function scopeWhereTag(Builder $query, string $key, mixed $value = JobStatus::INDEXLESS_VALUE)
     {
         $query->whereHas('tags', function (Builder $query) use ($key, $value) {
-            $query->where(['key' => $key, 'value' => $value]);
+            if($value === JobStatus::INDEXLESS_VALUE) {
+                $query->where(['key' => $key, 'value' => null, 'is_indexless' => true]);
+            } else {
+                $query->where(['key' => $key, 'value' => $value, 'is_indexless' => false]);
+            }
+        });
+    }
+
+    public function scopeWhereHasTag(Builder $query, string $key)
+    {
+        $query->whereHas('tags', function (Builder $query) use ($key) {
+            $query->where(['key' => $key]);
         });
     }
 
@@ -147,7 +159,18 @@ class JobStatus extends Model
     public function scopeWhereTags(Builder $query, array $tags)
     {
         foreach ($tags as $key => $value) {
-            $query->whereTag($key, $value);
+            if(is_numeric($key)) {
+                $query->whereTag($value);
+            } else {
+                $query->whereTag($key, $value);
+            }
+        }
+    }
+
+    public function scopeWhereHasTags(Builder $query, array $tags)
+    {
+        foreach ($tags as $value) {
+            $query->whereHasTag($value);
         }
     }
 

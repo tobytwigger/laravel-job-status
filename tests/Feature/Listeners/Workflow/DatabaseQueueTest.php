@@ -21,7 +21,7 @@ class DatabaseQueueTest extends TestCase
     {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
-            ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
+            ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'my-indexless-tag'])
             ->setCallback(static::class . '@a_run_is_handled_callback')
             ->setUsers([1, 2])
             ->setPublic(true)
@@ -43,11 +43,16 @@ class DatabaseQueueTest extends TestCase
         Assert::assertEquals('database', $jobStatus->connection_name);
         Assert::assertEquals(true, $jobStatus->public);
 
-        Assert::assertCount(2, $jobStatus->tags);
+        Assert::assertCount(3, $jobStatus->tags);
         Assert::assertEquals('my-first-tag', $jobStatus->tags[0]->key);
         Assert::assertEquals(1, $jobStatus->tags[0]->value);
+        Assert::assertFalse($jobStatus->tags[0]->is_indexless);
         Assert::assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         Assert::assertEquals('mytag-value', $jobStatus->tags[1]->value);
+        Assert::assertFalse($jobStatus->tags[1]->is_indexless);
+        Assert::assertEquals('my-indexless-tag', $jobStatus->tags[2]->key);
+        Assert::assertNull($jobStatus->tags[2]->value);
+        Assert::assertTrue($jobStatus->tags[2]->is_indexless);
 
         Assert::assertNull($jobStatus->batch);
         Assert::assertCount(0, JobBatch::all());
@@ -71,7 +76,7 @@ class DatabaseQueueTest extends TestCase
     {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
-            ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
+            ->setTags(['my-only-indexless-tag'])
             ->dispatch();
 
         Assert::assertCount(1, JobStatus::all());
@@ -84,11 +89,10 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
 
-        $this->assertCount(2, $jobStatus->tags);
-        $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
-        $this->assertEquals(1, $jobStatus->tags[0]->value);
-        $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
-        $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
+        $this->assertCount(1, $jobStatus->tags);
+        $this->assertEquals('my-only-indexless-tag', $jobStatus->tags[0]->key);
+        $this->assertNull($jobStatus->tags[0]->value);
+        $this->assertTrue($jobStatus->tags[0]->is_indexless);
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
