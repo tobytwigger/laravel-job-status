@@ -12,14 +12,23 @@ To make it easier, we've provided some scopes.
 
 - `whereClass($jobClass)` - Filter by the job class (.e.g `\App\Jobs\ProcessPodcast`)
 - `whereAlias($jobAlias)` - Filter by the job alias
-- `whereTag($key, $value)` - Filter by a tag
+- `whereTag($key, $value)` - Filter by a tag. Set the value to `true` for .
 - `whereTags(['key' => 'value'])` - Filter by multiple tags in a key-value array
+- `whereHasTag('key1')` - Filter to jobs that have a tag, with any or no value.
+- `whereHasTags(['key1', 'key2'])` - Filter by multiple tags existing
 - `whereFinished()` - Filter to jobs that have finished running
 - `whereNotFinished()` - Filter to jobs that are running or queued
 - `whereStatusIn([\JobStatus\Enums\Status::SUCCEEDED])` - Filter to jobs with the given statuses
 - `whereStatusNotIn([\JobStatus\Enums\Status::FAILED])` - Filter to jobs without the given statuses
 - `whereUuid($uuid)` - Filter to jobs with a matching uuid
 - `forUsers(1)` - Filter to jobs that allows the given use to access it. This will also match all public jobs.
+
+!!! note
+    If you use index-less tags, omit the value in `whereTag` and pass the value into `whereHasTag`;
+    ```php
+        ->whereTag('long-running')
+        ->whereHasTag('long-running')
+    ```
 
 ## Drilling into results
 
