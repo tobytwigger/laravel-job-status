@@ -41,7 +41,7 @@ class ClearJobStatusCommand extends Command
     public function handle()
     {
         $hours = (int) $this->option('preserve') ?? 0;
-                          
+
         $statuses = JobStatus::query();
         if ($this->option('keep-failed')) {
             $statuses->whereStatusIn([Status::SUCCEEDED, Status::CANCELLED]);
@@ -56,7 +56,6 @@ class ClearJobStatusCommand extends Command
         $this->withProgressBar($statuses, function (JobStatus $jobStatus) {
             if ($this->option('trim')) {
                 $jobStatus->statuses()->delete();
-                $jobStatus->tags()->delete();
                 $jobStatus->signals()->delete();
                 $jobStatus->messages()->delete();
             } else {
