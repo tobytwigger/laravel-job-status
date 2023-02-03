@@ -81,15 +81,15 @@ return [
     'collectors' => [
         'messages' => [
             // Whether your job can send messages to your app
-            'enabled' => true
+            'enabled' => true,
         ],
         'signals' => [
             // Whether your app can send signals to your job
-            'enabled' => true
+            'enabled' => true,
         ],
         'status_history' => [
             // Whether we store the timeline of the job
-            'enabled' => true
+            'enabled' => true,
         ],
     ],
 

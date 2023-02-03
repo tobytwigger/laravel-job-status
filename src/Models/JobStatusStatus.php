@@ -33,7 +33,7 @@ class JobStatusStatus extends Model
 
     protected static function booted()
     {
-        static::creating(fn(JobStatusStatus $jobStatus) => config('laravel-job-status.collectors.status_history.enabled', true));
+        static::creating(fn (JobStatusStatus $jobStatus) => config('laravel-job-status.collectors.status_history.enabled', true));
     }
 
     public function jobStatus()
