@@ -83,6 +83,12 @@ class ClearJobStatusCommandTest extends TestCase
         )->has(
             JobMessage::factory()->count(3),
             'messages'
+        )->has(
+            JobException::factory(),
+            'exception'
+        )->has(
+            JobBatch::factory(),
+            'exception'
         )->count(3)->create([
             'status' => \JobStatus\Enums\Status::SUCCEEDED,
         ]);
@@ -91,6 +97,8 @@ class ClearJobStatusCommandTest extends TestCase
             ->assertOk();
 
         $this->assertCount(0, JobStatus::all());
+        $this->assertCount(0, JobBatch::all());
+        $this->assertCount(0, JobException::all());
         $this->assertCount(0, JobStatusStatus::all());
         $this->assertCount(0, JobStatusTag::all());
         $this->assertCount(0, JobSignal::all());
@@ -113,10 +121,10 @@ class ClearJobStatusCommandTest extends TestCase
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_statuses', 1);
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_exceptions', 1);
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_batches', 1);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_status_tags', 5);
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_messages', 5);
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_signals', 5);
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_status_statuses', 5);
-        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_status_tags', 5);
 
         $this->artisan('job-status:clear --preserve=2 --trim')
             ->assertOk();
@@ -124,10 +132,10 @@ class ClearJobStatusCommandTest extends TestCase
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_statuses', 1);
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_exceptions', 1);
         $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_batches', 1);
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_status_tags', 5);
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_messages');
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_signals');
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_statuses');
-        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_tags');
     }
 
     /** @test */
