@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import api from 'src/utils/client/api';
 import { JobRun, TrackedJob } from 'src/types/api';
 import { useApi } from '../compostables/useApi';

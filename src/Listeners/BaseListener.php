@@ -54,11 +54,11 @@ class BaseListener
                 return false;
             }
             if (!in_array(Trackable::class, class_uses_recursive($job->resolveName()))) {
-                return false;
+                return config('laravel-job-status.track_anonymous', true);
             }
         } else {
             if (!in_array(Trackable::class, class_uses_recursive($job))) {
-                return false;
+                return config('laravel-job-status.track_anonymous', true);
             }
         }
 
@@ -93,17 +93,17 @@ class BaseListener
             }
             $jobStatus = JobStatus::create([
                 'class' => get_class($command),
-                'alias' => $command->alias(),
+                'alias' => method_exists($command, 'alias') ? $command->alias() : get_class($command),
                 'percentage' => 0,
                 'status' => Status::QUEUED,
                 'uuid' => $job->uuid(),
                 'batch_id' => $batchId,
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId(),
-                'public' => $command->public(),
+                'public' => method_exists($command, 'public') ? $command->public() : true,
             ]);
             $modifier = JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
-            foreach ($command->tags() as $key => $value) {
+            foreach ((method_exists($command, 'tags') ? $command->tags() : []) as $key => $value) {
                 if (is_numeric($key)) {
                     $jobStatus->tags()->create([
                         'is_indexless' => true,
@@ -119,7 +119,7 @@ class BaseListener
                 }
             }
 
-            foreach ($command->users() as $user) {
+            foreach ((method_exists($command, 'users') ? $command->users() : []) as $user) {
                 $modifier->grantAccessTo($user);
             }
         }
