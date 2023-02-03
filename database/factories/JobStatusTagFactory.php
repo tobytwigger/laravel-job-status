@@ -27,10 +27,10 @@ class JobStatusTagFactory extends Factory
 
     public function indexless(string $key)
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'is_indexless' => true,
             'key' => $key,
-            'value' => null
+            'value' => null,
         ]);
     }
 }

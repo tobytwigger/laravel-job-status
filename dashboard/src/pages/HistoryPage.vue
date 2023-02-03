@@ -1,25 +1,25 @@
 <template>
   <q-page class="justify-evenly" padding v-if="results !== null">
     <q-breadcrumbs>
-      <q-breadcrumbs-el icon="manage_search" to="/history" label="History"/>
+      <q-breadcrumbs-el icon="manage_search" to="/history" label="History" />
     </q-breadcrumbs>
 
     <div class="row">
-<!--      <div class="col-12 q-py-md">-->
-<!--        <q-list bordered separator>-->
-<!--          <q-item v-ripple><q-item-section>-->
-<!--            <q-item-label>{{ results.alias }}</q-item-label>-->
-<!--            <q-item-label caption>Alias</q-item-label>-->
-<!--          </q-item-section></q-item>-->
-<!--          <q-item v-ripple><q-item-section>-->
-<!--            <q-item-label>{{ results.class }}</q-item-label>-->
-<!--            <q-item-label caption>Class</q-item-label>-->
-<!--          </q-item-section></q-item>-->
-<!--        </q-list>-->
-<!--      </div>-->
+      <!--      <div class="col-12 q-py-md">-->
+      <!--        <q-list bordered separator>-->
+      <!--          <q-item v-ripple><q-item-section>-->
+      <!--            <q-item-label>{{ results.alias }}</q-item-label>-->
+      <!--            <q-item-label caption>Alias</q-item-label>-->
+      <!--          </q-item-section></q-item>-->
+      <!--          <q-item v-ripple><q-item-section>-->
+      <!--            <q-item-label>{{ results.class }}</q-item-label>-->
+      <!--            <q-item-label caption>Class</q-item-label>-->
+      <!--          </q-item-section></q-item>-->
+      <!--        </q-list>-->
+      <!--      </div>-->
 
       <div class="col-12">
-        <q-list bordered class="rounded-borders" style="min-width: 85%" >
+        <q-list bordered class="rounded-borders" style="min-width: 85%">
           <q-item-label header>Runs</q-item-label>
 
           <q-separator></q-separator>
@@ -31,26 +31,23 @@
         </q-list>
       </div>
     </div>
-
   </q-page>
-  <q-page class="items-center justify-evenly" v-else>
-    Loading
-  </q-page>
+  <q-page class="items-center justify-evenly" v-else> Loading </q-page>
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import { ref } from 'vue';
 import api from 'src/utils/client/api';
-import {JobRun} from 'src/types/api';
-import {useApi} from "../compostables/useApi";
-import NoContextTrackedRunListItem from "components/NoContextTrackedRunListItem.vue";
+import { JobRun } from 'src/types/api';
+import { useApi } from '../compostables/useApi';
+import NoContextTrackedRunListItem from 'components/NoContextTrackedRunListItem.vue';
 
-const results = ref<JobRun[]|null>(null);
+const results = ref<JobRun[] | null>(null);
 
 useApi((after) => {
-  api.history()
-    .then((response: JobRun[]) => results.value = response)
+  api
+    .history()
+    .then((response: JobRun[]) => (results.value = response))
     .finally(after);
-})
-
+});
 </script>

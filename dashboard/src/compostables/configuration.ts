@@ -1,5 +1,5 @@
-import Config from "src/utils/config";
-import {ref} from "vue";
+import Config from 'src/utils/config';
+import { ref } from 'vue';
 
 export function useConfig() {
   const config = Config.get();
@@ -10,7 +10,9 @@ export function useConfig() {
   const assets_in_date = ref(config.assets_in_date);
 
   return {
-    version, domain, path, assets_in_date
+    version,
+    domain,
+    path,
+    assets_in_date,
   };
-
 }

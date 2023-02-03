@@ -1,52 +1,74 @@
-import {RouteRecordRaw} from 'vue-router';
+import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: {name: 'dashboard'}
+    redirect: { name: 'dashboard' },
   },
   {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', component: () => import('pages/DashboardPage.vue')}],
+    children: [
+      { path: '', component: () => import('pages/DashboardPage.vue') },
+    ],
   },
   {
     path: '/history',
     name: 'history',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', component:  () => import('pages/HistoryPage.vue')}]
+    children: [{ path: '', component: () => import('pages/HistoryPage.vue') }],
   },
   {
     path: '/jobs',
     name: 'jobs.index',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', component:  () => import('pages/JobListPage.vue')}]
+    children: [{ path: '', component: () => import('pages/JobListPage.vue') }],
   },
   {
     path: '/jobs/:alias',
     name: 'jobs.show',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', props: true, component:  () => import('pages/JobShowPage.vue')}],
+    children: [
+      {
+        path: '',
+        props: true,
+        component: () => import('pages/JobShowPage.vue'),
+      },
+    ],
   },
   {
     path: '/run/:jobStatusId',
     name: 'run.show',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', props: true, component: () => import('pages/RunShowPage.vue')}],
+    children: [
+      {
+        path: '',
+        props: true,
+        component: () => import('pages/RunShowPage.vue'),
+      },
+    ],
   },
 
   {
     path: '/batch',
     name: 'batch.index',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', component:  () => import('pages/BatchListPage.vue')}]
+    children: [
+      { path: '', component: () => import('pages/BatchListPage.vue') },
+    ],
   },
   {
     path: '/batch/:batchId',
     name: 'batch.show',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{path: '', props: true, component:  () => import('pages/BatchShowPage.vue')}],
+    children: [
+      {
+        path: '',
+        props: true,
+        component: () => import('pages/BatchShowPage.vue'),
+      },
+    ],
   },
 
   // Always leave this as last one,

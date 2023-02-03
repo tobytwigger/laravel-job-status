@@ -7,11 +7,11 @@ type VueOptions = import('~/types/vue').VueOptions;
  * Install the vue plugin into Vue.
  */
 export const installer = {
-    install(VueInstance: any, options: VueOptions) {
-        VueInstance.component('JobStatus', JobStatus);
+  install(VueInstance: any, options: VueOptions) {
+    VueInstance.component('JobStatus', JobStatus);
 
-        JobStatusClient.createInstance(options.url, options.axios);
-    },
+    JobStatusClient.createInstance(options.url, options.axios);
+  },
 };
 
 export default installer;

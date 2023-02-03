@@ -1,8 +1,12 @@
-
 <template>
-  <q-item clickable :to="{path: '/run/' + props.trackedRun.id}">
+  <q-item clickable :to="{ path: '/run/' + props.trackedRun.id }">
     <q-item-section avatar top>
-      <q-icon name="hourglass_top" color="black" size="34px" v-if="props.trackedRun.status === Status.Queued" />
+      <q-icon
+        name="hourglass_top"
+        color="black"
+        size="34px"
+        v-if="props.trackedRun.status === Status.Queued"
+      />
       <q-circular-progress
         show-value
         :value="props.trackedRun.percentage"
@@ -11,9 +15,24 @@
         size="34px"
         class="q-ma-md"
       />
-      <q-icon name="done" color="black" size="34px" v-else-if="props.trackedRun.status === Status.Succeeded" />
-      <q-icon name="close" color="black" size="34px" v-else-if="props.trackedRun.status === Status.Failed" />
-      <q-icon name="not_interested" color="black" size="34px" v-else-if="props.trackedRun.status === Status.Cancelled" />
+      <q-icon
+        name="done"
+        color="black"
+        size="34px"
+        v-else-if="props.trackedRun.status === Status.Succeeded"
+      />
+      <q-icon
+        name="close"
+        color="black"
+        size="34px"
+        v-else-if="props.trackedRun.status === Status.Failed"
+      />
+      <q-icon
+        name="not_interested"
+        color="black"
+        size="34px"
+        v-else-if="props.trackedRun.status === Status.Cancelled"
+      />
     </q-item-section>
 
     <q-item-section top class="col-2 gt-sm">
@@ -22,26 +41,38 @@
 
     <q-item-section top>
       <q-item-label lines="1">
-        <span class="text-weight-medium">{{props.trackedRun.status}}</span>
-<!--        <span class="text-grey-8" v-if="Status.Failed && tryCount > 0"> - {{tryCount}} {{tryCount > 1 ? 'attempts' : 'attempt'}}</span>-->
+        <span class="text-weight-medium">{{ props.trackedRun.status }}</span>
+        <!--        <span class="text-grey-8" v-if="Status.Failed && tryCount > 0"> - {{tryCount}} {{tryCount > 1 ? 'attempts' : 'attempt'}}</span>-->
       </q-item-label>
       <q-item-label caption>
         <span>
-          <q-chip v-if="props.trackedRun.messages.length === 0" dense icon="chat">Messages: {{props.trackedRun.messages.length}}</q-chip>
+          <q-chip
+            v-if="props.trackedRun.messages.length === 0"
+            dense
+            icon="chat"
+            >Messages: {{ props.trackedRun.messages.length }}</q-chip
+          >
           <q-chip v-else dense color="blue" text-color="white" icon="chat">
-            Messages: {{props.trackedRun.messages.length}}
+            Messages: {{ props.trackedRun.messages.length }}
           </q-chip>
         </span>
         <span>
-          <q-chip v-if="props.trackedRun.signals.length === 0" dense icon="sensors">Signals: {{props.trackedRun.signals.length}}</q-chip>
+          <q-chip
+            v-if="props.trackedRun.signals.length === 0"
+            dense
+            icon="sensors"
+            >Signals: {{ props.trackedRun.signals.length }}</q-chip
+          >
           <q-chip v-else dense color="red" text-color="white" icon="sensors">
-            Signals: {{props.trackedRun.signals.length}}
+            Signals: {{ props.trackedRun.signals.length }}
           </q-chip>
         </span>
         <span>
-          <q-chip v-if="tryCount === 1" dense icon="replay">Retries: {{tryCount - 1}}</q-chip>
+          <q-chip v-if="tryCount === 1" dense icon="replay"
+            >Retries: {{ tryCount - 1 }}</q-chip
+          >
           <q-chip v-else dense color="orange" text-color="white" icon="replay">
-            Retries: {{tryCount - 1}}
+            Retries: {{ tryCount - 1 }}
           </q-chip>
         </span>
       </q-item-label>
@@ -56,31 +87,28 @@
 </template>
 
 <script setup lang="ts">
-import {computed, defineProps} from 'vue';
-import {JobRun, Status} from 'src/types/api';
-import dayjs from "dayjs";
+import { computed, defineProps } from 'vue';
+import { JobRun, Status } from 'src/types/api';
+import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
 const props = defineProps<{
-  trackedRun: JobRun
+  trackedRun: JobRun;
 }>();
 
-const timeAgo = computed(() => dayjs().to(props.trackedRun.created_at))
+const timeAgo = computed(() => dayjs().to(props.trackedRun.created_at));
 
 const tryCount = computed(() => {
   let tries = 1;
   let run = props.trackedRun;
-  while(run.parent !== null) {
-    run = run.parent
+  while (run.parent !== null) {
+    run = run.parent;
     tries++;
   }
   return tries;
-})
-
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

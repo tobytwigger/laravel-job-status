@@ -13,7 +13,6 @@ use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
-use JobStatus\Models\JobStatusTag;
 
 class JobRun implements Arrayable, Jsonable
 {
@@ -29,13 +28,14 @@ class JobRun implements Arrayable, Jsonable
     public function getTagsAsArray(): array
     {
         $tags = [];
-        foreach($this->jobStatus->tags as $tag) {
-            if($tag->is_indexless) {
+        foreach ($this->jobStatus->tags as $tag) {
+            if ($tag->is_indexless) {
                 $tags[] = $tag->key;
             } else {
                 $tags[$tag->key] = $tag->value;
             }
         }
+
         return $tags;
     }
 

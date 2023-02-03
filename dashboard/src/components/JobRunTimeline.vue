@@ -13,40 +13,58 @@
         <span v-else>{{ run.alias }}</span>
       </template>
       <template v-slot:stamp>
-        <span>{{ Math.round(entry.time_into_job.asSeconds() * 10) / 10 }} seconds</span></template>
+        <span
+          >{{
+            Math.round(entry.time_into_job.asSeconds() * 10) / 10
+          }}
+          seconds</span
+        ></template
+      >
       <template v-slot:avatar>
-        <q-avatar color="teal" class="q-ma-sm" text-color="white" v-if="entry.from_app" :icon="entry.icon"></q-avatar>
-        <q-avatar color="teal" class="q-ma-sm" text-color="white" v-else :icon="entry.icon"></q-avatar>
+        <q-avatar
+          color="teal"
+          class="q-ma-sm"
+          text-color="white"
+          v-if="entry.from_app"
+          :icon="entry.icon"
+        ></q-avatar>
+        <q-avatar
+          color="teal"
+          class="q-ma-sm"
+          text-color="white"
+          v-else
+          :icon="entry.icon"
+        ></q-avatar>
       </template>
     </q-chat-message>
   </div>
 </template>
 
 <script setup lang="ts">
-import {computed, defineProps} from 'vue';
-import {JobRun, MessageType, JobException} from 'src/types/api';
-import duration, {Duration} from 'dayjs/plugin/duration';
-import dayjs from "dayjs";
+import { computed, defineProps } from 'vue';
+import { JobRun, MessageType, JobException } from 'src/types/api';
+import duration, { Duration } from 'dayjs/plugin/duration';
+import dayjs from 'dayjs';
 
 dayjs.extend(duration);
 
 const props = defineProps<{
-  run: JobRun
+  run: JobRun;
 }>();
 
 interface TimelineEntry {
-  id: string
-  text: string[]
-  from_app: boolean
-  time_into_job: Duration,
-  color: string | null,
-  icon: string
+  id: string;
+  text: string[];
+  from_app: boolean;
+  time_into_job: Duration;
+  color: string | null;
+  icon: string;
 }
 
 function calculateTimeIntoJob(time: Date): Duration {
   let originalDate = props.run.created_at;
   return dayjs.duration({
-    milliseconds: dayjs(time).diff(originalDate, 'millisecond')
+    milliseconds: dayjs(time).diff(originalDate, 'millisecond'),
   });
 }
 
@@ -76,7 +94,7 @@ const entries = computed((): TimelineEntry[] => {
       icon: 'chat',
     });
   }
-  if(props.run.exception !== null) {
+  if (props.run.exception !== null) {
     rawEntries.push({
       from_app: false,
       id: 'exception-' + props.run.exception.id.toString(),
@@ -90,12 +108,10 @@ const entries = computed((): TimelineEntry[] => {
     rawEntries.push({
       from_app: false,
       id: 'status-' + status.id.toString(),
-      text: [
-        'Status changed to ' + status.status
-      ],
+      text: ['Status changed to ' + status.status],
       time_into_job: calculateTimeIntoJob(status.created_at),
       color: null,
-      icon: 'move_down'
+      icon: 'move_down',
     });
   }
   for (let signal of props.run.signals) {
@@ -103,38 +119,42 @@ const entries = computed((): TimelineEntry[] => {
       from_app: true,
       id: 'signal-dispatched-' + signal.id.toString(),
       text: [
-        'Signal ' + signal.signal + ' sent (#' + signal.id.toString() + ')'
+        'Signal ' + signal.signal + ' sent (#' + signal.id.toString() + ')',
       ].concat(
-        Object.keys(signal.parameters)
-          .map((key): string => {
-            return 'Passing parameter \'' + key + '\' with value \'' + signal.parameters[key] + '\''
-          })
+        Object.keys(signal.parameters).map((key): string => {
+          return (
+            "Passing parameter '" +
+            key +
+            "' with value '" +
+            signal.parameters[key] +
+            "'"
+          );
+        })
       ),
       time_into_job: calculateTimeIntoJob(signal.created_at),
       color: null,
-      icon: 'connect_without_contact'
+      icon: 'connect_without_contact',
     });
-    if(signal.handled_at !== null) {
+    if (signal.handled_at !== null) {
       rawEntries.push({
         from_app: false,
         id: 'signal-handled-' + signal.id.toString(),
         text: [
-          'Handled signal ' + signal.signal + ' (#' + signal.id + ')'
-        ].concat(signal.cancel_job ? ['This caused the job to be cancelled.'] : []),
+          'Handled signal ' + signal.signal + ' (#' + signal.id + ')',
+        ].concat(
+          signal.cancel_job ? ['This caused the job to be cancelled.'] : []
+        ),
         time_into_job: calculateTimeIntoJob(signal.handled_at),
         color: signal.cancel_job ? 'warning' : null,
-        icon: 'connect_without_contact'
+        icon: 'connect_without_contact',
       });
     }
   }
   rawEntries.sort((a, b) => {
-    return a.time_into_job.asMilliseconds() - b.time_into_job.asMilliseconds()
+    return a.time_into_job.asMilliseconds() - b.time_into_job.asMilliseconds();
   });
   return rawEntries;
 });
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

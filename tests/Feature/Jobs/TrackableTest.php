@@ -42,9 +42,11 @@ class TrackableTest extends TestCase
     public function search_returns_a_search_for_the_job_and_tags_with_indexless_tags()
     {
         JobStatus::factory()->count(6)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
-        JobStatus::factory()->has(JobStatusTag::factory()
-            ->state(['key' => 'key1', 'value' => 'val1'])
-            ->indexless('keyone-indexless'), 'tags'
+        JobStatus::factory()->has(
+            JobStatusTag::factory()
+                ->state(['key' => 'key1', 'value' => 'val1'])
+                ->indexless('keyone-indexless'),
+            'tags'
         )
             ->count(8)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
 
