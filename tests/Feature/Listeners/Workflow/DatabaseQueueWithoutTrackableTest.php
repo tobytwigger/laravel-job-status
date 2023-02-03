@@ -10,7 +10,6 @@ use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\AssertBatch;
 use JobStatus\Tests\fakes\AssertJobStatus;
-use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\fakes\JobFakeFactory;
 use JobStatus\Tests\fakes\JobFakeWithoutTrackable;
 use JobStatus\Tests\TestCase;
@@ -58,7 +57,8 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
 
 
     /** @test */
-    public function it_saves_nothing_when_config_set(){
+    public function it_saves_nothing_when_config_set()
+    {
         config()->set('laravel-job-status.track_anonymous', false);
 
         $job = (new JobFakeFactory())
@@ -533,7 +533,6 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
     /** @test */
     public function it_handles_a_batch_with_first_job_failing()
     {
-
         config()->set('laravel-job-status.track_anonymous', true);
         $job1 = (new JobFakeFactory())
             ->withoutTrackable()

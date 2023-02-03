@@ -33,7 +33,7 @@ class JobMessage extends Model
 
     protected static function booted()
     {
-        static::creating(fn(JobMessage $jobMessage) => config('laravel-job-status.collectors.messages.enabled', true));
+        static::creating(fn (JobMessage $jobMessage) => config('laravel-job-status.collectors.messages.enabled', true));
     }
 
     public function jobStatus()

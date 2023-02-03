@@ -34,7 +34,7 @@ class JobSignal extends Model
 
     protected static function booted()
     {
-        static::creating(fn(JobSignal $jobSignal) => config('laravel-job-status.collectors.signals.enabled', true));
+        static::creating(fn (JobSignal $jobSignal) => config('laravel-job-status.collectors.signals.enabled', true));
     }
 
     public static function scopeUnhandled(Builder $query)
