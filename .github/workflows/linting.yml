@@ -29,15 +29,18 @@ jobs:
 
             -   run: npm install
                 name: Inzstall js dependencies
+                working-directory: './dashboard'
 
             -   run: npm install -g @quasar/cli
                 name: Install the Quasar CLI
 
             -   name: Run cs fixer
                 run: ./vendor/bin/php-cs-fixer fix
+                working-directory: './dashboard'
 
             -   run: npm run format
                 name: Run the js linter
+                working-directory: './dashboard'
 
             -   name: Commit changes
                 uses: stefanzweifel/git-auto-commit-action@v4
