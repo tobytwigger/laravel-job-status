@@ -1,8 +1,7 @@
 <template>
   <q-page class="justify-evenly" v-if="results !== null">
-
     <q-breadcrumbs>
-        <q-breadcrumbs-el icon="list" to="/jobs" label="Jobs"/>
+      <q-breadcrumbs-el icon="list" to="/jobs" label="Jobs" />
     </q-breadcrumbs>
 
     <q-list class="rounded-borders q-pa-lg">
@@ -10,35 +9,31 @@
 
       <q-separator></q-separator>
       <div v-for="result in results" :key="getHash(result)">
-        <tracked-job-list-item  :tracked-job="result">
-        </tracked-job-list-item>
+        <tracked-job-list-item :tracked-job="result"> </tracked-job-list-item>
         <q-separator></q-separator>
       </div>
     </q-list>
-
   </q-page>
-  <q-page class="items-center justify-evenly" v-else>
-    Loading
-  </q-page>
+  <q-page class="items-center justify-evenly" v-else> Loading </q-page>
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import { ref } from 'vue';
 import api from 'src/utils/client/api';
-import TrackedJobListItem from "../components/TrackedJobListItem.vue";
-import {useApi} from "../compostables/useApi";
-import {TrackedJob} from "src/types/api";
+import TrackedJobListItem from '../components/TrackedJobListItem.vue';
+import { useApi } from '../compostables/useApi';
+import { TrackedJob } from 'src/types/api';
 
-const results = ref<TrackedJob[]|null>(null);
+const results = ref<TrackedJob[] | null>(null);
 
 useApi((after) => {
-  api.jobList()
-    .then((response: TrackedJob[]) => results.value = response)
+  api
+    .jobList()
+    .then((response: TrackedJob[]) => (results.value = response))
     .finally(after);
-})
+});
 
 function getHash(trackedJob: TrackedJob): string {
   return trackedJob.class;
 }
-
 </script>

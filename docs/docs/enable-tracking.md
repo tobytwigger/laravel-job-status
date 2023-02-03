@@ -46,3 +46,24 @@ class ProcessPodcast
 
 }
 ```
+##### Index-less tags
+
+You can provide an array of tags with numerical indexes from the `tags` function, for example
+
+```php
+public function tags(): array
+{
+    return array_merge([
+        'long-running', 'uses-third-party'
+    ], [
+        'podcast_id' => $this->podcast->id,
+        'user_id' => $this->user->id
+    ]);
+}
+```
+
+If you use Horizon, using index-less tags will let you continue to use the Horizon job tagging system. 
+
+!!! warning
+    Make sure your tags are different, `['podcast', 'podcast' => 1]` is invalid.
+

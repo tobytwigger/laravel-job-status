@@ -22,7 +22,7 @@ class SyncQueueTest extends TestCase
     {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
-            ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
+            ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'my-indexless-tag'])
             ->setCallback(static::class . '@a_run_is_handled_callback')
             ->setUsers([1,2])
             ->dispatchSync();
@@ -42,11 +42,16 @@ class SyncQueueTest extends TestCase
         Assert::assertEquals('', $jobStatus->job_id);
         Assert::assertEquals('sync', $jobStatus->connection_name);
 
-        Assert::assertCount(2, $jobStatus->tags);
+        Assert::assertCount(3, $jobStatus->tags);
         Assert::assertEquals('my-first-tag', $jobStatus->tags[0]->key);
         Assert::assertEquals(1, $jobStatus->tags[0]->value);
+        Assert::assertFalse($jobStatus->tags[0]->is_indexless);
         Assert::assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         Assert::assertEquals('mytag-value', $jobStatus->tags[1]->value);
+        Assert::assertFalse($jobStatus->tags[1]->is_indexless);
+        Assert::assertEquals('my-indexless-tag', $jobStatus->tags[2]->key);
+        Assert::assertNull($jobStatus->tags[2]->value);
+        Assert::assertTrue($jobStatus->tags[2]->is_indexless);
 
         Assert::assertCount(2, $jobStatus->users()->get());
         Assert::assertEquals(1, $jobStatus->users()->get()[0]->user_id);

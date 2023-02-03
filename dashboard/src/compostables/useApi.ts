@@ -1,11 +1,11 @@
-import {onMounted, onUnmounted, ref} from "vue";
+import { onMounted, onUnmounted, ref } from 'vue';
 import Timeout = NodeJS.Timeout;
 
 export function useApi(callApi: (after: () => void) => void) {
   const loading = ref<boolean>(false);
 
   function triggerApiCall() {
-    loading.value = true
+    loading.value = true;
     function after(): void {
       loading.value = false;
     }
@@ -20,14 +20,13 @@ export function useApi(callApi: (after: () => void) => void) {
   });
 
   onUnmounted(() => {
-    if(intervalId) {
-      clearInterval(intervalId)
+    if (intervalId) {
+      clearInterval(intervalId);
     }
-  })
+  });
 
   return {
     loading,
-    triggerApiCall
-  }
-
+    triggerApiCall,
+  };
 }

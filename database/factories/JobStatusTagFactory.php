@@ -20,7 +20,17 @@ class JobStatusTagFactory extends Factory
         return [
             'key' => $this->faker->word,
             'value' => $this->faker->sentence,
+            'is_indexless' => false,
             'job_status_id' => JobStatus::factory(),
         ];
+    }
+
+    public function indexless(string $key)
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_indexless' => true,
+            'key' => $key,
+            'value' => null,
+        ]);
     }
 }

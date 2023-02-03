@@ -39,6 +39,23 @@ class TrackableTest extends TestCase
         $this->assertCount(8, $search->get()->jobs()->first()->runs());
     }
 
+    public function search_returns_a_search_for_the_job_and_tags_with_indexless_tags()
+    {
+        JobStatus::factory()->count(6)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
+        JobStatus::factory()->has(
+            JobStatusTag::factory()
+                ->state(['key' => 'key1', 'value' => 'val1'])
+                ->indexless('keyone-indexless'),
+            'tags'
+        )
+            ->count(8)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
+
+        JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'jobfake']);
+        $search = JobFake::search(['keyone-indexless', 'key1' => 'val1']);
+        $this->assertInstanceOf(Builder::class, $search);
+        $this->assertCount(8, $search->get()->jobs()->first()->runs());
+    }
+
     /** @test */
     public function history_gets_a_list_of_the_jobs()
     {
@@ -236,5 +253,14 @@ class TrackableTest extends TestCase
             ->create();
 
         $this->assertEquals(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'], $jobFake->tags());
+    }
+
+    public function tags_gets_the_tags_from_the_job_including_with_indexless_tags()
+    {
+        $jobFake = (new JobFakeFactory())
+            ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'tag-three', 'tag-four'])
+            ->create();
+
+        $this->assertEquals(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'tag-three', 'tag-four'], $jobFake->tags());
     }
 }

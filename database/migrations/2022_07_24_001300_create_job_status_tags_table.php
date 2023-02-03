@@ -14,7 +14,8 @@ return new class() extends Migration {
         Schema::create(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_status_tags'), function (Blueprint $table) {
             $table->id();
             $table->string('key');
-            $table->string('value');
+            $table->string('value')->nullable();
+            $table->boolean('is_indexless')->default(false);
             $table->unsignedBigInteger('job_status_id');
             $table->timestamps();
         });

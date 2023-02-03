@@ -29,6 +29,38 @@ class JobStatusSearchTest extends TestCase
     }
 
     /** @test */
+    public function it_can_get_a_requested_job_status_with_index_less_and_indexed_tags()
+    {
+        $jobStatus = JobStatus::factory()
+            ->has(JobStatusTag::factory(['key' => 'one', 'value' => 'yes']), 'tags')
+            ->has(JobStatusTag::factory()->indexless('keytwo'), 'tags')
+            ->create(['alias' => 'mystatus']);
+        JobStatus::factory()->count(10)->create();
+
+        $statusQuery = [
+            'alias' => 'mystatus',
+            'tags' => ['keytwo'],
+        ];
+        $response = $this->getJson(route('job-status.search', $statusQuery));
+        $response->assertJson([
+            'id' => $jobStatus->id,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
+        ]);
+
+        $statusQuery = [
+            'alias' => 'mystatus',
+            'tags' => ['one' => 'yes', 'keytwo'],
+        ];
+        $response = $this->getJson(route('job-status.search', $statusQuery));
+        $response->assertJson([
+            'id' => $jobStatus->id,
+            'class' => $jobStatus->class,
+            'alias' => $jobStatus->alias,
+        ]);
+    }
+
+    /** @test */
     public function it_returns_the_job_status_formatted()
     {
         $jobStatus = JobStatus::factory()->has(
