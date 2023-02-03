@@ -17,7 +17,9 @@ class JobFakeWithoutTrackableOrBatchable implements ShouldQueue
 
     public function __construct(
         private \Closure|string|null $callback = null,
+        ?string $queue = null
     ) {
+        $this->onQueue($queue);
     }
 
     public function handle()

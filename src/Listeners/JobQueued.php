@@ -45,6 +45,8 @@ class JobQueued extends BaseListener
                 'class' => get_class($job),
                 'alias' => method_exists($job, 'alias') ? $job->alias() : get_class($job),
                 'percentage' => 0,
+                'queue' => $event->job->job?->getQueue() ?? $event->job->queue ?? null,
+                'payload' => $event->job->job?->payload(),
                 'batch_id' => $batchModel?->id,
                 'status' => Status::QUEUED,
                 'uuid' => null,

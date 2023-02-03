@@ -402,4 +402,26 @@ class JobStatusModifierTest extends TestCase
 
         $this->assertDatabaseEmpty(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_signals'));
     }
+
+    /** @test */
+    public function the_payload_can_be_set()
+    {
+        $jobStatus = JobStatus::factory()->create(['payload' => ['test']]);
+
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $modifier->setPayload(['test-two']);
+        $this->assertEquals(['test-two'], $jobStatus->refresh()->payload);
+    }
+
+    /** @test */
+    public function the_queue_can_be_set()
+    {
+        $jobStatus = JobStatus::factory()->create(['queue' => 'queue-1']);
+
+        $modifier = new JobStatusModifier($jobStatus);
+
+        $modifier->setQueue('queue-2');
+        $this->assertEquals('queue-2', $jobStatus->refresh()->queue);
+    }
 }

@@ -38,6 +38,8 @@ class JobFakeFactory
      */
     private bool $withoutBatchable = false;
 
+    private ?string $queue = null;
+
     /**
      * @return int
      */
@@ -133,14 +135,14 @@ class JobFakeFactory
         $job = null;
         if ($this->withoutTrackable === true) {
             if ($this->withoutInteractsWithQueue === true) {
-                $job = new JobFakeWithoutTrackableOrInteractsWithQueue($this->callback ?? static::class . '@fakeCallback');
+                $job = new JobFakeWithoutTrackableOrInteractsWithQueue($this->callback ?? static::class . '@fakeCallback', queue: $this->queue);
             } elseif ($this->withoutBatchable) {
-                $job = new JobFakeWithoutTrackableOrBatchable($this->callback ?? static::class . '@fakeCallback');
+                $job = new JobFakeWithoutTrackableOrBatchable($this->callback ?? static::class . '@fakeCallback', queue: $this->queue);
             } else {
-                $job = new JobFakeWithoutTrackable($this->callback ?? static::class . '@fakeCallback');
+                $job = new JobFakeWithoutTrackable($this->callback ?? static::class . '@fakeCallback', queue: $this->queue);
             }
         } else {
-            $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals, $this->users, $this->public);
+            $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals, $this->users, $this->public, queue: $this->queue);
         }
         if ($job === null) {
             throw new \Exception('Need to implement a job fake with trackable but without interacts with queue');
@@ -185,9 +187,16 @@ class JobFakeFactory
         static::createBatchesTable();
         static::createFailedJobsTable();
         $realBatch = $batch->dispatch();
-        for ($i = 0; $i < $jobCount; $i++) {
-            Artisan::call('queue:work database --once --stop-when-empty');
+
+        $command = 'queue:work database --once --stop-when-empty';
+        if($batch->queue() !== null) {
+            $command .= ' --queue=' . $batch->queue();
         }
+        for ($i = 0; $i < $jobCount; $i++) {
+            Artisan::call($command);
+        }
+
+
 
         return $realBatch;
     }
@@ -211,8 +220,12 @@ class JobFakeFactory
         $job->onConnection('database');
         static::createJobsTable();
         app(Dispatcher::class)->dispatch($job);
+        $runCommand = 'queue:work database --once --stop-when-empty';
+        if($this->queue !== null) {
+            $runCommand .= ' --queue=' . $this->queue;
+        }
         for ($i = 0; $i < $jobsToRun; $i++) {
-            Artisan::call('queue:work database --once --stop-when-empty');
+            Artisan::call($runCommand);
         }
 
         return $job;
@@ -285,6 +298,13 @@ class JobFakeFactory
     public function maxExceptions(int $maxExceptions): JobFakeFactory
     {
         $this->maxExceptions = $maxExceptions;
+
+        return $this;
+    }
+
+    public function onQueue(?string $queue)
+    {
+        $this->queue = $queue;
 
         return $this;
     }

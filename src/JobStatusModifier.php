@@ -223,4 +223,24 @@ class JobStatusModifier
 
         return $this;
     }
+
+    public function setPayload(array $payload)
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->payload = $payload;
+            $this->jobStatus->save();
+        }
+
+        return $this;
+    }
+
+    public function setQueue(string $queue)
+    {
+        if ($this->jobStatus !== null) {
+            $this->jobStatus->queue = $queue;
+            $this->jobStatus->save();
+        }
+
+        return $this;
+    }
 }

@@ -25,6 +25,7 @@ class DatabaseQueueTest extends TestCase
             ->setCallback(static::class . '@a_run_is_handled_callback')
             ->setUsers([1, 2])
             ->setPublic(true)
+            ->onQueue('my-database-queue')
             ->dispatch();
 
         $this->assertNull(JobStatus::first()->exception, JobStatus::first()->exception?->message ?? 'An error occured');
@@ -35,6 +36,8 @@ class DatabaseQueueTest extends TestCase
     {
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        Assert::assertNotNull($jobStatus->payload);
+        Assert::assertEquals('my-database-queue', $jobStatus->queue);
         Assert::assertEquals(JobFake::class, $jobStatus->class);
         Assert::assertEquals('my-fake-job', $jobStatus->alias);
         Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->status);
@@ -70,7 +73,7 @@ class DatabaseQueueTest extends TestCase
         Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
     }
 
-    /** @test  */
+    /** @test */
     public function models_can_be_stopped_from_being_saved()
     {
         config()->set('laravel-job-status.collectors.messages.enabled', false);
@@ -79,10 +82,13 @@ class DatabaseQueueTest extends TestCase
 
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
+            ->onQueue('a-different-queue')
             ->dispatch();
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('a-different-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
@@ -117,10 +123,13 @@ class DatabaseQueueTest extends TestCase
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-only-indexless-tag'])
+            ->onQueue(null)
             ->dispatch();
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('default', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
@@ -155,10 +164,13 @@ class DatabaseQueueTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->setCallback(static::class . '@a_cancelled_run_is_handled_callback')
+            ->onQueue('my-database-queue')
             ->dispatch();
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
@@ -204,12 +216,15 @@ class DatabaseQueueTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->setCallback(static::class . '@a_cancelled_custom_signal_run_is_handled_callback')
             ->handleSignal('custom_signal', static::class . '@a_cancelled_custom_signal_run_is_handled_custom_signal_callback')
+            ->onQueue('my-database-queue')
             ->dispatch();
 
         $this->assertTrue(static::$calledCancelledCustomSignal);
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
@@ -263,10 +278,13 @@ class DatabaseQueueTest extends TestCase
             ->maxTries(1)
             ->setPublic(false)
             ->maxExceptions(1)
+            ->onQueue('my-database-queue')
             ->dispatch();
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
@@ -315,11 +333,14 @@ class DatabaseQueueTest extends TestCase
             ->setUsers([1, 2])
             ->setPublic(false)
             ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_callback')
+            ->onQueue('my-database-queue')
             ->dispatch();
 
         Assert::assertCount(2, JobStatus::all());
 
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
@@ -352,6 +373,8 @@ class DatabaseQueueTest extends TestCase
         Assert::assertNull($jobStatus->batch);
 
         $jobStatusRetry = JobStatus::all()[1];
+        $this->assertNull($jobStatusRetry->payload);
+        $this->assertEquals('my-database-queue', $jobStatusRetry->queue);
         $this->assertEquals(JobFake::class, $jobStatusRetry->class);
         $this->assertEquals('my-fake-job', $jobStatusRetry->alias);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->status);
@@ -400,6 +423,7 @@ class DatabaseQueueTest extends TestCase
             ->maxExceptions(2)
             ->setUsers([1, 2])
             ->setPublic(true)
+            ->onQueue('my-database-queue')
             ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_after_a_rerun_callback')
             ->dispatch(2);
 
@@ -408,6 +432,8 @@ class DatabaseQueueTest extends TestCase
         $jobStatus = JobStatus::first();
         Assert::assertNull($jobStatus->batch);
 
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
@@ -440,6 +466,8 @@ class DatabaseQueueTest extends TestCase
         $jobStatusRetry = JobStatus::all()[1];
         Assert::assertNull($jobStatusRetry->batch);
 
+        $this->assertNotNull($jobStatusRetry->payload);
+        $this->assertEquals('my-database-queue', $jobStatusRetry->queue);
         $this->assertEquals(JobFake::class, $jobStatusRetry->class);
         $this->assertEquals('my-fake-job', $jobStatusRetry->alias);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatusRetry->status);
@@ -488,11 +516,14 @@ class DatabaseQueueTest extends TestCase
             ->maxTries(2)
             ->maxExceptions(2)
             ->setCallback(static::class . '@it_tracks_a_new_job_when_failed_and_retried_if_already_manually_released_callback')
+            ->onQueue('my-database-queue')
             ->dispatch();
 
         Assert::assertCount(1, JobStatus::all());
 
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
@@ -538,6 +569,7 @@ class DatabaseQueueTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->maxTries(2)
+            ->onQueue('my-database-queue')
             ->maxExceptions(2)
             ->setUsers([1, 2])
             ->setPublic(false)
@@ -547,6 +579,8 @@ class DatabaseQueueTest extends TestCase
         Assert::assertCount(3, JobStatus::all());
 
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
@@ -577,6 +611,8 @@ class DatabaseQueueTest extends TestCase
         Assert::assertNull($jobStatus->batch);
 
         $jobStatusRetry = JobStatus::all()[1];
+        $this->assertNotNull($jobStatusRetry->payload);
+        $this->assertEquals('my-database-queue', $jobStatusRetry->queue);
         $this->assertEquals(JobFake::class, $jobStatusRetry->class);
         $this->assertEquals('my-fake-job', $jobStatusRetry->alias);
         $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatusRetry->status);
@@ -608,6 +644,8 @@ class DatabaseQueueTest extends TestCase
 
 
         $jobStatusRetryNotRan = JobStatus::all()[2];
+        $this->assertNull($jobStatusRetryNotRan->payload);
+        $this->assertEquals('my-database-queue', $jobStatusRetryNotRan->queue);
         $this->assertEquals(JobFake::class, $jobStatusRetryNotRan->class);
         $this->assertEquals('my-fake-job', $jobStatusRetryNotRan->alias);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetryNotRan->status);
@@ -644,6 +682,7 @@ class DatabaseQueueTest extends TestCase
         $job1 = (new JobFakeFactory())
             ->setAlias('my-fake-job-one')
             ->setTags(['my-first-tag' => 'one', 'my-second-tag' => 'one'])
+            ->onQueue('this-is-ignored')
             ->maxTries(1)
             ->maxExceptions(1)
             ->create();
@@ -652,11 +691,13 @@ class DatabaseQueueTest extends TestCase
             ->setAlias('my-fake-job-two')
             ->setTags(['my-first-tag' => 'two', 'my-second-tag' => 'two'])
             ->maxTries(1)
+            ->onQueue('this-is-ignored')
             ->maxExceptions(1)
             ->create();
 
         $job3 = (new JobFakeFactory())
             ->setAlias('my-fake-job-three')
+            ->onQueue('ignored')
             ->setTags(['my-first-tag' => 'three', 'my-second-tag' => 'three'])
             ->maxTries(1)
             ->maxExceptions(1)
@@ -665,14 +706,14 @@ class DatabaseQueueTest extends TestCase
         $realBatch = JobFakeFactory::dispatchBatch(
             Bus::batch([
                 $job1, $job2, $job3,
-            ])->name('My Batch Name')
+            ])->onQueue('my-database-queue')->name('My Batch Name'),
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn (AssertBatch $batch) => $batch
+                fn(AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -681,7 +722,9 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::SUCCEEDED)
@@ -706,7 +749,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::SUCCEEDED)
@@ -731,7 +776,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 2,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-three')
                     ->hasStatus(Status::SUCCEEDED)
@@ -787,14 +834,14 @@ class DatabaseQueueTest extends TestCase
         $realBatch = JobFakeFactory::dispatchBatch(
             Bus::batch([
                 $job1, $job2, $job3,
-            ])->name('My Batch Name')
+            ])->onQueue('my-database-queue')->name('My Batch Name'),
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn (AssertBatch $batch) => $batch
+                fn(AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -803,7 +850,9 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::FAILED)
@@ -828,7 +877,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::CANCELLED)
@@ -854,7 +905,9 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasStatus(Status::CANCELLED)
                     ->hasAlias('my-fake-job-three')
@@ -922,14 +975,14 @@ class DatabaseQueueTest extends TestCase
         $realBatch = JobFakeFactory::dispatchBatch(
             Bus::batch([
                 $job1, $job2, $job3,
-            ])->name('My Batch Name')
+            ])->onQueue('my-database-queue')->name('My Batch Name'),
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn (AssertBatch $batch) => $batch
+                fn(AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -938,7 +991,9 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::FAILED)
@@ -963,7 +1018,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::CANCELLED)
@@ -989,7 +1046,9 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasStatus(Status::CANCELLED)
                     ->hasAlias('my-fake-job-three')
@@ -1050,14 +1109,14 @@ class DatabaseQueueTest extends TestCase
         $realBatch = JobFakeFactory::dispatchBatch(
             Bus::batch([
                 $job1, $job2, $job3,
-            ])->name('My Batch Name')
+            ])->onQueue('my-database-queue')->name('My Batch Name')
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn (AssertBatch $batch) => $batch
+                fn(AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1066,7 +1125,9 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::CANCELLED)
@@ -1093,7 +1154,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::CANCELLED)
@@ -1119,7 +1182,9 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasStatus(Status::CANCELLED)
                     ->hasAlias('my-fake-job-three')
@@ -1185,14 +1250,14 @@ class DatabaseQueueTest extends TestCase
         $realBatch = JobFakeFactory::dispatchBatch(
             Bus::batch([
                 $job1, $job2, $job3,
-            ])->name('My Batch Name')->allowFailures()
+            ])->onQueue('my-database-queue')->name('My Batch Name')->allowFailures(),
         );
 
         $this->assertBatches()
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn (AssertBatch $batch) => $batch
+                fn(AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1201,7 +1266,9 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::FAILED)
@@ -1226,7 +1293,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1250,7 +1319,9 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasStatus(Status::SUCCEEDED)
                     ->hasAlias('my-fake-job-three')
@@ -1281,9 +1352,6 @@ class DatabaseQueueTest extends TestCase
     }
 
 
-
-
-
     /** @test */
     public function it_handles_adding_a_job_from_inside_a_batch()
     {
@@ -1312,7 +1380,7 @@ class DatabaseQueueTest extends TestCase
         $realBatch = JobFakeFactory::dispatchBatch(
             Bus::batch([
                 $job1, $job2, $job3,
-            ])->name('My Batch Name'),
+            ])->onQueue('my-database-queue')->name('My Batch Name'),
             5
         );
 
@@ -1320,7 +1388,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn (AssertBatch $batch) => $batch
+                fn(AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1329,7 +1397,9 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(5)
             ->withIndex(
                 0,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1354,7 +1424,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1379,7 +1451,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 2,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-three')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1404,7 +1478,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 3,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-four')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1429,7 +1505,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 4,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-five')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1460,6 +1538,7 @@ class DatabaseQueueTest extends TestCase
     {
         $job4 = (new JobFakeFactory())
             ->setAlias('my-fake-job-four')
+            ->onQueue('my-database-queue')
             ->setTags(['my-first-tag' => 'four', 'my-second-tag' => 'four'])
             ->maxTries(1)
             ->maxExceptions(1)
@@ -1469,14 +1548,12 @@ class DatabaseQueueTest extends TestCase
             ->setAlias('my-fake-job-five')
             ->setTags(['my-first-tag' => 'five', 'my-second-tag' => 'five'])
             ->maxTries(1)
+            ->onQueue('my-database-queue')
             ->maxExceptions(1)
             ->create();
 
         $job->batch()->add([$job4, $job5]);
     }
-
-
-
 
 
     /** @test */
@@ -1521,7 +1598,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn (AssertBatch $batch) => $batch
+                fn(AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1530,7 +1607,9 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(4)
             ->withIndex(
                 0,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('default')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1555,7 +1634,8 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasQueue('default')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-three')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1570,6 +1650,7 @@ class DatabaseQueueTest extends TestCase
                         'my-second-tag' => 'three',
                     ])
                     ->withMessages([])
+                    ->hasPayload()
                     ->withNoException()
                     ->withPastStatuses([
                         \JobStatus\Enums\Status::QUEUED,
@@ -1580,7 +1661,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 2,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('default')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1605,7 +1688,9 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 3,
-                fn (AssertJobStatus $jobStatus) => $jobStatus
+                fn(AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('default')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-four')
                     ->hasStatus(Status::SUCCEEDED)

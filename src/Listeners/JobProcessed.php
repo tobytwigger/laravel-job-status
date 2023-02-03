@@ -26,7 +26,6 @@ class JobProcessed extends BaseListener
     {
         if ($this->isTrackingEnabled()) {
             $modifier = $this->getJobStatusModifier($event->job);
-
             if ($modifier === null) {
                 return;
             }
@@ -49,6 +48,7 @@ class JobProcessed extends BaseListener
                 $jobStatus = JobStatus::create([
                     'class' => $modifier->getJobStatus()?->class,
                     'alias' => $modifier->getJobStatus()?->alias,
+                    'queue' => $modifier->getJobStatus()->queue,
                     'batch_id' => $modifier->getJobStatus()->batch_id,
                     'percentage' => 0,
                     'status' => Status::QUEUED,
