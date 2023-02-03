@@ -36,7 +36,6 @@ jobs:
 
             -   name: Run cs fixer
                 run: ./vendor/bin/php-cs-fixer fix
-                working-directory: './dashboard'
 
             -   run: npm run format
                 name: Run the js linter
