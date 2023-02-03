@@ -33,5 +33,5 @@ jobs:
             -   name: Commit changes
                 uses: stefanzweifel/git-auto-commit-action@v4
                 with:
-                    commit_message: '[CI - JS Files] Run cs-fixer and eslint'
+                    commit_message: '[CI - JS Files] Compile JS files for production.'
                     skip_fetch: true
