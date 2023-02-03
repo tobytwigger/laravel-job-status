@@ -60,7 +60,7 @@ class JobStatusServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../config/laravel-job-status.php' => config_path('laravel-job-status.php'),
-        ], 'config');
+        ], ['config', 'laravel-job-status-config']);
 
         $this->publishes([
             __DIR__ . '/../database/migrations/' => database_path('migrations'),
