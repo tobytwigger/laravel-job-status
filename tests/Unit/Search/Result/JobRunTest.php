@@ -345,6 +345,7 @@ class JobRunTest extends TestCase
             'exception_id' => $exception->id,
             'connection_name' => 'database-test',
             'queue' => 'custom-queue',
+            'payload' => ['one']
         ]);
         $message1 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
         $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subHour()]);
@@ -388,7 +389,7 @@ class JobRunTest extends TestCase
             ]),
             'batch_id' => $batch->id,
             'batch_id_uuid' => $batch->batch_id,
-            'has_payload' => false,
+            'has_payload' => true,
             'connection_name' => 'database-test',
             'queue' => 'custom-queue',
         ];
