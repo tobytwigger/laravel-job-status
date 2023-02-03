@@ -79,6 +79,14 @@ const jobFailureReasons = (alias: string): Promise<JobFailureReason[]> => {
   });
 };
 
+const retry = (jobStatusId: number): Promise<void> => {
+  return post(
+    generateUrl('job-run/' + jobStatusId.toString() + '/retry')
+  ).then((response) => {
+    return;
+  })
+}
+
 export default {
   dashboard,
   jobList,
@@ -89,4 +97,5 @@ export default {
   batchList,
   batchShow,
   jobFailureReasons,
+  retry
 };

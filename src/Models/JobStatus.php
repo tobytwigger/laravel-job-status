@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\Enums\Status;
 use JobStatus\Search\Collections\JobStatusCollection;
+use JobStatus\Search\Result\JobRun;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
@@ -210,5 +211,10 @@ class JobStatus extends Model
     public function batch()
     {
         return $this->belongsTo(JobBatch::class, 'batch_id');
+    }
+
+    public function toRun(): JobRun
+    {
+        return new JobRun($this);
     }
 }

@@ -24,7 +24,6 @@ class JobQueued extends BaseListener
     public function handle(\Illuminate\Queue\Events\JobQueued $event)
     {
         if ($this->isTrackingEnabled()) {
-            /** @var Trackable $job */
             $job = $event->job;
 
             if ($this->validateJob($job) === false) {

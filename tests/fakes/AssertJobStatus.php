@@ -174,4 +174,11 @@ class AssertJobStatus
 
         return $this;
     }
+
+    public function missingPayload()
+    {
+        Assert::assertNull($this->jobStatus->payload);
+
+        return $this;
+    }
 }

@@ -220,6 +220,13 @@ class JobFakeFactory
         $job->onConnection('database');
         static::createJobsTable();
         app(Dispatcher::class)->dispatch($job);
+        $this->runQueueWorker($jobsToRun);
+
+        return $job;
+    }
+
+    public function runQueueWorker(int $jobsToRun)
+    {
         $runCommand = 'queue:work database --once --stop-when-empty';
         if ($this->queue !== null) {
             $runCommand .= ' --queue=' . $this->queue;
@@ -227,8 +234,6 @@ class JobFakeFactory
         for ($i = 0; $i < $jobsToRun; $i++) {
             Artisan::call($runCommand);
         }
-
-        return $job;
     }
 
 

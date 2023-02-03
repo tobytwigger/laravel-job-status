@@ -13,6 +13,7 @@ use JobStatus\Models\JobStatusStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Models\JobStatusUser;
 use JobStatus\Search\Collections\JobStatusCollection;
+use JobStatus\Search\Result\JobRun;
 use JobStatus\Tests\TestCase;
 
 class JobStatusTest extends TestCase
@@ -470,5 +471,16 @@ class JobStatusTest extends TestCase
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_signals');
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_statuses');
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_tags');
+    }
+
+    /** @test */
+    public function it_converts_itself_into_a_run(){
+        /** @var JobStatus $jobStatus */
+        $jobStatus = JobStatus::factory()->create();
+
+        $this->assertInstanceOf(JobRun::class, $jobStatus->toRun());
+        $this->assertTrue($jobStatus->is(
+            $jobStatus->toRun()->jobStatus()
+        ));
     }
 }
