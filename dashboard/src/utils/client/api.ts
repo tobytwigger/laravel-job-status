@@ -23,7 +23,7 @@ const jobList = (): Promise<TrackedJob[]> => {
 };
 
 const jobShow = (alias: string): Promise<TrackedJob> => {
-  return get(generateUrl('tracked-job/' + alias)).then((response) => {
+  return get(generateUrl('tracked-job/' + encodeURIComponent(alias))).then((response) => {
     return response.data as TrackedJob;
   });
 };
@@ -70,7 +70,7 @@ const batchShow = (batchId: number): Promise<Batch> => {
 };
 
 const jobFailureReasons = (alias: string): Promise<JobFailureReason[]> => {
-  return get(generateUrl('tracked-job/' + alias + '/failures')).then(
+  return get(generateUrl('tracked-job/' + encodeURIComponent(alias) + '/failures')).then(
     (response) => {
       return response.data as JobFailureReason[];
     }
