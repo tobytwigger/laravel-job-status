@@ -63,26 +63,24 @@
               selectedRun.status === 'started' ||
               selectedRun.status === 'queued'
             "
-            rounded
             :disable="hasUnfinishedCancel"
             :loading="cancelling"
             push
-            icon-right="cancel"
+            icon="cancel"
             label="Cancel"
             @click="cancel"
           />
 
           <q-btn
             v-if="
-              selectedRun.connection_name !== null &&
-              selectedRun.queue !== null &&
-              selectedRun.payload !== null
+              selectedRun.connection_name &&
+              selectedRun.queue &&
+              selectedRun.has_payload
             "
-            rounded
-            :disable="hasUnfinishedRetry"
+            :disable="retrying"
             :loading="retrying"
             push
-            icon-right="retry"
+            icon="replay"
             label="Retry"
             @click="retry"
           />

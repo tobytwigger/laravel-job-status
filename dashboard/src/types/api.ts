@@ -25,6 +25,12 @@ export interface JobRun {
   tags: {
     [key: string]: string;
   };
+
+  has_payload: boolean;
+
+  connection_name: string | null;
+
+  queue: string | null;
 }
 
 export interface JobFailureReason {

@@ -343,6 +343,8 @@ class JobRunTest extends TestCase
             'started_at' => $startedAt,
             'finished_at' => $finishedAt,
             'exception_id' => $exception->id,
+            'connection_name' => 'database-test',
+            'queue' => 'custom-queue',
         ]);
         $message1 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subMinute()]);
         $message2 = JobMessage::factory()->create(['job_status_id' => $jobStatus->id, 'created_at' => Carbon::now()->subHour()]);
@@ -386,6 +388,9 @@ class JobRunTest extends TestCase
             ]),
             'batch_id' => $batch->id,
             'batch_id_uuid' => $batch->batch_id,
+            'has_payload' => false,
+            'connection_name' => 'database-test',
+            'queue' => 'custom-queue',
         ];
         $this->assertEquals($array, $run->toArray());
         $this->assertIsString($run->toJson());
