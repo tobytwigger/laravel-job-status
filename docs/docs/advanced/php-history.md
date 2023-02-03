@@ -12,7 +12,7 @@ To make it easier, we've provided some scopes.
 
 - `whereClass($jobClass)` - Filter by the job class (.e.g `\App\Jobs\ProcessPodcast`)
 - `whereAlias($jobAlias)` - Filter by the job alias
-- `whereTag($key, $value)` - Filter by a tag. Set the value to `true` for .
+- `whereTag($key, $value)` - Filter by a tag. Leave the value blank to search for index-less tags.
 - `whereTags(['key' => 'value'])` - Filter by multiple tags in a key-value array
 - `whereHasTag('key1')` - Filter to jobs that have a tag, with any or no value.
 - `whereHasTags(['key1', 'key2'])` - Filter by multiple tags existing
