@@ -32,6 +32,11 @@ class JobSignal extends Model
         parent::__construct($attributes);
     }
 
+    protected static function booted()
+    {
+        static::creating(fn (JobSignal $jobSignal) => config('laravel-job-status.collectors.signals.enabled', true));
+    }
+
     public static function scopeUnhandled(Builder $query)
     {
         $query->whereNull('handled_at');

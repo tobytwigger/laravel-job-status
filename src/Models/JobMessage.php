@@ -31,6 +31,11 @@ class JobMessage extends Model
         parent::__construct($attributes);
     }
 
+    protected static function booted()
+    {
+        static::creating(fn (JobMessage $jobMessage) => config('laravel-job-status.collectors.messages.enabled', true));
+    }
+
     public function jobStatus()
     {
         return $this->belongsTo(JobStatus::class);

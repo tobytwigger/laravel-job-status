@@ -70,6 +70,46 @@ class DatabaseQueueTest extends TestCase
         Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
     }
 
+    /** @test  */
+    public function models_can_be_stopped_from_being_saved()
+    {
+        config()->set('laravel-job-status.collectors.messages.enabled', false);
+        config()->set('laravel-job-status.collectors.signals.enabled', false);
+        config()->set('laravel-job-status.collectors.status_history.enabled', false);
+
+        $job = (new JobFakeFactory())
+            ->setAlias('my-fake-job')
+            ->dispatch();
+
+        Assert::assertCount(1, JobStatus::all());
+        $jobStatus = JobStatus::first();
+        $this->assertEquals(JobFake::class, $jobStatus->class);
+        $this->assertEquals('my-fake-job', $jobStatus->alias);
+        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
+        $this->assertEquals(100, $jobStatus->percentage);
+        $this->assertEquals(1, $jobStatus->job_id);
+        $this->assertEquals('database', $jobStatus->connection_name);
+        $this->assertNotNull($jobStatus->uuid);
+
+        $this->assertCount(0, $jobStatus->tags);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
+
+        $this->assertCount(0, $jobStatus->signals()->orderBy('id')->get());
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
+
+        $this->assertNull($jobStatus->exception);
+
+        $this->assertCount(0, $jobStatus->statuses);
+    }
+
+    public static function models_can_be_stopped_from_being_saved_callback(JobFake $job)
+    {
+        $job->status()->message('My test message');
+        $job->status()->cancel();
+    }
 
     /** @test */
     public function a_successful_run_is_handled()

@@ -60,4 +60,39 @@ class JobMessageTest extends TestCase
         $this->assertEquals(24, $updatedAt->second);
         $this->assertEquals(234, $updatedAt->millisecond);
     }
+
+    /** @test */
+    public function it_does_not_get_created_when_disabled()
+    {
+        config()->set('laravel-job-status.collectors.messages.enabled', false);
+        $message = JobMessage::factory()->create();
+
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_messages');
+    }
+
+    public function a_job_message_can_be_updated_when_disabled()
+    {
+        config()->set('laravel-job-status.collectors.messages.enabled', true);
+        $message = JobMessage::factory()->create(['message' => 'On creation']);
+
+        config()->set('laravel-job-status.collectors.messages.enabled', false);
+
+        $this->assertDatabaseHas(config('laravel-job-status.table_prefix') . '_job_messages', [
+            'message' => 'On creation',
+        ]);
+
+        $message->message = 'On update';
+        $message->save();
+
+        $this->assertDatabaseHas(config('laravel-job-status.table_prefix') . '_job_messages', [
+            'message' => 'On update',
+        ]);
+
+        JobMessage::factory()->create(['message' => 'New message']);
+
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_messages', 1);
+        $this->assertDatabaseMissing(config('laravel-job-status.table_prefix') . '_job_messages', [
+            'message' => 'New message',
+        ]);
+    }
 }
