@@ -4,7 +4,6 @@ namespace JobStatus\Listeners;
 
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Queue;
-use JobStatus\Concerns\Trackable;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobBatch;

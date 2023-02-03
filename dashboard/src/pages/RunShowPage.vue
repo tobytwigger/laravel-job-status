@@ -303,7 +303,6 @@ const props = defineProps<{
   jobStatusId: number;
 }>();
 
-
 useApi((after) => {
   api
     .runShow(props.jobStatusId)
@@ -312,7 +311,6 @@ useApi((after) => {
     })
     .finally(after);
 });
-
 
 // CANCELLING
 
@@ -336,22 +334,14 @@ function cancel() {
     .finally(() => (cancelling.value = false));
 }
 
-
-
-
 // RETRYING
 
 const retrying = ref(false);
 
 function retry() {
   retrying.value = true;
-  api
-    .retry(props.jobStatusId)
-    .finally(() => (retrying.value = false));
+  api.retry(props.jobStatusId).finally(() => (retrying.value = false));
 }
-
-
-
 
 const exceptions = computed((): JobException[] => {
   let tempException = selectedRun.value?.exception;
