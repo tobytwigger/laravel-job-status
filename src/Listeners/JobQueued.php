@@ -30,13 +30,16 @@ class JobQueued extends BaseListener
             if ($this->validateJob($job) === false) {
                 return true;
             }
-
-            $batchModel = $job->batch() !== null
-                ? JobBatch::firstOrCreate(
+            if (method_exists($job, 'batch')) {
+                $batchModel = ($job->batch() !== null
+                    ? JobBatch::firstOrCreate(
                     ['batch_id' => $job->batch()->id],
                     ['name' => $job->batch()->name]
                 )
-                : null;
+                    : null);
+            } else {
+                $batchModel = null;
+            }
 
             $jobStatus = JobStatus::create([
                 'class' => get_class($job),
