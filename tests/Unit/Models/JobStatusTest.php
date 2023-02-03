@@ -474,7 +474,8 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
-    public function it_converts_itself_into_a_run(){
+    public function it_converts_itself_into_a_run()
+    {
         /** @var JobStatus $jobStatus */
         $jobStatus = JobStatus::factory()->create();
 

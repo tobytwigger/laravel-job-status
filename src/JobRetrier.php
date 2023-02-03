@@ -11,7 +11,6 @@ use JobStatus\Models\JobStatus;
 
 class JobRetrier
 {
-
     private JobStatus $jobStatus;
 
     public function __construct(JobStatus $jobStatus)
@@ -27,43 +26,44 @@ class JobRetrier
 
     public function retry(): void
     {
-        if(!$this->canBeRetried()) {
+        if (!$this->canBeRetried()) {
             throw new CannotBeRetriedException();
         }
-            $jobId = Queue::connection($this->jobStatus->connection_name)->pushRaw(
-                $this->preparePayloadForRefresh(), $this->jobStatus->queue
-            );
+        $jobId = Queue::connection($this->jobStatus->connection_name)->pushRaw(
+            $this->preparePayloadForRefresh(),
+            $this->jobStatus->queue
+        );
 
-            $retryJobStatus = JobStatus::create([
-                'class' => $this->jobStatus->class,
-                'alias' => $this->jobStatus->alias,
-                'percentage' => 0,
-                'status' => Status::QUEUED,
-                'uuid' => $this->jobStatus->uuid,
-                'job_id' => $jobId,
-                'connection_name' => $this->jobStatus->connection_name,
-                'exception_id' => null,
-                'started_at' => null,
-                'finished_at' => null,
-                'public' => $this->jobStatus->public,
-                'batch_id' => $this->jobStatus->batch_id,
-                'queue' => $this->jobStatus->queue,
-                'payload' => $this->jobStatus->payload,
+        $retryJobStatus = JobStatus::create([
+            'class' => $this->jobStatus->class,
+            'alias' => $this->jobStatus->alias,
+            'percentage' => 0,
+            'status' => Status::QUEUED,
+            'uuid' => $this->jobStatus->uuid,
+            'job_id' => $jobId,
+            'connection_name' => $this->jobStatus->connection_name,
+            'exception_id' => null,
+            'started_at' => null,
+            'finished_at' => null,
+            'public' => $this->jobStatus->public,
+            'batch_id' => $this->jobStatus->batch_id,
+            'queue' => $this->jobStatus->queue,
+            'payload' => $this->jobStatus->payload,
+        ]);
+
+        $modifier = new JobStatusModifier($retryJobStatus);
+        $modifier->setStatus(Status::QUEUED);
+        foreach ($this->jobStatus->tags as $tag) {
+            $retryJobStatus->tags()->create([
+                'is_indexless' => $tag->is_indexless,
+                'key' => $tag->key,
+                'value' => $tag->value,
             ]);
+        }
 
-            $modifier = new JobStatusModifier($retryJobStatus);
-            $modifier->setStatus(Status::QUEUED);
-            foreach($this->jobStatus->tags as $tag) {
-                $retryJobStatus->tags()->create([
-                    'is_indexless' => $tag->is_indexless,
-                    'key' => $tag->key,
-                    'value' => $tag->value,
-                ]);
-            }
-
-            foreach($this->jobStatus->users as $user) {
-                $modifier->grantAccessTo($user->user_id);
-            }
+        foreach ($this->jobStatus->users as $user) {
+            $modifier->grantAccessTo($user->user_id);
+        }
     }
 
     private function preparePayloadForRefresh(): string
@@ -103,5 +103,4 @@ class JobRetrier
     {
         return $this->jobStatus->connection_name !== null && $this->jobStatus->queue !== null && $this->jobStatus->payload !== null;
     }
-
 }

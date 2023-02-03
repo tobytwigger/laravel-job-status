@@ -2,19 +2,13 @@
 
 namespace JobStatus\Search\Result;
 
-use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
 use JobStatus\JobRetrier;
-use JobStatus\JobStatusModifier;
-use JobStatus\Listeners\JobQueued;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
@@ -199,5 +193,4 @@ class JobRun implements Arrayable, Jsonable
     {
         JobRetrier::retryFor($this->jobStatus);
     }
-
 }
