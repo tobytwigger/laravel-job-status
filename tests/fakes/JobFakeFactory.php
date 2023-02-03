@@ -189,7 +189,7 @@ class JobFakeFactory
         $realBatch = $batch->dispatch();
 
         $command = 'queue:work database --once --stop-when-empty';
-        if($batch->queue() !== null) {
+        if ($batch->queue() !== null) {
             $command .= ' --queue=' . $batch->queue();
         }
         for ($i = 0; $i < $jobCount; $i++) {
@@ -221,7 +221,7 @@ class JobFakeFactory
         static::createJobsTable();
         app(Dispatcher::class)->dispatch($job);
         $runCommand = 'queue:work database --once --stop-when-empty';
-        if($this->queue !== null) {
+        if ($this->queue !== null) {
             $runCommand .= ' --queue=' . $this->queue;
         }
         for ($i = 0; $i < $jobsToRun; $i++) {

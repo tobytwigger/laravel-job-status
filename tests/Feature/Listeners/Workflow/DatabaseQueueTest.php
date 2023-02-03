@@ -713,7 +713,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn(AssertBatch $batch) => $batch
+                fn (AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -722,7 +722,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -749,7 +749,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -776,7 +776,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 2,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -841,7 +841,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn(AssertBatch $batch) => $batch
+                fn (AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -850,7 +850,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -877,7 +877,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -905,7 +905,7 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -982,7 +982,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn(AssertBatch $batch) => $batch
+                fn (AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -991,7 +991,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1018,7 +1018,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1046,7 +1046,7 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1116,7 +1116,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn(AssertBatch $batch) => $batch
+                fn (AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1125,7 +1125,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1154,7 +1154,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1182,7 +1182,7 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1257,7 +1257,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn(AssertBatch $batch) => $batch
+                fn (AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1266,7 +1266,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(3)
             ->withIndex(
                 0,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1293,7 +1293,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1319,7 +1319,7 @@ class DatabaseQueueTest extends TestCase
                     ->withUsers([])
             )->withIndex(
                 2,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1388,7 +1388,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn(AssertBatch $batch) => $batch
+                fn (AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1397,7 +1397,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(5)
             ->withIndex(
                 0,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1424,7 +1424,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1451,7 +1451,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 2,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1478,7 +1478,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 3,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1505,7 +1505,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 4,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('my-database-queue')
                     ->hasClass(JobFake::class)
@@ -1598,7 +1598,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(1)
             ->withIndex(
                 0,
-                fn(AssertBatch $batch) => $batch
+                fn (AssertBatch $batch) => $batch
                     ->hasName('My Batch Name')
                     ->hasBatchId($realBatch->id)
             );
@@ -1607,7 +1607,7 @@ class DatabaseQueueTest extends TestCase
             ->hasCountInDatabase(4)
             ->withIndex(
                 0,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('default')
                     ->hasClass(JobFake::class)
@@ -1634,7 +1634,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 1,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasQueue('default')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-three')
@@ -1661,7 +1661,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 2,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('default')
                     ->hasClass(JobFake::class)
@@ -1688,7 +1688,7 @@ class DatabaseQueueTest extends TestCase
             )
             ->withIndex(
                 3,
-                fn(AssertJobStatus $jobStatus) => $jobStatus
+                fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->hasPayload()
                     ->hasQueue('default')
                     ->hasClass(JobFake::class)

@@ -39,11 +39,11 @@ class BaseListener
             $jobStatusModifier->setJobId($job->getJobId());
         }
 
-        if($jobStatusModifier->getJobStatus()->payload === null) {
+        if ($jobStatusModifier->getJobStatus()->payload === null) {
             $jobStatusModifier->setPayload($job->payload());
         }
 
-        if($job->getQueue() !== null && $jobStatusModifier->getJobStatus()->queue !== $job->getQueue()) {
+        if ($job->getQueue() !== null && $jobStatusModifier->getJobStatus()->queue !== $job->getQueue()) {
             $jobStatusModifier->setQueue($job->getQueue());
         }
     }
