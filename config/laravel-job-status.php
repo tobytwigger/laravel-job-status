@@ -13,6 +13,16 @@ return [
     'enabled' => true,
 
     /*
+     |
+     |
+     | By default, we will only track jobs that run that use the `Trackable` trait.
+     |
+     | If this is set to true, we will track information about any job with no configuration needed.
+     |
+     */
+    'track_anonymous' => false,
+
+    /*
     |--------------------------------------------------------------------------
     | Table Prefix
     |--------------------------------------------------------------------------

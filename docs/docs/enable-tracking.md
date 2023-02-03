@@ -2,9 +2,11 @@
 
 > Setting up tracking on Laravel jobs
 
-## Basic Setup
+By default, we track all jobs running through your queue system. This can be changed by setting `track_anonymous` to false in your [config](./config.md).
 
-By default, a job is not tracked. 
+To make the results and debugging easier, we recommend setting up your job with some extra data and giving it access to features such as two-way communication.
+
+## Basic Setup
 
 To set up tracking, simply add `use Trackable;` to your job class and make sure your job is queueable.
 

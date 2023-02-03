@@ -25,6 +25,14 @@ class JobFakeFactory
 
     private array $users = [];
     private bool $public = true;
+    /**
+     * @var true
+     */
+    private bool $withoutTrackable = false;
+    /**
+     * @var true
+     */
+    private bool $withoutInteractsWithQueue = false;
 
     /**
      * @return int
@@ -116,13 +124,39 @@ class JobFakeFactory
         return $this;
     }
 
-    public function create(): JobFake
+    public function create(): JobFake|JobFakeWithoutTrackable|JobFakeWithoutTrackableOrInteractsWithQueue
     {
-        $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals, $this->users, $this->public);
+        if($this->withoutTrackable === true) {
+            if($this->withoutInteractsWithQueue === true) {
+                $job = new JobFakeWithoutTrackableOrInteractsWithQueue($this->callback ?? static::class . '@fakeCallback');
+            } else {
+                $job = new JobFakeWithoutTrackable($this->callback ?? static::class . '@fakeCallback');
+            }
+        } else {
+            if($this->withoutInteractsWithQueue === true) {
+                throw new \Exception('Need to implement a job fake with trackable but without interacts with queue');
+            } else {
+                $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals, $this->users, $this->public);
+            }
+        }
         $job->maxExceptions = $this->maxExceptions;
         $job->tries = $this->tries;
 
         return $job;
+    }
+
+    public function withoutTrackable(): JobFakeFactory
+    {
+        $this->withoutTrackable = true;
+
+        return $this;
+    }
+
+    public function withoutInteractsWithQueue(): JobFakeFactory
+    {
+        $this->withoutInteractsWithQueue = true;
+
+        return $this;
     }
 
     public function fakeCallback(): void
@@ -158,7 +192,7 @@ class JobFakeFactory
         return $realBatch;
     }
 
-    public function dispatch(int $jobsToRun = 1): JobFake
+    public function dispatch(int $jobsToRun = 1):  JobFake|JobFakeWithoutTrackable|JobFakeWithoutTrackableOrInteractsWithQueue
     {
         $job = $this->create();
         $job->onConnection('database');
@@ -172,7 +206,7 @@ class JobFakeFactory
     }
 
 
-    public function dispatchSync(): JobFake
+    public function dispatchSync():  JobFake|JobFakeWithoutTrackable|JobFakeWithoutTrackableOrInteractsWithQueue
     {
         $job = $this->create();
         app(Dispatcher::class)->dispatchSync($job);

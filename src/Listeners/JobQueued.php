@@ -40,24 +40,24 @@ class JobQueued extends BaseListener
 
             $jobStatus = JobStatus::create([
                 'class' => get_class($job),
-                'alias' => $job->alias(),
+                'alias' => method_exists($job, 'alias') ? $job->alias() : get_class($job),
                 'percentage' => 0,
                 'batch_id' => $batchModel?->id,
                 'status' => Status::QUEUED,
                 'uuid' => null,
                 'job_id' => $event->id,
                 'connection_name' => $event->connectionName,
-                'public' => $job->public(),
+                'public' => method_exists($job, 'public') ? $job->public() : true,
             ]);
 
             $modifier = JobStatusModifier::forJobStatus($jobStatus);
             $modifier->setStatus(Status::QUEUED);
 
-            foreach ($job->users() as $user) {
+            foreach ((method_exists($job, 'users') ? $job->users() : []) as $user) {
                 $modifier->grantAccessTo($user);
             }
 
-            foreach ($job->tags() as $key => $value) {
+            foreach ((method_exists($job, 'tags') ? $job->tags() : []) as $key => $value) {
                 if (is_numeric($key)) {
                     $jobStatus->tags()->create([
                         'is_indexless' => true,
