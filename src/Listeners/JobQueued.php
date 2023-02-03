@@ -33,9 +33,9 @@ class JobQueued extends BaseListener
             if (method_exists($job, 'batch')) {
                 $batchModel = ($job->batch() !== null
                     ? JobBatch::firstOrCreate(
-                    ['batch_id' => $job->batch()->id],
-                    ['name' => $job->batch()->name]
-                )
+                        ['batch_id' => $job->batch()->id],
+                        ['name' => $job->batch()->name]
+                    )
                     : null);
             } else {
                 $batchModel = null;

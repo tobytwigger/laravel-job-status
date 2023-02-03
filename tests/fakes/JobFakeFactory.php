@@ -134,7 +134,7 @@ class JobFakeFactory
         if ($this->withoutTrackable === true) {
             if ($this->withoutInteractsWithQueue === true) {
                 $job = new JobFakeWithoutTrackableOrInteractsWithQueue($this->callback ?? static::class . '@fakeCallback');
-            } elseif($this->withoutBatchable) {
+            } elseif ($this->withoutBatchable) {
                 $job = new JobFakeWithoutTrackableOrBatchable($this->callback ?? static::class . '@fakeCallback');
             } else {
                 $job = new JobFakeWithoutTrackable($this->callback ?? static::class . '@fakeCallback');
