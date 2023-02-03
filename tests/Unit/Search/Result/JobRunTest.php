@@ -415,7 +415,7 @@ class JobRunTest extends TestCase
             'bicycle',
             'new',
             'road',
-            'dispatched'
+            'dispatched',
         ], (new JobRun($status))->getTagsAsArray());
     }
 

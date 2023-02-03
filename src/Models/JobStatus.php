@@ -117,7 +117,7 @@ class JobStatus extends Model
     public function scopeWhereTag(Builder $query, string $key, mixed $value = JobStatus::INDEXLESS_VALUE)
     {
         $query->whereHas('tags', function (Builder $query) use ($key, $value) {
-            if($value === JobStatus::INDEXLESS_VALUE) {
+            if ($value === JobStatus::INDEXLESS_VALUE) {
                 $query->where(['key' => $key, 'value' => null, 'is_indexless' => true]);
             } else {
                 $query->where(['key' => $key, 'value' => $value, 'is_indexless' => false]);
@@ -159,7 +159,7 @@ class JobStatus extends Model
     public function scopeWhereTags(Builder $query, array $tags)
     {
         foreach ($tags as $key => $value) {
-            if(is_numeric($key)) {
+            if (is_numeric($key)) {
                 $query->whereTag($value);
             } else {
                 $query->whereTag($key, $value);

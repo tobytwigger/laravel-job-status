@@ -29,7 +29,8 @@ class JobStatusSearchTest extends TestCase
     }
 
     /** @test */
-    public function it_can_get_a_requested_job_status_with_index_less_and_indexed_tags(){
+    public function it_can_get_a_requested_job_status_with_index_less_and_indexed_tags()
+    {
         $jobStatus = JobStatus::factory()
             ->has(JobStatusTag::factory(['key' => 'one', 'value' => 'yes']), 'tags')
             ->has(JobStatusTag::factory()->indexless('keytwo'), 'tags')

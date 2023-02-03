@@ -104,7 +104,7 @@ class BaseListener
             ]);
             $modifier = JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
             foreach ($command->tags() as $key => $value) {
-                if(is_numeric($key)) {
+                if (is_numeric($key)) {
                     $jobStatus->tags()->create([
                         'is_indexless' => true,
                         'key' => $value,

@@ -58,7 +58,7 @@ class JobQueued extends BaseListener
             }
 
             foreach ($job->tags() as $key => $value) {
-                if(is_numeric($key)) {
+                if (is_numeric($key)) {
                     $jobStatus->tags()->create([
                         'is_indexless' => true,
                         'key' => $value,

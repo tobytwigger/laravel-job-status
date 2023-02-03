@@ -42,7 +42,7 @@ class JobReleasedAfterException extends BaseListener
                 $jobStatus->tags()->create([
                     'key' => $tag->key,
                     'value' => $tag->value,
-                    'is_indexless' => $tag->is_indexless
+                    'is_indexless' => $tag->is_indexless,
                 ]);
             }
 
