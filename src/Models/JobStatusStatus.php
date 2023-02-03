@@ -31,6 +31,11 @@ class JobStatusStatus extends Model
         parent::__construct($attributes);
     }
 
+    protected static function booted()
+    {
+        static::creating(fn(JobStatusStatus $jobStatus) => config('laravel-job-status.collectors.status_history.enabled', true));
+    }
+
     public function jobStatus()
     {
         return $this->belongsTo(JobStatus::class);

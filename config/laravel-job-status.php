@@ -68,4 +68,29 @@ return [
 
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Job Collectors
+    |--------------------------------------------------------------------------
+    |
+    | Configure what information we store from a job
+    |
+     */
+
+    'collectors' => [
+        'messages' => [
+            // Whether your job can send messages to your app
+            'enabled' => true
+        ],
+        'signals' => [
+            // Whether your app can send signals to your job
+            'enabled' => true
+        ],
+        'status_history' => [
+            // Whether we store the timeline of the job
+            'enabled' => true
+        ],
+    ],
+
 ];

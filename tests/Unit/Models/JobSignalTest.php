@@ -90,4 +90,37 @@ class JobSignalTest extends TestCase
         $this->assertEquals(24, $handledAt->second);
         $this->assertEquals(234, $handledAt->millisecond);
     }
+
+    /** @test */
+    public function it_does_not_get_created_when_disabled(){
+        config()->set('laravel-job-status.collectors.signals.enabled', false);
+        $signal = JobSignal::factory()->create();
+
+        $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_signals');
+    }
+
+    public function a_job_signal_can_be_updated_when_disabled(){
+        config()->set('laravel-job-status.collectors.signals.enabled', true);
+        $signal = JobSignal::factory()->create(['signal' => 'On creation']);
+
+        config()->set('laravel-job-status.collectors.signals.enabled', false);
+
+        $this->assertDatabaseHas(config('laravel-job-status.table_prefix') . '_job_signals', [
+            'signal' => 'On creation'
+        ]);
+
+        $signal->signal = 'On update';
+        $signal->save();
+
+        $this->assertDatabaseHas(config('laravel-job-status.table_prefix') . '_job_signals', [
+            'signal' => 'On update'
+        ]);
+
+        JobSignal::factory()->create(['signal' => 'New signal']);
+
+        $this->assertDatabaseCount(config('laravel-job-status.table_prefix') . '_job_signals', 1);
+        $this->assertDatabaseMissing(config('laravel-job-status.table_prefix') . '_job_signals', [
+            'signal' => 'New signal'
+        ]);
+    }
 }
