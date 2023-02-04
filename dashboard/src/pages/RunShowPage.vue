@@ -45,6 +45,7 @@
         </q-banner>
       </div>
     </div>
+
     <div class="row q-pa-md">
       <div class="col-12 text-right">
         <q-btn-group rounded>
@@ -62,13 +63,26 @@
               selectedRun.status === 'started' ||
               selectedRun.status === 'queued'
             "
-            rounded
             :disable="hasUnfinishedCancel"
             :loading="cancelling"
             push
-            icon-right="cancel"
+            icon="cancel"
             label="Cancel"
             @click="cancel"
+          />
+
+          <q-btn
+            v-if="
+              selectedRun.connection_name &&
+              selectedRun.queue &&
+              selectedRun.has_payload
+            "
+            :disable="retrying"
+            :loading="retrying"
+            push
+            icon="replay"
+            label="Retry"
+            @click="retry"
           />
         </q-btn-group>
       </div>
@@ -287,6 +301,17 @@ const props = defineProps<{
   jobStatusId: number;
 }>();
 
+useApi((after) => {
+  api
+    .runShow(props.jobStatusId)
+    .then((response: JobRun) => {
+      results.value = response;
+    })
+    .finally(after);
+});
+
+// CANCELLING
+
 const hasUnfinishedCancel = computed((): boolean => {
   if (selectedRun.value === null) {
     return false;
@@ -298,15 +323,6 @@ const hasUnfinishedCancel = computed((): boolean => {
   );
 });
 
-useApi((after) => {
-  api
-    .runShow(props.jobStatusId)
-    .then((response: JobRun) => {
-      results.value = response;
-    })
-    .finally(after);
-});
-
 const cancelling = ref(false);
 
 function cancel() {
@@ -314,6 +330,15 @@ function cancel() {
   api
     .signal(props.jobStatusId, 'cancel', true, {})
     .finally(() => (cancelling.value = false));
+}
+
+// RETRYING
+
+const retrying = ref(false);
+
+function retry() {
+  retrying.value = true;
+  api.retry(props.jobStatusId).finally(() => (retrying.value = false));
 }
 
 const exceptions = computed((): JobException[] => {

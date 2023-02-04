@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use JobStatus\Database\Factories\JobStatusFactory;
 use JobStatus\Enums\Status;
 use JobStatus\Search\Collections\JobStatusCollection;
+use JobStatus\Search\Result\JobRun;
 
 /**
  * @property Collection<JobStatusTag> $tags The tags that belong to the job
@@ -29,7 +30,7 @@ class JobStatus extends Model
     const INDEXLESS_VALUE = 'JOB_STATUS_MODEL_INDEXLESS';
     protected $fillable = [
         'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'exception_id',
-        'started_at', 'finished_at', 'public', 'batch_id',
+        'started_at', 'finished_at', 'public', 'batch_id', 'queue', 'payload',
     ];
 
     protected $casts = [
@@ -40,6 +41,7 @@ class JobStatus extends Model
         'status' => Status::class,
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
+        'payload' => 'array',
     ];
 
     protected $dateFormat = 'Y-m-d H:i:s.v';
@@ -209,5 +211,10 @@ class JobStatus extends Model
     public function batch()
     {
         return $this->belongsTo(JobBatch::class, 'batch_id');
+    }
+
+    public function toRun(): JobRun
+    {
+        return new JobRun($this);
     }
 }

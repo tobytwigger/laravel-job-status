@@ -4,7 +4,6 @@ namespace JobStatus\Listeners;
 
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Queue;
-use JobStatus\Concerns\Trackable;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobBatch;
@@ -24,7 +23,6 @@ class JobQueued extends BaseListener
     public function handle(\Illuminate\Queue\Events\JobQueued $event)
     {
         if ($this->isTrackingEnabled()) {
-            /** @var Trackable $job */
             $job = $event->job;
 
             if ($this->validateJob($job) === false) {
@@ -45,6 +43,8 @@ class JobQueued extends BaseListener
                 'class' => get_class($job),
                 'alias' => method_exists($job, 'alias') ? $job->alias() : get_class($job),
                 'percentage' => 0,
+                'queue' => $event->job->job?->getQueue() ?? $event->job->queue ?? null,
+                'payload' => $event->job->job?->payload(),
                 'batch_id' => $batchModel?->id,
                 'status' => Status::QUEUED,
                 'uuid' => null,

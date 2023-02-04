@@ -24,7 +24,8 @@ class SyncQueueTest extends TestCase
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'my-indexless-tag'])
             ->setCallback(static::class . '@a_run_is_handled_callback')
-            ->setUsers([1,2])
+            ->setUsers([1, 2])
+            ->onQueue(null)
             ->dispatchSync();
 
         $this->assertNull(JobStatus::first()->exception, JobStatus::first()->exception?->message ?? 'An error occured');
@@ -35,6 +36,7 @@ class SyncQueueTest extends TestCase
     {
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        Assert::assertEquals('sync', $jobStatus->queue);
         Assert::assertEquals(JobFake::class, $jobStatus->class);
         Assert::assertEquals('my-fake-job', $jobStatus->alias);
         Assert::assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->status);
@@ -70,27 +72,19 @@ class SyncQueueTest extends TestCase
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
     /** @test */
     public function a_successful_run_is_handled()
     {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
+            ->onQueue('my-queue') // queue should be ignored for sync jobs
             ->dispatchSync();
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('sync', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
@@ -119,11 +113,6 @@ class SyncQueueTest extends TestCase
     }
 
 
-
-
-
-
-
     /** @test */
     public function a_cancelled_run_is_handled()
     {
@@ -134,6 +123,7 @@ class SyncQueueTest extends TestCase
                 ->setAlias('my-fake-job')
                 ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
                 ->setCallback(static::class . '@a_cancelled_run_is_handled_callback')
+                ->onQueue(null)
                 ->dispatchSync();
         } catch (\Throwable $e) {
             $this->assertEquals(JobCancelledException::class, get_class($e));
@@ -145,6 +135,8 @@ class SyncQueueTest extends TestCase
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('sync', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
@@ -182,12 +174,6 @@ class SyncQueueTest extends TestCase
     }
 
 
-
-
-
-
-
-
     /** @test */
     public function a_cancelled_custom_signal_run_is_handled()
     {
@@ -199,6 +185,7 @@ class SyncQueueTest extends TestCase
                 ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
                 ->setCallback(static::class . '@a_cancelled_custom_signal_run_is_handled_callback')
                 ->handleSignal('custom_signal', static::class . '@a_cancelled_custom_signal_run_is_handled_custom_signal_callback')
+                ->onQueue(null)
                 ->dispatchSync();
         } catch (\Throwable $e) {
             $this->assertEquals(JobCancelledException::class, get_class($e));
@@ -211,6 +198,8 @@ class SyncQueueTest extends TestCase
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('sync', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::CANCELLED, $jobStatus->status);
@@ -254,15 +243,6 @@ class SyncQueueTest extends TestCase
     }
 
 
-
-
-
-
-
-
-
-
-
     /** @test */
     public function a_failed_run_is_handled()
     {
@@ -275,8 +255,9 @@ class SyncQueueTest extends TestCase
                 ->setCallback(static::class . '@a_failed_run_is_handled_callback')
                 ->maxTries(1)
                 ->maxExceptions(1)
-                ->setUsers([1,2])
+                ->setUsers([1, 2])
                 ->setPublic(true)
+                ->onQueue(null)
                 ->dispatchSync();
         } catch (\Exception $e) {
             $this->assertEquals(\Exception::class, get_class($e));
@@ -288,6 +269,8 @@ class SyncQueueTest extends TestCase
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('sync', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
@@ -328,12 +311,6 @@ class SyncQueueTest extends TestCase
     }
 
 
-
-
-
-
-
-
     /** @test */
     public function a_failed_and_retry_run_is_handled_without_retrying_as_sync_cannot_retry()
     {
@@ -345,9 +322,10 @@ class SyncQueueTest extends TestCase
                 ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
                 ->maxTries(2)
                 ->maxExceptions(2)
-                ->setUsers([1,2])
+                ->setUsers([1, 2])
                 ->setPublic(false)
                 ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_callback')
+                ->onQueue(null)
                 ->dispatchSync();
         } catch (\Exception $e) {
             $this->assertEquals(\Exception::class, get_class($e));
@@ -359,6 +337,8 @@ class SyncQueueTest extends TestCase
 
         Assert::assertCount(1, JobStatus::all());
         $jobStatus = JobStatus::first();
+        $this->assertNotNull($jobStatus->payload);
+        $this->assertEquals('sync', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->status);
@@ -397,7 +377,6 @@ class SyncQueueTest extends TestCase
     {
         throw new \Exception('Test');
     }
-
 
 
     /** @test */
@@ -444,6 +423,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 0,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::SUCCEEDED)
@@ -469,6 +450,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 1,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::SUCCEEDED)
@@ -494,6 +477,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 2,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-three')
                     ->hasStatus(Status::SUCCEEDED)
@@ -677,6 +662,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 0,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::CANCELLED)
@@ -704,6 +691,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 1,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::CANCELLED)
@@ -730,6 +719,8 @@ class SyncQueueTest extends TestCase
             )->withIndex(
                 2,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasStatus(Status::CANCELLED)
                     ->hasAlias('my-fake-job-three')
@@ -820,9 +811,6 @@ class SyncQueueTest extends TestCase
     }
 
 
-
-
-
     /** @test */
     public function it_handles_adding_a_job_from_inside_a_batch()
     {
@@ -869,6 +857,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 0,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::SUCCEEDED)
@@ -894,6 +884,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 1,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-four')
                     ->hasStatus(Status::SUCCEEDED)
@@ -919,6 +911,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 2,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-five')
                     ->hasStatus(Status::SUCCEEDED)
@@ -944,6 +938,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 3,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::SUCCEEDED)
@@ -969,6 +965,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 4,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-three')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1013,9 +1011,6 @@ class SyncQueueTest extends TestCase
 
         $job->batch()->add([$job4, $job5]);
     }
-
-
-
 
 
     /** @test */
@@ -1070,6 +1065,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 0,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-one')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1095,6 +1092,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 1,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-two')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1120,6 +1119,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 2,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-three')
                     ->hasStatus(Status::SUCCEEDED)
@@ -1145,6 +1146,8 @@ class SyncQueueTest extends TestCase
             ->withIndex(
                 3,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
+                    ->hasPayload()
+                    ->hasQueue('sync')
                     ->hasClass(JobFake::class)
                     ->hasAlias('my-fake-job-four')
                     ->hasStatus(Status::SUCCEEDED)

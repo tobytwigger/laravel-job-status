@@ -24,7 +24,9 @@ class JobFake implements ShouldQueue
         private array $signals = [],
         private array $users = [],
         private bool $public = true,
+        ?string $queue = null
     ) {
+        $this->queue = $queue;
     }
 
     public function public(): bool

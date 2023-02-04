@@ -16,6 +16,8 @@ return new class() extends Migration {
             $table->uuid('uuid')->nullable();
             $table->text('class');
             $table->string('alias');
+            $table->string('queue')->nullable();
+            $table->longText('payload')->nullable();
             $table->float('percentage')->default(0.0);
             $table->string('status')->default('queued');
             $table->timestamp('started_at', 3)->nullable();

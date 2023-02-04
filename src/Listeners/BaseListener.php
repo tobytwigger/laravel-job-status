@@ -38,6 +38,14 @@ class BaseListener
         if ($job->getJobId() !== null && $jobStatusModifier->getJobStatus()->job_id !== $job->getJobId()) {
             $jobStatusModifier->setJobId($job->getJobId());
         }
+
+        if ($jobStatusModifier->getJobStatus()->payload === null) {
+            $jobStatusModifier->setPayload($job->payload());
+        }
+
+        if ($job->getQueue() !== null && $jobStatusModifier->getJobStatus()->queue !== $job->getQueue()) {
+            $jobStatusModifier->setQueue($job->getQueue());
+        }
     }
 
     protected function validateJob(mixed $job): bool
@@ -94,6 +102,8 @@ class BaseListener
             $jobStatus = JobStatus::create([
                 'class' => get_class($command),
                 'alias' => method_exists($command, 'alias') ? $command->alias() : get_class($command),
+                'queue' => $job->getQueue(),
+                'payload' => $job->payload(),
                 'percentage' => 0,
                 'status' => Status::QUEUED,
                 'uuid' => $job->uuid(),

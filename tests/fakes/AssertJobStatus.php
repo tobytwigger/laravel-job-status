@@ -160,4 +160,25 @@ class AssertJobStatus
 
         return $this;
     }
+
+    public function hasQueue(string $queue)
+    {
+        Assert::assertEquals($queue, $this->jobStatus->queue);
+
+        return $this;
+    }
+
+    public function hasPayload()
+    {
+        Assert::assertNotNull($this->jobStatus->payload);
+
+        return $this;
+    }
+
+    public function missingPayload()
+    {
+        Assert::assertNull($this->jobStatus->payload);
+
+        return $this;
+    }
 }
