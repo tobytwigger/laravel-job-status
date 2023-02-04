@@ -18,9 +18,9 @@ nav:
             -   Viewing Runs: 'dashboard/runs.md'
             -   Viewing Batches: 'dashboard/batches.md'
             -   Security: 'dashboard/security.md'
-#    -   Frontend:
-#            -   Javascript Integration: 'js/custom-frontend.md'
-#            -   Vue Integration: 'js/vue.md'
+    -   Javascript:
+            -   Javascript: 'js/js.md'
+            -   Examples: 'js/snippets.md'
     -   Configuration: 'config.md'
     -   Advanced:
             -   Interacting with history programmatically: 'advanced/php-history.md'
@@ -56,6 +56,8 @@ markdown_extensions:
     - pymdownx.superfences
     - attr_list
     - md_in_html
+    - pymdownx.tabbed:
+          alternate_style: true
 extra_css:
     - assets/highlight.css
     - assets/a11y-dark.css
