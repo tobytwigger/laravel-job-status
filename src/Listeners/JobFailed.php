@@ -15,7 +15,6 @@ use JobStatus\Exception\JobCancelledException;
  * a point of running, so we get the job that's running.
  *
  * - Mark the job as failed.
- * - Save an error message
  * - If the exception is a cancelled exception, mark it as cancelled instead
  * - Set the percentage to 100%
  *
@@ -38,7 +37,6 @@ class JobFailed extends BaseListener
 
                 if ($event->exception instanceof JobCancelledException) {
                     $modifier->setStatus(Status::CANCELLED);
-                    $modifier->warningMessage('The job has been cancelled');
                 } else {
                     $modifier->setStatus(Status::FAILED);
                     $modifier->addException($event->exception);
