@@ -151,9 +151,7 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertNull($jobStatus->exception);
 
@@ -214,9 +212,7 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
         $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
 
-        $this->assertCount(1, $jobStatus->messages()->orderBy('id')->get());
-        $this->assertEquals('The job has been cancelled', $jobStatus->messages()->orderBy('id')->get()[0]->message);
-        $this->assertEquals(\JobStatus\Enums\MessageType::WARNING, $jobStatus->messages()->orderBy('id')->get()[0]->type);
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
 
         $this->assertNull($jobStatus->exception);
 
