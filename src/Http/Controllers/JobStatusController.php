@@ -2,8 +2,8 @@
 
 namespace JobStatus\Http\Controllers;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use JobStatus\Http\Controllers\Api\Controller;
 use JobStatus\Http\Requests\JobStatusSearchRequest;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobStatus;
@@ -28,8 +28,4 @@ class JobStatusController extends Controller
         return $result->toArray();
     }
 
-    public function resolveAuth(): ?int
-    {
-        return call_user_func(JobStatusServiceProvider::$resolveAuthWith ?? fn () => Auth::user()?->id);
-    }
 }

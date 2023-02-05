@@ -2,16 +2,27 @@
 
 namespace JobStatus\Http\Controllers\Api;
 
+use JobStatus\Http\Requests\Api\Run\RunSearchRequest;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobRun;
 
 class RunController extends Controller
 {
 
-    public function index()
+    public function index(RunSearchRequest $request)
     {
-        return JobStatus::all()
-            ->runs();
+        $query = JobStatus::query()
+            ->forUsers($this->resolveAuth());
+
+        if($request->has('alias')) {
+            $query->whereAlias($request->input('alias'));
+        }
+
+        if ($request->has('tags')) {
+            $query->whereTags($request->input('tags'));
+        }
+
+        return $query->get()->runs();
     }
 
     public function show(JobStatus $jobStatus)

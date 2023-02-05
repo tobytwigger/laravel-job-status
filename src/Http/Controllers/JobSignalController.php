@@ -4,13 +4,14 @@ namespace JobStatus\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
+use JobStatus\Http\Controllers\Api\Controller;
 use JobStatus\Http\Requests\JobSignalStoreRequest;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobRun;
 
-class JobSignalController
+class JobSignalController extends Controller
 {
     public function store(JobSignalStoreRequest $request, JobStatus $jobStatus)
     {
@@ -22,11 +23,6 @@ class JobSignalController
             parameters: $request->input('parameters', []),
             cancel: $request->input('cancel_job'),
         );
-    }
-
-    public function resolveAuth(): ?int
-    {
-        return call_user_func(JobStatusServiceProvider::$resolveAuthWith ?? fn () => Auth::user()?->id);
     }
 
     private function authenticateUserWithJob(JobStatus $jobStatus)

@@ -43,6 +43,6 @@ In a service provider, add the following snippet.
 
 ```php
 \JobStatus\JobStatusServiceProvider::$resolveAuthWith = function() {
-    return Auth::user(); // Resolve the user however you'd like
+    return Auth::user()->id; // Resolve the user ID however you'd like
     }
 ```
