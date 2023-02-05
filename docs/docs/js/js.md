@@ -27,7 +27,7 @@ To build up a request
 ```js
 import {client} from '@tobytwigger/laravel-job-status-js';
 
-client.runs.list().whereStatus('failed').get()
+client.runs.list().whereStatus('failed').send()
   .then(response => console.log('Number of failed runs: ' + response.data.length));
 ```
 
@@ -35,7 +35,7 @@ See the [appendix](#available-methods) for all available methods.
 
 ### Listening for updates
 
-Calling `.get()` gets the result in a promise as usual. To keep the result up to date, and therefore let your users see the job progress updating, we can listen to the result. Usually this just instructs the client to poll the API every few seconds, but it can make use of webhooks in some situations.
+Calling `.send()` gets the result in a promise as usual. To keep the result up to date, and therefore let your users see the job progress updating, we can listen to the result. Usually this just instructs the client to poll the API every few seconds, but it can make use of webhooks in some situations.
 
 Provide callbacks to `listen()` to keep information up to date
 
@@ -76,13 +76,11 @@ Interact with times that your jobs have ran
 
 #### Search for runs
 
-List all the times jobs have ran in your app.
-
 === "Request"
 
     ``` js
     client.runs.list()
-    .get();
+    .send();
     ```
 
 === "Response"
@@ -144,13 +142,11 @@ List all the times jobs have ran in your app.
 
 #### Get a run by ID
 
-Get a single job by ID.
-
 === "Request"
 
     ``` js
     client.runs.show(44)
-    .get();
+    .send();
     ```
 
 === "Response"
@@ -212,13 +208,11 @@ Get a single job by ID.
 
 #### Retry a run
 
-Retry a job by ID
-
 === "Request"
 
     ``` js
     client.runs.retry(44)
-    .get();
+    .send();
     ```
 
 === "Response"
@@ -229,8 +223,6 @@ Retry a job by ID
 
 #### Send a signal
 
-Send a signal to a job
-
 === "Request"
 
     ``` js
@@ -240,7 +232,7 @@ Send a signal to a job
         cancel: boolean, // Whether to cancel the job when the signal runs.
         parameters: { key: value } // Parameters to pass to the job through the signal
     )
-    .get();
+    .send();
     ```
 
 === "Response"
@@ -255,13 +247,11 @@ Interact with the jobs in your Laravel app
 
 #### Search for jobs
 
-List all jobs in your Laravel app.
-
 === "Request"
 
     ``` js
     client.jobs.list()
-        .get();
+        .send();
     ```
 
 === "Response"
@@ -279,13 +269,11 @@ List all jobs in your Laravel app.
 
 #### Show a job by alias/class
 
-Get a single job by alias/class.
-
 === "Request"
 
     ``` js
     client.jobs.show('my-job-alias-or-class') // Pass the job alias or the job class to retrieve the job.
-        .get();
+        .send();
     ```
 
 === "Response"
@@ -306,13 +294,11 @@ Retrieve information about the batches that have ran through your queue system
 
 #### Search for batches
 
-Search for batches
-
 === "Request"
 
     ``` js
     client.batches.list()
-        .get();
+        .send();
     ```
 
 === "Response"
@@ -333,16 +319,13 @@ Search for batches
 
 #### Get a batch by ID
 
-Get a batch by its ID.
-
-This is the ID of the batch from this package, and not the UUID. 
 
 
 === "Request"
 
     ``` js
-    client.batches.show(24)
-        .get();
+        client.batches.show(24) // This is the ID of the batch from this package, and not the UUID.
+        .send();
     ```
 
 === "Response"
