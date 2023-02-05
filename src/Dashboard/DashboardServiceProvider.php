@@ -54,12 +54,6 @@ class DashboardServiceProvider extends ServiceProvider
                 $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
             });
 
-        Route::prefix(config('laravel-job-status.dashboard.path', 'job-status') . '/api')
-            ->domain(config('laravel-job-status.dashboard.domain', null))
-            ->middleware(config('laravel-job-status.dashboard.middleware', 'api'))
-            ->group(function () {
-                $this->loadRoutesFrom(__DIR__ . '/../../routes/internal-api.php');
-            });
     }
 
     protected function setupGates()
