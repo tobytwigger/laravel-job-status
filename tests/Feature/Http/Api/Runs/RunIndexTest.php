@@ -14,7 +14,7 @@ class RunIndexTest extends TestCase
     public function it_gets_a_requested_job_run()
     {
         $jobStatus = JobStatus::factory()->has(JobStatusTag::factory(['key' => 'one', 'value' => 'yes']), 'tags')->create(['alias' => 'mystatus']);
-//        JobStatus::factory()->count(10)->create();
+        JobStatus::factory()->count(10)->create();
 
         $statusQuery = [
             'alias' => 'mystatus',
