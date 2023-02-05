@@ -27,8 +27,12 @@ class RunController extends Controller
 
     public function show(JobStatus $jobStatus)
     {
+        $this->checkUserCanAccessJob($jobStatus);
+
         if ($jobStatus->uuid) {
+            // Load all the retries
             return JobStatus::query()
+                ->forUsers($this->resolveAuth())
                 ->whereUuid($jobStatus->uuid)
                 ->get()
                 ->runs()

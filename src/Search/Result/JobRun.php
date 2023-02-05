@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
-use JobStatus\JobRetrier;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
+use JobStatus\Retry\JobRetrier;
+use JobStatus\Retry\Retrier;
 
 class JobRun implements Arrayable, Jsonable
 {
@@ -191,6 +192,6 @@ class JobRun implements Arrayable, Jsonable
 
     public function retry()
     {
-        JobRetrier::retryFor($this->jobStatus);
+        Retrier::for($this->jobStatus)->retry();
     }
 }

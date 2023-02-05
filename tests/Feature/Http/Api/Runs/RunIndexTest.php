@@ -136,11 +136,8 @@ class RunIndexTest extends TestCase
     {
         $jobStatus = JobStatus::factory()->create(['public' => false]);
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
-        $user = $this->prophesize(Authenticatable::class);
-        $user->getAuthIdentifier()->willReturn(1);
-        $user->id = 1;
-        $userRevealed = $user->reveal();
-        $this->be($userRevealed);
+        $this->prophesizeUserWithId(1);
+
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
@@ -157,11 +154,8 @@ class RunIndexTest extends TestCase
     {
         $jobStatus = JobStatus::factory()->create(['public' => false]);
         JobStatusUser::factory()->create(['user_id' => 2, 'job_status_id' => $jobStatus->id]);
-        $user = $this->prophesize(Authenticatable::class);
-        $user->getAuthIdentifier()->willReturn(1);
-        $user->id = 1;
-        $userRevealed = $user->reveal();
-        $this->be($userRevealed);
+        $this->prophesizeUserWithId(1);
+
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
@@ -184,11 +178,7 @@ class RunIndexTest extends TestCase
     {
         $jobStatus = JobStatus::factory()->create(['public' => true]);
 
-        $user = $this->prophesize(Authenticatable::class);
-        $user->getAuthIdentifier()->willReturn(1);
-        $user->id = 1;
-        $userRevealed = $user->reveal();
-        $this->be($userRevealed);
+        $this->prophesizeUserWithId(1);
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
@@ -205,11 +195,8 @@ class RunIndexTest extends TestCase
         $jobStatus = JobStatus::factory()->create(['public' => true]);
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
 
-        $user = $this->prophesize(Authenticatable::class);
-        $user->getAuthIdentifier()->willReturn(1);
-        $user->id = 1;
-        $userRevealed = $user->reveal();
-        $this->be($userRevealed);
+        $this->prophesizeUserWithId(1);
+
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();

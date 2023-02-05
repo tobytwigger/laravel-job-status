@@ -1,13 +1,16 @@
 <?php
 
-namespace JobStatus;
+namespace JobStatus\Retry;
 
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Queue;
 use JobStatus\Enums\Status;
 use JobStatus\Exceptions\CannotBeRetriedException;
+use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
+use JobStatus\RuntimeException;
+use function JobStatus\str_starts_with;
 
 class JobRetrier
 {
@@ -18,21 +21,20 @@ class JobRetrier
         $this->jobStatus = $jobStatus;
     }
 
-    public static function retryFor(JobStatus $jobStatus): void
-    {
-        $jobRetrier = new static($jobStatus);
-        $jobRetrier->retry();
-    }
-
     public function retry(): void
     {
-        if (!$this->canBeRetried()) {
-            throw new CannotBeRetriedException();
+        if (!empty($this->emptyRequiredFields())) {
+            throw new CannotBeRetriedException('All the following fields must be given: ' . implode(', ', $this->emptyRequiredFields()));
         }
+
         $jobId = Queue::connection($this->jobStatus->connection_name)->pushRaw(
             $this->preparePayloadForRefresh(),
             $this->jobStatus->queue
         );
+
+        if($jobId === null) {
+            throw CannotBeRetriedException::reason('The queue must return an ID when job pushed, none returned. The driver you are using is probably not supported.');
+        }
 
         $retryJobStatus = JobStatus::create([
             'class' => $this->jobStatus->class,
@@ -52,6 +54,7 @@ class JobRetrier
         ]);
 
         $modifier = new JobStatusModifier($retryJobStatus);
+
         $modifier->setStatus(Status::QUEUED);
         foreach ($this->jobStatus->tags as $tag) {
             $retryJobStatus->tags()->create([
@@ -99,8 +102,21 @@ class JobRetrier
         return json_encode($payload);
     }
 
-    private function canBeRetried()
+    private function emptyRequiredFields(): array
     {
-        return $this->jobStatus->connection_name !== null && $this->jobStatus->queue !== null && $this->jobStatus->payload !== null;
+        $fields = [];
+        if($this->jobStatus->connection_name === null) {
+            $fields[] = 'Connection name';
+        }
+        if($this->jobStatus->queue === null) {
+            $fields[] = 'Queue';
+        }
+        if($this->jobStatus->payload === null) {
+            $fields[] = 'Payload';
+        }
+        if(in_array($this->jobStatus->connection_name, ['sync', 'database'])) {
+            $fields[] = 'Unsupported driver';
+    }
+        return $fields;
     }
 }

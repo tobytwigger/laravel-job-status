@@ -8,4 +8,11 @@ class CannotBeRetriedException extends \Exception
     {
         parent::__construct($message, $code, $previous);
     }
+
+    public static function reason(string $reason): CannotBeRetriedException
+    {
+        return new static(
+            message: 'This job cannot be retried - ' . $reason
+        );
+    }
 }
