@@ -9,7 +9,7 @@ class ShareConfig
 
     public function __construct(RetrieveConfig $config)
     {
-        $this->config = $confgig;
+        $this->config = $config;
     }
 
     public function toString(): string
