@@ -18,19 +18,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import api from 'src/utils/client/api';
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
-import { useApi } from '../compostables/useApi';
 import { TrackedJob } from 'src/types/api';
+import {client} from "laravel-job-status-js";
 
 const results = ref<TrackedJob[] | null>(null);
 
-useApi((after) => {
-  api
-    .jobList()
-    .then((response: TrackedJob[]) => (results.value = response))
-    .finally(after);
+let listener = client.jobs.search()
+  .listen()
+  .onUpdated(newResults => results.value = newResults)
+  .start();
+
+onBeforeUnmount(() => {
+  listener.stop();
 });
 
 function getHash(trackedJob: TrackedJob): string {

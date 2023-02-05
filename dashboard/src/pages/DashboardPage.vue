@@ -1,8 +1,8 @@
 <template>
   <q-page class="justify-evenly">
-    Result: {{ apiResult }}
-
-    <button @click="loadApi">Load API</button>
+<!--    Result: {{ apiResult }}-->
+<!---->
+<!--    <button @click="loadApi">Load API</button>-->
   </q-page>
 </template>
 
@@ -17,13 +17,13 @@ export default defineComponent({
     let results: DashboardResponse | null = null;
 
     function loadApi() {
-      api.dashboard().then((response: DashboardResponse) => {
-        results = reactive(response);
-      });
+      // api.dashboard().then((response: DashboardResponse) => {
+      //   results = reactive(response);
+      // });
     }
 
     return {
-      loadApi,
+      // loadApi,
       results,
     };
 

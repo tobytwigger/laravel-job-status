@@ -14,9 +14,8 @@ class RunController extends Controller
             ->runs();
     }
 
-    public function show(int $jobStatusId)
+    public function show(JobStatus $jobStatus)
     {
-        $jobStatus = JobStatus::findOrFail($jobStatusId);
         if ($jobStatus->uuid) {
             return JobStatus::query()
                 ->whereUuid($jobStatus->uuid)

@@ -47,14 +47,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import {computed, onBeforeUnmount, ref} from 'vue';
 import api from 'src/utils/client/api';
 import { Batch } from 'src/types/api';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
-import { useApi } from '../compostables/useApi';
 import BatchListItem from 'components/BatchListItem.vue';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import dayjs from 'dayjs';
+import {client} from "laravel-job-status-js";
 
 const results = ref<Batch | null>(null);
 
@@ -62,11 +62,13 @@ const props = defineProps<{
   batchId: number;
 }>();
 
-useApi((after) => {
-  api
-    .batchShow(props.batchId)
-    .then((response: Batch) => (results.value = response))
-    .finally(after);
+let listener = client.batches.show(props.batchId)
+  .listen()
+  .onUpdated(newResults => results.value = newResults)
+  .start();
+
+onBeforeUnmount(() => {
+  listener.stop();
 });
 
 const batchName = computed((): string => {

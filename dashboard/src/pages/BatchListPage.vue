@@ -18,20 +18,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onBeforeUnmount, ref} from 'vue';
 import api from 'src/utils/client/api';
 import { Batch } from 'src/types/api';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
-import { useApi } from '../compostables/useApi';
 import BatchListItem from 'components/BatchListItem.vue';
+import {client} from "laravel-job-status-js";
 
 const results = ref<Batch[] | null>(null);
 
-useApi((after) => {
-  api
-    .batchList()
-    .then((response: Batch[]) => (results.value = response))
-    .finally(after);
+let listener = client.batches.search()
+  .listen()
+  .onUpdated(newResults => results.value = newResults)
+  .start();
+
+onBeforeUnmount(() => {
+  listener.stop();
 });
 
 function getHash(batch: Batch): string {

@@ -277,7 +277,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import {computed, onBeforeUnmount, reactive, ref} from 'vue';
 import api from 'src/utils/client/api';
 import {
   JobException,
@@ -285,11 +285,11 @@ import {
   JobSignal,
   JobStatusStatus,
 } from 'src/types/api';
-import { useApi } from '../compostables/useApi';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import JobRunTimeline from 'components/JobRunTimeline.vue';
 import ExceptionView from 'components/ExceptionView.vue';
+import {client} from "laravel-job-status-js";
 
 dayjs.extend(localizedFormat);
 
@@ -301,13 +301,14 @@ const props = defineProps<{
   jobStatusId: number;
 }>();
 
-useApi((after) => {
-  api
-    .runShow(props.jobStatusId)
-    .then((response: JobRun) => {
-      results.value = response;
-    })
-    .finally(after);
+
+let listener = client.runs.show(props.jobStatusId)
+  .listen()
+  .onUpdated(newResults => results.value = newResults)
+  .start();
+
+onBeforeUnmount(() => {
+  listener.stop();
 });
 
 // CANCELLING
@@ -327,9 +328,10 @@ const cancelling = ref(false);
 
 function cancel() {
   cancelling.value = true;
-  api
-    .signal(props.jobStatusId, 'cancel', true, {})
-    .finally(() => (cancelling.value = false));
+
+  client.runs.cancel(props.jobStatusId)
+    .send()
+    .finally(() => cancelling.value = false);
 }
 
 // RETRYING
@@ -338,7 +340,11 @@ const retrying = ref(false);
 
 function retry() {
   retrying.value = true;
-  api.retry(props.jobStatusId).finally(() => (retrying.value = false));
+
+  client.runs.retry(props.jobStatusId)
+    .send()
+    .finally(() => retrying.value = false);
+
 }
 
 const exceptions = computed((): JobException[] => {

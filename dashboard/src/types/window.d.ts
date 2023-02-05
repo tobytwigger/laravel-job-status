@@ -6,5 +6,5 @@ interface Config {
 }
 
 interface Window {
-  JobStatusConfig?: Config;
+  JobStatusDashboardConfig?: Config;
 }

@@ -31,8 +31,6 @@ import StatusCount from 'components/StatusCount.vue';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useApi } from 'src/compostables/useApi';
-import api from 'src/utils/client/api';
 import JobFailureListItem from 'components/JobFailureListItem.vue';
 
 const results = ref<JobFailureReason[] | null>(null);
@@ -41,12 +39,12 @@ const props = defineProps<{
   alias: string;
 }>();
 
-useApi((after) => {
-  api
-    .jobFailureReasons(props.alias)
-    .then((response: JobFailureReason[]) => (results.value = response))
-    .finally(after);
-});
+// useApi((after) => {
+//   api
+//     .jobFailureReasons(props.alias)
+//     .then((response: JobFailureReason[]) => (results.value = response))
+//     .finally(after);
+// });
 </script>
 
 <style scoped></style>

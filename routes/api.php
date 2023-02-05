@@ -13,9 +13,9 @@ Route::middleware(config('laravel-job-status.routes.api.middleware'))->group(fun
     Route::get('jobs/{job_status_job_alias}', [\JobStatus\Http\Controllers\Api\JobController::class, 'show'])
         ->name('jobs.show');
 
-    Route::get('runs', [\RunStatus\Http\Controllers\Api\RunController::class, 'index'])
+    Route::get('runs', [\JobStatus\Http\Controllers\Api\RunController::class, 'index'])
         ->name('runs.index');
-    Route::get('runs/{job_status_run}', [\RunStatus\Http\Controllers\Api\RunController::class, 'show'])
+    Route::get('runs/{job_status_run}', [\JobStatus\Http\Controllers\Api\RunController::class, 'show'])
         ->name('runs.show');
     Route::post('/runs/{job_status_run}/retry', [\JobStatus\Http\Controllers\Api\JobRetryController::class, 'store'])
         ->name('runs.retry');
