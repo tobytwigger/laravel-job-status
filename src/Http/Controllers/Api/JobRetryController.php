@@ -1,6 +1,6 @@
 <?php
 
-namespace JobStatus\Dashboard\Http\Controllers\Api;
+namespace JobStatus\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use JobStatus\Dashboard\Http\Controllers\Controller;

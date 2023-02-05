@@ -1,13 +1,19 @@
 <?php
 
-namespace JobStatus\Dashboard\Http\Controllers\Api;
+namespace JobStatus\Http\Controllers\Api;
 
-use JobStatus\Dashboard\Http\Controllers\Controller;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobRun;
 
 class RunController extends Controller
 {
+
+    public function index()
+    {
+        return JobStatus::all()
+            ->runs();
+    }
+
     public function show(int $jobStatusId)
     {
         $jobStatus = JobStatus::findOrFail($jobStatusId);
@@ -21,4 +27,5 @@ class RunController extends Controller
 
         return new JobRun($jobStatus);
     }
+
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace JobStatus\Dashboard\Http\Controllers\Api;
+namespace JobStatus\Http\Controllers\Api;
 
-use JobStatus\Dashboard\Http\Controllers\Controller;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 
 class BatchController extends Controller
 {
+
     public function index()
     {
         return JobStatus::all()
@@ -21,4 +21,5 @@ class BatchController extends Controller
             ->batches()
             ->first();
     }
+
 }
