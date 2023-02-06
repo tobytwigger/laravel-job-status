@@ -38,7 +38,7 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->commands([
             ClearJobStatusCommand::class,
             ShowJobStatusSummaryCommand::class,
-            InstallAssets::class
+            InstallAssets::class,
         ]);
     }
 
