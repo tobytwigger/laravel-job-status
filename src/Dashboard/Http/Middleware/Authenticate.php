@@ -9,9 +9,10 @@ class Authenticate
 {
     public function handle(Request $request, $next)
     {
-        if(config('job-status.dashboard.enabled', true) === false) {
+        if (config('job-status.dashboard.enabled', true) === false) {
             abort(403);
         }
+
         return
             (
                 app()->environment('local')
