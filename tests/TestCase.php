@@ -25,7 +25,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function getPackageProviders($app)
     {
-        return [JobStatusServiceProvider::class, DashboardServiceProvider::class];
+        return [JobStatusServiceProvider::class];
     }
 
     protected function setUp(): void

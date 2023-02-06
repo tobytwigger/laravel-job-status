@@ -66,8 +66,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "JobStatus\\JobStatusServiceProvider",
-                "JobStatus\\Dashboard\\DashboardServiceProvider"
+                "JobStatus\\JobStatusServiceProvider"
             ]
         }
     },

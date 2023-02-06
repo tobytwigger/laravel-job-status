@@ -10,12 +10,16 @@ use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Queue\Events\JobReleasedAfterException;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use JobStatus\Console\ClearJobStatusCommand;
 use JobStatus\Console\ShowJobStatusSummaryCommand;
+use JobStatus\Dashboard\Commands\InstallAssets;
+use JobStatus\Dashboard\Http\Composers\DashboardVariables;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 
@@ -34,6 +38,7 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->commands([
             ClearJobStatusCommand::class,
             ShowJobStatusSummaryCommand::class,
+            InstallAssets::class
         ]);
     }
 
@@ -50,6 +55,10 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->mapRoutes();
         $this->bindListeners();
         $this->defineBladeDirective();
+        if (config('laravel-job-status.dashboard.enabled', true)) {
+            $this->setupGates();
+            $this->publishDashboardAssets();
+        }
     }
 
     /**
@@ -84,6 +93,22 @@ class JobStatusServiceProvider extends ServiceProvider
                 ->name('api.job-status.')
                 ->group(__DIR__ . '/../routes/api.php');
         }
+
+        if (config('laravel-job-status.dashboard.enabled', true)) {
+            Route::prefix(config('laravel-job-status.dashboard.path', 'job-status'))
+                ->domain(config('laravel-job-status.dashboard.domain', null))
+                ->middleware(config('laravel-job-status.dashboard.middleware', 'web'))
+                ->group(function () {
+                    $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+                });
+        }
+    }
+
+    protected function setupGates()
+    {
+        Gate::define('viewJobStatus', function () {
+            return null;
+        });
     }
 
     private function bindListeners()
@@ -119,5 +144,19 @@ class JobStatusServiceProvider extends ServiceProvider
         $compiler->directive('jobapi', function () {
             return '<?php echo sprintf("<script>%s</script>", app(\JobStatus\Share\ShareConfig::class)->toString()); ?>';
         });
+    }
+
+    private function publishDashboardAssets()
+    {
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'job-status');
+
+        $this->publishes([
+            __DIR__ . '/../public/dashboard' => public_path('vendor/job-status'),
+        ], ['job-status-dashboard']);
+        $this->publishes([
+            __DIR__ . '/../public/dashboard/index.html' => resource_path('views/vendor/job-status/layout.blade.php'),
+        ], ['job-status-dashboard']);
+
+        View::composer('job-status::layout', DashboardVariables::class);
     }
 }
