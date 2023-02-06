@@ -10,6 +10,8 @@ To install the frontend package, you can use `npm` or `yarn`.
 
 ```yarn add @tobytwigger/laravel-job-status-js```
 
+You will also need to share configuration with this package. To do this, add `@jobapi` into the blade template of any page that uses the config.
+
 ## Using the client
 
 A request has two steps - building up the request with any filters or pagination information, and telling the client if you want the result to be kept up to date.
@@ -27,7 +29,7 @@ To build up a request
 ```js
 import {client} from '@tobytwigger/laravel-job-status-js';
 
-client.runs.list().whereStatus('failed').send()
+client.runs.search().whereStatus('failed').send()
   .then(response => console.log('Number of failed runs: ' + response.data.length));
 ```
 
@@ -44,7 +46,7 @@ let isLoadingInitialResult = false;
 let isUpdating = false;
 let results = [];
 
-let listenerId = client.runs.list().whereStatus('failed').listen()
+let listenerId = client.runs.search().whereStatus('failed').listen()
   // Show the user a large loading screen when we're initially loading job information.
   .onStartingInitialLoad(() => isLoadingInitialResult = true)
   .onFinishingInitialLoad(() => isLoadingInitialResult = false)
@@ -79,7 +81,7 @@ Interact with times that your jobs have ran
 === "Request"
 
     ``` js
-    client.runs.list()
+    client.runs.search()
     .send();
     ```
 
@@ -250,7 +252,7 @@ Interact with the jobs in your Laravel app
 === "Request"
 
     ``` js
-    client.jobs.list()
+    client.jobs.search()
         .send();
     ```
 
@@ -297,7 +299,7 @@ Retrieve information about the batches that have ran through your queue system
 === "Request"
 
     ``` js
-    client.batches.list()
+    client.batches.search()
         .send();
     ```
 

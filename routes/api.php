@@ -2,5 +2,23 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('job-status', [\JobStatus\Http\Controllers\JobStatusController::class, 'search'])->name('job-status.search');
-Route::resource('job-status.job-signal', \JobStatus\Http\Controllers\JobSignalController::class)->only(['store'])->scoped();
+Route::middleware(config('laravel-job-status.routes.api.middleware'))->group(function () {
+    Route::get('batches', [\JobStatus\Http\Controllers\Api\BatchController::class, 'index'])
+        ->name('batches.index');
+    Route::get('batches/{job_status_batch}', [\JobStatus\Http\Controllers\Api\BatchController::class, 'show'])
+        ->name('batches.show');
+
+    Route::get('jobs', [\JobStatus\Http\Controllers\Api\JobController::class, 'index'])
+        ->name('jobs.index');
+    Route::get('jobs/{job_status_job_alias}', [\JobStatus\Http\Controllers\Api\JobController::class, 'show'])
+        ->name('jobs.show');
+
+    Route::get('runs', [\JobStatus\Http\Controllers\Api\RunController::class, 'index'])
+        ->name('runs.index');
+    Route::get('runs/{job_status_run}', [\JobStatus\Http\Controllers\Api\RunController::class, 'show'])
+        ->name('runs.show');
+    Route::post('/runs/{job_status_run}/retry', [\JobStatus\Http\Controllers\Api\JobRetryController::class, 'store'])
+        ->name('runs.retry');
+    Route::post('/runs/{job_status_run}/signal', [\JobStatus\Http\Controllers\Api\JobSignalController::class, 'store'])
+        ->name('runs.signal');
+});

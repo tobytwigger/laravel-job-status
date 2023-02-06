@@ -36,18 +36,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import api from 'src/utils/client/api';
 import { JobRun } from 'src/types/api';
-import { useApi } from '../compostables/useApi';
 import NoContextTrackedRunListItem from 'components/NoContextTrackedRunListItem.vue';
+import { client } from 'laravel-job-status-js';
 
 const results = ref<JobRun[] | null>(null);
 
-useApi((after) => {
-  api
-    .history()
-    .then((response: JobRun[]) => (results.value = response))
-    .finally(after);
+let listener = client.runs
+  .search()
+  .bypassAuth()
+  .listen()
+  .onUpdated((newResults) => (results.value = newResults))
+  .start();
+
+onBeforeUnmount(() => {
+  listener.stop();
 });
 </script>

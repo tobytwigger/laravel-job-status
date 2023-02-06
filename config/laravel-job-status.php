@@ -51,6 +51,7 @@ return [
             // Whether the API is enabled
             'enabled' => true,
             // What middleware to apply to the API
+            // To stop anonymous users accessing public job information, add Auth:API to the middleware array
             'middleware' => ['api'],
         ],
     ],

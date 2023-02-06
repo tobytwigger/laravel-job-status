@@ -28,7 +28,9 @@
       </div>
 
       <div class="col-12 col-sm-6 q-py-md">
-        <job-failure-reasons :alias="props.alias"></job-failure-reasons>
+        <job-failure-reasons
+          :job-failure-reasons="results.failure_reasons"
+        ></job-failure-reasons>
       </div>
     </div>
     <div class="row">
@@ -49,12 +51,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import api from 'src/utils/client/api';
 import { JobRun, TrackedJob } from 'src/types/api';
-import { useApi } from '../compostables/useApi';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
+import { client } from 'laravel-job-status-js';
 
 const results = ref<TrackedJob | null>(null);
 
@@ -62,11 +64,15 @@ const props = defineProps<{
   alias: string;
 }>();
 
-useApi((after) => {
-  api
-    .jobShow(props.alias)
-    .then((response: TrackedJob) => (results.value = response))
-    .finally(after);
+let listener = client.jobs
+  .show(props.alias)
+  .bypassAuth()
+  .listen()
+  .onUpdated((newResults) => (results.value = newResults))
+  .start();
+
+onBeforeUnmount(() => {
+  listener.stop();
 });
 
 function getHash(jobRun: JobRun): string {

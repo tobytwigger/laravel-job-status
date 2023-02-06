@@ -1,10 +1,10 @@
 const get = (): Config => {
-  if (window.JobStatusConfig === undefined) {
+  if (window.JobStatusDashboardConfig === undefined) {
     throw new Error(
-      'Job status configuratino not found in the window. Have you loaded the package correctly?'
+      'Job status configuration not found in the window. Have you loaded the package correctly?'
     );
   }
-  return window.JobStatusConfig;
+  return window.JobStatusDashboardConfig;
 };
 
 export default { get };

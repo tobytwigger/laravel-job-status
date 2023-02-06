@@ -52,11 +52,11 @@
 
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import { JobRun, Status, Batch } from 'src/types/api';
 import StatusCount from 'components/StatusCount.vue';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Batch } from 'src/types/api';
 
 dayjs.extend(relativeTime);
 dayjs.extend(localizedFormat);

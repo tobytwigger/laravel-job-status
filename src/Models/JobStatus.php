@@ -178,7 +178,7 @@ class JobStatus extends Model
 
     public function scopeForUsers(Builder $query, int|array|null $userIds)
     {
-        if ($userIds === null) {
+        if ($userIds === null || empty($userIds)) {
             $query->where('public', true);
         } else {
             $userIds = Arr::wrap($userIds);
