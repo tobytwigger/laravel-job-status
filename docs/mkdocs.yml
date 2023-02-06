@@ -17,6 +17,7 @@ nav:
             -   Viewing Jobs: 'dashboard/jobs.md'
             -   Viewing Runs: 'dashboard/runs.md'
             -   Viewing Batches: 'dashboard/batches.md'
+            -   Viewing Queues: 'dashboard/queues.md'
             -   Security: 'dashboard/security.md'
     -   Javascript:
             -   Javascript: 'js/js.md'
