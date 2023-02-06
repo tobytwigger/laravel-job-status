@@ -7,9 +7,9 @@ use JobStatus\Tests\TestCase;
 
 class InstallAssetsTest extends TestCase
 {
-
     /** @test */
-    public function it_handles_assets_already_existing(){
+    public function it_handles_assets_already_existing()
+    {
         $assets = $this->prophesize(Assets::class);
         $assets->clear()->shouldBeCalled()->willReturn(true);
         $assets->publish()->shouldBeCalled();
@@ -24,7 +24,8 @@ class InstallAssetsTest extends TestCase
     }
 
     /** @test */
-    public function it_handles_no_assets_existing(){
+    public function it_handles_no_assets_existing()
+    {
         $assets = $this->prophesize(Assets::class);
         $assets->clear()->shouldBeCalled()->willReturn(false);
         $assets->publish()->shouldBeCalled();
@@ -39,7 +40,8 @@ class InstallAssetsTest extends TestCase
     }
 
     /** @test */
-    public function it_can_be_silent(){
+    public function it_can_be_silent()
+    {
         $assets = $this->prophesize(Assets::class);
         $assets->clear()->shouldBeCalled()->willReturn(false);
         $assets->publish()->shouldBeCalled();
@@ -53,5 +55,4 @@ class InstallAssetsTest extends TestCase
             ->doesntExpectOutput('Installed assets')
             ->assertOk();
     }
-
 }

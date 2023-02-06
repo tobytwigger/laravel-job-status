@@ -2,20 +2,16 @@
 
 namespace JobStatus\Tests\Feature\Http\Api\Jobs;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Testing\AssertableJsonString;
-use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusTag;
-use JobStatus\Models\JobStatusUser;
 use JobStatus\Tests\TestCase;
 
 class JobIndexTest extends TestCase
 {
-
     /** @test */
-    public function it_returns_all_jobs(){
+    public function it_returns_all_jobs()
+    {
         $job1 = JobStatus::factory(['alias' => 'OurAlias', 'public' => true])->count(5)->create();
         $job2 = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(5)->create();
 
@@ -35,7 +31,8 @@ class JobIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_only_jobs_that_have_runs_the_user_can_access(){
+    public function it_returns_only_jobs_that_have_runs_the_user_can_access()
+    {
         $inaccessible = JobStatus::factory(['alias' => 'OurAlias', 'public' => false])->count(10)->create();
         $accessible = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(10)->create();
 
@@ -70,7 +67,8 @@ class JobIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_jobs_for_the_runs_a_user_can_access(){
+    public function it_returns_jobs_for_the_runs_a_user_can_access()
+    {
         $job1 = JobStatus::factory(['alias' => 'OurAlias', 'public' => true])->count(5)->create();
         $job2 = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => false])->count(5)->create();
 
@@ -86,7 +84,8 @@ class JobIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_an_empty_array_for_no_jobs(){
+    public function it_returns_an_empty_array_for_no_jobs()
+    {
         $response = $this->getJson(route('api.job-status.jobs.index'));
         $response->decodeResponseJson()->assertExact([]);
     }
@@ -95,7 +94,7 @@ class JobIndexTest extends TestCase
     public function it_gives_access_to_a_private_job_to_a_dashboard_user()
     {
         $this->prophesizeUserWithId(1);
-        Gate::define('viewJobStatus', fn($user) => $user->id === 1);
+        Gate::define('viewJobStatus', fn ($user) => $user->id === 1);
 
         $inaccessible = JobStatus::factory(['alias' => 'OurAlias', 'public' => false])->count(10)->create();
         $accessible = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(10)->create();
@@ -157,17 +156,17 @@ class JobIndexTest extends TestCase
     }
 
     /** @test */
-    public function auth_cannot_be_bypassed_if_no_gate_permission(){
+    public function auth_cannot_be_bypassed_if_no_gate_permission()
+    {
         $this->prophesizeUserWithId(1);
-        Gate::define('viewJobStatus', fn($user) => false);
+        Gate::define('viewJobStatus', fn ($user) => false);
 
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => false
+            'public' => false,
         ]);
 
         $response = $this->getJson(route('api.job-status.jobs.index', ['bypassAuth' => true]));
         $response->assertStatus(403);
     }
-
 }

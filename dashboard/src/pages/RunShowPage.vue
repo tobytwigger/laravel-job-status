@@ -277,7 +277,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onBeforeUnmount, reactive, ref} from 'vue';
+import { computed, onBeforeUnmount, reactive, ref } from 'vue';
 import api from 'src/utils/client/api';
 import {
   JobException,
@@ -289,7 +289,7 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import JobRunTimeline from 'components/JobRunTimeline.vue';
 import ExceptionView from 'components/ExceptionView.vue';
-import {client} from "laravel-job-status-js";
+import { client } from 'laravel-job-status-js';
 
 dayjs.extend(localizedFormat);
 
@@ -301,11 +301,11 @@ const props = defineProps<{
   jobStatusId: number;
 }>();
 
-
-let listener = client.runs.show(props.jobStatusId)
+let listener = client.runs
+  .show(props.jobStatusId)
   .bypassAuth()
   .listen()
-  .onUpdated(newResults => results.value = newResults)
+  .onUpdated((newResults) => (results.value = newResults))
   .start();
 
 onBeforeUnmount(() => {
@@ -330,10 +330,11 @@ const cancelling = ref(false);
 function cancel() {
   cancelling.value = true;
 
-  client.runs.cancel(props.jobStatusId)
+  client.runs
+    .cancel(props.jobStatusId)
     .bypassAuth()
     .send()
-    .finally(() => cancelling.value = false);
+    .finally(() => (cancelling.value = false));
 }
 
 // RETRYING
@@ -343,11 +344,11 @@ const retrying = ref(false);
 function retry() {
   retrying.value = true;
 
-  client.runs.retry(props.jobStatusId)
+  client.runs
+    .retry(props.jobStatusId)
     .bypassAuth()
     .send()
-    .finally(() => retrying.value = false);
-
+    .finally(() => (retrying.value = false));
 }
 
 const exceptions = computed((): JobException[] => {

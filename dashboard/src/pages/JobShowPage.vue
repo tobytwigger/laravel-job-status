@@ -49,12 +49,12 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref} from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import api from 'src/utils/client/api';
 import { JobRun, TrackedJob } from 'src/types/api';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
-import {client} from "laravel-job-status-js";
+import { client } from 'laravel-job-status-js';
 
 const results = ref<TrackedJob | null>(null);
 
@@ -62,10 +62,11 @@ const props = defineProps<{
   alias: string;
 }>();
 
-let listener = client.jobs.show(props.alias)
+let listener = client.jobs
+  .show(props.alias)
   .bypassAuth()
   .listen()
-  .onUpdated(newResults => results.value = newResults)
+  .onUpdated((newResults) => (results.value = newResults))
   .start();
 
 onBeforeUnmount(() => {

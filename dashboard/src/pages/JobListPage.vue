@@ -18,17 +18,18 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref} from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
 import { TrackedJob } from 'src/types/api';
-import {client} from "laravel-job-status-js";
+import { client } from 'laravel-job-status-js';
 
 const results = ref<TrackedJob[] | null>(null);
 
-let listener = client.jobs.search()
+let listener = client.jobs
+  .search()
   .bypassAuth()
   .listen()
-  .onUpdated(newResults => results.value = newResults)
+  .onUpdated((newResults) => (results.value = newResults))
   .start();
 
 onBeforeUnmount(() => {

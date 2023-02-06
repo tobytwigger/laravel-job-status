@@ -9,19 +9,20 @@ use JobStatus\Tests\TestCase;
 
 class DashboardIndexTest extends TestCase
 {
-
     /** @test */
-    public function it_returns_the_base_route(){
+    public function it_returns_the_base_route()
+    {
         $this->prophesizeUserWithId(1);
 
-        Gate::define('viewJobStatus', fn($user) => true);
+        Gate::define('viewJobStatus', fn ($user) => true);
         $response = $this->get(route('job-status.dashboard'));
         $response->assertOk();
         $response->assertViewIs('job-status::layout');
     }
 
     /** @test */
-    public function it_returns_403_if_you_do_not_have_the_permission(){
+    public function it_returns_403_if_you_do_not_have_the_permission()
+    {
         $this->prophesizeUserWithId(1);
 
         $response = $this->get(route('job-status.dashboard'));
@@ -29,13 +30,15 @@ class DashboardIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_403_if_you_are_not_logged_in(){
+    public function it_returns_403_if_you_are_not_logged_in()
+    {
         $response = $this->get(route('job-status.dashboard'));
         $response->assertForbidden();
     }
 
     /** @test */
-    public function variables_are_shared_with_the_view(){
+    public function variables_are_shared_with_the_view()
+    {
         $this->prophesizeUserWithId(1);
 
         config()->set('laravel-job-status.dashboard.path', 'job--status-path');
@@ -49,7 +52,7 @@ class DashboardIndexTest extends TestCase
         $version->version()->willReturn('v1.0.0');
         $this->app->instance(InstalledVersion::class, $version->reveal());
 
-        Gate::define('viewJobStatus', fn($user) => true);
+        Gate::define('viewJobStatus', fn ($user) => true);
         $response = $this->get(route('job-status.dashboard'));
         $response->assertOk();
         $data = $response->viewData('jobStatusVariables');
@@ -61,6 +64,4 @@ class DashboardIndexTest extends TestCase
             'assets_in_date' => false,
         ], $data);
     }
-
-
 }

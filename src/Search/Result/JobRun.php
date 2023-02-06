@@ -13,7 +13,6 @@ use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
-use JobStatus\Retry\JobRetrier;
 use JobStatus\Retry\Retrier;
 
 class JobRun implements Arrayable, Jsonable

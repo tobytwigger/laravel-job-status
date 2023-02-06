@@ -7,25 +7,25 @@ use JobStatus\Models\JobStatus;
 
 class BatchController extends Controller
 {
-
     public function index()
     {
         $query = JobStatus::query();
-        if(!$this->shouldBypassAuth()) {
+        if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
+
         return $query->get()->batches();
     }
 
     public function show(JobBatch $batch)
     {
         $query = JobStatus::where('batch_id', $batch->id);
-        if(!$this->shouldBypassAuth()) {
+        if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
         $results = $query->get();
 
-        if($results->count() === 0){
+        if ($results->count() === 0) {
             abort(403);
         }
 
@@ -33,5 +33,4 @@ class BatchController extends Controller
             ->batches()
             ->first();
     }
-
 }

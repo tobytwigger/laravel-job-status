@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(config('laravel-job-status.routes.api.middleware'))->group(function() {
+Route::middleware(config('laravel-job-status.routes.api.middleware'))->group(function () {
     Route::get('batches', [\JobStatus\Http\Controllers\Api\BatchController::class, 'index'])
         ->name('batches.index');
     Route::get('batches/{job_status_batch}', [\JobStatus\Http\Controllers\Api\BatchController::class, 'show'])
@@ -21,5 +21,4 @@ Route::middleware(config('laravel-job-status.routes.api.middleware'))->group(fun
         ->name('runs.retry');
     Route::post('/runs/{job_status_run}/signal', [\JobStatus\Http\Controllers\Api\JobSignalController::class, 'store'])
         ->name('runs.signal');
-
 });

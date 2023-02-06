@@ -1,8 +1,8 @@
 <template>
   <q-page class="justify-evenly">
-<!--    Result: {{ apiResult }}-->
-<!---->
-<!--    <button @click="loadApi">Load API</button>-->
+    <!--    Result: {{ apiResult }}-->
+    <!---->
+    <!--    <button @click="loadApi">Load API</button>-->
   </q-page>
 </template>
 

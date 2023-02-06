@@ -6,7 +6,6 @@ use Composer\InstalledVersions;
 
 class InstalledVersion
 {
-
     public function version(): string
     {
         try {
@@ -15,5 +14,4 @@ class InstalledVersion
             return 'N/A';
         }
     }
-
 }

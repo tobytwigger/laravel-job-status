@@ -7,13 +7,12 @@ use JobStatus\Tests\TestCase;
 
 class RetrieveConfigTest extends TestCase
 {
-
     /** @test */
-    public function it_gets_the_config(){
-
+    public function it_gets_the_config()
+    {
         config()->set('laravel-job-status.routes.api.prefix', 'api/job-status');
         $config = [
-            'baseUrl' => 'http://localhost/api/job-status'
+            'baseUrl' => 'http://localhost/api/job-status',
         ];
 
         $configRepo = new RetrieveConfig();
@@ -22,5 +21,4 @@ class RetrieveConfigTest extends TestCase
         $this->assertEquals(json_encode($config), $configRepo->toJson());
         $this->assertEquals(json_encode($config), (string) $configRepo);
     }
-
 }

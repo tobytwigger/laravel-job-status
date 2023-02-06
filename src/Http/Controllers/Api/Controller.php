@@ -11,7 +11,6 @@ use JobStatus\Search\Result\JobRun;
 
 class Controller extends \Illuminate\Routing\Controller
 {
-
     public function resolveAuth(): ?int
     {
         return call_user_func(JobStatusServiceProvider::$resolveAuthWith ?? fn () => Auth::user()?->getAuthIdentifier());
@@ -29,14 +28,13 @@ class Controller extends \Illuminate\Routing\Controller
 
     public function shouldBypassAuth(): bool
     {
-        if(request()->query('bypassAuth', false)) {
-            if(Gate::allows('viewJobStatus')) {
+        if (request()->query('bypassAuth', false)) {
+            if (Gate::allows('viewJobStatus')) {
                 return true;
-            } else {
-                abort(403, 'You do not have permission to bypass auth');
             }
+            abort(403, 'You do not have permission to bypass auth');
         }
+
         return false;
     }
-
 }

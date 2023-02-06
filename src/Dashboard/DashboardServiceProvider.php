@@ -53,7 +53,6 @@ class DashboardServiceProvider extends ServiceProvider
             ->group(function () {
                 $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
             });
-
     }
 
     protected function setupGates()

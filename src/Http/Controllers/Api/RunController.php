@@ -8,16 +8,15 @@ use JobStatus\Search\Result\JobRun;
 
 class RunController extends Controller
 {
-
     public function index(RunSearchRequest $request)
     {
         $query = JobStatus::query();
 
-        if(!$this->shouldBypassAuth()) {
+        if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
 
-        if($request->has('alias')) {
+        if ($request->has('alias')) {
             $query->whereAlias($request->input('alias'));
         }
 
@@ -44,5 +43,4 @@ class RunController extends Controller
 
         return new JobRun($jobStatus);
     }
-
 }

@@ -56,7 +56,7 @@ import StatusCount from 'components/StatusCount.vue';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {Batch} from "src/types/api";
+import { Batch } from 'src/types/api';
 
 dayjs.extend(relativeTime);
 dayjs.extend(localizedFormat);

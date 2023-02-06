@@ -2,20 +2,17 @@
 
 namespace JobStatus\Tests\Feature\Http\Api\Batches;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Testing\AssertableJsonString;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
-use JobStatus\Models\JobStatusTag;
-use JobStatus\Models\JobStatusUser;
 use JobStatus\Tests\TestCase;
 
 class BatchIndexTest extends TestCase
 {
-
     /** @test */
-    public function it_returns_all_batches(){
+    public function it_returns_all_batches()
+    {
         $batches = JobBatch::factory()
             ->has(JobStatus::factory(['public' => true]), 'jobStatus')
             ->count(10)->create();
@@ -36,7 +33,8 @@ class BatchIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_only_batches_that_have_jobs_the_user_can_access(){
+    public function it_returns_only_batches_that_have_jobs_the_user_can_access()
+    {
         $inaccessible = JobBatch::factory()
             ->has(JobStatus::factory(['public' => false]), 'jobStatus')
             ->count(10)->create();
@@ -69,11 +67,11 @@ class BatchIndexTest extends TestCase
         $response->decodeResponseJson()->assertMissing(['id' => $inaccessible[7]->id]);
         $response->decodeResponseJson()->assertMissing(['id' => $inaccessible[8]->id]);
         $response->decodeResponseJson()->assertMissing(['id' => $inaccessible[9]->id]);
-
     }
 
     /** @test */
-    public function it_returns_runs_for_the_jobs_a_user_can_access(){
+    public function it_returns_runs_for_the_jobs_a_user_can_access()
+    {
         $batch = JobBatch::factory()->create();
         $run1 = JobStatus::factory()->create(['public' => true, 'batch_id' => $batch->id, 'created_at' => now()->subHour()]);
         $run2 = JobStatus::factory()->create(['public' => false, 'batch_id' => $batch->id]);
@@ -90,7 +88,8 @@ class BatchIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_an_empty_array_for_no_batches(){
+    public function it_returns_an_empty_array_for_no_batches()
+    {
         $response = $this->getJson(route('api.job-status.batches.index'));
         $response->decodeResponseJson()->assertExact([]);
     }
@@ -99,7 +98,7 @@ class BatchIndexTest extends TestCase
     public function it_gives_access_to_a_private_job_to_a_dashboard_user()
     {
         $this->prophesizeUserWithId(1);
-        Gate::define('viewJobStatus', fn($user) => $user->id === 1);
+        Gate::define('viewJobStatus', fn ($user) => $user->id === 1);
 
         $inaccessible = JobBatch::factory()
             ->has(JobStatus::factory(['alias' => 'OurAlias', 'public' => false])->count(10), 'jobStatus')
@@ -165,18 +164,18 @@ class BatchIndexTest extends TestCase
     }
 
     /** @test */
-    public function auth_cannot_be_bypassed_if_no_gate_permission(){
+    public function auth_cannot_be_bypassed_if_no_gate_permission()
+    {
         $this->prophesizeUserWithId(1);
-        Gate::define('viewJobStatus', fn($user) => false);
+        Gate::define('viewJobStatus', fn ($user) => false);
 
         $batch = JobBatch::factory()->create();
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default', 'batch_id' => $batch->id,
-            'public' => false
+            'public' => false,
         ]);
 
         $response = $this->getJson(route('api.job-status.batches.index', ['bypassAuth' => true]));
         $response->assertStatus(403);
     }
-
 }

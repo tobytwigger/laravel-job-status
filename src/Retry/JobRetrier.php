@@ -30,7 +30,7 @@ class JobRetrier
             $this->jobStatus->queue
         );
 
-        if($jobId === null) {
+        if ($jobId === null) {
             throw CannotBeRetriedException::reason('The queue must return an ID when job pushed, none returned. The driver you are using is probably not supported.');
         }
 
@@ -103,18 +103,19 @@ class JobRetrier
     private function emptyRequiredFields(): array
     {
         $fields = [];
-        if($this->jobStatus->connection_name === null) {
+        if ($this->jobStatus->connection_name === null) {
             $fields[] = 'Connection name';
         }
-        if($this->jobStatus->queue === null) {
+        if ($this->jobStatus->queue === null) {
             $fields[] = 'Queue';
         }
-        if($this->jobStatus->payload === null) {
+        if ($this->jobStatus->payload === null) {
             $fields[] = 'Payload';
         }
-        if(in_array($this->jobStatus->connection_name, ['sync'])) {
+        if (in_array($this->jobStatus->connection_name, ['sync'])) {
             $fields[] = 'Unsupported driver';
-    }
+        }
+
         return $fields;
     }
 }

@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\URL;
 
 class RetrieveConfig implements Arrayable, Jsonable
 {
-
-
     public function toArray()
     {
         return $this->getConfig();
@@ -23,7 +21,7 @@ class RetrieveConfig implements Arrayable, Jsonable
     public function getConfig(): array
     {
         return [
-            'baseUrl' => URL::to(config('laravel-job-status.routes.api.prefix'))
+            'baseUrl' => URL::to(config('laravel-job-status.routes.api.prefix')),
         ];
     }
 

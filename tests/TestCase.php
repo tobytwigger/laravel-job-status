@@ -85,7 +85,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $retrierFactory = $this->prophesize(JobRetrierFactory::class);
         $retrierFactory->for(
-            Argument::that(fn($arg) => $arg instanceof JobStatus && $arg->is($jobStatus))
+            Argument::that(fn ($arg) => $arg instanceof JobStatus && $arg->is($jobStatus))
         )->shouldBeCalled()->willReturn($retrier->reveal());
 
         Retrier::swap($retrierFactory->reveal());
@@ -98,7 +98,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $retrierFactory = $this->prophesize(JobRetrierFactory::class);
         $retrierFactory->for(
-            Argument::that(fn($arg) => $arg instanceof JobStatus && $arg->is($jobStatus))
+            Argument::that(fn ($arg) => $arg instanceof JobStatus && $arg->is($jobStatus))
         )->shouldBeCalled()->willReturn($retrier->reveal());
 
         Retrier::swap($retrierFactory->reveal());
@@ -111,5 +111,4 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         Retrier::swap($retrierFactory->reveal());
     }
-
 }

@@ -4,7 +4,6 @@ namespace JobStatus\Share;
 
 class ShareConfig
 {
-
     private RetrieveConfig $config;
 
     public function __construct(RetrieveConfig $config)
@@ -25,8 +24,7 @@ class ShareConfig
     public function configAsJs(): string
     {
         return collect($this->config->getConfig())
-            ->map(fn($value, $key) => sprintf('JobStatusConfig.%s=%s;', $key, json_encode($value)))
+            ->map(fn ($value, $key) => sprintf('JobStatusConfig.%s=%s;', $key, json_encode($value)))
             ->join('');
     }
-
 }

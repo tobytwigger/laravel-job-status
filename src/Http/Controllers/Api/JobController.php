@@ -6,25 +6,25 @@ use JobStatus\Models\JobStatus;
 
 class JobController extends Controller
 {
-
     public function index()
     {
         $query = JobStatus::query();
-        if(!$this->shouldBypassAuth()) {
+        if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
+
         return $query->get()->jobs();
     }
 
     public function show(string $jobStatusJobAlias)
     {
         $query = JobStatus::whereAlias($jobStatusJobAlias);
-        if(!$this->shouldBypassAuth()) {
+        if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
         $result = $query->get();
 
-        if($result->count() === 0){
+        if ($result->count() === 0) {
             abort(404, 'No job runs found for alias: ' . $jobStatusJobAlias);
         }
 
@@ -32,5 +32,4 @@ class JobController extends Controller
             ->jobs()
             ->first();
     }
-
 }

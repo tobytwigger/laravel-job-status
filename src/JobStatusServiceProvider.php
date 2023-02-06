@@ -116,7 +116,7 @@ class JobStatusServiceProvider extends ServiceProvider
 
     private function defineJobStatusBladeDirective(BladeCompiler $compiler)
     {
-        $compiler->directive('jobapi', function() {
+        $compiler->directive('jobapi', function () {
             return '<?php echo sprintf("<script>%s</script>", app(\JobStatus\Share\ShareConfig::class)->toString()); ?>';
         });
     }

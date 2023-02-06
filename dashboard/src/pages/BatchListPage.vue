@@ -18,19 +18,20 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, ref} from 'vue';
+import { onBeforeUnmount, ref } from 'vue';
 import api from 'src/utils/client/api';
 import { Batch } from 'src/types/api';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
 import BatchListItem from 'components/BatchListItem.vue';
-import {client} from "laravel-job-status-js";
+import { client } from 'laravel-job-status-js';
 
 const results = ref<Batch[] | null>(null);
 
-let listener = client.batches.search()
+let listener = client.batches
+  .search()
   .bypassAuth()
   .listen()
-  .onUpdated(newResults => results.value = newResults)
+  .onUpdated((newResults) => (results.value = newResults))
   .start();
 
 onBeforeUnmount(() => {
