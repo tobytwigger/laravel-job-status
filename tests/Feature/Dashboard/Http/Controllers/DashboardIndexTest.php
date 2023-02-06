@@ -2,7 +2,6 @@
 
 namespace JobStatus\Tests\Feature\Dashboard\Http\Controllers;
 
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use JobStatus\Dashboard\Utils\Assets;
 use JobStatus\Dashboard\Utils\InstalledVersion;
