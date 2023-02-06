@@ -9,7 +9,10 @@
     </q-item>
 
     <div v-else>
-      <q-item v-for="(jobFailureReason, index) in jobFailureReasons" :key="index">
+      <q-item
+        v-for="(jobFailureReason, index) in jobFailureReasons"
+        :key="index"
+      >
         <job-failure-list-item
           :job-failure="jobFailureReason"
         ></job-failure-list-item>
@@ -36,7 +39,6 @@ import JobFailureListItem from 'components/JobFailureListItem.vue';
 const props = defineProps<{
   jobFailureReasons: JobFailureReason[];
 }>();
-
 </script>
 
 <style scoped></style>

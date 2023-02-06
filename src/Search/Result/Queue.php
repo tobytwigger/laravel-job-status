@@ -5,7 +5,6 @@ namespace JobStatus\Search\Result;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JobStatus\Enums\Status;
-use JobStatus\Models\JobBatch;
 use JobStatus\Search\Collections\JobRunCollection;
 
 class Queue implements Arrayable, Jsonable

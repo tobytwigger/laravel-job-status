@@ -80,7 +80,7 @@ class JobStatusCollection extends Collection
 
         $queues = new QueueCollection();
         foreach ($queryResult as $queueName => $sameQueueJobs) {
-            if($queueName === null) {
+            if ($queueName === null) {
                 continue;
             }
             // Groups of the same run

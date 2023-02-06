@@ -2,14 +2,11 @@
 
 namespace JobStatus\Tests\Unit\Search\Result;
 
-use Carbon\Carbon;
 use JobStatus\Enums\Status;
-use JobStatus\Models\JobQueue;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Collections\JobRunCollection;
-use JobStatus\Search\Collections\JobStatusCollection;
-use JobStatus\Search\Result\Queue;
 use JobStatus\Search\Result\JobRun;
+use JobStatus\Search\Result\Queue;
 use JobStatus\Tests\TestCase;
 
 class QueueTest extends TestCase

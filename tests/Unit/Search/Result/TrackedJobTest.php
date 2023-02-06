@@ -87,20 +87,21 @@ class TrackedJobTest extends TestCase
             'failure_reasons' => [
                 [
                     'message' => 'Test One',
-                    'count' => 2
+                    'count' => 2,
                 ],
                 [
                     'message' => 'Test Two',
-                    'count' => 1
+                    'count' => 1,
                 ],
-            ]
+            ],
         ];
         $this->assertEquals($array, $job->toArray());
         $this->assertEquals(json_encode($array), $job->toJson());
     }
 
     /** @test */
-    public function getFailureReasons_gets_all_failure_reasons_from_run_exceptions(){
+    public function get_failure_reasons_gets_all_failure_reasons_from_run_exceptions()
+    {
         $exception1 = JobException::factory(['message' => 'Test One'])->create();
         $exception2 = JobException::factory(['message' => 'Test Two'])->create();
         $run1 = new JobRun(JobStatus::factory()->create(['exception_id' => $exception1->id, 'alias' => 'alias1', 'status' => Status::FAILED, 'created_at' => now()->subHour()]));
@@ -114,11 +115,11 @@ class TrackedJobTest extends TestCase
         $this->assertEquals([
             [
                 'message' => 'Test One',
-                'count' => 2
+                'count' => 2,
             ],
             [
                 'message' => 'Test Two',
-                'count' => 1
+                'count' => 1,
             ],
         ], $job->getFailureReasons());
     }

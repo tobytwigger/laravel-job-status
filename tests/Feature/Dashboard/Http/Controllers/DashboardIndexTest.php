@@ -9,7 +9,6 @@ use JobStatus\Tests\TestCase;
 
 class DashboardIndexTest extends TestCase
 {
-
     /** @test */
     public function it_returns_403_if_you_do_not_have_the_permission()
     {
