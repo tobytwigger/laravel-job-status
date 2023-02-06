@@ -1,5 +1,8 @@
 <template>
-  <q-item clickable :to="{ path: '/queues/' + encodeURIComponent(props.queue.name) }">
+  <q-item
+    clickable
+    :to="{ path: '/queues/' + encodeURIComponent(props.queue.name) }"
+  >
     <q-item-section avatar top>
       <q-icon name="queue" color="black" size="34px" />
     </q-item-section>
@@ -10,10 +13,7 @@
 
     <q-item-section top>
       <q-item-label lines="1">
-        <span class="text-weight-medium">{{
-          props.queue.name
-        }}</span>
-
+        <span class="text-weight-medium">{{ props.queue.name }}</span>
       </q-item-label>
       <q-item-label caption lines="5">
         <status-count
@@ -54,12 +54,10 @@
 
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import {JobRun, Status, Queue} from 'src/types/api';
-import StatusCount from "./StatusCount.vue";
+import { JobRun, Status, Queue } from 'src/types/api';
+import StatusCount from './StatusCount.vue';
 
 const props = defineProps<{
   queue: Queue;
 }>();
-
-
 </script>

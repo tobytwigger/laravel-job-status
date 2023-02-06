@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { client } from 'laravel-job-status-js';
-import {Queue} from "src/types/api";
-import QueueListItem from "components/QueueListItem.vue";
+import { Queue } from 'src/types/api';
+import QueueListItem from 'components/QueueListItem.vue';
 
 const results = ref<Queue[] | null>(null);
 

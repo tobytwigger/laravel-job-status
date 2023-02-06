@@ -7,12 +7,12 @@ use Illuminate\Support\Str;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Collections\BatchCollection;
-use JobStatus\Search\Collections\QueueCollection;
 use JobStatus\Search\Collections\JobRunCollection;
+use JobStatus\Search\Collections\QueueCollection;
 use JobStatus\Search\Collections\TrackedJobCollection;
 use JobStatus\Search\Result\Batch;
-use JobStatus\Search\Result\Queue;
 use JobStatus\Search\Result\JobRun;
+use JobStatus\Search\Result\Queue;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Tests\TestCase;
 

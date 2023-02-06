@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-import {JobRun, Queue, TrackedJob} from 'src/types/api';
+import { JobRun, Queue, TrackedJob } from 'src/types/api';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
 import { client } from 'laravel-job-status-js';
