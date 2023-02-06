@@ -31,9 +31,10 @@ class Controller extends \Illuminate\Routing\Controller
     {
         if(request()->query('bypassAuth', false)) {
             if(Gate::allows('viewJobStatus')) {
-                return $this->resolveAuth() !== null;
+                return true;
+            } else {
+                abort(403, 'You do not have permission to bypass auth');
             }
-            abort(403, 'You do not have permission to bypass auth');
         }
         return false;
     }
