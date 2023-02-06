@@ -4,6 +4,7 @@ namespace JobStatus\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JobStatus\Dashboard\DashboardServiceProvider;
 use JobStatus\Exceptions\CannotBeRetriedException;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobBatch;
@@ -24,7 +25,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function getPackageProviders($app)
     {
-        return [JobStatusServiceProvider::class];
+        return [JobStatusServiceProvider::class, DashboardServiceProvider::class];
     }
 
     protected function setUp(): void

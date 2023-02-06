@@ -9,8 +9,6 @@ use JobStatus\Enums\Status;
 use JobStatus\Exceptions\CannotBeRetriedException;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
-use JobStatus\RuntimeException;
-use function JobStatus\str_starts_with;
 
 class JobRetrier
 {
@@ -114,7 +112,7 @@ class JobRetrier
         if($this->jobStatus->payload === null) {
             $fields[] = 'Payload';
         }
-        if(in_array($this->jobStatus->connection_name, ['sync', 'database'])) {
+        if(in_array($this->jobStatus->connection_name, ['sync'])) {
             $fields[] = 'Unsupported driver';
     }
         return $fields;

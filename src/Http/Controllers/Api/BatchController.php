@@ -10,16 +10,20 @@ class BatchController extends Controller
 
     public function index()
     {
-        return JobStatus::forUsers($this->resolveAuth())
-            ->get()
-            ->batches();
+        $query = JobStatus::query();
+        if(!$this->shouldBypassAuth()) {
+            $query->forUsers($this->resolveAuth());
+        }
+        return $query->get()->batches();
     }
 
     public function show(JobBatch $batch)
     {
-        $results = JobStatus::where('batch_id', $batch->id)
-            ->forUsers($this->resolveAuth())
-            ->get();
+        $query = JobStatus::where('batch_id', $batch->id);
+        if(!$this->shouldBypassAuth()) {
+            $query->forUsers($this->resolveAuth());
+        }
+        $results = $query->get();
 
         if($results->count() === 0){
             abort(403);

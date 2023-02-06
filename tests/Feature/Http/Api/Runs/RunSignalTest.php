@@ -3,6 +3,7 @@
 namespace JobStatus\Tests\Feature\Http\Api\Runs;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Gate;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusUser;
 use JobStatus\Tests\TestCase;
@@ -199,4 +200,50 @@ $this->prophesizeUserWithId(1);
         ]);
         $response->assertOk();
     }
+
+
+    /** @test */
+    public function it_gives_access_to_a_private_job_to_a_dashboard_user()
+    {
+        $this->prophesizeUserWithId(1);
+        Gate::define('viewJobStatus', fn($user) => $user->id === 1);
+
+        $jobStatus = JobStatus::factory()->create([
+            'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
+            'public' => false
+        ]);
+
+        $response = $this->postJson(route('api.job-status.runs.signal', $jobStatus->id), [
+            'signal' => 'custom-signal',
+            'cancel_job' => true,
+            'parameters' => ['param1' => 'value1'],
+        ]);
+        $response->assertStatus(403);
+
+        $response = $this->postJson(route('api.job-status.runs.signal', ['job_status_run' => $jobStatus->id, 'bypassAuth' => true]), [
+            'signal' => 'custom-signal',
+            'cancel_job' => true,
+            'parameters' => ['param1' => 'value1'],
+        ]);
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function auth_cannot_be_bypassed_if_no_gate_permission(){
+        $this->prophesizeUserWithId(1);
+        Gate::define('viewJobStatus', fn($user) => false);
+
+        $jobStatus = JobStatus::factory()->create([
+            'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
+            'public' => false
+        ]);
+
+        $response = $this->postJson(route('api.job-status.runs.signal', ['job_status_run' => $jobStatus->id, 'bypassAuth' => true]), [
+            'signal' => 'custom-signal',
+            'cancel_job' => true,
+            'parameters' => ['param1' => 'value1'],
+        ]);
+        $response->assertStatus(403);
+    }
+
 }

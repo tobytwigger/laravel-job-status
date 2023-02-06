@@ -1,6 +1,6 @@
 <?php
 
-namespace JobStatus\Tests\Feature\Console;
+namespace JobStatus\Tests\Feature\Commands;
 
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;

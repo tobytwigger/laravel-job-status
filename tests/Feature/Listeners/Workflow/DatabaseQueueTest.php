@@ -1880,7 +1880,7 @@ class DatabaseQueueTest extends TestCase
     public function cannot_retry_a_queued_job()
     {
         $this->expectException(\JobStatus\Exceptions\CannotBeRetriedException::class);
-        $this->expectExceptionMessage('This job cannot be retried');
+        $this->expectExceptionMessage('All the following fields must be given: Payload');
 
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')

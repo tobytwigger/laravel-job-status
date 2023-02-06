@@ -26,4 +26,9 @@ class RetrieveConfig implements Arrayable, Jsonable
             'baseUrl' => URL::to(config('laravel-job-status.routes.api.prefix'))
         ];
     }
+
+    public function __toString(): string
+    {
+        return $this->toJson();
+    }
 }

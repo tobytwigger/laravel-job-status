@@ -9,14 +9,20 @@ class JobController extends Controller
 
     public function index()
     {
-        return JobStatus::forUsers($this->resolveAuth())->get()->jobs();
+        $query = JobStatus::query();
+        if(!$this->shouldBypassAuth()) {
+            $query->forUsers($this->resolveAuth());
+        }
+        return $query->get()->jobs();
     }
 
     public function show(string $jobStatusJobAlias)
     {
-        $result = JobStatus::whereAlias($jobStatusJobAlias)
-            ->forUsers($this->resolveAuth())
-            ->get();
+        $query = JobStatus::whereAlias($jobStatusJobAlias);
+        if(!$this->shouldBypassAuth()) {
+            $query->forUsers($this->resolveAuth());
+        }
+        $result = $query->get();
 
         if($result->count() === 0){
             abort(404, 'No job runs found for alias: ' . $jobStatusJobAlias);

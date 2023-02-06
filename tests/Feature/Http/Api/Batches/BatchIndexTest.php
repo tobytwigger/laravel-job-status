@@ -3,6 +3,8 @@
 namespace JobStatus\Tests\Feature\Http\Api\Batches;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Testing\AssertableJsonString;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
@@ -91,6 +93,90 @@ class BatchIndexTest extends TestCase
     public function it_returns_an_empty_array_for_no_batches(){
         $response = $this->getJson(route('api.job-status.batches.index'));
         $response->decodeResponseJson()->assertExact([]);
+    }
+
+    /** @test */
+    public function it_gives_access_to_a_private_job_to_a_dashboard_user()
+    {
+        $this->prophesizeUserWithId(1);
+        Gate::define('viewJobStatus', fn($user) => $user->id === 1);
+
+        $inaccessible = JobBatch::factory()
+            ->has(JobStatus::factory(['alias' => 'OurAlias', 'public' => false])->count(10), 'jobStatus')
+            ->create();
+        $accessible = JobBatch::factory()
+            ->has(JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(10), 'jobStatus')
+            ->create();
+
+        $response = $this->getJson(route('api.job-status.batches.index'));
+        $response->assertJsonCount(1);
+        $result = new AssertableJsonString(json_encode($response->decodeResponseJson()[0]['runs']));
+        $result->assertFragment(['alias' => 'OurAliasTwo']);
+        $result->assertFragment(['id' => $accessible->jobStatus[0]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[1]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[2]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[3]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[4]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[5]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[6]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[7]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[8]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[9]->id]);
+
+        $result->assertMissing(['alias' => 'OurAlias']);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[0]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[1]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[2]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[3]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[4]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[5]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[6]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[7]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[8]->id]);
+        $result->assertMissing(['id' => $inaccessible->jobStatus[9]->id]);
+
+        $response = $this->getJson(route('api.job-status.batches.index', ['bypassAuth' => true]));
+        $response->assertJsonCount(2);
+        $result = new AssertableJsonString(json_encode($response->decodeResponseJson()[0]['runs']));
+        $result->assertFragment(['alias' => 'OurAliasTwo']);
+        $result->assertFragment(['id' => $accessible->jobStatus[0]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[1]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[2]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[3]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[4]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[5]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[6]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[7]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[8]->id]);
+        $result->assertFragment(['id' => $accessible->jobStatus[9]->id]);
+
+        $result = new AssertableJsonString(json_encode($response->decodeResponseJson()[1]['runs']));
+        $result->assertFragment(['alias' => 'OurAlias']);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[0]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[1]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[2]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[3]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[4]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[5]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[6]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[7]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[8]->id]);
+        $result->assertFragment(['id' => $inaccessible->jobStatus[9]->id]);
+    }
+
+    /** @test */
+    public function auth_cannot_be_bypassed_if_no_gate_permission(){
+        $this->prophesizeUserWithId(1);
+        Gate::define('viewJobStatus', fn($user) => false);
+
+        $batch = JobBatch::factory()->create();
+        $jobStatus = JobStatus::factory()->create([
+            'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default', 'batch_id' => $batch->id,
+            'public' => false
+        ]);
+
+        $response = $this->getJson(route('api.job-status.batches.index', ['bypassAuth' => true]));
+        $response->assertStatus(403);
     }
 
 }

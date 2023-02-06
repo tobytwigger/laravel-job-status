@@ -11,8 +11,11 @@ class RunController extends Controller
 
     public function index(RunSearchRequest $request)
     {
-        $query = JobStatus::query()
-            ->forUsers($this->resolveAuth());
+        $query = JobStatus::query();
+
+        if(!$this->shouldBypassAuth()) {
+            $query->forUsers($this->resolveAuth());
+        }
 
         if($request->has('alias')) {
             $query->whereAlias($request->input('alias'));

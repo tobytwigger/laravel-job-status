@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Feature\Http\Api\Runs;
 
+use Illuminate\Support\Facades\Gate;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Models\JobStatusUser;
@@ -110,6 +111,38 @@ class RunShowTest extends TestCase
             $response->decodeResponseJson()->offsetGet('alias'),
             $jobStatus->alias
         );
+    }
+
+    /** @test */
+    public function it_gives_access_to_a_private_job_to_a_dashboard_user()
+    {
+        $this->prophesizeUserWithId(1);
+        Gate::define('viewJobStatus', fn($user) => $user->id === 1);
+
+        $jobStatus = JobStatus::factory()->create([
+            'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
+            'public' => false
+        ]);
+
+        $response = $this->getJson(route('api.job-status.runs.show', $jobStatus->id));
+        $response->assertStatus(403);
+
+        $response = $this->getJson(route('api.job-status.runs.show', ['job_status_run' => $jobStatus->id, 'bypassAuth' => true]));
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function auth_cannot_be_bypassed_if_no_gate_permission(){
+        $this->prophesizeUserWithId(1);
+        Gate::define('viewJobStatus', fn($user) => false);
+
+        $jobStatus = JobStatus::factory()->create([
+            'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
+            'public' => false
+        ]);
+
+        $response = $this->getJson(route('api.job-status.runs.show', ['job_status_run' => $jobStatus->id, 'bypassAuth' => true]));
+        $response->assertStatus(403);
     }
 
 }

@@ -35,14 +35,14 @@ class InstallAssets extends Command
         if ($assets->clear()) {
             $this->output(fn () => $this->info('Old assets cleared'));
         } else {
-            $this->output(fn () => $this->warn('No assets need clearing.'));
+            $this->output(fn () => $this->warn('No assets need clearing'));
         }
 
         $this->output(fn () => $this->line('Installing assets'));
 
         $assets->publish();
 
-        $this->output(fn () => $this->info('Installing assets'));
+        $this->output(fn () => $this->info('Installed assets'));
 
         return Command::SUCCESS;
     }
