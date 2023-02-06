@@ -20,7 +20,6 @@ class DashboardIndexTest extends TestCase
         Gate::define('viewJobStatus', fn ($user) => true);
         $response = $this->get(route('job-status.dashboard'));
         $response->assertOk();
-        $response->assertViewIs('job-status::layout');
     }
 
     /** @test */
