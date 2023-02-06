@@ -63,6 +63,7 @@ const props = defineProps<{
 }>();
 
 let listener = client.batches.show(props.batchId)
+  .bypassAuth()
   .listen()
   .onUpdated(newResults => results.value = newResults)
   .start();

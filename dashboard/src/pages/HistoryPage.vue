@@ -45,6 +45,7 @@ import {client} from "laravel-job-status-js";
 const results = ref<JobRun[] | null>(null);
 
 let listener = client.runs.search()
+  .bypassAuth()
   .listen()
   .onUpdated(newResults => results.value = newResults)
   .start();

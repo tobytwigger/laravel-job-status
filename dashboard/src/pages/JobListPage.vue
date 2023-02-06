@@ -26,6 +26,7 @@ import {client} from "laravel-job-status-js";
 const results = ref<TrackedJob[] | null>(null);
 
 let listener = client.jobs.search()
+  .bypassAuth()
   .listen()
   .onUpdated(newResults => results.value = newResults)
   .start();

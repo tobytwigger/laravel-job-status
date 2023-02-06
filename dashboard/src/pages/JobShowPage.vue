@@ -63,6 +63,7 @@ const props = defineProps<{
 }>();
 
 let listener = client.jobs.show(props.alias)
+  .bypassAuth()
   .listen()
   .onUpdated(newResults => results.value = newResults)
   .start();

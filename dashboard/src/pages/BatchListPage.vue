@@ -28,6 +28,7 @@ import {client} from "laravel-job-status-js";
 const results = ref<Batch[] | null>(null);
 
 let listener = client.batches.search()
+  .bypassAuth()
   .listen()
   .onUpdated(newResults => results.value = newResults)
   .start();

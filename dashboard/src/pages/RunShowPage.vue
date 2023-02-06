@@ -303,6 +303,7 @@ const props = defineProps<{
 
 
 let listener = client.runs.show(props.jobStatusId)
+  .bypassAuth()
   .listen()
   .onUpdated(newResults => results.value = newResults)
   .start();
@@ -330,6 +331,7 @@ function cancel() {
   cancelling.value = true;
 
   client.runs.cancel(props.jobStatusId)
+    .bypassAuth()
     .send()
     .finally(() => cancelling.value = false);
 }
@@ -342,6 +344,7 @@ function retry() {
   retrying.value = true;
 
   client.runs.retry(props.jobStatusId)
+    .bypassAuth()
     .send()
     .finally(() => retrying.value = false);
 
