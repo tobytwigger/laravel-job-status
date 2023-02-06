@@ -46,7 +46,7 @@ let isLoadingInitialResult = false;
 let isUpdating = false;
 let results = [];
 
-let listenerId = client.runs.search().whereStatus('failed').listen()
+let listener = client.runs.search().whereStatus('failed').listen()
   // Show the user a large loading screen when we're initially loading job information.
   .onStartingInitialLoad(() => isLoadingInitialResult = true)
   .onFinishingInitialLoad(() => isLoadingInitialResult = false)
@@ -62,13 +62,13 @@ let listenerId = client.runs.search().whereStatus('failed').listen()
 
 `results` will now contain up to date information.
 
-The listener ID is essential for cleaning up and avoiding excess requests.
+The returned listener is essential for cleaning up and avoiding excess requests.
 
 #### Cleaning Up
 
 When the user navigates away from the code, you'll want to stop the client from listening.
 
-When you call `start()`, you get back a string. Pass this to `client.cleanup(listenerId)` to cancel any requests and stop the listening.
+When you call `start()`, you get back a listener. Call `listener.stop()` to cancel any requests and stop the listening.
 
 ## Available methods
 
