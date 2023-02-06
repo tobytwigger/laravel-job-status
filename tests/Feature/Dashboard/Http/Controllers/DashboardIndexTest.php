@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Feature\Dashboard\Http\Controllers;
 
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\View;
 use JobStatus\Dashboard\Utils\Assets;
 use JobStatus\Dashboard\Utils\InstalledVersion;
 use JobStatus\Tests\TestCase;
