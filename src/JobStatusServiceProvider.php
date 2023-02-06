@@ -146,7 +146,7 @@ class JobStatusServiceProvider extends ServiceProvider
 
     private function publishDashboardAssets()
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'job-status');
+        $this->loadViewsFrom(resource_path('views/vendor/job-status'), 'job-status');
 
         $this->publishes([
             __DIR__ . '/../public/dashboard' => public_path('vendor/job-status'),
