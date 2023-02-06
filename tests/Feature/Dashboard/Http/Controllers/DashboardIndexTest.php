@@ -28,6 +28,8 @@ class DashboardIndexTest extends TestCase
     /** @test */
     public function variables_are_shared_with_the_view()
     {
+        $this->artisan('job:install --silent');
+
         $this->prophesizeUserWithId(1);
 
         config()->set('laravel-job-status.dashboard.path', 'job--status-path');

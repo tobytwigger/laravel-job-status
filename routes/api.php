@@ -13,6 +13,11 @@ Route::middleware(config('laravel-job-status.routes.api.middleware'))->group(fun
     Route::get('jobs/{job_status_job_alias}', [\JobStatus\Http\Controllers\Api\JobController::class, 'show'])
         ->name('jobs.show');
 
+    Route::get('queues', [\JobStatus\Http\Controllers\Api\QueueController::class, 'index'])
+        ->name('queues.index');
+    Route::get('queues/{job_status_queue}', [\JobStatus\Http\Controllers\Api\QueueController::class, 'show'])
+        ->name('queues.show');
+
     Route::get('runs', [\JobStatus\Http\Controllers\Api\RunController::class, 'index'])
         ->name('runs.index');
     Route::get('runs/{job_status_run}', [\JobStatus\Http\Controllers\Api\RunController::class, 'show'])

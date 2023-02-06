@@ -6,6 +6,17 @@ export interface TrackedJob {
   failure_reasons: JobFailureReason[];
 }
 
+export interface Queue {
+  count: number;
+  runs: JobRun[];
+  name: string | null;
+  queued: number;
+  started: number;
+  failed: number;
+  succeeded: number;
+  cancelled: number;
+}
+
 export interface JobRun {
   alias: string;
   class: string;

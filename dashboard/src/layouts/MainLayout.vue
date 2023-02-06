@@ -77,6 +77,12 @@ const linksList = [
     icon: 'manage_search',
     route: { path: '/batch' },
   },
+  {
+    title: 'Queues',
+    caption: 'A list of all the queues in your system.',
+    icon: 'queue',
+    route: { path: '/queues' },
+  },
 ];
 
 export default defineComponent({

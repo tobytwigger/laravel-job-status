@@ -226,6 +226,21 @@ class JobStatusTest extends TestCase
     }
 
     /** @test */
+    public function it_filters_by_queue()
+    {
+        $set1 = JobStatus::factory()->count(3)->create(['queue' => 'myqueue']);
+        $set2 = JobStatus::factory()->count(12)->create(['queue' => 'notmyqueue']);
+
+        $results = JobStatus::whereQueue('myqueue')->get();
+        $this->assertCount(3, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set1->pluck('id')->sort()->values());
+
+        $results = JobStatus::whereQueue('notmyqueue')->get();
+        $this->assertCount(12, $results);
+        $this->assertEquals($results->pluck('id')->sort()->values(), $set2->pluck('id')->sort()->values());
+    }
+
+    /** @test */
     public function it_filters_by_tags()
     {
         $set1 = JobStatus::factory()->has(JobStatusTag::factory()->state(['key' => 'key1', 'value' => 'val1']), 'tags')->count(3)->create();

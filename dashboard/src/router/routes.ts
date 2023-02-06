@@ -71,6 +71,27 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
+  {
+    path: '/queues',
+    name: 'queues.index',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/QueueListPage.vue') },
+    ],
+  },
+  {
+    path: '/queues/:queue',
+    name: 'queues.show',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        props: true,
+        component: () => import('pages/QueueShowPage.vue'),
+      },
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

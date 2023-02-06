@@ -116,6 +116,11 @@ class JobStatus extends Model
         $query->where('alias', $alias);
     }
 
+    public function scopeWhereQueue(Builder $query, string $queue)
+    {
+        $query->where('queue', $queue);
+    }
+
     public function scopeWhereTag(Builder $query, string $key, mixed $value = JobStatus::INDEXLESS_VALUE)
     {
         $query->whereHas('tags', function (Builder $query) use ($key, $value) {
