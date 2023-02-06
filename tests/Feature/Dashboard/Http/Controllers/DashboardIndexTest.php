@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Feature\Dashboard\Http\Controllers;
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use JobStatus\Dashboard\Utils\Assets;
 use JobStatus\Dashboard\Utils\InstalledVersion;
@@ -12,6 +13,8 @@ class DashboardIndexTest extends TestCase
     /** @test */
     public function it_returns_the_base_route()
     {
+        Artisan::call('job:install --silent');
+
         $this->prophesizeUserWithId(1);
 
         Gate::define('viewJobStatus', fn ($user) => true);
@@ -23,6 +26,8 @@ class DashboardIndexTest extends TestCase
     /** @test */
     public function it_returns_403_if_you_do_not_have_the_permission()
     {
+        Artisan::call('job:install --silent');
+
         $this->prophesizeUserWithId(1);
 
         $response = $this->get(route('job-status.dashboard'));
@@ -32,6 +37,8 @@ class DashboardIndexTest extends TestCase
     /** @test */
     public function it_returns_403_if_you_are_not_logged_in()
     {
+        Artisan::call('job:install --silent');
+
         $response = $this->get(route('job-status.dashboard'));
         $response->assertForbidden();
     }
@@ -39,6 +46,8 @@ class DashboardIndexTest extends TestCase
     /** @test */
     public function variables_are_shared_with_the_view()
     {
+        Artisan::call('job:install --silent');
+
         $this->prophesizeUserWithId(1);
 
         config()->set('laravel-job-status.dashboard.path', 'job--status-path');
