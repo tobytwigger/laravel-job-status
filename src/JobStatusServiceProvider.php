@@ -38,7 +38,7 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->commands([
             ClearJobStatusCommand::class,
             ShowJobStatusSummaryCommand::class,
-            InstallAssets::class
+            InstallAssets::class,
         ]);
     }
 
@@ -55,10 +55,8 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->mapRoutes();
         $this->bindListeners();
         $this->defineBladeDirective();
-        if (config('laravel-job-status.dashboard.enabled', true)) {
-            $this->setupGates();
-            $this->publishDashboardAssets();
-        }
+        $this->setupGates();
+        $this->publishDashboardAssets();
     }
 
     /**
