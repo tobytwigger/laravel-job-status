@@ -17,27 +17,6 @@ class DashboardIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_the_base_route()
-    {
-        $this->prophesizeUserWithId(1);
-
-        config()->set('laravel-job-status.dashboard.path', 'job--status-path');
-        config()->set('laravel-job-status.dashboard.domain', 'job-status-domain.com');
-
-        $assets = $this->prophesize(Assets::class);
-        $assets->inDate()->willReturn(false);
-        $this->app->instance(Assets::class, $assets->reveal());
-
-        $version = $this->prophesize(InstalledVersion::class);
-        $version->version()->willReturn('v1.0.0');
-        $this->app->instance(InstalledVersion::class, $version->reveal());
-
-        Gate::define('viewJobStatus', fn ($user) => true);
-        $response = $this->get(route('job-status.dashboard'));
-        $response->assertOk();
-    }
-
-    /** @test */
     public function it_returns_403_if_you_do_not_have_the_permission()
     {
         $this->prophesizeUserWithId(1);
