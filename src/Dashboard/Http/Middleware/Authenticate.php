@@ -9,6 +9,16 @@ class Authenticate
 {
     public function handle(Request $request, $next)
     {
-        return (app()->environment('local') || Gate::allows('viewJobStatus')) ? $next($request) : abort(403);
+        if (config('job-status.dashboard.enabled', true) === false) {
+            abort(403);
+        }
+
+        return
+            (
+                app()->environment('local')
+                || Gate::allows('viewJobStatus')
+            )
+                ? $next($request)
+                : abort(403);
     }
 }

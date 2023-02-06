@@ -1,8 +1,5 @@
 <template>
-  <q-page class="justify-evenly">
-    Not implemented...
-
-  </q-page>
+  <q-page class="justify-evenly"> Not implemented... </q-page>
 </template>
 
 <script lang="ts">

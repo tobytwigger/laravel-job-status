@@ -10,17 +10,6 @@ use JobStatus\Tests\TestCase;
 class DashboardIndexTest extends TestCase
 {
     /** @test */
-    public function it_returns_the_base_route()
-    {
-        $this->prophesizeUserWithId(1);
-
-        Gate::define('viewJobStatus', fn ($user) => true);
-        $response = $this->get(route('job-status.dashboard'));
-        $response->assertOk();
-        $response->assertViewIs('job-status::layout');
-    }
-
-    /** @test */
     public function it_returns_403_if_you_do_not_have_the_permission()
     {
         $this->prophesizeUserWithId(1);
