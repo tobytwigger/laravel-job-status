@@ -4,7 +4,6 @@ namespace JobStatus\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use JobStatus\Dashboard\DashboardServiceProvider;
 use JobStatus\Exceptions\CannotBeRetriedException;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobBatch;
