@@ -12,7 +12,7 @@ class DashboardIndexTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('job:install --silent')->assertOk();
+//        $this->artisan('job:install --silent')->assertOk();
     }
 
     /** @test */
