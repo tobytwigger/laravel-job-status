@@ -20,7 +20,7 @@ class DashboardServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if (config('laravel-job-status.dashboard.enabled', false)) {
+        if (config('laravel-job-status.dashboard.enabled', true)) {
             $this->setupGates();
             $this->registerRoutes();
             $this->registerResources();
