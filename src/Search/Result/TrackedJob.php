@@ -46,16 +46,16 @@ class TrackedJob implements Arrayable, Jsonable
             'alias' => $this->alias,
             'class' => $this->jobClass,
             'runs' => $this->runs->toArray(),
-            'failure_reasons' => $this->getFailureReasons()
+            'failure_reasons' => $this->getFailureReasons(),
         ];
     }
 
     public function getFailureReasons(): array
     {
         return $this->runs()
-            ->filter(fn(JobRun $jobRun) => $jobRun->getStatus() === Status::FAILED && $jobRun->getException() !== null)
+            ->filter(fn (JobRun $jobRun) => $jobRun->getStatus() === Status::FAILED && $jobRun->getException() !== null)
             ->groupBy(fn (JobRun $jobRun) => $jobRun->getException()->message)
-            ->map(fn(JobRunCollection $failureGroup, string $failureReason) => [
+            ->map(fn (JobRunCollection $failureGroup, string $failureReason) => [
                 'message' => $failureReason,
                 'count' => count($failureGroup),
             ])
