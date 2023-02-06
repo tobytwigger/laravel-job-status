@@ -28,7 +28,7 @@
       </div>
 
       <div class="col-12 col-sm-6 q-py-md">
-        <job-failure-reasons :alias="props.alias"></job-failure-reasons>
+        <job-failure-reasons :job-failure-reasons="results.failure_reasons"></job-failure-reasons>
       </div>
     </div>
     <div class="row">
