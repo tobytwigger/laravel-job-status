@@ -71,7 +71,7 @@ trait Trackable
         return [];
     }
 
-    public function public(): bool
+    public function isUnprotected(): bool
     {
         return true;
     }

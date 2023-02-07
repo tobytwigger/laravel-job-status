@@ -13,7 +13,7 @@ class RunRetryTest extends TestCase
     {
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'faked', 'queue' => 'default',
-            'public' => true,
+            'is_unprotected' => true,
         ]);
 
         $this->assertWillRetryJobStatus($jobStatus);
@@ -36,7 +36,7 @@ class RunRetryTest extends TestCase
     {
         $jobStatus = JobStatus::factory()->create([
             'payload' => null, 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => true,
+            'is_unprotected' => true,
         ]);
 
         $this->assertWillFailRetryingJobStatus($jobStatus);
@@ -50,7 +50,7 @@ class RunRetryTest extends TestCase
     {
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => false,
+            'is_unprotected' => false,
         ]);
         $this->assertNoJobStatusesRetried();
 
@@ -66,7 +66,7 @@ class RunRetryTest extends TestCase
 
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => false,
+            'is_unprotected' => false,
         ]);
 
         $this->assertWillRetryJobStatus($jobStatus);
@@ -86,7 +86,7 @@ class RunRetryTest extends TestCase
 
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => false,
+            'is_unprotected' => false,
         ]);
 
         $this->assertNoJobStatusesRetried();

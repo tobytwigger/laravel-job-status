@@ -41,7 +41,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         Assert::assertEquals(0, $jobStatus->percentage);
         Assert::assertEquals(1, $jobStatus->job_id);
         Assert::assertEquals('database', $jobStatus->connection_name);
-        Assert::assertEquals(true, $jobStatus->public);
+        Assert::assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -127,7 +127,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -173,7 +173,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -200,7 +200,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(1, $jobStatusRetry->job_id); // has not yet been changed to 2 since has not ran
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(0, $jobStatusRetry->users()->get());
         $this->assertCount(0, $jobStatusRetry->tags);
@@ -242,7 +242,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -271,7 +271,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(true, $jobStatusRetry->public);
+        $this->assertEquals(true, $jobStatusRetry->is_unprotected);
 
         Assert::assertCount(0, $jobStatusRetry->tags);
         Assert::assertNull($jobStatusRetry->batch);
@@ -319,7 +319,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(0, $jobStatus->tags);
         $this->assertNotNull($jobStatus->exception);
@@ -363,7 +363,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(0, $jobStatus->tags);
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
@@ -386,7 +386,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(true, $jobStatusRetry->public);
+        $this->assertEquals(true, $jobStatusRetry->is_unprotected);
 
         $this->assertCount(0, $jobStatusRetry->users()->get());
         $this->assertCount(0, $jobStatusRetry->tags);
@@ -406,7 +406,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(2, $jobStatusRetryNotRan->job_id);
         $this->assertEquals('database', $jobStatusRetryNotRan->connection_name);
         $this->assertNotNull($jobStatusRetryNotRan->uuid);
-        $this->assertEquals(true, $jobStatusRetryNotRan->public);
+        $this->assertEquals(true, $jobStatusRetryNotRan->is_unprotected);
 
         $this->assertCount(0, $jobStatusRetryNotRan->tags);
         $this->assertCount(0, $jobStatusRetryNotRan->messages()->orderBy('id')->get());
@@ -472,7 +472,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -494,7 +494,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -516,7 +516,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -583,7 +583,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withExceptionMessage('Job has failed')
@@ -605,7 +605,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([
                         ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
@@ -628,7 +628,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([
                         ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
@@ -707,7 +707,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withExceptionMessage('Job has failed')
@@ -729,7 +729,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([
                         ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
@@ -752,7 +752,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([
                         ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
@@ -824,7 +824,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([
                         ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
@@ -848,7 +848,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([
                         ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
@@ -871,7 +871,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([
                         ['message' => 'The batch that the job is a part of has been cancelled', 'type' => MessageType::WARNING],
@@ -948,7 +948,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withExceptionMessage('Job has failed')
@@ -970,7 +970,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -991,7 +991,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1065,7 +1065,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1087,7 +1087,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1109,7 +1109,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1131,7 +1131,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1153,7 +1153,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1246,7 +1246,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1268,7 +1268,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1290,7 +1290,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()
@@ -1312,7 +1312,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([])
                     ->withMessages([])
                     ->withNoException()

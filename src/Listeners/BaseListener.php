@@ -110,7 +110,7 @@ class BaseListener
                 'batch_id' => $batchId,
                 'connection_name' => $job->getConnectionName(),
                 'job_id' => $job->getJobId(),
-                'public' => method_exists($command, 'public') ? $command->public() : true,
+                'is_unprotected' => method_exists($command, 'isUnprotected') ? $command->isUnprotected() : true,
             ]);
             $modifier = JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
             foreach ((method_exists($command, 'tags') ? $command->tags() : []) as $key => $value) {

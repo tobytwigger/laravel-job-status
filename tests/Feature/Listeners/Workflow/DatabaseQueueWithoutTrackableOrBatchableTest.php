@@ -37,7 +37,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         Assert::assertEquals(0, $jobStatus->percentage);
         Assert::assertEquals(1, $jobStatus->job_id);
         Assert::assertEquals('database', $jobStatus->connection_name);
-        Assert::assertEquals(true, $jobStatus->public);
+        Assert::assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -126,7 +126,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -173,7 +173,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -200,7 +200,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(1, $jobStatusRetry->job_id); // has not yet been changed to 2 since has not ran
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(0, $jobStatusRetry->users()->get());
         $this->assertCount(0, $jobStatusRetry->tags);
@@ -243,7 +243,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(0, $jobStatus->tags);
         Assert::assertNull($jobStatus->batch);
@@ -272,7 +272,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(true, $jobStatusRetry->public);
+        $this->assertEquals(true, $jobStatusRetry->is_unprotected);
 
         Assert::assertCount(0, $jobStatusRetry->tags);
         Assert::assertNull($jobStatusRetry->batch);
@@ -321,7 +321,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(0, $jobStatus->tags);
         $this->assertNotNull($jobStatus->exception);
@@ -366,7 +366,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(0, $jobStatus->tags);
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
@@ -389,7 +389,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(true, $jobStatusRetry->public);
+        $this->assertEquals(true, $jobStatusRetry->is_unprotected);
 
         $this->assertCount(0, $jobStatusRetry->users()->get());
         $this->assertCount(0, $jobStatusRetry->tags);
@@ -409,7 +409,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(2, $jobStatusRetryNotRan->job_id);
         $this->assertEquals('database', $jobStatusRetryNotRan->connection_name);
         $this->assertNotNull($jobStatusRetryNotRan->uuid);
-        $this->assertEquals(true, $jobStatusRetryNotRan->public);
+        $this->assertEquals(true, $jobStatusRetryNotRan->is_unprotected);
 
         $this->assertCount(0, $jobStatusRetryNotRan->tags);
         $this->assertCount(0, $jobStatusRetryNotRan->messages()->orderBy('id')->get());

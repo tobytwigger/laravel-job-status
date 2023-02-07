@@ -50,7 +50,7 @@ class JobQueued extends BaseListener
                 'uuid' => null,
                 'job_id' => $event->id,
                 'connection_name' => $event->connectionName,
-                'public' => method_exists($job, 'public') ? $job->public() : true,
+                'is_unprotected' => method_exists($job, 'isUnprotected') ? $job->isUnprotected() : true,
             ]);
 
             $modifier = JobStatusModifier::forJobStatus($jobStatus);

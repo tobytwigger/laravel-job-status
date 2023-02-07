@@ -22,16 +22,16 @@ If a user is not specified in `users`, they cannot view the job. By default, any
 
     The `users` array only controls who can access the job through your app, not through the dashboard.
 
-If a job should only be viewable to users granted access, it must be made private. Add a `public` method to return false.
+If a job should only be viewable to users granted access, it must be made private. Add an `isUnprotected` method to return false.
 
 ```php
-public function public(): bool
+public function isUnprotected(): bool
 {
     return false;
 }
 ```
 
-By default, a job is public.
+By default, a job is public/not protected.
 
 ## Resolving the current user
 

@@ -21,7 +21,7 @@ To make it easier, we've provided some scopes.
 - `whereStatusIn([\JobStatus\Enums\Status::SUCCEEDED])` - Filter to jobs with the given statuses
 - `whereStatusNotIn([\JobStatus\Enums\Status::FAILED])` - Filter to jobs without the given statuses
 - `whereUuid($uuid)` - Filter to jobs with a matching uuid
-- `forUsers(1)` - Filter to jobs that allows the given use to access it. This will also match all public jobs.
+- `forUsers(1)` - Filter to jobs that allows the given use to access it. This will also match all unprotected jobs.
 
 !!! Index-less
     If you use index-less tags, omit the value in `whereTag` and pass the value into `whereHasTag`;
@@ -80,7 +80,7 @@ Each job run is a new time a job has been dispatched
 - `getTagsAsArray()` - Get the tags belonging to a job in a [key => value] format.
 - `getPercentge()`: Get the status of the job.
 - `accessibleBy($userId)` - Check if the given user ID can access the job
-- `trackingIsPublic()` - True if the tracking is marked as public
+- `trackingIsUnprotected()` - True if the tracking is marked as public/not protected
 
 #### Status
 

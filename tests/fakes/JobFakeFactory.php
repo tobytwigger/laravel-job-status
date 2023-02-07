@@ -24,7 +24,7 @@ class JobFakeFactory
     private int $tries = 3;
 
     private array $users = [];
-    private bool $public = true;
+    private bool $isUnprotected = true;
     /**
      * @var true
      */
@@ -116,9 +116,9 @@ class JobFakeFactory
         return $this;
     }
 
-    public function setPublic(bool $public): JobFakeFactory
+    public function setIsUnprotected(bool $isUnprotected): JobFakeFactory
     {
-        $this->public = $public;
+        $this->isUnprotected = $isUnprotected;
 
         return $this;
     }
@@ -142,7 +142,7 @@ class JobFakeFactory
                 $job = new JobFakeWithoutTrackable($this->callback ?? static::class . '@fakeCallback', queue: $this->queue);
             }
         } else {
-            $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals, $this->users, $this->public, queue: $this->queue);
+            $job = new JobFake($this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback', $this->signals, $this->users, $this->isUnprotected, queue: $this->queue);
         }
         if ($job === null) {
             throw new \Exception('Need to implement a job fake with trackable but without interacts with queue');

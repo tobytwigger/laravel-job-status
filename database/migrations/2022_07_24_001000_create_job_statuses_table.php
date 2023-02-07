@@ -23,7 +23,7 @@ return new class() extends Migration {
             $table->timestamp('started_at', 3)->nullable();
             $table->timestamp('finished_at', 3)->nullable();
             $table->string('job_id');
-            $table->boolean('public')->default(true);
+            $table->boolean('is_unprotected')->default(true);
             $table->string('connection_name');
             $table->timestamps(3);
         });

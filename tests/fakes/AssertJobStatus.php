@@ -91,9 +91,9 @@ class AssertJobStatus
         return $this;
     }
 
-    public function isPublic(bool $isPublic)
+    public function isUnprotected(bool $isUnprotected)
     {
-        Assert::assertEquals($isPublic, $this->jobStatus->public);
+        Assert::assertEquals($isUnprotected, $this->jobStatus->is_unprotected);
 
         return $this;
     }
