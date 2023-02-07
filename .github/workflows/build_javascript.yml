@@ -7,6 +7,7 @@ on:
 jobs:
     build-js:
         runs-on: ubuntu-latest
+        name: 🔨 Compile the JS files
 
         steps:
             -   name: ⏳ Check out repository

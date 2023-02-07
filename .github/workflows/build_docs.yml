@@ -9,7 +9,8 @@ jobs:
         defaults:
             run:
                 working-directory: docs
-        name: 🚀 Deploy docs
+        name: 🚀 Deploy the documentation
+        
         runs-on: ubuntu-latest
         steps:
             - name: ⏳ Checkout

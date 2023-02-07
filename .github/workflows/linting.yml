@@ -7,6 +7,7 @@ on:
 jobs:
     phplint:
         runs-on: ubuntu-latest
+        name: 🔧 Lint the code
         steps:
             -   name: ⏳ Check out repository
                 uses: actions/checkout@v2
