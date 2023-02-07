@@ -1,4 +1,4 @@
-name: Build JS
+name: Compile the JS code
 
 on:
     workflow_dispatch:
@@ -9,28 +9,29 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            -   uses: actions/checkout@v3
+            -   name: ⏳ Check out repository
+                uses: actions/checkout@v3
                 with:
                     ref: ${{ github.ref }}
                     token: ${{ secrets.GITHUB_TOKEN  }}
 
-            -   name: Setup Node
+            -   name: ⏳ Setup Node
                 uses: actions/setup-node@v3
                 with:
                     node-version: 18
 
             -   run: npm install
                 working-directory: './dashboard'
-                name: Install js dependencies
+                name: ⏳ Install JS dependencies
 
             -   run: npm install -g @quasar/cli
-                name: Install the Quasar CLI
+                name: ⏳ Install the Quasar CLI
 
             -   run: quasar build
                 working-directory: './dashboard'
-                name: Build the JS files
+                name: 🔨 Build the JS files
 
-            -   name: Commit changes
+            -   name: 💾 Commit changes
                 uses: stefanzweifel/git-auto-commit-action@v4
                 with:
                     commit_message: '[CI - JS Files] Compile JS files for production.'

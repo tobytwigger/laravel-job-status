@@ -1,4 +1,4 @@
-name: Unit Testing & Static Analysis
+name: 🔎 Checking pull request
 
 on:
     pull_request:

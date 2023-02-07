@@ -1,4 +1,4 @@
-name: PHP & JS linting
+name: Fixing code format
 
 on:
     workflow_dispatch:
@@ -8,40 +8,51 @@ jobs:
     phplint:
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v2
+            -   name: ⏳ Check out repository
+                uses: actions/checkout@v2
                 with:
                     token: ${{ secrets.PAT_TOKEN }}
                     ref: ${{ github.head_ref }}
 
-            -   name: Setup PHP
+            -   name: ⏳ Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: 8.1
 
-            -   name: Setup Node
+            -   name: ⏳ Setup Node
                 uses: actions/setup-node@v3
                 with:
                     node-version: 18
 
-            -   uses: "ramsey/composer-install@v2"
+            -   name: ⏳ Cache Composer packages
+                id: composer-cache
+                uses: actions/cache@v2
+                with:
+                    path: vendor
+                    key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+                    restore-keys: |
+                        ${{ runner.os }}-php-
+
+            -   name: ⏳ Install PHP dependencies
+                uses: "ramsey/composer-install@v2"
                 with:
                     composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
 
-            -   run: npm install
-                name: Inzstall js dependencies
+            -   run: ⏳ npm install
+                name: Install JS dependencies
                 working-directory: './dashboard'
 
-            -   run: npm install -g @quasar/cli
+            -   run: ⏳ npm install -g @quasar/cli
                 name: Install the Quasar CLI
 
-            -   name: Run cs fixer
+            -   name: 🔧 Run cs fixer
                 run: ./vendor/bin/php-cs-fixer fix
 
-            -   run: npm run format
+            -   run: 🔧 npm run format
                 name: Run the js linter
                 working-directory: './dashboard'
 
-            -   name: Commit changes
+            -   name: 💾 Commit changes
                 uses: stefanzweifel/git-auto-commit-action@v4
                 with:
                     commit_message: '[CI - Linting] Run cs-fixer and eslint'

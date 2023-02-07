@@ -1,4 +1,4 @@
-name: PHPUnit Tests
+name: Run automated test suite
 
 on:
     workflow_dispatch:
@@ -11,21 +11,22 @@ jobs:
                 php: [ '8.1', '8.2' ]
         runs-on: ubuntu-latest
         if: "!contains(github.event.head_commit.message, '[CI]')"
-    
+
         steps:
-            -   uses: actions/checkout@v2
+            -   name: ⏳ Check out repository
+                uses: actions/checkout@v2
                 with:
                     ref: ${{ github.ref }}
-                    
-            - name: Cancel Previous Runs
+
+            - name: ⏳ Cancel Previous Runs
               uses: styfle/cancel-workflow-action@0.10.1
-      
-            -   name: Setup PHP
+
+            -   name: ⏳ Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ matrix.php }}
 
-            -   name: Cache Composer packages
+            -   name: ⏳ Cache Composer packages
                 id: composer-cache
                 uses: actions/cache@v2
                 with:
@@ -34,20 +35,20 @@ jobs:
                     restore-keys: |
                         ${{ runner.os }}-php-
 
-            -   name: Install dependencies
+            -   name: ⏳ Install PHP dependencies
                 if: steps.composer-cache.outputs.cache-hit != 'true'
                 run: composer install --prefer-dist --no-progress --no-suggest
 
-            -   name: Run test suite
+            -   name: 🔎 Run test suite
                 run: ./vendor/bin/paratest --coverage-clover ci/phpunit/clover.xml --coverage-html ci/phpunit/html --log-junit ci/phpunit/junit.xml
 
-            -   name: Upload test coverage
+            -   name: 💾 Upload test coverage
                 uses: actions/upload-artifact@v3
                 with:
                     name: test-coverage
                     path: ci/phpunit/html
 
-            -   name: Check test coverage
+            -   name: 📋 Check test coverage
                 uses: johanvanhelden/gha-clover-test-coverage-check@v1
                 id: coverage
                 with:
@@ -56,13 +57,13 @@ jobs:
                     rounded-precision: "0"
                     exit: false
 
-            -   name: Publish Test Report
+            -   name: 📋 Publish Test Report
                 uses: mikepenz/action-junit-report@v3
                 if: always() # always run even if the previous step fails
                 with:
                     report_paths: 'ci/phpunit/junit.xml'
 
-            -   name: Upload test summary
+            -   name: 💾 Upload test summary
                 uses: actions/upload-artifact@v3
                 with:
                     name: summary

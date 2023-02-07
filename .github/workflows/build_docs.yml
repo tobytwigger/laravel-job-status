@@ -1,4 +1,4 @@
-name: Build docs and commit to build branch
+name: 🚀 Publish documentation
 
 on:
     workflow_dispatch:
@@ -9,19 +9,19 @@ jobs:
         defaults:
             run:
                 working-directory: docs
-        name: Deploy docs
+        name: 🚀 Deploy docs
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
+            - name: ⏳ Checkout
               uses: actions/checkout@v2
 
-            - name: Setup Python
+            - name: ⏳ Setup Python
               uses: actions/setup-python@v2
               with:
                   python-version: 3.x
 
-            - name: Install python dependencies
+            - name: ⏳ Install python dependencies
               run: pip install -r requirements.txt
 
-            - name: Build and deploy
+            - name: 🚀 Build and deploy
               run: mkdocs gh-deploy --force --remote-branch build/documentation

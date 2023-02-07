@@ -1,4 +1,4 @@
-name: PHPStan Analysis
+name: Static Analysis
 
 on:
     workflow_dispatch:
@@ -13,32 +13,35 @@ jobs:
         if: "!contains(github.event.head_commit.message, '[CI]')"
 
         steps:
-            -   uses: actions/checkout@v3
+            -   name: ⏳ Check out repository
+                uses: actions/checkout@v3
                 with:
                     ref: ${{ github.ref }}
 
-            -   name: Setup PHP
+            -   name: ⏳ Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ matrix.php }}
 
-            -   name: Setup Node
+            -   name: ⏳ Setup Node
                 uses: actions/setup-node@v3
                 with:
                     node-version: 18
 
-            -   uses: "ramsey/composer-install@v2"
+            -   run: ⏳ Install PHP dependencies
+                uses: "ramsey/composer-install@v2"
                 with:
                     composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
 
-            -   run: npm install
+            -   name: ⏳ Install JS dependencies
+                run: npm install
                 working-directory: './dashboard'
-                name: Install js dependencies
 
             -   run: npm install -g @quasar/cli
-                name: Install the Quasar CLI
+                name: ⏳ Install the Quasar CLI
 
-            -   uses: php-actions/phpstan@v3
+            -   name: 🔎 Analyse the PHP code with PHPStan
+                uses: php-actions/phpstan@v3
                 continue-on-error: true
                 with:
 
@@ -50,4 +53,4 @@ jobs:
             -   run: npm run lint
                 working-directory: './dashboard'
                 continue-on-error: true
-                name: Run the js linter
+                name: 🔎 Analyse the JS code
