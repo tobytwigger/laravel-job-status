@@ -7,12 +7,15 @@ on:
 
 jobs:
     run-tests:
+        name: 🔎 Run the test suite
         if: "!contains(github.event.head_commit.message, '[CI]')"
         uses: ./.github/workflows/phpunit_tests.yml
     static-analysis:
+        name: 🔎 Analyse the code for errors
         if: "!contains(github.event.head_commit.message, '[CI]')"
         uses: ./.github/workflows/phpstan_analysis.yml
     build-docs:
+        name: 🚀 Deploy the documentation
         if: "!contains(github.event.head_commit.message, '[CI - JS Files]')"
         needs: [static-analysis, run-tests]
         uses: ./.github/workflows/build_docs.yml
