@@ -180,13 +180,13 @@ class JobRun implements Arrayable, Jsonable
 
     public function accessibleBy(?int $userId): bool
     {
-        return $this->trackingIsPublic()
+        return $this->trackingIsUnprotected()
             || $this->jobStatus->users()->where('user_id', $userId)->exists();
     }
 
-    public function trackingIsPublic(): bool
+    public function trackingIsUnprotected(): bool
     {
-        return $this->jobStatus->public;
+        return $this->jobStatus->is_unprotected;
     }
 
     public function retry()

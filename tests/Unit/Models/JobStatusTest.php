@@ -398,10 +398,10 @@ class JobStatusTest extends TestCase
     public function it_filters_by_connected_users()
     {
         $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
-            ->count(3)->create(['public' => false]);
+            ->count(3)->create(['is_unprotected' => false]);
         $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
-            ->count(7)->create(['public' => false]);
-        $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
+            ->count(7)->create(['is_unprotected' => false]);
+        $set3 = JobStatus::factory()->count(4)->create(['is_unprotected' => true]);
 
         $results = JobStatus::forUsers(1)->get();
         $this->assertCount(7, $results);
@@ -425,10 +425,10 @@ class JobStatusTest extends TestCase
     public function without_user_limits_means_all_jobs_can_be_seen()
     {
         $set1 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 1]), 'users')
-            ->count(3)->create(['public' => false]);
+            ->count(3)->create(['is_unprotected' => false]);
         $set2 = JobStatus::factory()->has(JobStatusUser::factory()->state(['user_id' => 2]), 'users')
-            ->count(7)->create(['public' => false]);
-        $set3 = JobStatus::factory()->count(4)->create(['public' => true]);
+            ->count(7)->create(['is_unprotected' => false]);
+        $set3 = JobStatus::factory()->count(4)->create(['is_unprotected' => true]);
 
         $results = JobStatus::all();
         $this->assertCount(14, $results);

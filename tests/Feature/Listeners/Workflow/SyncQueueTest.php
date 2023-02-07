@@ -252,7 +252,7 @@ class SyncQueueTest extends TestCase
                 ->maxTries(1)
                 ->maxExceptions(1)
                 ->setUsers([1, 2])
-                ->setPublic(true)
+                ->setIsUnprotected(true)
                 ->onQueue(null)
                 ->dispatchSync();
         } catch (\Exception $e) {
@@ -274,7 +274,7 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('', $jobStatus->job_id);
         $this->assertEquals('sync', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -319,7 +319,7 @@ class SyncQueueTest extends TestCase
                 ->maxTries(2)
                 ->maxExceptions(2)
                 ->setUsers([1, 2])
-                ->setPublic(false)
+                ->setIsUnprotected(false)
                 ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_callback')
                 ->onQueue(null)
                 ->dispatchSync();
@@ -342,7 +342,7 @@ class SyncQueueTest extends TestCase
         $this->assertEquals('', $jobStatus->job_id);
         $this->assertEquals('sync', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(false, $jobStatus->public);
+        $this->assertEquals(false, $jobStatus->is_unprotected);
 
         $this->assertCount(2, $jobStatus->users()->get());
         $this->assertEquals(1, $jobStatus->users()->get()[0]->user_id);
@@ -429,7 +429,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -456,7 +456,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -483,7 +483,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -668,7 +668,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -697,7 +697,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -725,7 +725,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -863,7 +863,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -890,7 +890,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'four',
                         'my-second-tag' => 'four',
@@ -917,7 +917,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'five',
                         'my-second-tag' => 'five',
@@ -944,7 +944,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -971,7 +971,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -1071,7 +1071,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -1098,7 +1098,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -1125,7 +1125,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -1152,7 +1152,7 @@ class SyncQueueTest extends TestCase
                     ->hasConnectionName('sync')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'four',
                         'my-second-tag' => 'four',

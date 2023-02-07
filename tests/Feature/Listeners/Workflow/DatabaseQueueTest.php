@@ -25,7 +25,7 @@ class DatabaseQueueTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'my-indexless-tag'])
             ->setCallback(static::class . '@a_run_is_handled_callback')
             ->setUsers([1, 2])
-            ->setPublic(true)
+            ->setIsUnprotected(true)
             ->onQueue('my-database-queue')
             ->dispatch();
 
@@ -45,7 +45,7 @@ class DatabaseQueueTest extends TestCase
         Assert::assertEquals(0, $jobStatus->percentage);
         Assert::assertEquals(1, $jobStatus->job_id);
         Assert::assertEquals('database', $jobStatus->connection_name);
-        Assert::assertEquals(true, $jobStatus->public);
+        Assert::assertEquals(true, $jobStatus->is_unprotected);
 
         Assert::assertCount(3, $jobStatus->tags);
         Assert::assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -273,7 +273,7 @@ class DatabaseQueueTest extends TestCase
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value'])
             ->setCallback(static::class . '@a_failed_run_is_handled_callback')
             ->maxTries(1)
-            ->setPublic(false)
+            ->setIsUnprotected(false)
             ->maxExceptions(1)
             ->onQueue('my-database-queue')
             ->dispatch();
@@ -290,7 +290,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
 
-        $this->assertEquals(false, $jobStatus->public);
+        $this->assertEquals(false, $jobStatus->is_unprotected);
 
         Assert::assertNull($jobStatus->batch);
         Assert::assertCount(0, JobBatch::all());
@@ -328,7 +328,7 @@ class DatabaseQueueTest extends TestCase
             ->maxTries(2)
             ->maxExceptions(2)
             ->setUsers([1, 2])
-            ->setPublic(false)
+            ->setIsUnprotected(false)
             ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_callback')
             ->onQueue('my-database-queue')
             ->dispatch();
@@ -345,7 +345,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(false, $jobStatus->public);
+        $this->assertEquals(false, $jobStatus->is_unprotected);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -379,7 +379,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatusRetry->job_id); // has not yet been changed to 2 since has not ran
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(false, $jobStatus->public);
+        $this->assertEquals(false, $jobStatus->is_unprotected);
 
         $this->assertCount(2, $jobStatusRetry->users()->get());
         $this->assertEquals(1, $jobStatusRetry->users()->get()[0]->user_id);
@@ -419,7 +419,7 @@ class DatabaseQueueTest extends TestCase
             ->maxTries(2)
             ->maxExceptions(2)
             ->setUsers([1, 2])
-            ->setPublic(true)
+            ->setIsUnprotected(true)
             ->onQueue('my-database-queue')
             ->setCallback(static::class . '@a_failed_and_retry_run_is_handled_after_a_rerun_callback')
             ->dispatch(2);
@@ -438,7 +438,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -472,7 +472,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(true, $jobStatusRetry->public);
+        $this->assertEquals(true, $jobStatusRetry->is_unprotected);
 
         $this->assertCount(2, $jobStatusRetry->tags);
         $this->assertEquals('my-first-tag', $jobStatusRetry->tags[0]->key);
@@ -528,7 +528,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
-        $this->assertEquals(true, $jobStatus->public);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
 
         $this->assertCount(2, $jobStatus->tags);
         $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
@@ -569,7 +569,7 @@ class DatabaseQueueTest extends TestCase
             ->onQueue('my-database-queue')
             ->maxExceptions(2)
             ->setUsers([1, 2])
-            ->setPublic(false)
+            ->setIsUnprotected(false)
             ->setCallback(static::class . '@it_does_track_a_new_job_when_succeeded_and_retried_and_already_manually_released_callback')
             ->dispatch(2);
 
@@ -594,7 +594,7 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
         $this->assertNull($jobStatus->exception);
-        $this->assertEquals(false, $jobStatus->public);
+        $this->assertEquals(false, $jobStatus->is_unprotected);
 
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
@@ -617,7 +617,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
         $this->assertNotNull($jobStatusRetry->uuid);
-        $this->assertEquals(false, $jobStatusRetry->public);
+        $this->assertEquals(false, $jobStatusRetry->is_unprotected);
 
         $this->assertCount(2, $jobStatusRetry->users()->get());
         $this->assertEquals(1, $jobStatusRetry->users()->get()[0]->user_id);
@@ -650,7 +650,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(2, $jobStatusRetryNotRan->job_id);
         $this->assertEquals('database', $jobStatusRetryNotRan->connection_name);
         $this->assertNotNull($jobStatusRetryNotRan->uuid);
-        $this->assertEquals(false, $jobStatusRetryNotRan->public);
+        $this->assertEquals(false, $jobStatusRetryNotRan->is_unprotected);
 
         $this->assertCount(2, $jobStatusRetryNotRan->tags);
         $this->assertEquals('my-first-tag', $jobStatusRetryNotRan->tags[0]->key);
@@ -730,7 +730,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -757,7 +757,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -784,7 +784,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -858,7 +858,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -885,7 +885,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -913,7 +913,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -999,7 +999,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -1026,7 +1026,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -1054,7 +1054,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -1133,7 +1133,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -1162,7 +1162,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -1190,7 +1190,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -1274,7 +1274,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -1301,7 +1301,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -1327,7 +1327,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -1405,7 +1405,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -1432,7 +1432,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -1459,7 +1459,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -1486,7 +1486,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'four',
                         'my-second-tag' => 'four',
@@ -1513,7 +1513,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'five',
                         'my-second-tag' => 'five',
@@ -1615,7 +1615,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'one',
                         'my-second-tag' => 'one',
@@ -1641,7 +1641,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'three',
                         'my-second-tag' => 'three',
@@ -1669,7 +1669,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'two',
                         'my-second-tag' => 'two',
@@ -1696,7 +1696,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasConnectionName('database')
                     ->hasBatchId($realBatch->id)
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 'four',
                         'my-second-tag' => 'four',
@@ -1722,7 +1722,7 @@ class DatabaseQueueTest extends TestCase
             ->maxTries(1)
             ->maxExceptions(1)
             ->setUsers([1, 2])
-            ->setPublic(true)
+            ->setIsUnprotected(true)
             ->onQueue('my-database-queue')
             ->dispatch();
 
@@ -1740,7 +1740,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasJobId(1)
                     ->hasConnectionName('database')
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 1,
                         'my-second-tag' => 'mytag-value',
@@ -1775,7 +1775,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasJobId(1)
                     ->hasConnectionName('database')
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 1,
                         'my-second-tag' => 'mytag-value',
@@ -1800,7 +1800,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasJobId(2)
                     ->hasConnectionName('database')
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 1,
                         'my-second-tag' => 'mytag-value',
@@ -1832,7 +1832,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasJobId(1)
                     ->hasConnectionName('database')
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 1,
                         'my-second-tag' => 'mytag-value',
@@ -1857,7 +1857,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasJobId(2)
                     ->hasConnectionName('database')
                     ->hasNonNullUuid()
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 1,
                         'my-second-tag' => 'mytag-value',
@@ -1888,7 +1888,7 @@ class DatabaseQueueTest extends TestCase
             ->maxTries(1)
             ->maxExceptions(1)
             ->setUsers([1, 2])
-            ->setPublic(true)
+            ->setIsUnprotected(true)
             ->onQueue('my-database-queue')
             ->dispatch(0);
 
@@ -1907,7 +1907,7 @@ class DatabaseQueueTest extends TestCase
                     ->hasJobId(1)
                     ->hasConnectionName('database')
                     ->hasUuid(null)
-                    ->isPublic(true)
+                    ->isUnprotected(true)
                     ->withTags([
                         'my-first-tag' => 1,
                         'my-second-tag' => 'mytag-value',

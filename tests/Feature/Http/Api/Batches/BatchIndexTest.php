@@ -14,7 +14,7 @@ class BatchIndexTest extends TestCase
     public function it_returns_all_batches()
     {
         $batches = JobBatch::factory()
-            ->has(JobStatus::factory(['public' => true]), 'jobStatus')
+            ->has(JobStatus::factory(['is_unprotected' => true]), 'jobStatus')
             ->count(10)->create();
 
         $response = $this->getJson(route('api.job-status.batches.index'));
@@ -36,10 +36,10 @@ class BatchIndexTest extends TestCase
     public function it_returns_only_batches_that_have_jobs_the_user_can_access()
     {
         $inaccessible = JobBatch::factory()
-            ->has(JobStatus::factory(['public' => false]), 'jobStatus')
+            ->has(JobStatus::factory(['is_unprotected' => false]), 'jobStatus')
             ->count(10)->create();
         $accessible = JobBatch::factory()
-            ->has(JobStatus::factory(['public' => true]), 'jobStatus')
+            ->has(JobStatus::factory(['is_unprotected' => true]), 'jobStatus')
             ->count(10)->create();
 
         $response = $this->getJson(route('api.job-status.batches.index'));
@@ -73,9 +73,9 @@ class BatchIndexTest extends TestCase
     public function it_returns_runs_for_the_jobs_a_user_can_access()
     {
         $batch = JobBatch::factory()->create();
-        $run1 = JobStatus::factory()->create(['public' => true, 'batch_id' => $batch->id, 'created_at' => now()->subHour()]);
-        $run2 = JobStatus::factory()->create(['public' => false, 'batch_id' => $batch->id]);
-        $run3 = JobStatus::factory()->create(['public' => true, 'batch_id' => $batch->id, 'created_at' => now()->subDay()]);
+        $run1 = JobStatus::factory()->create(['is_unprotected' => true, 'batch_id' => $batch->id, 'created_at' => now()->subHour()]);
+        $run2 = JobStatus::factory()->create(['is_unprotected' => false, 'batch_id' => $batch->id]);
+        $run3 = JobStatus::factory()->create(['is_unprotected' => true, 'batch_id' => $batch->id, 'created_at' => now()->subDay()]);
 
         $response = $this->getJson(route('api.job-status.batches.index'));
 
@@ -101,10 +101,10 @@ class BatchIndexTest extends TestCase
         Gate::define('viewJobStatus', fn ($user) => $user->id === 1);
 
         $inaccessible = JobBatch::factory()
-            ->has(JobStatus::factory(['alias' => 'OurAlias', 'public' => false])->count(10), 'jobStatus')
+            ->has(JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => false])->count(10), 'jobStatus')
             ->create();
         $accessible = JobBatch::factory()
-            ->has(JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(10), 'jobStatus')
+            ->has(JobStatus::factory(['alias' => 'OurAliasTwo', 'is_unprotected' => true])->count(10), 'jobStatus')
             ->create();
 
         $response = $this->getJson(route('api.job-status.batches.index'));
@@ -172,7 +172,7 @@ class BatchIndexTest extends TestCase
         $batch = JobBatch::factory()->create();
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default', 'batch_id' => $batch->id,
-            'public' => false,
+            'is_unprotected' => false,
         ]);
 
         $response = $this->getJson(route('api.job-status.batches.index', ['bypassAuth' => true]));

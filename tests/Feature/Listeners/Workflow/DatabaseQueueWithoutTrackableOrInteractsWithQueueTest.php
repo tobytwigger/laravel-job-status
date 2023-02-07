@@ -16,7 +16,7 @@ class DatabaseQueueWithoutTrackableOrInteractsWithQueueTest extends TestCase
             ->setUsers([1, 2])
             ->withoutTrackable()
             ->withoutInteractsWithQueue()
-            ->setPublic(true)
+            ->setIsUnprotected(true)
             ->dispatch();
 
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_statuses');

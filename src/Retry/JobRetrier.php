@@ -45,7 +45,7 @@ class JobRetrier
             'exception_id' => null,
             'started_at' => null,
             'finished_at' => null,
-            'public' => $this->jobStatus->public,
+            'is_unprotected' => $this->jobStatus->is_unprotected,
             'batch_id' => $this->jobStatus->batch_id,
             'queue' => $this->jobStatus->queue,
             'payload' => $this->jobStatus->payload,

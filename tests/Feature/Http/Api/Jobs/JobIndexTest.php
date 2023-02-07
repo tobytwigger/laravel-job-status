@@ -12,8 +12,8 @@ class JobIndexTest extends TestCase
     /** @test */
     public function it_returns_all_jobs()
     {
-        $job1 = JobStatus::factory(['alias' => 'OurAlias', 'public' => true])->count(5)->create();
-        $job2 = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(5)->create();
+        $job1 = JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => true])->count(5)->create();
+        $job2 = JobStatus::factory(['alias' => 'OurAliasTwo', 'is_unprotected' => true])->count(5)->create();
 
         $response = $this->getJson(route('api.job-status.jobs.index'));
 
@@ -33,8 +33,8 @@ class JobIndexTest extends TestCase
     /** @test */
     public function it_returns_only_jobs_that_have_runs_the_user_can_access()
     {
-        $inaccessible = JobStatus::factory(['alias' => 'OurAlias', 'public' => false])->count(10)->create();
-        $accessible = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(10)->create();
+        $inaccessible = JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => false])->count(10)->create();
+        $accessible = JobStatus::factory(['alias' => 'OurAliasTwo', 'is_unprotected' => true])->count(10)->create();
 
         $response = $this->getJson(route('api.job-status.jobs.index'));
 
@@ -69,8 +69,8 @@ class JobIndexTest extends TestCase
     /** @test */
     public function it_returns_jobs_for_the_runs_a_user_can_access()
     {
-        $job1 = JobStatus::factory(['alias' => 'OurAlias', 'public' => true])->count(5)->create();
-        $job2 = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => false])->count(5)->create();
+        $job1 = JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => true])->count(5)->create();
+        $job2 = JobStatus::factory(['alias' => 'OurAliasTwo', 'is_unprotected' => false])->count(5)->create();
 
         $response = $this->getJson(route('api.job-status.jobs.index'));
 
@@ -96,8 +96,8 @@ class JobIndexTest extends TestCase
         $this->prophesizeUserWithId(1);
         Gate::define('viewJobStatus', fn ($user) => $user->id === 1);
 
-        $inaccessible = JobStatus::factory(['alias' => 'OurAlias', 'public' => false])->count(10)->create();
-        $accessible = JobStatus::factory(['alias' => 'OurAliasTwo', 'public' => true])->count(10)->create();
+        $inaccessible = JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => false])->count(10)->create();
+        $accessible = JobStatus::factory(['alias' => 'OurAliasTwo', 'is_unprotected' => true])->count(10)->create();
 
         $response = $this->getJson(route('api.job-status.jobs.index'));
         $response->assertJsonCount(1);
@@ -163,7 +163,7 @@ class JobIndexTest extends TestCase
 
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => false,
+            'is_unprotected' => false,
         ]);
 
         $response = $this->getJson(route('api.job-status.jobs.index', ['bypassAuth' => true]));

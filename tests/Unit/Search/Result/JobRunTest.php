@@ -428,7 +428,7 @@ class JobRunTest extends TestCase
     /** @test */
     public function accessible_by_returns_true_if_the_user_can_see_the_private_job()
     {
-        $status = JobStatus::factory()->create(['public' => false]);
+        $status = JobStatus::factory()->create(['is_unprotected' => false]);
         JobStatusUser::factory()->create(['job_status_id' => $status->id, 'user_id' => 1]);
 
         $this->assertTrue((new JobRun($status))->accessibleBy(1));
@@ -437,7 +437,7 @@ class JobRunTest extends TestCase
     /** @test */
     public function accessible_by_returns_false_if_the_user_cannot_see_the_private_job()
     {
-        $status = JobStatus::factory()->create(['public' => false]);
+        $status = JobStatus::factory()->create(['is_unprotected' => false]);
         JobStatusUser::factory()->create(['job_status_id' => $status->id, 'user_id' => 2]);
 
         $this->assertFalse((new JobRun($status))->accessibleBy(1));
@@ -446,7 +446,7 @@ class JobRunTest extends TestCase
     /** @test */
     public function accessible_by_returns_true_if_the_job_is_public()
     {
-        $status = JobStatus::factory()->create(['public' => true]);
+        $status = JobStatus::factory()->create(['is_unprotected' => true]);
 
         $this->assertTrue((new JobRun($status))->accessibleBy(1));
     }

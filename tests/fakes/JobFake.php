@@ -23,15 +23,15 @@ class JobFake implements ShouldQueue
         private \Closure|string|null $callback = null,
         private array $signals = [],
         private array $users = [],
-        private bool $public = true,
+        private bool $isUnprotected = true,
         ?string $queue = null
     ) {
         $this->queue = $queue;
     }
 
-    public function public(): bool
+    public function isUnprotected(): bool
     {
-        return $this->public;
+        return $this->isUnprotected;
     }
 
     public function alias(): ?string

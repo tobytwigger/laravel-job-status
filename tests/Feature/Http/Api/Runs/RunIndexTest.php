@@ -134,7 +134,7 @@ class RunIndexTest extends TestCase
     /** @test */
     public function it_gives_access_to_a_user_with_access_to_the_private_job()
     {
-        $jobStatus = JobStatus::factory()->create(['public' => false]);
+        $jobStatus = JobStatus::factory()->create(['is_unprotected' => false]);
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
         $this->prophesizeUserWithId(1);
 
@@ -152,7 +152,7 @@ class RunIndexTest extends TestCase
     /** @test */
     public function it_denies_access_to_a_user_without_access_to_the_private_job()
     {
-        $jobStatus = JobStatus::factory()->create(['public' => false]);
+        $jobStatus = JobStatus::factory()->create(['is_unprotected' => false]);
         JobStatusUser::factory()->create(['user_id' => 2, 'job_status_id' => $jobStatus->id]);
         $this->prophesizeUserWithId(1);
 
@@ -165,7 +165,7 @@ class RunIndexTest extends TestCase
     /** @test */
     public function it_denies_access_to_an_anonymous_user_to_the_private_job()
     {
-        $jobStatus = JobStatus::factory()->create(['public' => false]);
+        $jobStatus = JobStatus::factory()->create(['is_unprotected' => false]);
         JobStatusUser::factory()->create(['user_id' => 2, 'job_status_id' => $jobStatus->id]);
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
@@ -176,7 +176,7 @@ class RunIndexTest extends TestCase
     /** @test */
     public function it_gives_access_to_a_user_to_the_public_job()
     {
-        $jobStatus = JobStatus::factory()->create(['public' => true]);
+        $jobStatus = JobStatus::factory()->create(['is_unprotected' => true]);
 
         $this->prophesizeUserWithId(1);
 
@@ -192,7 +192,7 @@ class RunIndexTest extends TestCase
     /** @test */
     public function it_gives_access_to_a_connected_user_to_the_public_job()
     {
-        $jobStatus = JobStatus::factory()->create(['public' => true]);
+        $jobStatus = JobStatus::factory()->create(['is_unprotected' => true]);
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
 
         $this->prophesizeUserWithId(1);
@@ -211,7 +211,7 @@ class RunIndexTest extends TestCase
     /** @test */
     public function it_gives_access_to_an_anonymous_user_to_the_public_job()
     {
-        $jobStatus = JobStatus::factory()->create(['public' => true]);
+        $jobStatus = JobStatus::factory()->create(['is_unprotected' => true]);
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $jobStatus->id]);
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
@@ -230,7 +230,7 @@ class RunIndexTest extends TestCase
         $this->prophesizeUserWithId(1);
         Gate::define('viewJobStatus', fn ($user) => $user->id === 1);
 
-        $jobStatus = JobStatus::factory()->create(['public' => false]);
+        $jobStatus = JobStatus::factory()->create(['is_unprotected' => false]);
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
@@ -255,7 +255,7 @@ class RunIndexTest extends TestCase
 
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => false,
+            'is_unprotected' => false,
         ]);
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias, 'bypassAuth' => true]));

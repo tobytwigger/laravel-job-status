@@ -33,7 +33,7 @@ class JobReleasedAfterException extends BaseListener
                 'uuid' => $event->job->uuid(),
                 'connection_name' => $event->job->getConnectionName(),
                 'job_id' => $event->job->getJobId(),
-                'public' => $modifier->getJobStatus()?->public,
+                'is_unprotected' => $modifier->getJobStatus()?->is_unprotected,
             ]);
 
 

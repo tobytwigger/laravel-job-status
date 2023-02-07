@@ -30,11 +30,11 @@ class JobStatus extends Model
     const INDEXLESS_VALUE = 'JOB_STATUS_MODEL_INDEXLESS';
     protected $fillable = [
         'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'exception_id',
-        'started_at', 'finished_at', 'public', 'batch_id', 'queue', 'payload',
+        'started_at', 'finished_at', 'is_unprotected', 'batch_id', 'queue', 'payload',
     ];
 
     protected $casts = [
-        'public' => 'boolean',
+        'is_unprotected' => 'boolean',
         'percentage' => 'float',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
@@ -184,7 +184,7 @@ class JobStatus extends Model
     public function scopeForUsers(Builder $query, int|array|null $userIds)
     {
         if ($userIds === null || empty($userIds)) {
-            $query->where('public', true);
+            $query->where('is_unprotected', true);
         } else {
             $userIds = Arr::wrap($userIds);
 
@@ -192,7 +192,7 @@ class JobStatus extends Model
                 $query->whereHas('users', function (Builder $query) use ($userIds) {
                     $query->whereIn('user_id', $userIds);
                 })
-                    ->orWhere('public', true);
+                    ->orWhere('is_unprotected', true);
             });
         }
     }

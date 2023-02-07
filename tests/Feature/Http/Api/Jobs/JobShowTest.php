@@ -14,7 +14,7 @@ class JobShowTest extends TestCase
     {
         $this->prophesizeUserWithId(1);
 
-        $status = JobStatus::factory()->create(['public' => false, 'alias' => 'Job 1']);
+        $status = JobStatus::factory()->create(['is_unprotected' => false, 'alias' => 'Job 1']);
 
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $status->id]);
 
@@ -41,7 +41,7 @@ class JobShowTest extends TestCase
     {
         $this->prophesizeUserWithId(1);
 
-        $status = JobStatus::factory()->create(['public' => false, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
+        $status = JobStatus::factory()->create(['is_unprotected' => false, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
 
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $status->id]);
 
@@ -54,7 +54,7 @@ class JobShowTest extends TestCase
     {
         $this->prophesizeUserWithId(1);
 
-        $status = JobStatus::factory()->create(['public' => false, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
+        $status = JobStatus::factory()->create(['is_unprotected' => false, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
         $response->assertNotFound();
@@ -63,7 +63,7 @@ class JobShowTest extends TestCase
     /** @test */
     public function it_returns_a_404_if_an_anonymous_user_tries_to_get_the_job_without_any_public_jobs_in_the_job()
     {
-        $status = JobStatus::factory()->create(['public' => false, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
+        $status = JobStatus::factory()->create(['is_unprotected' => false, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
         $response->assertNotFound();
@@ -74,7 +74,7 @@ class JobShowTest extends TestCase
     {
         $this->prophesizeUserWithId(1);
 
-        $status = JobStatus::factory()->create(['public' => true, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
+        $status = JobStatus::factory()->create(['is_unprotected' => true, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
         $response->assertOk();
@@ -92,7 +92,7 @@ class JobShowTest extends TestCase
     {
         $this->prophesizeUserWithId(1);
 
-        $status = JobStatus::factory()->create(['public' => true, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
+        $status = JobStatus::factory()->create(['is_unprotected' => true, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
 
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $status->id]);
 
@@ -110,7 +110,7 @@ class JobShowTest extends TestCase
     /** @test */
     public function it_returns_a_200_if_the_user_is_anonymous_for_a_public_run_through_the_job()
     {
-        $status = JobStatus::factory()->create(['public' => true, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
+        $status = JobStatus::factory()->create(['is_unprotected' => true, 'alias' => 'Job 1', 'class' => 'MyJobClass']);
 
         JobStatusUser::factory()->create(['user_id' => 1, 'job_status_id' => $status->id]);
 
@@ -133,7 +133,7 @@ class JobShowTest extends TestCase
 
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default', 'alias' => 'Job 1',
-            'public' => false,
+            'is_unprotected' => false,
         ]);
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
@@ -151,7 +151,7 @@ class JobShowTest extends TestCase
 
         $jobStatus = JobStatus::factory()->create([
             'payload' => ['test'], 'connection_name' => 'fake', 'queue' => 'default',
-            'public' => false,
+            'is_unprotected' => false,
         ]);
 
         $response = $this->getJson(route('api.job-status.jobs.show', ['job_status_job_alias' => 'Job 1', 'bypassAuth' => true]));
