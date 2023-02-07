@@ -28,7 +28,7 @@ jobs:
                 with:
                     node-version: 18
 
-            -   run: ⏳ Install PHP dependencies
+            -   name: ⏳ Install PHP dependencies
                 uses: "ramsey/composer-install@v2"
                 with:
                     composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
@@ -44,7 +44,6 @@ jobs:
                 uses: php-actions/phpstan@v3
                 continue-on-error: true
                 with:
-
                     path: config database routes src tests
                     php_version: ${{ matrix.php }}
                     error_format: github
