@@ -3,6 +3,8 @@
 namespace JobStatus\Http\Controllers\Api;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use JobStatus\JobStatusServiceProvider;
@@ -37,4 +39,24 @@ class Controller extends \Illuminate\Routing\Controller
 
         return false;
     }
+
+
+    public function paginate(Collection $items)
+    {
+        $perPage = request()->input('per_page', 10);
+        $page = request()->input('page', 1);
+
+        $slicedItems = collect($items)->forPage($page, $perPage)->values();
+
+        return (new LengthAwarePaginator(
+            $slicedItems,
+            $items->count(),
+            $perPage,
+            $page,
+            ['path' => url(request()->path())]
+        ))->appends('per_page', $perPage);
+
+        return $this->paginationResponse($slicedItems, count($items));
+    }
+
 }

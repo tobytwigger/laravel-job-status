@@ -14,7 +14,9 @@ class BatchController extends Controller
             $query->forUsers($this->resolveAuth());
         }
 
-        return $query->get()->batches();
+        return $this->paginate(
+            $query->get()->batches()
+        );
     }
 
     public function show(JobBatch $batch)
