@@ -4,8 +4,7 @@ Signals are the opposite of messages - they let your app communicate with your j
 
 ## Cancelling a job
 
-Once you've dispatched a job, you are able to cancel it at a later date. To do so, from the job status model, simply
-call `$status->cancel()`.
+Once you've dispatched a job, you are able to cancel it at a later date. This can be done through the [dashboard](./../dashboard/runs.md#cancelling--retrying), [programatically](./../advanced/php-history.md#signals) or through the [JS API client](./../js/js.md#send-a-signal).
 
 ### Enabling cancelling
 
@@ -37,14 +36,14 @@ Cancelling a job is one example of a signal, where the app is sending a message 
 
 ### Sending Signals
 
-With a status model, use `$status->sendSignal('signal-type');`. This will send the signal to the job that owns the status model.
+This can be done [programatically](./../advanced/php-history.md#signals) or through the [JS API client](./../js/js.md#send-a-signal).
 
 #### Signal parameters
 
 With custom signals, you can also send parameters to the job. For example, a job that checks the price of all the books a user owns may want to be notified if a new book is added during processing. To avoid us having to redo all the books, the signal can contain information about the new book allowing us to add it to the queue.
 
 ```php
-$jobStatus->sendSignal('book-added', ['book_id' => $bookId]);
+$jobRun->sendSignal('book-added', ['book_id' => $bookId]);
 ````
 
 ```php
@@ -114,5 +113,5 @@ You can throw an exception in the `onSignalName` method, which will mark your jo
 
 Or you can pass `cancelJob: true` to the `sendSignal` function to cancel the job after the cleanup has finished.
 ```php
-$status->sendSignal('user-deleted', ['user_id' => $user->id], cancelJob: true);
+$jobRun->sendSignal('user-deleted', ['user_id' => $user->id], cancelJob: true);
 ```

@@ -30,3 +30,9 @@ The timeline will list
 You can dive into the exception thrown by a failed job
 
 ![Run exception](../assets/images/dashboard/exception.png)
+
+## Cancelling & Retrying
+
+You can cancel and/or retry a job by clicking the button in the corner.
+
+![img.png](../assets/images/dashboard/cancel_retry.png)
