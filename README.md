@@ -1,6 +1,6 @@
 # Laravel Job Status
 
-> The only job debugging tool you'll ever need
+> The only Laravel job debugging tool you'll ever need
 
 [![Latest Version](https://img.shields.io/github/v/release/tobytwigger/laravel-job-status?label=Latest%20Version&sort=semver&style=plastic)](https://github.com/tobytwigger/laravel-job-status/releases)
 [![Build Status](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml)
