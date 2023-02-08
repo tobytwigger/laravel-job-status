@@ -3,7 +3,7 @@
 > The only job debugging tool you'll ever need
 
 [![Latest Version](https://img.shields.io/github/v/release/tobytwigger/laravel-job-status?label=Latest%20Version&sort=semver&style=plastic)](https://github.com/tobytwigger/laravel-job-status/releases)
-[![Build status]([![🚀 Compile package](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml))
+[![Build Status](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml)
 
 [![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](http://buymeacoffee.com/translate)
 
