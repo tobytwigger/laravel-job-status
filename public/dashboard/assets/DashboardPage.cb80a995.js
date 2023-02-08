@@ -1,1 +1,0 @@
-import{Q as e}from"./QPage.05c0d848.js";import{_ as a,J as t,K as o,L as s,M as r,O as n}from"./index.e40d63b2.js";import"./render.c0279511.js";const c=t({name:"DashboardPage"});function p(d,f,i,m,_,l){return o(),s(e,{class:"justify-evenly"},{default:r(()=>[n(" Not implemented... ")]),_:1})}var $=a(c,[["render",p]]);export{$ as default};
