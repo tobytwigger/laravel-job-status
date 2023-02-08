@@ -39,18 +39,18 @@ jobs:
                 with:
                     composer-options: "--no-ansi --no-interaction --no-scripts --no-progress"
 
-            -   run: ⏳ npm install
-                name: Install JS dependencies
+            -   run: npm install
+                name: ⏳ Install JS dependencies
                 working-directory: './dashboard'
 
-            -   run: ⏳ npm install -g @quasar/cli
-                name: Install the Quasar CLI
+            -   run: npm install -g @quasar/cli
+                name: ⏳ Install the Quasar CLI
 
             -   name: 🔧 Run cs fixer
                 run: ./vendor/bin/php-cs-fixer fix
 
-            -   run: 🔧 npm run format
-                name: Run the js linter
+            -   run: npm run format
+                name: 🔧 Run the js linter
                 working-directory: './dashboard'
 
             -   name: 💾 Commit changes

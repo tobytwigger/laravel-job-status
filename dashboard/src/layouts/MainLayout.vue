@@ -53,12 +53,12 @@ import EssentialLink from 'components/EssentialLink.vue';
 import { useConfig } from 'src/compostables/configuration';
 
 const linksList = [
-  {
-    title: 'Dashboard',
-    caption: 'Job dashboard.',
-    icon: 'dashboard',
-    route: { path: '/dashboard' },
-  },
+  // {
+  //   title: 'Dashboard',
+  //   caption: 'Job dashboard.',
+  //   icon: 'dashboard',
+  //   route: { path: '/dashboard' },
+  // },
   {
     title: 'Jobs',
     caption: 'All tracked jobs.',
