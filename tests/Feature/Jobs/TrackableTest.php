@@ -45,7 +45,10 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(6)->create(['class' => JobFake::class, 'alias' => 'jobfake']);
         JobStatus::factory()->has(
             JobStatusTag::factory()
-                ->state(['key' => 'key1', 'value' => 'val1'])
+                ->state(['key' => 'key1', 'value' => 'val1']),
+            'tags'
+        )->has(
+            JobStatusTag::factory()
                 ->indexless('keyone-indexless'),
             'tags'
         )
@@ -54,6 +57,7 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'jobfake']);
         $search = JobFake::search(['keyone-indexless', 'key1' => 'val1']);
         $this->assertInstanceOf(Builder::class, $search);
+        
         $this->assertCount(8, $search->get()->jobs()->first()->runs());
     }
 
