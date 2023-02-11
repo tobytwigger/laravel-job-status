@@ -15,7 +15,7 @@ class JobStatusCollection extends Collection
     public function runs(): JobRunCollection
     {
         $queryResult = $this
-            ->sortByDesc('created_at')
+            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
             ->groupBy(['uuid']);
 
         $jobRuns = new JobRunCollection();
@@ -39,7 +39,7 @@ class JobStatusCollection extends Collection
     public function jobs(): TrackedJobCollection
     {
         $queryResult = $this
-            ->sortByDesc('created_at')
+            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
             ->groupBy(['alias']);
 
         $trackedJobs = new TrackedJobCollection();
@@ -47,7 +47,7 @@ class JobStatusCollection extends Collection
             // Groups of the same run
             $exactJobGrouped = $sameJobTypes->groupBy('uuid');
             $jobClass = $sameJobTypes->filter(fn (JobStatus $jobStatus) => $jobStatus->alias !== null)
-                ->sortByDesc('created_at')
+                ->sortBy([['created_at', 'desc'], ['id', 'desc']])
                 ->first()
                 ?->class;
 
@@ -75,7 +75,7 @@ class JobStatusCollection extends Collection
     public function queues(): QueueCollection
     {
         $queryResult = $this
-            ->sortByDesc('created_at')
+            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
             ->groupBy(['queue']);
 
         $queues = new QueueCollection();
@@ -87,7 +87,7 @@ class JobStatusCollection extends Collection
             $exactJobGrouped = $sameQueueJobs->groupBy('uuid');
             $jobRuns = new JobRunCollection();
             foreach ($exactJobGrouped as $uuid => $runs) {
-                $runs = $runs->sortBy('created_at')->values();
+                $runs = $runs->sortBy([['created_at', 'asc'], ['id', 'asc']])->values();
                 if ($uuid === null || $uuid === '') {
                     foreach ($runs as $run) {
                         $jobRuns->push(new JobRun($run, null));
@@ -109,7 +109,7 @@ class JobStatusCollection extends Collection
     public function batches(): BatchCollection
     {
         $queryResult = $this
-            ->sortByDesc('created_at')
+            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
             ->groupBy(['batch_id']);
 
         $batches = new BatchCollection();

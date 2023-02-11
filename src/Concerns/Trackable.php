@@ -20,7 +20,11 @@ trait Trackable
     {
         $search = JobStatus::whereClass(static::class);
         foreach ($tags as $key => $value) {
-            $search->whereTag($key, $value);
+            if (is_numeric($key)) {
+                $search->whereTag($value);
+            } else {
+                $search->whereTag($key, $value);
+            }
         }
 
         return $search;

@@ -18,16 +18,16 @@ class RunController extends Controller
         }
 
         if ($request->has('alias')) {
-            $query->where(function(Builder $query) use ($request) {
-                foreach($request->input('alias') as $alias) {
+            $query->where(function (Builder $query) use ($request) {
+                foreach ($request->input('alias') as $alias) {
                     $query->orWhere('alias', $alias);
                 }
             });
         }
 
         if ($request->has('status')) {
-            $query->where(function(Builder $query) use ($request) {
-                foreach($request->input('status') as $status) {
+            $query->where(function (Builder $query) use ($request) {
+                foreach ($request->input('status') as $status) {
                     $query->orWhere('status', $status);
                 }
             });
@@ -38,7 +38,9 @@ class RunController extends Controller
             $query->whereTags($request->input('tags'));
         }
 
-        return $query->get()->runs();
+        return $this->paginate(
+            $query->get()->runs()
+        );
     }
 
     public function show(JobStatus $jobStatus)

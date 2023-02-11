@@ -70,6 +70,7 @@ class JobMessageTest extends TestCase
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_messages');
     }
 
+    /** @test */
     public function a_job_message_can_be_updated_when_disabled()
     {
         config()->set('laravel-job-status.collectors.messages.enabled', true);

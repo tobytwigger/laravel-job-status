@@ -17,8 +17,8 @@ class RunSearchRequest extends FormRequest
             'status' => ['sometimes', 'array'],
             'status.*' => [
                 'string',
-                Rule::in(Arr::map(Status::cases(), fn(Status $status) => $status->value))
-            ]
+                Rule::in(Arr::map(Status::cases(), fn (Status $status) => $status->value)),
+            ],
         ];
     }
 }

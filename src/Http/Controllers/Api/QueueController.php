@@ -13,7 +13,9 @@ class QueueController extends Controller
             $query->forUsers($this->resolveAuth());
         }
 
-        return $query->get()->queues();
+        return $this->paginate(
+            $query->get()->queues()
+        );
     }
 
     public function show(string $jobStatusQueue)

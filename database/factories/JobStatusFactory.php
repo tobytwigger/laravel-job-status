@@ -21,8 +21,8 @@ class JobStatusFactory extends Factory
     {
         return [
             'class' => JobFake::class,
-            'alias' => $this->faker->word,
-            'queue' => $this->faker->word,
+            'alias' => $this->faker->unique()->word,
+            'queue' => $this->faker->unique()->word,
             'payload' => [],
             'percentage' => $this->faker->numberBetween(0, 100),
             'uuid' => Str::uuid(),

@@ -102,12 +102,12 @@ class JobStatusCollectionTest extends TestCase
         $batch3 = JobBatch::factory()->create();
         $batch4 = JobBatch::factory()->create();
 
-        $jobStatus1_1 = JobStatus::factory()->create(['batch_id' => $batch1->id, 'created_at' => Carbon::now()->subHours(6)]);
-        $jobStatus1_2 = JobStatus::factory()->create(['batch_id' => $batch1->id, 'created_at' => Carbon::now()->subHours(5)]);
-        $jobStatus2_1 = JobStatus::factory()->create(['batch_id' => $batch2->id, 'created_at' => Carbon::now()->subHours(4)]);
-        $jobStatus3_1 = JobStatus::factory()->create(['batch_id' => $batch3->id, 'created_at' => Carbon::now()->subHours(3)]);
-        $jobStatus3_2 = JobStatus::factory()->create(['batch_id' => $batch3->id, 'created_at' => Carbon::now()->subHours(2)]);
         $jobStatus4 = JobStatus::factory()->create(['batch_id' => $batch4->id, 'created_at' => Carbon::now()->subHours(1)]);
+        $jobStatus3_2 = JobStatus::factory()->create(['batch_id' => $batch3->id, 'created_at' => Carbon::now()->subHours(2)]);
+        $jobStatus3_1 = JobStatus::factory()->create(['batch_id' => $batch3->id, 'created_at' => Carbon::now()->subHours(3)]);
+        $jobStatus2_1 = JobStatus::factory()->create(['batch_id' => $batch2->id, 'created_at' => Carbon::now()->subHours(4)]);
+        $jobStatus1_2 = JobStatus::factory()->create(['batch_id' => $batch1->id, 'created_at' => Carbon::now()->subHours(5)]);
+        $jobStatus1_1 = JobStatus::factory()->create(['batch_id' => $batch1->id, 'created_at' => Carbon::now()->subHours(6)]);
 
         $collection = JobStatus::all()
             ->batches();

@@ -13,7 +13,9 @@ class JobController extends Controller
             $query->forUsers($this->resolveAuth());
         }
 
-        return $query->get()->jobs();
+        return $this->paginate(
+            $query->get()->jobs()
+        );
     }
 
     public function show(string $jobStatusJobAlias)
