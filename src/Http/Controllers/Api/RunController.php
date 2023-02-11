@@ -24,7 +24,9 @@ class RunController extends Controller
             $query->whereTags($request->input('tags'));
         }
 
-        return $query->get()->runs();
+        return $this->paginate(
+            $query->get()->runs()
+        );
     }
 
     public function show(JobStatus $jobStatus)

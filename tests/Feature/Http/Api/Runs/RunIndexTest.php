@@ -22,12 +22,11 @@ class RunIndexTest extends TestCase
         ];
         $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
 
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
+        $response->assertJsonCount(1, 'data');
 
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
     }
 
     /** @test */
@@ -44,22 +43,20 @@ class RunIndexTest extends TestCase
             'tags' => ['keytwo'],
         ];
         $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
 
         $statusQuery = [
             'alias' => 'mystatus',
             'tags' => ['one' => 'yes', 'keytwo'],
         ];
         $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
     }
 
     /** @test */
@@ -76,11 +73,10 @@ class RunIndexTest extends TestCase
             'tags' => ['one' => 'yes'],
         ];
         $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
     }
 
     /** @test */
@@ -92,7 +88,7 @@ class RunIndexTest extends TestCase
         ];
         $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
         $response->assertStatus(200);
-        $response->decodeResponseJson()->assertExact([]);
+        $this->assertEquals([], $response->json('data'));
     }
 
     /** @test */
@@ -141,11 +137,10 @@ class RunIndexTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
     }
 
 
@@ -159,7 +154,7 @@ class RunIndexTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
-        $response->decodeResponseJson()->assertExact([]);
+        $this->assertEquals([], $response->json('data'));
     }
 
     /** @test */
@@ -170,7 +165,7 @@ class RunIndexTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
-        $response->decodeResponseJson()->assertExact([]);
+        $this->assertEquals([], $response->json('data'));
     }
 
     /** @test */
@@ -182,11 +177,10 @@ class RunIndexTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
     }
 
     /** @test */
@@ -200,11 +194,11 @@ class RunIndexTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
+
     }
 
 
@@ -217,11 +211,10 @@ class RunIndexTest extends TestCase
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
 
         $response->assertOk();
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
     }
 
     /** @test */
@@ -234,17 +227,16 @@ class RunIndexTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias]));
         $response->assertOk();
-        $response->decodeResponseJson()->assertExact([]);
+        $this->assertEquals([], $response->json('data'));
 
 
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias, 'bypassAuth' => true]));
         $response->assertOk();
-        $response->assertJsonCount(1);
-        $result = $response->decodeResponseJson()[0];
-        $this->assertEquals($jobStatus->id, $result['id'] ?? null);
-        $this->assertEquals($jobStatus->class, $result['class'] ?? null);
-        $this->assertEquals($jobStatus->alias, $result['alias'] ?? null);
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
+        $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
     }
 
     /** @test */
@@ -260,5 +252,41 @@ class RunIndexTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => $jobStatus->alias, 'bypassAuth' => true]));
         $response->assertStatus(403);
+    }
+
+    /** @test */
+    public function it_can_paginate(){
+        $jobStatuses = JobStatus::factory(['is_unprotected' => true])->count(10)->create();
+
+        $response = $this->getJson(route('api.job-status.runs.index', ['page' => 1, 'per_page' => 5]));
+
+        $this->assertEquals(1, $response->json('current_page'));
+        $this->assertEquals(2, $response->json('last_page'));
+        $this->assertEquals(5, $response->json('per_page'));
+        $this->assertEquals(1, $response->json('from'));
+        $this->assertEquals(5, $response->json('to'));
+        $this->assertEquals(10, $response->json('total'));
+
+        $response->assertJsonCount(5, 'data');
+        $this->assertEquals($jobStatuses[9]->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatuses[8]->id, $response->json('data.1.id'));
+        $this->assertEquals($jobStatuses[7]->id, $response->json('data.2.id'));
+        $this->assertEquals($jobStatuses[6]->id, $response->json('data.3.id'));
+        $this->assertEquals($jobStatuses[5]->id, $response->json('data.4.id'));
+
+        $response = $this->getJson(route('api.job-status.runs.index', ['page' => 2, 'per_page' => 5]));
+        $this->assertEquals(2, $response->json('current_page'));
+        $this->assertEquals(2, $response->json('last_page'));
+        $this->assertEquals(5, $response->json('per_page'));
+        $this->assertEquals(6, $response->json('from'));
+        $this->assertEquals(10, $response->json('to'));
+        $this->assertEquals(10, $response->json('total'));
+
+        $response->assertJsonCount(5, 'data');
+        $this->assertEquals($jobStatuses[4]->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatuses[3]->id, $response->json('data.1.id'));
+        $this->assertEquals($jobStatuses[2]->id, $response->json('data.2.id'));
+        $this->assertEquals($jobStatuses[1]->id, $response->json('data.3.id'));
+        $this->assertEquals($jobStatuses[0]->id, $response->json('data.4.id'));
     }
 }
