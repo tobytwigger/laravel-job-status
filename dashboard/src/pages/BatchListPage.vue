@@ -1,40 +1,60 @@
 <template>
-  <q-page class="justify-evenly" v-if="results?.total > 0">
+  <q-page class="justify-evenly">
     <q-breadcrumbs>
-      <q-breadcrumbs-el icon="list" to="/batch" label="Batches" />
+      <q-breadcrumbs-el icon="list" to="/batch" label="Batches"/>
     </q-breadcrumbs>
 
     <q-list class="rounded-borders q-pa-lg">
       <q-item-label header>All Batches</q-item-label>
 
-      <q-separator></q-separator>
-      <div v-for="result in results?.data ?? []" :key="getHash(result)">
-        <batch-list-item :batch="result"></batch-list-item>
-        <q-separator></q-separator>
-      </div>
+      <div v-if="results?.total > 0">
 
-      <div class="q-pa-lg flex flex-center">
-        <q-pagination
-          v-if="results?.total > 0"
-          input
-          :model-value="results.current_page"
-          @update:model-value="page = $event"
-          :max="results.last_page"
-        />
+        <q-separator></q-separator>
+        <div v-for="result in results?.data ?? []" :key="getHash(result)">
+          <batch-list-item :batch="result"></batch-list-item>
+          <q-separator></q-separator>
+        </div>
+
+        <div class="q-pa-lg flex flex-center">
+          <q-pagination
+            v-if="results?.total > 0"
+            input
+            :model-value="results.current_page"
+            @update:model-value="page = $event"
+            :max="results.last_page"
+          />
+        </div>
+      </div>
+      <div v-else-if="results?.total === 0">
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-icon color="negative" name="warning" />
+          </q-item-section>
+
+          <q-item-section>No batches found</q-item-section>
+        </q-item>
+      </div>
+      <div v-else>
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-icon color="primary" name="sync" />
+          </q-item-section>
+
+          <q-item-section>Loading</q-item-section>
+        </q-item>
       </div>
     </q-list>
   </q-page>
-  <q-page class="items-center justify-evenly" v-else> Loading </q-page>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import {onBeforeUnmount, onMounted, ref, watch} from 'vue';
 import api from 'src/utils/client/api';
-import { Batch } from 'src/types/api';
+import {Batch} from 'src/types/api';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
 import BatchListItem from 'components/BatchListItem.vue';
-import { client } from '@tobytwigger/laravel-job-status-js';
-import { PaginationResponse } from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
+import {client} from '@tobytwigger/laravel-job-status-js';
+import {PaginationResponse} from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
 import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
 
 const results = ref<PaginationResponse<Batch> | null>(null);

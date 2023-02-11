@@ -53,7 +53,7 @@
           <div v-else-if="results?.total === 0">
             <q-item clickable v-ripple>
               <q-item-section avatar>
-                <q-icon color="primary" name="warning" />
+                <q-icon color="negative" name="warning" />
               </q-item-section>
 
               <q-item-section>No runs found</q-item-section>
