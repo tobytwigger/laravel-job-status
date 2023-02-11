@@ -56,7 +56,7 @@ import api from 'src/utils/client/api';
 import { JobRun, TrackedJob } from 'src/types/api';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
-import { client } from 'laravel-job-status-js';
+import { client } from '@tobytwigger/laravel-job-status-js';
 
 const results = ref<TrackedJob | null>(null);
 
@@ -64,15 +64,18 @@ const props = defineProps<{
   alias: string;
 }>();
 
-let listener = client.jobs
-  .show(props.alias)
-  .bypassAuth()
-  .listen()
-  .onUpdated((newResults) => (results.value = newResults))
-  .start();
+onMounted(() => {
 
-onBeforeUnmount(() => {
-  listener.stop();
+  let listener = client.jobs
+    .show(props.alias)
+    .bypassAuth()
+    .listen()
+    .onUpdated((newResults) => (results.value = newResults))
+    .start();
+
+  onBeforeUnmount(() => {
+    listener.stop();
+  });
 });
 
 function getHash(jobRun: JobRun): string {

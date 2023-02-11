@@ -277,7 +277,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref } from 'vue';
+import {computed, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
 import api from 'src/utils/client/api';
 import {
   JobException,
@@ -289,7 +289,7 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import JobRunTimeline from 'components/JobRunTimeline.vue';
 import ExceptionView from 'components/ExceptionView.vue';
-import { client } from 'laravel-job-status-js';
+import { client } from '@tobytwigger/laravel-job-status-js';
 
 dayjs.extend(localizedFormat);
 
@@ -301,15 +301,18 @@ const props = defineProps<{
   jobStatusId: number;
 }>();
 
-let listener = client.runs
-  .show(props.jobStatusId)
-  .bypassAuth()
-  .listen()
-  .onUpdated((newResults) => (results.value = newResults))
-  .start();
+onMounted(() => {
 
-onBeforeUnmount(() => {
-  listener.stop();
+  let listener = client.runs
+    .show(props.jobStatusId)
+    .bypassAuth()
+    .listen()
+    .onUpdated((newResults) => (results.value = newResults))
+    .start();
+
+  onBeforeUnmount(() => {
+    listener.stop();
+  });
 });
 
 // CANCELLING

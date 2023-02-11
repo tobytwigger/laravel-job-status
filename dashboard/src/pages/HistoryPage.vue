@@ -40,18 +40,21 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import api from 'src/utils/client/api';
 import { JobRun } from 'src/types/api';
 import NoContextTrackedRunListItem from 'components/NoContextTrackedRunListItem.vue';
-import { client } from 'laravel-job-status-js';
+import { client } from '@tobytwigger/laravel-job-status-js';
 
 const results = ref<JobRun[] | null>(null);
 
-let listener = client.runs
-  .search()
-  .bypassAuth()
-  .listen()
-  .onUpdated((newResults) => (results.value = newResults))
-  .start();
+onMounted(() => {
+  let listener = client.runs
+    .search()
+    .bypassAuth()
+    .listen()
+    .onUpdated((newResults) => (results.value = newResults))
+    .start();
 
-onBeforeUnmount(() => {
-  listener.stop();
-});
+  onBeforeUnmount(() => {
+    listener.stop();
+  });
+})
+
 </script>

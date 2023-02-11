@@ -21,20 +21,22 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
 import { TrackedJob } from 'src/types/api';
-import { client } from 'laravel-job-status-js';
+import { client } from '@tobytwigger/laravel-job-status-js';
 
 const results = ref<TrackedJob[] | null>(null);
 
-let listener = client.jobs
-  .search()
-  .bypassAuth()
-  .listen()
-  .onUpdated((newResults) => (results.value = newResults))
-  .start();
+onMounted(() => {
+  let listener = client.jobs
+    .search()
+    .bypassAuth()
+    .listen()
+    .onUpdated((newResults) => (results.value = newResults))
+    .start();
 
-onBeforeUnmount(() => {
-  listener.stop();
-});
+  onBeforeUnmount(() => {
+    listener.stop();
+  });
+})
 
 function getHash(trackedJob: TrackedJob): string {
   return trackedJob.class;

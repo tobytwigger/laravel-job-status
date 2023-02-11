@@ -43,7 +43,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { JobRun, Queue, TrackedJob } from 'src/types/api';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
-import { client } from 'laravel-job-status-js';
+import { client } from '@tobytwigger/laravel-job-status-js';
 
 const results = ref<Queue | null>(null);
 
@@ -51,17 +51,19 @@ const props = defineProps<{
   queue: string;
 }>();
 
-let listener = client.queues
-  .show(props.queue)
-  .bypassAuth()
-  .listen()
-  .onUpdated((newResults) => (results.value = newResults))
-  .start();
+onMounted(() => {
 
-onBeforeUnmount(() => {
-  listener.stop();
+  let listener = client.queues
+    .show(props.queue)
+    .bypassAuth()
+    .listen()
+    .onUpdated((newResults) => (results.value = newResults))
+    .start();
+
+  onBeforeUnmount(() => {
+    listener.stop();
+  });
 });
-
 function getHash(jobRun: JobRun): string {
   return jobRun.uuid;
 }
