@@ -82,6 +82,8 @@ Interact with times that your jobs have ran
 
     ``` js
     client.runs.search()
+    .whereAlias('job-alias') // Optional call to filter by alias. Can be called multiple times.
+    .whereStatus('failed') // Optional call to filter by status. Can be called multiple times.
     .send();
     ```
 
