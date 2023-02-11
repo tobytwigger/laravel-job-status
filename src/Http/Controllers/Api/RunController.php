@@ -2,6 +2,7 @@
 
 namespace JobStatus\Http\Controllers\Api;
 
+use Illuminate\Database\Eloquent\Builder;
 use JobStatus\Http\Requests\Api\Run\RunSearchRequest;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\JobRun;
@@ -17,8 +18,21 @@ class RunController extends Controller
         }
 
         if ($request->has('alias')) {
-            $query->whereAlias($request->input('alias'));
+            $query->where(function(Builder $query) use ($request) {
+                foreach($request->input('alias') as $alias) {
+                    $query->orWhere('alias', $alias);
+                }
+            });
         }
+
+        if ($request->has('status')) {
+            $query->where(function(Builder $query) use ($request) {
+                foreach($request->input('status') as $status) {
+                    $query->orWhere('status', $status);
+                }
+            });
+        }
+
 
         if ($request->has('tags')) {
             $query->whereTags($request->input('tags'));

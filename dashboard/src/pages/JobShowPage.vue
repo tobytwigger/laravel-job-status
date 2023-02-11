@@ -51,12 +51,12 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue';
-import api from 'src/utils/client/api';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { JobRun, TrackedJob } from 'src/types/api';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
 import { client } from '@tobytwigger/laravel-job-status-js';
+import Listener from "@tobytwigger/laravel-job-status-js/dist/listener/Listener";
 
 const results = ref<TrackedJob | null>(null);
 
@@ -64,18 +64,30 @@ const props = defineProps<{
   alias: string;
 }>();
 
-onMounted(() => {
 
-  let listener = client.jobs
+// Filter
+
+const listener = ref<Listener|null>(null);
+
+function setupListener() {
+  if(listener.value !== null) {
+    listener.value.stop();
+  }
+
+  listener.value = client.jobs
     .show(props.alias)
     .bypassAuth()
     .listen()
     .onUpdated((newResults) => (results.value = newResults))
     .start();
+}
 
-  onBeforeUnmount(() => {
-    listener.stop();
-  });
+onMounted(() => setupListener());
+
+onBeforeUnmount(() => {
+  if(listener.value !== null) {
+    listener.value.stop();
+  }
 });
 
 function getHash(jobRun: JobRun): string {
