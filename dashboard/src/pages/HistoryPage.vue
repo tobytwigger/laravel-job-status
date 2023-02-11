@@ -10,12 +10,20 @@
           <div class="row">
             <div class="col-md-4 col-sm-6 col-xs-12">
               <q-card-section>
-                <q-select use-chips multiple clearable emit-value v-model="statusFilter" :options="statusOptions" label="Status" hint="Only show runs with these statuses" />
+                <q-select
+                  use-chips
+                  multiple
+                  clearable
+                  emit-value
+                  v-model="statusFilter"
+                  :options="statusOptions"
+                  label="Status"
+                  hint="Only show runs with these statuses"
+                />
               </q-card-section>
             </div>
           </div>
         </q-card>
-
       </div>
     </div>
 
@@ -40,7 +48,6 @@
               :max="results.last_page"
             />
           </div>
-
         </q-list>
       </div>
     </div>
@@ -49,12 +56,12 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue';
-import {JobRun, Status} from 'src/types/api';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { JobRun, Status } from 'src/types/api';
 import NoContextTrackedRunListItem from 'components/NoContextTrackedRunListItem.vue';
-import {client} from '@tobytwigger/laravel-job-status-js';
-import Listener from "@tobytwigger/laravel-job-status-js/dist/listener/Listener";
-import {PaginationResponse} from "@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse";
+import { client } from '@tobytwigger/laravel-job-status-js';
+import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
+import { PaginationResponse } from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
 
 const results = ref<PaginationResponse<JobRun> | null>(null);
 
@@ -63,8 +70,8 @@ watch(page, (page, prevPage) => {
   setupListener();
 });
 
-const statusFilter = ref<string[]|null>(null);
-const listener = ref<Listener|null>(null);
+const statusFilter = ref<string[] | null>(null);
+const listener = ref<Listener | null>(null);
 
 watch(statusFilter, (aliasFilter, prevAliasFilter) => {
   setupListener();
@@ -74,13 +81,13 @@ watch(page, (page, prevPage) => {
 });
 
 function setupListener() {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 
   let search = client.runs.search();
-  if(statusFilter.value !== null && statusFilter.value.length > 0) {
-    for(let status of statusFilter.value) {
+  if (statusFilter.value !== null && statusFilter.value.length > 0) {
+    for (let status of statusFilter.value) {
       search = search.whereStatus(status);
     }
   }
@@ -96,20 +103,19 @@ function setupListener() {
 onMounted(() => setupListener());
 
 onBeforeUnmount(() => {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 });
 
 const statusOptions = computed(() => {
   return [
-    {label: 'All', value: null},
-    {label: 'Queued', value: Status.Queued},
-    {label: 'Running', value: Status.Started},
-    {label: 'Failed', value: Status.Failed},
-    {label: 'Cancelled', value: Status.Cancelled},
-    {label: 'Succeeded', value: Status.Succeeded},
-  ]
+    { label: 'All', value: null },
+    { label: 'Queued', value: Status.Queued },
+    { label: 'Running', value: Status.Started },
+    { label: 'Failed', value: Status.Failed },
+    { label: 'Cancelled', value: Status.Cancelled },
+    { label: 'Succeeded', value: Status.Succeeded },
+  ];
 });
-
 </script>

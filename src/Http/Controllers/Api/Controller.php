@@ -58,5 +58,4 @@ class Controller extends \Illuminate\Routing\Controller
 
         return $this->paginationResponse($slicedItems, count($items));
     }
-
 }

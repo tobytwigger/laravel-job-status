@@ -52,7 +52,6 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
-
   let listener = client.queues
     .show(props.queue)
     .bypassAuth()

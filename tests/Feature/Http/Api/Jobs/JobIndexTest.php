@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Feature\Http\Api\Jobs;
 
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Testing\AssertableJsonString;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
 
@@ -97,16 +96,16 @@ class JobIndexTest extends TestCase
         $response->assertJsonCount(10, 'data.0.runs');
 
         $this->assertEquals('OurAliasTwo', $response->json('data.0.runs.0.alias'));
-        $this->assertEquals($accessible[9]->id,  $response->json('data.0.runs.0.id'));
-        $this->assertEquals($accessible[8]->id,  $response->json('data.0.runs.1.id'));
-        $this->assertEquals($accessible[7]->id,  $response->json('data.0.runs.2.id'));
-        $this->assertEquals($accessible[6]->id,  $response->json('data.0.runs.3.id'));
-        $this->assertEquals($accessible[5]->id,  $response->json('data.0.runs.4.id'));
-        $this->assertEquals($accessible[4]->id,  $response->json('data.0.runs.5.id'));
-        $this->assertEquals($accessible[3]->id,  $response->json('data.0.runs.6.id'));
-        $this->assertEquals($accessible[2]->id,  $response->json('data.0.runs.7.id'));
-        $this->assertEquals($accessible[1]->id,  $response->json('data.0.runs.8.id'));
-        $this->assertEquals($accessible[0]->id,  $response->json('data.0.runs.9.id'));
+        $this->assertEquals($accessible[9]->id, $response->json('data.0.runs.0.id'));
+        $this->assertEquals($accessible[8]->id, $response->json('data.0.runs.1.id'));
+        $this->assertEquals($accessible[7]->id, $response->json('data.0.runs.2.id'));
+        $this->assertEquals($accessible[6]->id, $response->json('data.0.runs.3.id'));
+        $this->assertEquals($accessible[5]->id, $response->json('data.0.runs.4.id'));
+        $this->assertEquals($accessible[4]->id, $response->json('data.0.runs.5.id'));
+        $this->assertEquals($accessible[3]->id, $response->json('data.0.runs.6.id'));
+        $this->assertEquals($accessible[2]->id, $response->json('data.0.runs.7.id'));
+        $this->assertEquals($accessible[1]->id, $response->json('data.0.runs.8.id'));
+        $this->assertEquals($accessible[0]->id, $response->json('data.0.runs.9.id'));
 
         $response = $this->getJson(route('api.job-status.jobs.index', ['bypassAuth' => true]));
 
@@ -114,31 +113,30 @@ class JobIndexTest extends TestCase
         $response->assertJsonCount(10, 'data.0.runs');
 
         $this->assertEquals('OurAliasTwo', $response->json('data.0.runs.0.alias'));
-        $this->assertEquals($accessible[9]->id,  $response->json('data.0.runs.0.id'));
-        $this->assertEquals($accessible[8]->id,  $response->json('data.0.runs.1.id'));
-        $this->assertEquals($accessible[7]->id,  $response->json('data.0.runs.2.id'));
-        $this->assertEquals($accessible[6]->id,  $response->json('data.0.runs.3.id'));
-        $this->assertEquals($accessible[5]->id,  $response->json('data.0.runs.4.id'));
-        $this->assertEquals($accessible[4]->id,  $response->json('data.0.runs.5.id'));
-        $this->assertEquals($accessible[3]->id,  $response->json('data.0.runs.6.id'));
-        $this->assertEquals($accessible[2]->id,  $response->json('data.0.runs.7.id'));
-        $this->assertEquals($accessible[1]->id,  $response->json('data.0.runs.8.id'));
-        $this->assertEquals($accessible[0]->id,  $response->json('data.0.runs.9.id'));
+        $this->assertEquals($accessible[9]->id, $response->json('data.0.runs.0.id'));
+        $this->assertEquals($accessible[8]->id, $response->json('data.0.runs.1.id'));
+        $this->assertEquals($accessible[7]->id, $response->json('data.0.runs.2.id'));
+        $this->assertEquals($accessible[6]->id, $response->json('data.0.runs.3.id'));
+        $this->assertEquals($accessible[5]->id, $response->json('data.0.runs.4.id'));
+        $this->assertEquals($accessible[4]->id, $response->json('data.0.runs.5.id'));
+        $this->assertEquals($accessible[3]->id, $response->json('data.0.runs.6.id'));
+        $this->assertEquals($accessible[2]->id, $response->json('data.0.runs.7.id'));
+        $this->assertEquals($accessible[1]->id, $response->json('data.0.runs.8.id'));
+        $this->assertEquals($accessible[0]->id, $response->json('data.0.runs.9.id'));
 
         $response->assertJsonCount(10, 'data.1.runs');
 
         $this->assertEquals('OurAlias', $response->json('data.1.runs.0.alias'));
-        $this->assertEquals($inaccessible[9]->id,  $response->json('data.1.runs.0.id'));
-        $this->assertEquals($inaccessible[8]->id,  $response->json('data.1.runs.1.id'));
-        $this->assertEquals($inaccessible[7]->id,  $response->json('data.1.runs.2.id'));
-        $this->assertEquals($inaccessible[6]->id,  $response->json('data.1.runs.3.id'));
-        $this->assertEquals($inaccessible[5]->id,  $response->json('data.1.runs.4.id'));
-        $this->assertEquals($inaccessible[4]->id,  $response->json('data.1.runs.5.id'));
-        $this->assertEquals($inaccessible[3]->id,  $response->json('data.1.runs.6.id'));
-        $this->assertEquals($inaccessible[2]->id,  $response->json('data.1.runs.7.id'));
-        $this->assertEquals($inaccessible[1]->id,  $response->json('data.1.runs.8.id'));
-        $this->assertEquals($inaccessible[0]->id,  $response->json('data.1.runs.9.id'));
-
+        $this->assertEquals($inaccessible[9]->id, $response->json('data.1.runs.0.id'));
+        $this->assertEquals($inaccessible[8]->id, $response->json('data.1.runs.1.id'));
+        $this->assertEquals($inaccessible[7]->id, $response->json('data.1.runs.2.id'));
+        $this->assertEquals($inaccessible[6]->id, $response->json('data.1.runs.3.id'));
+        $this->assertEquals($inaccessible[5]->id, $response->json('data.1.runs.4.id'));
+        $this->assertEquals($inaccessible[4]->id, $response->json('data.1.runs.5.id'));
+        $this->assertEquals($inaccessible[3]->id, $response->json('data.1.runs.6.id'));
+        $this->assertEquals($inaccessible[2]->id, $response->json('data.1.runs.7.id'));
+        $this->assertEquals($inaccessible[1]->id, $response->json('data.1.runs.8.id'));
+        $this->assertEquals($inaccessible[0]->id, $response->json('data.1.runs.9.id'));
     }
 
     /** @test */
@@ -157,7 +155,8 @@ class JobIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_can_paginate(){
+    public function it_can_paginate()
+    {
         $jobStatuses = JobStatus::factory(['is_unprotected' => true])->count(10)->create();
 
         $response = $this->getJson(route('api.job-status.jobs.index', ['page' => 1, 'per_page' => 5]));
@@ -190,6 +189,5 @@ class JobIndexTest extends TestCase
         $this->assertEquals($jobStatuses[2]->alias, $response->json('data.2.alias'));
         $this->assertEquals($jobStatuses[1]->alias, $response->json('data.3.alias'));
         $this->assertEquals($jobStatuses[0]->alias, $response->json('data.4.alias'));
-
     }
 }

@@ -56,7 +56,7 @@ import { JobRun, TrackedJob } from 'src/types/api';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
 import { client } from '@tobytwigger/laravel-job-status-js';
-import Listener from "@tobytwigger/laravel-job-status-js/dist/listener/Listener";
+import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
 
 const results = ref<TrackedJob | null>(null);
 
@@ -64,13 +64,12 @@ const props = defineProps<{
   alias: string;
 }>();
 
-
 // Filter
 
-const listener = ref<Listener|null>(null);
+const listener = ref<Listener | null>(null);
 
 function setupListener() {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 
@@ -85,7 +84,7 @@ function setupListener() {
 onMounted(() => setupListener());
 
 onBeforeUnmount(() => {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 });

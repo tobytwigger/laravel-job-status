@@ -28,12 +28,12 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref, watch} from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
 import { TrackedJob } from 'src/types/api';
 import { client } from '@tobytwigger/laravel-job-status-js';
-import {PaginationResponse} from "@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse";
-import Listener from "@tobytwigger/laravel-job-status-js/dist/listener/Listener";
+import { PaginationResponse } from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
+import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
 
 const results = ref<PaginationResponse<TrackedJob> | null>(null);
 
@@ -42,10 +42,10 @@ watch(page, (page, prevPage) => {
   setupListener();
 });
 
-const listener = ref<Listener|null>(null);
+const listener = ref<Listener | null>(null);
 
 function setupListener() {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 
@@ -61,7 +61,7 @@ function setupListener() {
 onMounted(() => setupListener());
 
 onBeforeUnmount(() => {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 });

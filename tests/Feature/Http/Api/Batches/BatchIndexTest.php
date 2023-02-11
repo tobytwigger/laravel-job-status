@@ -170,7 +170,8 @@ class BatchIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_can_paginate(){
+    public function it_can_paginate()
+    {
         $batches = JobBatch::factory()
             ->has(JobStatus::factory(['is_unprotected' => true]), 'jobStatus')
             ->count(10)->create();
@@ -205,6 +206,5 @@ class BatchIndexTest extends TestCase
         $this->assertEquals($batches[2]->id, $response->json('data.2.id'));
         $this->assertEquals($batches[1]->id, $response->json('data.3.id'));
         $this->assertEquals($batches[0]->id, $response->json('data.4.id'));
-
     }
 }

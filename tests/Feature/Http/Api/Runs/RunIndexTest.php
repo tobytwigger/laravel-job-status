@@ -195,7 +195,6 @@ class RunIndexTest extends TestCase
         $this->assertEquals($jobStatus->id, $response->json('data.0.id'));
         $this->assertEquals($jobStatus->class, $response->json('data.0.class'));
         $this->assertEquals($jobStatus->alias, $response->json('data.0.alias'));
-
     }
 
 
@@ -252,7 +251,8 @@ class RunIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_can_paginate(){
+    public function it_can_paginate()
+    {
         $jobStatuses = JobStatus::factory(['is_unprotected' => true])->count(10)->create();
 
         $response = $this->getJson(route('api.job-status.runs.index', ['page' => 1, 'per_page' => 5]));
@@ -288,7 +288,8 @@ class RunIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_runs_by_alias(){
+    public function it_can_filter_runs_by_alias()
+    {
         $jobStatus = JobStatus::factory()->count(5)->create(['alias' => 'mystatus']);
         $jobStatus2 = JobStatus::factory()->count(4)->create(['alias' => 'mystatus-two']);
         $jobStatus3 = JobStatus::factory()->count(4)->create(['alias' => 'mystatus-three']);
@@ -332,6 +333,5 @@ class RunIndexTest extends TestCase
         $this->assertEquals($jobStatus[2]->id, $response->json('data.6.id'));
         $this->assertEquals($jobStatus[1]->id, $response->json('data.7.id'));
         $this->assertEquals($jobStatus[0]->id, $response->json('data.8.id'));
-
     }
 }

@@ -3,7 +3,6 @@
 namespace JobStatus\Tests\Feature\Http\Api\Queues;
 
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Testing\AssertableJsonString;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
 
@@ -78,7 +77,6 @@ class QueueIndexTest extends TestCase
         $this->assertEquals($job1[2]->id, $response->json('data.0.runs.2.id'));
         $this->assertEquals($job1[1]->id, $response->json('data.0.runs.3.id'));
         $this->assertEquals($job1[0]->id, $response->json('data.0.runs.4.id'));
-
     }
 
     /** @test */
@@ -144,7 +142,8 @@ class QueueIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_can_paginate(){
+    public function it_can_paginate()
+    {
         $jobStatuses = JobStatus::factory(['is_unprotected' => true])->count(10)->create();
 
         $response = $this->getJson(route('api.job-status.queues.index', ['page' => 1, 'per_page' => 5]));
@@ -177,7 +176,5 @@ class QueueIndexTest extends TestCase
         $this->assertEquals($jobStatuses[2]->queue, $response->json('data.2.name'));
         $this->assertEquals($jobStatuses[1]->queue, $response->json('data.3.name'));
         $this->assertEquals($jobStatuses[0]->queue, $response->json('data.4.name'));
-
     }
-
 }

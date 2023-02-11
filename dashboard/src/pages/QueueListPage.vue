@@ -28,16 +28,16 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref, watch} from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { client } from '@tobytwigger/laravel-job-status-js';
 import { Queue } from 'src/types/api';
 import QueueListItem from 'components/QueueListItem.vue';
-import {PaginationResponse} from "@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse";
-import Listener from "@tobytwigger/laravel-job-status-js/dist/listener/Listener";
+import { PaginationResponse } from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
+import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
 
 const results = ref<PaginationResponse<Queue> | null>(null);
 
-const listener = ref<Listener|null>(null);
+const listener = ref<Listener | null>(null);
 
 const page = ref<number>(1);
 
@@ -46,7 +46,7 @@ watch(page, (page, prevPage) => {
 });
 
 function setupListener() {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 
@@ -62,11 +62,10 @@ function setupListener() {
 onMounted(() => setupListener());
 
 onBeforeUnmount(() => {
-  if(listener.value !== null) {
+  if (listener.value !== null) {
     listener.value.stop();
   }
 });
-
 
 function getHash(queue: Queue): string {
   return queue.name ?? 'default';

@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onBeforeUnmount, onMounted, ref} from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import api from 'src/utils/client/api';
 import { Batch } from 'src/types/api';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
@@ -63,7 +63,6 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
-
   let listener = client.batches
     .show(props.batchId)
     .bypassAuth()
