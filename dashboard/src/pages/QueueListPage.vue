@@ -19,21 +19,24 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-import { client } from 'laravel-job-status-js';
+import { client } from '@tobytwigger/laravel-job-status-js';
 import { Queue } from 'src/types/api';
 import QueueListItem from 'components/QueueListItem.vue';
 
 const results = ref<Queue[] | null>(null);
 
-let listener = client.queues
-  .search()
-  .bypassAuth()
-  .listen()
-  .onUpdated((newResults) => (results.value = newResults))
-  .start();
+onMounted(() => {
 
-onBeforeUnmount(() => {
-  listener.stop();
+  let listener = client.queues
+    .search()
+    .bypassAuth()
+    .listen()
+    .onUpdated((newResults) => (results.value = newResults))
+    .start();
+
+  onBeforeUnmount(() => {
+    listener.stop();
+  });
 });
 
 function getHash(queue: Queue): string {

@@ -39,6 +39,7 @@ class TrackableTest extends TestCase
         $this->assertCount(8, $search->get()->jobs()->first()->runs());
     }
 
+    /** @test */
     public function search_returns_a_search_for_the_job_and_tags_with_indexless_tags()
     {
         JobStatus::factory()->count(6)->create(['class' => JobFake::class, 'alias' => 'jobfake']);

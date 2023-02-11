@@ -72,6 +72,7 @@ class JobStatusStatusTest extends TestCase
         $this->assertDatabaseEmpty(config('laravel-job-status.table_prefix') . '_job_status_statuses');
     }
 
+    /** @test */
     public function a_job_message_can_be_updated_when_disabled()
     {
         config()->set('laravel-job-status.collectors.status_history.enabled', true);
