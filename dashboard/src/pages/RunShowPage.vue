@@ -277,7 +277,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import api from 'src/utils/client/api';
 import {
   JobException,
@@ -302,7 +302,6 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
-
   let listener = client.runs
     .show(props.jobStatusId)
     .bypassAuth()
