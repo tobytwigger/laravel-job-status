@@ -1,5 +1,5 @@
 <template>
-  <q-page class="justify-evenly" padding v-if="results !== null">
+  <q-page class="justify-evenly" v-if="results?.total > 0">
     <q-breadcrumbs>
       <q-breadcrumbs-el icon="manage_search" to="/history" label="History" />
     </q-breadcrumbs>
@@ -25,11 +25,22 @@
           <q-item-label header>Runs</q-item-label>
 
           <q-separator></q-separator>
-          <div v-for="run in results" :key="run.id">
+          <div v-for="run in results?.data ?? []" :key="run.id">
             <no-context-tracked-run-list-item :tracked-run="run">
             </no-context-tracked-run-list-item>
             <q-separator></q-separator>
           </div>
+
+          <div class="q-pa-lg flex flex-center">
+            <q-pagination
+              v-if="results?.total > 0"
+              input
+              :model-value="results.current_page"
+              @update:model-value="page = $event"
+              :max="results.last_page"
+            />
+          </div>
+
         </q-list>
       </div>
     </div>
@@ -43,18 +54,24 @@ import {JobRun, Status} from 'src/types/api';
 import NoContextTrackedRunListItem from 'components/NoContextTrackedRunListItem.vue';
 import {client} from '@tobytwigger/laravel-job-status-js';
 import Listener from "@tobytwigger/laravel-job-status-js/dist/listener/Listener";
+import {PaginationResponse} from "@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse";
 
-const results = ref<JobRun[] | null>(null);
+const results = ref<PaginationResponse<JobRun> | null>(null);
 
-
-
+const page = ref<number>(1);
+watch(page, (page, prevPage) => {
+  setupListener();
+});
 
 const statusFilter = ref<string[]|null>(null);
 const listener = ref<Listener|null>(null);
 
 watch(statusFilter, (aliasFilter, prevAliasFilter) => {
   setupListener();
-})
+});
+watch(page, (page, prevPage) => {
+  setupListener();
+});
 
 function setupListener() {
   if(listener.value !== null) {
@@ -69,6 +86,7 @@ function setupListener() {
   }
 
   listener.value = search
+    .page(page.value)
     .bypassAuth()
     .listen()
     .onUpdated((newResults) => (results.value = newResults))
