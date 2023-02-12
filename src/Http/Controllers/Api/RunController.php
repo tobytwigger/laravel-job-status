@@ -33,6 +33,22 @@ class RunController extends Controller
             });
         }
 
+        if ($request->has('queue')) {
+            $query->where(function (Builder $query) use ($request) {
+                foreach ($request->input('queue') as $queue) {
+                    $query->orWhere('queue', $queue);
+                }
+            });
+        }
+
+        if ($request->has('batchId')) {
+            $query->where(function (Builder $query) use ($request) {
+                foreach ($request->input('batchId') as $batchId) {
+                    $query->orWhere('batch_id', $batchId);
+                }
+            });
+        }
+
 
         if ($request->has('tags')) {
             $query->whereTags($request->input('tags'));

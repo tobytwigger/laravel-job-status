@@ -1,7 +1,8 @@
 <template>
-  <q-page class="justify-evenly">
+  <q-page class="justify-evenly" padding>
     <q-breadcrumbs>
       <q-breadcrumbs-el icon="list" to="/batch" label="Batches"/>
+      <q-breadcrumbs-el to="/batch" label="List Batches"/>
     </q-breadcrumbs>
 
     <q-list class="rounded-borders q-pa-lg">

@@ -29,21 +29,12 @@
       </div>
 
       <div class="col-12">
-        <q-list class="rounded-borders q-pa-lg">
-          <q-item-label header>Viewing batch '{{ batchName }}'</q-item-label>
-          <q-separator></q-separator>
-
-          <div v-for="result in results.runs" :key="result.id">
-            <tracked-run-list-item
-              :tracked-run="result"
-            ></tracked-run-list-item>
-            <q-separator></q-separator>
-          </div>
-        </q-list>
+        <run-list-with-filtering :title="'Runs in batch \'' + batchName + '\''" :batch-ids="[props.batchId]">
+        </run-list-with-filtering>
       </div>
     </div>
   </q-page>
-  <q-page class="items-center justify-evenly" v-else> Loading </q-page>
+  <q-page class="items-center justify-evenly" v-else padding> Loading </q-page>
 </template>
 
 <script setup lang="ts">
@@ -55,6 +46,7 @@ import BatchListItem from 'components/BatchListItem.vue';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import dayjs from 'dayjs';
 import { client } from '@tobytwigger/laravel-job-status-js';
+import RunListWithFiltering from "components/RunListWithFiltering.vue";
 
 const results = ref<Batch | null>(null);
 

@@ -1,7 +1,8 @@
 <template>
-  <q-page class="justify-evenly">
+  <q-page class="justify-evenly" padding>
     <q-breadcrumbs>
       <q-breadcrumbs-el icon="manage_search" to="/history" label="History" />
+      <q-breadcrumbs-el to="/history" label="List Runs" />
     </q-breadcrumbs>
 
     <div class="row q-ma-md">

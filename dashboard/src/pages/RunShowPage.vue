@@ -273,7 +273,7 @@
       </div>
     </div>
   </q-page>
-  <q-page class="items-center justify-evenly" v-else> Loading </q-page>
+  <q-page class="items-center justify-evenly" v-else padding> Loading </q-page>
 </template>
 
 <script setup lang="ts">
