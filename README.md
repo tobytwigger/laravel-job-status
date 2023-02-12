@@ -8,7 +8,7 @@
   <p align="center">
     The only Laravel job tracking and debugging tool you'll ever need
 <br />
-        <a href="#"><strong>Demo Site »</strong></a>
+        <a href="https://job-tracker.gpsvault.co.uk/"><strong>Demo Site »</strong></a>
 <br />
     <a href="https://tobytwigger.github.io/laravel-job-status"><strong>Explore the docs »</strong></a>
 <br />
