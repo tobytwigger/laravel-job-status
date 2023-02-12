@@ -29,7 +29,10 @@
       </div>
 
       <div class="col-12">
-        <run-list-with-filtering :title="'Runs in batch \'' + batchName + '\''" :batch-ids="[props.batchId]">
+        <run-list-with-filtering
+          :title="'Runs in batch \'' + batchName + '\''"
+          :batch-ids="[props.batchId]"
+        >
         </run-list-with-filtering>
       </div>
     </div>
@@ -46,7 +49,7 @@ import BatchListItem from 'components/BatchListItem.vue';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import dayjs from 'dayjs';
 import { client } from '@tobytwigger/laravel-job-status-js';
-import RunListWithFiltering from "components/RunListWithFiltering.vue";
+import RunListWithFiltering from 'components/RunListWithFiltering.vue';
 
 const results = ref<Batch | null>(null);
 

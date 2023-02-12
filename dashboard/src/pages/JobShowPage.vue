@@ -35,16 +35,19 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <run-list-with-filtering title="Runs" :aliases="[props.alias]"></run-list-with-filtering>
-<!--        <q-list bordered class="rounded-borders" style="min-width: 85%">-->
-<!--          <q-item-label header>Runs</q-item-label>-->
+        <run-list-with-filtering
+          title="Runs"
+          :aliases="[props.alias]"
+        ></run-list-with-filtering>
+        <!--        <q-list bordered class="rounded-borders" style="min-width: 85%">-->
+        <!--          <q-item-label header>Runs</q-item-label>-->
 
-<!--          <q-separator></q-separator>-->
-<!--          <div v-for="run in results.runs" :key="getHash(run)">-->
-<!--            <tracked-run-list-item :tracked-run="run"> </tracked-run-list-item>-->
-<!--            <q-separator></q-separator>-->
-<!--          </div>-->
-<!--        </q-list>-->
+        <!--          <q-separator></q-separator>-->
+        <!--          <div v-for="run in results.runs" :key="getHash(run)">-->
+        <!--            <tracked-run-list-item :tracked-run="run"> </tracked-run-list-item>-->
+        <!--            <q-separator></q-separator>-->
+        <!--          </div>-->
+        <!--        </q-list>-->
       </div>
     </div>
   </q-page>
@@ -58,7 +61,7 @@ import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
 import { client } from '@tobytwigger/laravel-job-status-js';
 import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
-import RunListWithFiltering from "components/RunListWithFiltering.vue";
+import RunListWithFiltering from 'components/RunListWithFiltering.vue';
 
 const results = ref<TrackedJob | null>(null);
 

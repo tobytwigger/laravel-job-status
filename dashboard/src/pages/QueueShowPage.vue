@@ -23,7 +23,10 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <run-list-with-filtering :title="'Runs in queue \'' + queue + '\''" :queues="[props.queue]">
+        <run-list-with-filtering
+          :title="'Runs in queue \'' + queue + '\''"
+          :queues="[props.queue]"
+        >
         </run-list-with-filtering>
       </div>
     </div>
@@ -37,7 +40,7 @@ import { JobRun, Queue, TrackedJob } from 'src/types/api';
 import TrackedRunListItem from 'components/TrackedRunListItem.vue';
 import JobFailureReasons from 'components/JobFailureReasons.vue';
 import { client } from '@tobytwigger/laravel-job-status-js';
-import RunListWithFiltering from "components/RunListWithFiltering.vue";
+import RunListWithFiltering from 'components/RunListWithFiltering.vue';
 
 const results = ref<Queue | null>(null);
 
