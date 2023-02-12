@@ -1,15 +1,14 @@
 <template>
   <q-page class="justify-evenly" padding>
     <q-breadcrumbs>
-      <q-breadcrumbs-el icon="list" to="/queues" label="Queues"/>
-      <q-breadcrumbs-el to="/queues" label="List Queues"/>
+      <q-breadcrumbs-el icon="list" to="/queues" label="Queues" />
+      <q-breadcrumbs-el to="/queues" label="List Queues" />
     </q-breadcrumbs>
 
     <q-list class="rounded-borders q-pa-lg">
       <q-item-label header>All Queues</q-item-label>
 
       <div v-if="results?.total > 0">
-
         <q-separator></q-separator>
         <div v-for="result in results?.data ?? []" :key="getHash(result)">
           <queue-list-item :queue="result"></queue-list-item>
@@ -29,7 +28,7 @@
       <div v-else-if="results?.total === 0">
         <q-item clickable v-ripple>
           <q-item-section avatar>
-            <q-icon color="negative" name="warning"/>
+            <q-icon color="negative" name="warning" />
           </q-item-section>
 
           <q-item-section>No queues found</q-item-section>
@@ -38,7 +37,7 @@
       <div v-else>
         <q-item clickable v-ripple>
           <q-item-section avatar>
-            <q-icon color="primary" name="sync"/>
+            <q-icon color="primary" name="sync" />
           </q-item-section>
 
           <q-item-section>Loading</q-item-section>
@@ -49,11 +48,11 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref, watch} from 'vue';
-import {client} from '@tobytwigger/laravel-job-status-js';
-import {Queue} from 'src/types/api';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { client } from '@tobytwigger/laravel-job-status-js';
+import { Queue } from 'src/types/api';
 import QueueListItem from 'components/QueueListItem.vue';
-import {PaginationResponse} from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
+import { PaginationResponse } from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
 import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
 
 const results = ref<PaginationResponse<Queue> | null>(null);

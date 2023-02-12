@@ -1,15 +1,14 @@
 <template>
   <q-page class="justify-evenly" padding>
     <q-breadcrumbs>
-      <q-breadcrumbs-el icon="list" to="/batch" label="Batches"/>
-      <q-breadcrumbs-el to="/batch" label="List Batches"/>
+      <q-breadcrumbs-el icon="list" to="/batch" label="Batches" />
+      <q-breadcrumbs-el to="/batch" label="List Batches" />
     </q-breadcrumbs>
 
     <q-list class="rounded-borders q-pa-lg">
       <q-item-label header>All Batches</q-item-label>
 
       <div v-if="results?.total > 0">
-
         <q-separator></q-separator>
         <div v-for="result in results?.data ?? []" :key="getHash(result)">
           <batch-list-item :batch="result"></batch-list-item>
@@ -49,13 +48,13 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref, watch} from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import api from 'src/utils/client/api';
-import {Batch} from 'src/types/api';
+import { Batch } from 'src/types/api';
 import TrackedJobListItem from '../components/TrackedJobListItem.vue';
 import BatchListItem from 'components/BatchListItem.vue';
-import {client} from '@tobytwigger/laravel-job-status-js';
-import {PaginationResponse} from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
+import { client } from '@tobytwigger/laravel-job-status-js';
+import { PaginationResponse } from '@tobytwigger/laravel-job-status-js/dist/interfaces/PaginationResponse';
 import Listener from '@tobytwigger/laravel-job-status-js/dist/listener/Listener';
 
 const results = ref<PaginationResponse<Batch> | null>(null);

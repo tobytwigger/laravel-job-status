@@ -21,10 +21,10 @@ class RunSearchRequest extends FormRequest
             ],
             'batchId' => ['sometimes', 'array'],
             'batchId.*' => [
-                'numeric', sprintf('exists:%s_%s,id', config('laravel-job-status.table_prefix'), 'job_batches')
+                'numeric', sprintf('exists:%s_%s,id', config('laravel-job-status.table_prefix'), 'job_batches'),
             ],
             'queue' => ['sometimes', 'array'],
-            'queue.*' => ['string']
+            'queue.*' => ['string'],
         ];
     }
 }
