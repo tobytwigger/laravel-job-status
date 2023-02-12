@@ -1,11 +1,11 @@
-<p style="text-align: center;">
+<p align="center">
   <a href="https://github.com/tobytwigger/laravel-job-status">
     <img src="https://raw.githubusercontent.com/tobytwigger/laravel-job-status-demo/main/resources/images/logo-no-background.png" alt="Logo" width="100" height="63">
   </a>
 
 <h3 align="center">Laravel Job Tracker</h3>
 
-  <p style="text-align: center;">
+  <p align="center">
     The only Laravel job tracking and debugging tool you'll ever need
 <br />
         <a href="#"><strong>Demo Site »</strong></a>
