@@ -19,6 +19,12 @@ class RunSearchRequest extends FormRequest
                 'string',
                 Rule::in(Arr::map(Status::cases(), fn (Status $status) => $status->value)),
             ],
+            'batchId' => ['sometimes', 'array'],
+            'batchId.*' => [
+                'numeric', sprintf('exists:%s_%s,id', config('laravel-job-status.table_prefix'), 'job_batches'),
+            ],
+            'queue' => ['sometimes', 'array'],
+            'queue.*' => ['string'],
         ];
     }
 }

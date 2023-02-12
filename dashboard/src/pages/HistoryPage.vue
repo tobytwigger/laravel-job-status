@@ -1,7 +1,8 @@
 <template>
-  <q-page class="justify-evenly" v-if="results?.total > 0">
+  <q-page class="justify-evenly" padding>
     <q-breadcrumbs>
       <q-breadcrumbs-el icon="manage_search" to="/history" label="History" />
+      <q-breadcrumbs-el to="/history" label="List Runs" />
     </q-breadcrumbs>
 
     <div class="row q-ma-md">
@@ -32,27 +33,46 @@
         <q-list bordered class="rounded-borders" style="min-width: 85%">
           <q-item-label header>Runs</q-item-label>
 
-          <q-separator></q-separator>
-          <div v-for="run in results?.data ?? []" :key="run.id">
-            <no-context-tracked-run-list-item :tracked-run="run">
-            </no-context-tracked-run-list-item>
+          <div v-if="results?.total > 0">
             <q-separator></q-separator>
-          </div>
+            <div v-for="run in results?.data ?? []" :key="run.id">
+              <no-context-tracked-run-list-item :tracked-run="run">
+              </no-context-tracked-run-list-item>
+              <q-separator></q-separator>
+            </div>
 
-          <div class="q-pa-lg flex flex-center">
-            <q-pagination
-              v-if="results?.total > 0"
-              input
-              :model-value="results.current_page"
-              @update:model-value="page = $event"
-              :max="results.last_page"
-            />
+            <div class="q-pa-lg flex flex-center">
+              <q-pagination
+                v-if="results?.total > 0"
+                input
+                :model-value="results.current_page"
+                @update:model-value="page = $event"
+                :max="results.last_page"
+              />
+            </div>
+          </div>
+          <div v-else-if="results?.total === 0">
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon color="negative" name="warning" />
+              </q-item-section>
+
+              <q-item-section>No runs found</q-item-section>
+            </q-item>
+          </div>
+          <div v-else>
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon color="primary" name="sync" />
+              </q-item-section>
+
+              <q-item-section>Loading</q-item-section>
+            </q-item>
           </div>
         </q-list>
       </div>
     </div>
   </q-page>
-  <q-page class="items-center justify-evenly" v-else> Loading </q-page>
 </template>
 
 <script setup lang="ts">

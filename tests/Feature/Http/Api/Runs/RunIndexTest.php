@@ -4,6 +4,7 @@ namespace JobStatus\Tests\Feature\Http\Api\Runs;
 
 use Illuminate\Support\Facades\Gate;
 use JobStatus\Enums\Status;
+use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusTag;
 use JobStatus\Models\JobStatusUser;
@@ -320,6 +321,55 @@ class RunIndexTest extends TestCase
 
         $statusQuery = [
             'status' => [Status::FAILED->value, Status::QUEUED->value],
+        ];
+        $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
+        $response->assertJsonCount(9, 'data');
+
+        $this->assertEquals($jobStatus3[3]->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus3[2]->id, $response->json('data.1.id'));
+        $this->assertEquals($jobStatus3[1]->id, $response->json('data.2.id'));
+        $this->assertEquals($jobStatus3[0]->id, $response->json('data.3.id'));
+        $this->assertEquals($jobStatus[4]->id, $response->json('data.4.id'));
+        $this->assertEquals($jobStatus[3]->id, $response->json('data.5.id'));
+        $this->assertEquals($jobStatus[2]->id, $response->json('data.6.id'));
+        $this->assertEquals($jobStatus[1]->id, $response->json('data.7.id'));
+        $this->assertEquals($jobStatus[0]->id, $response->json('data.8.id'));
+    }
+
+    /** @test */
+    public function it_can_filter_runs_by_multiple_batches()
+    {
+        $batches = JobBatch::factory()->count(3)->create();
+        $jobStatus = JobStatus::factory()->count(5)->create(['batch_id' => $batches[0]->id]);
+        $jobStatus2 = JobStatus::factory()->count(4)->create(['batch_id' => $batches[1]->id]);
+        $jobStatus3 = JobStatus::factory()->count(4)->create(['batch_id' => $batches[2]->id]);
+
+        $statusQuery = [
+            'batchId' => [$batches[0]->id, $batches[2]->id],
+        ];
+        $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
+        $response->assertJsonCount(9, 'data');
+
+        $this->assertEquals($jobStatus3[3]->id, $response->json('data.0.id'));
+        $this->assertEquals($jobStatus3[2]->id, $response->json('data.1.id'));
+        $this->assertEquals($jobStatus3[1]->id, $response->json('data.2.id'));
+        $this->assertEquals($jobStatus3[0]->id, $response->json('data.3.id'));
+        $this->assertEquals($jobStatus[4]->id, $response->json('data.4.id'));
+        $this->assertEquals($jobStatus[3]->id, $response->json('data.5.id'));
+        $this->assertEquals($jobStatus[2]->id, $response->json('data.6.id'));
+        $this->assertEquals($jobStatus[1]->id, $response->json('data.7.id'));
+        $this->assertEquals($jobStatus[0]->id, $response->json('data.8.id'));
+    }
+
+    /** @test */
+    public function it_can_filter_runs_by_multiple_queues()
+    {
+        $jobStatus = JobStatus::factory()->count(5)->create(['queue' => 'queue1']);
+        $jobStatus2 = JobStatus::factory()->count(4)->create(['queue' => 'queue2']);
+        $jobStatus3 = JobStatus::factory()->count(4)->create(['queue' => 'queue3']);
+
+        $statusQuery = [
+            'queue' => ['queue1', 'queue3'],
         ];
         $response = $this->getJson(route('api.job-status.runs.index', $statusQuery));
         $response->assertJsonCount(9, 'data');
