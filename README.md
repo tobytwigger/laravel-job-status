@@ -1,6 +1,22 @@
-# Laravel Job Status
+<p align="center">
+  <a href="https://github.com/tobytwigger/laravel-job-status">
+    <img src="https://raw.githubusercontent.com/tobytwigger/laravel-job-status-demo/main/resources/images/logo-no-background.png" alt="Logo" width="100" height="63">
+  </a>
 
-> The only Laravel job debugging tool you'll ever need
+<h3 align="center">Laravel Job Tracker</h3>
+
+  <p align="center">
+    The only Laravel job tracking and debugging tool you'll ever need
+<br />
+        <a href="#"><strong>Demo Site »</strong></a>
+<br />
+    <a href="https://tobytwigger.github.io/laravel-job-status"><strong>Explore the docs »</strong></a>
+<br />
+<br />
+    <a href="https://github.com/tobytwigger/laravel-job-status/issues/new?template=bug_report.md">Report Bug</a>
+    ·
+    <a href="https://github.com/tobytwigger/laravel-job-status/issues/new?template=feature_request.md">Request Feature</a>
+</p>
 
 [![Latest Version](https://img.shields.io/github/v/release/tobytwigger/laravel-job-status?label=Latest%20Version&sort=semver&style=plastic)](https://github.com/tobytwigger/laravel-job-status/releases)
 [![Build Status](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml/badge.svg)](https://github.com/tobytwigger/laravel-job-status/actions/workflows/trigger_main_branch_flow.yml)
@@ -16,8 +32,6 @@
 * [Contact](#contact)
 
 ## About
-
-![example of job status in use](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/podcast.gif "Showing the user the status of their podcast being uploaded")
 
 - Save a complete history of jobs running in your Laravel application.
 - Provides realtime and historic insights into your queues.
@@ -44,4 +58,15 @@ and licensed for use under the terms of the MIT License (MIT). Please see
 
 ## Contact
 
-For any questions, suggestions, security vulnerabilities or help, email me directly at [tobytwigger1@gmail.com](mailto:tobytwigger1@gmail.com)
+For any questions, suggestions, security vulnerabilities or help, email me directly
+at [tobytwigger1@gmail.com](mailto:tobytwigger1@gmail.com)
+
+## Screenshots
+
+![example of job status in use](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/podcast.gif "Showing the user the status of their podcast being uploaded")
+
+
+![job status dashboard](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/dashboard/list-of-jobs.png "Viewing a list of jobs running in your application")
+
+
+![dashboard timeline](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/dashboard/run-timeline.png "View the timeline for a particular run of a job")
