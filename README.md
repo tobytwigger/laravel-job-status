@@ -33,8 +33,6 @@
 
 ## About
 
-![example of job status in use](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/podcast.gif "Showing the user the status of their podcast being uploaded")
-
 - Save a complete history of jobs running in your Laravel application.
 - Provides realtime and historic insights into your queues.
 - Add two-way communication, cancelling jobs and logging to jobs.
@@ -62,3 +60,13 @@ and licensed for use under the terms of the MIT License (MIT). Please see
 
 For any questions, suggestions, security vulnerabilities or help, email me directly
 at [tobytwigger1@gmail.com](mailto:tobytwigger1@gmail.com)
+
+## Screenshots
+
+![example of job status in use](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/podcast.gif "Showing the user the status of their podcast being uploaded")
+
+
+![job status dashboard](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/dashboard/list-of-jobs.png "Viewing a list of jobs running in your application")
+
+
+![dashboard timeline](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/dashboard/run-timeline.png "View the timeline for a particular run of a job")
