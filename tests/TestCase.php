@@ -4,8 +4,6 @@ namespace JobStatus\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
 use JobStatus\Exceptions\CannotBeRetriedException;
 use JobStatus\JobStatusServiceProvider;
 use JobStatus\Models\JobBatch;
@@ -42,12 +40,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-
         $app['config']->set('database.default', 'test');
         $app['config']->set('database.connections.test', [
             'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => ''
+            'prefix'   => '',
         ]);
     }
 
