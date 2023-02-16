@@ -27,7 +27,7 @@ return new class() extends Migration {
     public function down()
     {
         Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), function (Blueprint $table) {
-            $table->dropColumn('exception_id');
+            $table->dropConstrainedForeignId('exception_id');
         });
     }
 };
