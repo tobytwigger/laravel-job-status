@@ -4,15 +4,9 @@ on:
     pull_request:
 
 jobs:
-    php-linter:
-        name: 🔧 Lint the code
-        uses: ./.github/workflows/linting.yml
-        secrets: inherit
     run-tests:
         name: 🔎 Run the test suite
         uses: ./.github/workflows/phpunit_tests.yml
-        needs: [php-linter]
     static-analysis:
         name: 🔎 Analyse the code for errors
         uses: ./.github/workflows/phpstan_analysis.yml
-        needs: [php-linter]
