@@ -39,7 +39,7 @@ jobs:
             -   name: ⏳ Install PHP dependencies
                 if: steps.composer-cache.outputs.cache-hit != 'true'
                 run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+                  composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
                   composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
             -   name: 🔎 Run test suite
