@@ -82,6 +82,10 @@ Each job run is a new time a job has been dispatched
 - `accessibleBy($userId)` - Check if the given user ID can access the job
 - `trackingIsUnprotected()` - True if the tracking is marked as public/not protected
 
+#### Granting Access
+
+To grant access to additional users beyond those listed [in the job](./../auth.md), call `$run->modifier()->grantAccessTo(int $userId)` and pass in the ID of the user.
+
 #### Status
 
 A job has one of the following statuses (in the enum `\App\Enums\Status`).
@@ -108,6 +112,13 @@ A job has one of the following statuses (in the enum `\App\Enums\Status`).
 #### Signals
 
 - `$run->signals()` - Get an array of signals that were sent.
+
+##### Sending signals
+
+Using the `modifier()` option on the job run, you can interact with the job.
+
+`$run->modifier()->cancel()` - Cancel the job run.
+`$run->modifier->sendSignal(string $signal, array $parameters, bool $cancelJob = false)` - Send a [custom signal](./../features/signals.md#custom-signals) to the job.
 
 #### Retries
 
