@@ -23,7 +23,7 @@ class RetrieveConfig implements Arrayable, Jsonable
     {
         $baseUrl = config('laravel-job-status.routes.api.base_url');
         $prefix = config('laravel-job-status.routes.api.prefix');
-        if($baseUrl === null) {
+        if ($baseUrl === null) {
             $baseUrl = URL::to(config('laravel-job-status.routes.api.prefix'));
         } else {
             $baseUrl = sprintf(
@@ -32,8 +32,9 @@ class RetrieveConfig implements Arrayable, Jsonable
                 Str::startsWith($prefix, '/') ? Str::substr($prefix, 1) : $prefix,
             );
         }
+
         return [
-            'baseUrl' => $baseUrl
+            'baseUrl' => $baseUrl,
         ];
     }
 

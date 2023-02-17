@@ -7,7 +7,6 @@ use JobStatus\Tests\TestCase;
 
 class RetrieveConfigTest extends TestCase
 {
-
     /** @test */
     public function it_gets_the_config()
     {
@@ -28,7 +27,8 @@ class RetrieveConfigTest extends TestCase
      * @test
      * @dataProvider providerForBaseUrlPrefixConverter
      */
-    public function it_successfully_converts_a_base_url_and_prefix_into_a_url(?string $baseUrl, ?string $prefix, string $result){
+    public function it_successfully_converts_a_base_url_and_prefix_into_a_url(?string $baseUrl, ?string $prefix, string $result)
+    {
         config()->set('laravel-job-status.routes.api.base_url', $baseUrl);
         config()->set('laravel-job-status.routes.api.prefix', $prefix);
 
