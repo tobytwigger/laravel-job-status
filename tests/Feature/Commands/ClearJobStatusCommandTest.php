@@ -161,4 +161,18 @@ class ClearJobStatusCommandTest extends TestCase
         $this->assertTrue(JobStatus::where('id', $preservedJobs3[1]->id)->exists());
         $this->assertTrue(JobStatus::where('id', $preservedJobs3[2]->id)->exists());
     }
+
+    /** @test */
+    public function force_wipes_all_job_status_data()
+    {
+        JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::SUCCEEDED]);
+        JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::CANCELLED]);
+        JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::QUEUED]);
+        JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::FAILED]);
+
+        $this->artisan('job-status:clear --all')
+            ->assertOk();
+
+        $this->assertCount(0, JobStatus::all());
+    }
 }

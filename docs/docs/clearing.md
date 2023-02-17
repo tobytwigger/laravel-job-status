@@ -27,6 +27,12 @@ To keep a high level overview of your job history, you can choose to just delete
 
 To turn on trimming, pass the `--trim` flag to the command.
 
+### Wipe all data
+
+When developing `laravel-job-status`, or for other reasons - you might want to wipe all job status data from your database.
+
+To do this, pass the option `--all`, this will remove all constraints when searching for job status data to prune.
+
 ## Scheduling the command
 
 Often your real use case is more complex than the above examples. We may want to preserve a week of analytics at a time, and preserve failed jobs until you can debug them, but otherwise limit the stored data.
