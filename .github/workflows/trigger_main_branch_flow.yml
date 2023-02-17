@@ -7,13 +7,19 @@ on:
     workflow_dispatch:
 
 jobs:
+    php-linter:
+        name: 🔧 Lint the code
+        uses: ./.github/workflows/linting.yml
+        secrets: inherit
     run-tests:
         name: 🔎 Run the test suite
         if: "!contains(github.event.head_commit.message, '[CI]')"
+        needs: [php-linter]
         uses: ./.github/workflows/phpunit_tests.yml
     static-analysis:
         name: 🔎 Analyse the code for errors
         if: "!contains(github.event.head_commit.message, '[CI]')"
+        needs: [php-linter]
         uses: ./.github/workflows/phpstan_analysis.yml
     build-js:
         name: 🔨 Compile the JS files
