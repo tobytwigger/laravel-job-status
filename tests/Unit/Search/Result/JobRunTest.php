@@ -5,6 +5,7 @@ namespace JobStatus\Tests\Unit\Search\Result;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use JobStatus\Enums\Status;
+use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
@@ -449,5 +450,18 @@ class JobRunTest extends TestCase
         $status = JobStatus::factory()->create(['is_unprotected' => true]);
 
         $this->assertTrue((new JobRun($status))->accessibleBy(1));
+    }
+
+    /** @test */
+    public function it_returns_a_modifier(){
+        $status = JobStatus::factory()->create();
+
+        $modifier = (new JobRun($status))->modifier();
+        $this->assertInstanceOf(JobStatusModifier::class, $modifier);
+        $this->assertTrue(
+            $status->is(
+                $modifier->getJobStatus()
+            )
+        );
     }
 }

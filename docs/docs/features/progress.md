@@ -31,7 +31,7 @@ class SendEmail {
     public function handle() {
         foreach($this->users as $index => $user) {
             $percentageValue = $this->generatePercentage($index);
-            $this->percentage($percentageValue);
+            $this->status()->setPercentage($percentageValue);
             $this->email->sendTo($user);
         }
     }
