@@ -170,7 +170,7 @@ class ClearJobStatusCommandTest extends TestCase
         JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::QUEUED]);
         JobStatus::factory()->count(3)->create(['status' => \JobStatus\Enums\Status::FAILED]);
 
-        $this->artisan('job-status:clear --force')
+        $this->artisan('job-status:clear --all')
             ->assertOk();
 
         $this->assertCount(0, JobStatus::all());
