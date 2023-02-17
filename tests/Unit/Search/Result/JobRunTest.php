@@ -453,7 +453,8 @@ class JobRunTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_a_modifier(){
+    public function it_returns_a_modifier()
+    {
         $status = JobStatus::factory()->create();
 
         $modifier = (new JobRun($status))->modifier();
