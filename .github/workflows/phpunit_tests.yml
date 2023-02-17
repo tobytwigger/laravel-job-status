@@ -1,82 +1,82 @@
 name: Run automated test suite
 
 on:
-    workflow_dispatch:
-    workflow_call:
+  workflow_dispatch:
+  workflow_call:
 
 jobs:
-    phpunit-tests:
-        strategy:
-            matrix:
-                php: [ '8.1', '8.2' ]
-                laravel: [ '8.x', '9.x', '10.x' ]
-                dependency-version: [prefer-lowest, prefer-stable]
-                include:
-                  - laravel: 8.*
-                    testbench: 6.*
-                  - laravel: 9.*
-                    testbench: 7.*
-                  - laravel: 10.*
-                    testbench: 8.*
-        runs-on: ubuntu-latest
-        if: "!contains(github.event.head_commit.message, '[CI]')"
-        name: "PHP ${{matrix.php}} tests - Laravel ${{matrix.laravel}} (${{matrix.dependency-version}})"
+  phpunit-tests:
+    strategy:
+      matrix:
+        php: [ '8.1', '8.2' ]
+        laravel: [ '8.*', '9.*', '10.*' ]
+        dependency-version: [ prefer-lowest, prefer-stable ]
+        include:
+          - laravel: 8.*
+            testbench: 6.*
+          - laravel: 9.*
+            testbench: 7.*
+          - laravel: 10.*
+            testbench: 8.*
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[CI]')"
+    name: "PHP ${{matrix.php}} tests - Laravel ${{matrix.laravel}} (${{matrix.dependency-version}})"
 
-        steps:
-            -   name: ⏳ Check out repository
-                uses: actions/checkout@v2
-                with:
-                    ref: ${{ github.ref }}
+    steps:
+      - name: ⏳ Check out repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
 
-            - name: ⏳ Cancel Previous Runs
-              uses: styfle/cancel-workflow-action@0.10.1
+      - name: ⏳ Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.10.1
 
-            -   name: ⏳ Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: ${{ matrix.php }}
+      - name: ⏳ Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
 
-            -   name: ⏳ Cache Composer packages
-                id: composer-cache
-                uses: actions/cache@v2
-                with:
-                    path: vendor
-                    key: ${{ runner.os }}-dependencies-${{ matrix.dependency-version }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+      - name: ⏳ Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-dependencies-${{ matrix.dependency-version }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
-            -   name: ⏳ Install PHP dependencies
-                if: steps.composer-cache.outputs.cache-hit != 'true'
-                run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-                  composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+      - name: ⏳ Install PHP dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
-            -   name: 🔎 Run test suite
-                run: ./vendor/bin/paratest --coverage-clover ci/phpunit/clover.xml --coverage-html ci/phpunit/html --log-junit ci/phpunit/junit.xml
+      - name: 🔎 Run test suite
+        run: ./vendor/bin/paratest --coverage-clover ci/phpunit/clover.xml --coverage-html ci/phpunit/html --log-junit ci/phpunit/junit.xml
 
-            -   name: 💾 Upload test coverage
-                uses: actions/upload-artifact@v3
-                with:
-                    name: test-coverage
-                    path: ci/phpunit/html
+      - name: 💾 Upload test coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage
+          path: ci/phpunit/html
 
-            -   name: 📋 Check test coverage
-                uses: johanvanhelden/gha-clover-test-coverage-check@v1
-                id: coverage
-                with:
-                    percentage: "50"
-                    filename: ci/phpunit/clover.xml
-                    rounded-precision: "0"
-                    exit: false
+      - name: 📋 Check test coverage
+        uses: johanvanhelden/gha-clover-test-coverage-check@v1
+        id: coverage
+        with:
+          percentage: "50"
+          filename: ci/phpunit/clover.xml
+          rounded-precision: "0"
+          exit: false
 
-            -   name: 📋 Publish Test Report
-                uses: mikepenz/action-junit-report@v3
-                if: always() # always run even if the previous step fails
-                with:
-                    report_paths: 'ci/phpunit/junit.xml'
+      - name: 📋 Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always() # always run even if the previous step fails
+        with:
+          report_paths: 'ci/phpunit/junit.xml'
 
-            -   name: 💾 Upload test summary
-                uses: actions/upload-artifact@v3
-                with:
-                    name: summary
-                    path: "ci/phpunit/summary.md"
-                if: always()
+      - name: 💾 Upload test summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: summary
+          path: "ci/phpunit/summary.md"
+        if: always()
 
