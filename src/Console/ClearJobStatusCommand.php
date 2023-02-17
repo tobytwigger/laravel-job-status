@@ -17,7 +17,7 @@ class ClearJobStatusCommand extends Command
                         {--preserve=:Any jobs that were finished less than this number of hours ago will be kept}
                         {--trim : Only remove the excess information from jobs and keep the core data}
                         {--keep-failed : Keep all failed jobs}
-                        {--force : Wipe everything}';
+                        {--all : Wipe everything}';
 
     /**
      * The console command description.
