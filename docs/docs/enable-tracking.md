@@ -4,6 +4,10 @@
 
 By default, we only track the jobs that you tell us to. To track all jobs, set `track_anonymous` to `true` in your [config](./config.md).
 
+!!! warning
+    Care should be taken when tracking all jobs. Any job must use `\Illuminate\Queue\InteractsWithQueue` in order to work, and some jobs fail. Care should be taken tracking anonymous jobs until we've ironed out any potential issues.
+
+
 To make the results and debugging easier, we recommend setting up your job as below with some extra data and giving it access to features such as two-way communication.
 
 ## Basic Setup
