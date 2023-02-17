@@ -9,9 +9,11 @@ jobs:
         strategy:
             matrix:
                 php: [ '8.1', '8.2' ]
+                laravel: [ '8.x', '9.x', '10.x' ]
+                dependency-version: [prefer-lowest, prefer-stable]
         runs-on: ubuntu-latest
         if: "!contains(github.event.head_commit.message, '[CI]')"
-        name: "PHP ${{matrix.php}} tests"
+        name: "PHP ${{matrix.php}} tests - Laravel ${{matrix.laravel}} (${{matrix.dependency-version}})"
 
         steps:
             -   name: ⏳ Check out repository
@@ -32,13 +34,13 @@ jobs:
                 uses: actions/cache@v2
                 with:
                     path: vendor
-                    key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-                    restore-keys: |
-                        ${{ runner.os }}-php-
+                    key: ${{ runner.os }}-dependencies-${{ matrix.dependency-version }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
             -   name: ⏳ Install PHP dependencies
                 if: steps.composer-cache.outputs.cache-hit != 'true'
-                run: composer install --prefer-dist --no-progress --no-suggest
+                run: |
+                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+                  composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
             -   name: 🔎 Run test suite
                 run: ./vendor/bin/paratest --coverage-clover ci/phpunit/clover.xml --coverage-html ci/phpunit/html --log-junit ci/phpunit/junit.xml
