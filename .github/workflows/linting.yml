@@ -4,6 +4,11 @@ on:
     workflow_dispatch:
     workflow_call:
 
+permissions:
+    contents: write
+    pull-requests: write
+    issues: read
+
 jobs:
     phplint:
         runs-on: ubuntu-latest
@@ -12,7 +17,7 @@ jobs:
             -   name: ⏳ Check out repository
                 uses: actions/checkout@v2
                 with:
-                    token: ${{ secrets.PAT_TOKEN }}
+                    token: ${{ secrets.GITHUB_TOKEN }}
                     ref: ${{ github.head_ref }}
 
             -   name: ⏳ Setup PHP

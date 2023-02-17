@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use JobStatus\Enums\MessageType;
 use JobStatus\Enums\Status;
+use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobMessage;
 use JobStatus\Models\JobSignal;
@@ -187,6 +188,11 @@ class JobRun implements Arrayable, Jsonable
     public function trackingIsUnprotected(): bool
     {
         return $this->jobStatus->is_unprotected;
+    }
+
+    public function modifier(): JobStatusModifier
+    {
+        return new JobStatusModifier($this->jobStatus());
     }
 
     public function retry()

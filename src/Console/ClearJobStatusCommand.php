@@ -14,10 +14,10 @@ class ClearJobStatusCommand extends Command
      * @var string
      */
     protected $signature = 'job-status:clear 
-                            {--preserve=:Any jobs that were finished less than this number of hours ago will be kept}
-                            {--trim : Only remove the excess information from jobs and keep the core data}
-                            {--keep-failed : Keep all failed jobs}
-                            {--force : Wipe everything}';
+                        {--preserve=:Any jobs that were finished less than this number of hours ago will be kept}
+                        {--trim : Only remove the excess information from jobs and keep the core data}
+                        {--keep-failed : Keep all failed jobs}
+                        {--all : Wipe everything}';
 
     /**
      * The console command description.
@@ -44,7 +44,7 @@ class ClearJobStatusCommand extends Command
         $hours = (int) $this->option('preserve') ?? 0;
 
         $statuses = JobStatus::query();
-        if (!$this->option('force')) {
+        if (!$this->option('all')) {
             if ($this->option('keep-failed')) {
                 $statuses->whereStatusIn([Status::SUCCEEDED, Status::CANCELLED]);
             } else {
@@ -65,5 +65,7 @@ class ClearJobStatusCommand extends Command
                 $jobStatus->delete();
             }
         });
+
+        return self::SUCCESS;
     }
 }

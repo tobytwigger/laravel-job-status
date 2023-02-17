@@ -46,10 +46,8 @@ composer require twigger/laravel-job-status
 You can publish the configuration file by running
 
 ```console
-php artisan vendor:publish --provider="JobStatus\JobStatusServiceProvider"
+php artisan vendor:publish --tag=laravel-job-status-config
 ```
-
-This will publish the configuration file and migrations.
 
 ## Quick-start guide
 

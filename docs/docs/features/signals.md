@@ -17,7 +17,7 @@ some cleanup code to clean up anything your job may have done.
 public function handle()
 {
     foreach($i = 0; $i<10;$i++) {
-        $this->line('Processing number ' . $i);
+        $this->status()->line('Processing number ' . $i);
         $this->checkForSignals(); // Check if the user has cancelled the job
     }
     
@@ -43,7 +43,7 @@ This can be done [programatically](./../advanced/php-history.md#signals) or thro
 With custom signals, you can also send parameters to the job. For example, a job that checks the price of all the books a user owns may want to be notified if a new book is added during processing. To avoid us having to redo all the books, the signal can contain information about the new book allowing us to add it to the queue.
 
 ```php
-$jobRun->sendSignal('book-added', ['book_id' => $bookId]);
+$jobRun->modifier()->sendSignal('book-added', ['book_id' => $bookId]);
 ````
 
 ```php
@@ -113,5 +113,5 @@ You can throw an exception in the `onSignalName` method, which will mark your jo
 
 Or you can pass `cancelJob: true` to the `sendSignal` function to cancel the job after the cleanup has finished.
 ```php
-$jobRun->sendSignal('user-deleted', ['user_id' => $user->id], cancelJob: true);
+$jobRun->modifier()->sendSignal('user-deleted', ['user_id' => $user->id], cancelJob: true);
 ```
