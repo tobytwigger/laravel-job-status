@@ -12,7 +12,6 @@ Please note we have a code of conduct, please follow it in all your interactions
 1. Fork the Project
 2. Create your feature/bug branch (`git checkout -b feature/AmazingFeature`)
 3. Ensure all tests pass, and you have written tests for any new code.
-4. Update the changelog
 4. Commit your changes once you have finished (`git commit -m 'Add some AmazingFeature'`)
 5. Push to your feature/bug branch (`git push origin feature/AmazingFeature`)
 6. Open a Pull Request to the development branch of the package
