@@ -10,4 +10,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial Commit
 
-- Added `--force` option to `job-status:clear` command to wipe all job status data from the database
+- Added `--all` option to `job-status:clear` command to wipe all job status data from the database
