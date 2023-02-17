@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: vendor
-          key: ${{ runner.os }}-dependencies-${{ matrix.dependency-version }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+          key: ${{ runner.os }}-dependencies-${{ matrix.dependency-version }}-dependency-version-${{ matrix.dependency-version }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
       - name: ⏳ Install PHP dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
