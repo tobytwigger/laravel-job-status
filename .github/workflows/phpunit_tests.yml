@@ -9,14 +9,13 @@ jobs:
     strategy:
       matrix:
         php: [ '8.1', '8.2' ]
-        laravel: [ '9.*' ]
-        dependency-version: [ prefer-lowest, prefer-stable ]
+        laravel: [ '8.*', '9.*' ]
         include:
           - laravel: 9.*
             testbench: 7.*
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[CI]')"
-    name: "PHP ${{matrix.php}} tests - Laravel ${{matrix.laravel}} (${{matrix.dependency-version}})"
+    name: "PHP ${{matrix.php}} tests - Laravel ${{matrix.laravel}}"
 
     steps:
       - name: ⏳ Check out repository
@@ -37,13 +36,13 @@ jobs:
         uses: actions/cache@v2
         with:
           path: vendor
-          key: ${{ runner.os }}-dependencies-${{ matrix.dependency-version }}-dependency-version-${{ matrix.dependency-version }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+          key: ${{ runner.os }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
       - name: ⏳ Install PHP dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+          composer update --prefer-dist --no-interaction
 
       - name: 🔎 Run test suite
         run: ./vendor/bin/paratest --coverage-clover ci/phpunit/clover.xml --coverage-html ci/phpunit/html --log-junit ci/phpunit/junit.xml
