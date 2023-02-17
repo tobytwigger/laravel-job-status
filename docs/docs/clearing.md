@@ -31,7 +31,7 @@ To turn on trimming, pass the `--trim` flag to the command.
 
 When developing `laravel-job-status`, or for other reasons - you might want to wipe all job status data from your database.
 
-To do this, pass the option `--force`, this will remove all constraints when searching for job status data to prune.
+To do this, pass the option `--all`, this will remove all constraints when searching for job status data to prune.
 
 ## Scheduling the command
 
