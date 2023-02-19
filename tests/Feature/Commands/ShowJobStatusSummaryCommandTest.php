@@ -14,14 +14,15 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         JobStatus::factory()->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::QUEUED]);
         JobStatus::factory()->count(20)->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::FAILED]);
         JobStatus::factory()->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::STARTED]);
+        JobStatus::factory()->count(50)->create(['class' => 'MyFirstJob', 'alias' => 'my-first-job', 'status' => \JobStatus\Enums\Status::RELEASED]);
 
         $response = $this->artisan('job-status:summary')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded', 'Released'
             ], [
                 [
-                    'MyFirstJob', 1, 1, 0, 20, 0,
+                    'MyFirstJob', 1, 1, 0, 20, 0, 50
                 ],
             ]);
     }
@@ -36,10 +37,10 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded', 'Released'
             ], [
-                ['MyFirstJob', 1, 0, 0, 20, 0],
-                ['MySecondJob', 0, 1, 0, 0, 0],
+                ['MyFirstJob', 1, 0, 0, 20, 0, 0],
+                ['MySecondJob', 0, 1, 0, 0, 0, 0],
             ]);
     }
 
@@ -52,9 +53,9 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary --class=MySecondJob')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded', 'Released'
             ], [
-                ['MySecondJob', 0, 1, 0, 0, 0],
+                ['MySecondJob', 0, 1, 0, 0, 0, 0],
             ])
             // Test the table excludes any mention of MyFirstJob
             ->doesntExpectOutputToContain('MyFirstJob');
@@ -69,9 +70,9 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary --alias=MySecondJob')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded', 'Released'
             ], [
-                ['SomeJobTwo', 0, 1, 0, 0, 0],
+                ['SomeJobTwo', 0, 1, 0, 0, 0, 0],
             ])
             // Test the table excludes any mention of MyFirstJob
             ->doesntExpectOutputToContain('SomeJobOne');

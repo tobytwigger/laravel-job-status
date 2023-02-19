@@ -10,10 +10,11 @@ class StatusTest extends TestCase
 
     /** @test */
     public function it_returns_all_finished_statuses(){
-        $this->assertCount(3, Status::getFinishedStatuses());
+        $this->assertCount(4, Status::getFinishedStatuses());
         $this->assertContains(Status::FAILED, Status::getFinishedStatuses());
         $this->assertContains(Status::SUCCEEDED, Status::getFinishedStatuses());
         $this->assertContains(Status::CANCELLED, Status::getFinishedStatuses());
+        $this->assertContains(Status::RELEASED, Status::getFinishedStatuses());
     }
 
     /** @test */
@@ -25,9 +26,10 @@ class StatusTest extends TestCase
 
     /** @test */
     public function it_returns_all_finished_unfailed_statuses(){
-        $this->assertCount(2, Status::getFinishedUnfailedStatuses());
+        $this->assertCount(3, Status::getFinishedUnfailedStatuses());
         $this->assertContains(Status::SUCCEEDED, Status::getFinishedUnfailedStatuses());
         $this->assertContains(Status::CANCELLED, Status::getFinishedUnfailedStatuses());
+        $this->assertContains(Status::RELEASED, Status::getFinishedUnfailedStatuses());
     }
 
     /**
@@ -53,6 +55,7 @@ class StatusTest extends TestCase
             ['Succeeded', Status::SUCCEEDED],
             ['Failed', Status::FAILED],
             ['Cancelled', Status::CANCELLED],
+            ['Released', Status::RELEASED]
         ];
     }
 
