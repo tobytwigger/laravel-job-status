@@ -20,6 +20,8 @@ class DatabaseQueueTest extends TestCase
     /** @test */
     public function a_run_is_handled()
     {
+        config()->set('laravel-job-status.track_anonymous', true);
+
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'my-indexless-tag'])

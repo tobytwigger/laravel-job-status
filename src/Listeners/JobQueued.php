@@ -28,6 +28,7 @@ class JobQueued extends BaseListener
             if ($this->validateJob($job) === false) {
                 return true;
             }
+
             if (method_exists($job, 'batch')) {
                 $batchModel = ($job->batch() !== null
                     ? JobBatch::firstOrCreate(
@@ -43,8 +44,12 @@ class JobQueued extends BaseListener
                 'class' => get_class($job),
                 'alias' => method_exists($job, 'alias') ? $job->alias() : get_class($job),
                 'percentage' => 0,
-                'queue' => $event->job->job?->getQueue() ?? $event->job->queue ?? null,
-                'payload' => $event->job->job?->payload(),
+                'queue' => (property_exists($job, 'job') && $job?->job && $job->job?->getQueue())
+                    ? $job->job->getQueue()
+                    : $job?->queue ?? $job?->queue ?? null,
+                'payload' => ((property_exists($job, 'job') && $job?->job && $job->job?->getQueue())
+                    ? $job->job?->payload()
+                    : null),
                 'batch_id' => $batchModel?->id,
                 'status' => Status::QUEUED,
                 'uuid' => null,
@@ -76,7 +81,7 @@ class JobQueued extends BaseListener
                 }
             }
 
-            if ($job->job) {
+            if (property_exists($job, 'job') && $job->job instanceof \Illuminate\Contracts\Queue\Job) {
                 $this->checkJobUpToDate($modifier, $job->job);
             }
         }

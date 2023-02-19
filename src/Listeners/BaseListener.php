@@ -57,16 +57,17 @@ class BaseListener
             return false;
         }
 
+        // True if extends Illuminate\Contracts\Queue\Job
         if (method_exists($job, 'resolveName')) {
             if (!$job->resolveName() || !class_exists($job->resolveName())) {
                 return false;
             }
             if (!in_array(Trackable::class, class_uses_recursive($job->resolveName()))) {
-                return config('laravel-job-status.track_anonymous', true);
+                return config('laravel-job-status.track_anonymous', false);
             }
         } else {
             if (!in_array(Trackable::class, class_uses_recursive($job))) {
-                return config('laravel-job-status.track_anonymous', true);
+                return config('laravel-job-status.track_anonymous', false);
             }
         }
 
