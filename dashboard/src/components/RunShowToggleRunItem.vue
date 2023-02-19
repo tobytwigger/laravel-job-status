@@ -2,7 +2,7 @@
   <q-item
     clickable
     v-ripple
-    :active="selectedId.toString() === props.job.id.toString()"
+    :active="isActive"
     @click="emit('click', props.job.id)"
   >
     <q-item-section avatar v-if="icon !== null">
@@ -38,6 +38,11 @@ interface IconSettings {
   icon: string;
   color: string;
 }
+
+const isActive = computed((): boolean => {
+  return props.selectedId.toString() === props.job.id.toString()
+    || props.job.released_runs.map(run => run.id).includes(props.selectedId)
+})
 
 const icon = computed((): IconSettings|null => {
   switch (props.job.status) {

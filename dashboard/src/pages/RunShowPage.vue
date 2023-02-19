@@ -67,6 +67,31 @@
             label="Retry"
             @click="retry"
           />
+
+          <q-btn-dropdown
+            label="Released runs"
+            v-if="selectedRun !== null && selectedRun.released_runs.length > 0"
+            push
+          >
+            <q-list>
+              <q-item
+                v-for="(run, index) in selectedRun.released_runs"
+                :key="run.id"
+                clickable
+                @click="selectedRun = run"
+                v-close-popup
+                >
+                <q-item-section>
+                  <q-item-label>Run {{ index + 1 }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+
+<!--          <q-btn-->
+<!--            icon="cancel"-->
+<!--            :label="'View ' + selectedRun.released_runs.length + ' delay.'"-->
+<!--          />-->
         </q-btn-group>
       </div>
     </div>
@@ -391,15 +416,19 @@ const runTime = computed((): number => {
 });
 
 const queueTime = computed((): number => {
-  if (selectedRun.value === null || selectedRun.value.created_at === null) {
+  let startTime: Date|null = selectedRun.value === null ? null : selectedRun.value.created_at;
+  let endTime: Date|null = selectedRun.value === null ? null : selectedRun.value.started_at;
+
+  if(selectedRun.value !== null && selectedRun.value.released_runs.length > 0) {
+    startTime = selectedRun.value.released_runs[0].created_at;
+  }
+
+  if(startTime === null) {
     return 0;
   }
-  if (selectedRun.value.started_at === null) {
-    return getDuration(selectedRun.value?.created_at, new Date(), false);
-  }
   return getDuration(
-    selectedRun.value?.created_at,
-    selectedRun.value.started_at,
+    startTime,
+    endTime ?? new Date(),
     true
   );
 });

@@ -11,86 +11,6 @@
       </run-show-toggle-run-item>
     </q-list>
   </div>
-        <!--          <q-btn-dropdown auto-close rounded color="primary" label="Three" split>-->
-        <!--             dropdown content goes here-->
-        <!--            <q-list padding style="width: 250px">-->
-        <!--              <q-item clickable>-->
-        <!--                <q-item-section avatar>-->
-        <!--                  <q-avatar icon="folder" color="purple" text-color="white" />-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section>-->
-        <!--                  <q-item-label>Photos</q-item-label>-->
-        <!--                  <q-item-label caption>February 22, 2016</q-item-label>-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section side>-->
-        <!--                  <q-icon name="info" color="amber" />-->
-        <!--                </q-item-section>-->
-        <!--              </q-item>-->
-        <!---->
-        <!--              <q-item clickable>-->
-        <!--                <q-item-section avatar>-->
-        <!--                  <q-avatar icon="folder" color="purple" text-color="white" />-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section>-->
-        <!--                  <q-item-label>Videos</q-item-label>-->
-        <!--                  <q-item-label caption>London</q-item-label>-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section side>-->
-        <!--                  <q-icon name="info" color="amber" />-->
-        <!--                </q-item-section>-->
-        <!--              </q-item>-->
-        <!---->
-        <!--              <q-separator inset />-->
-        <!--              <q-item-label header>Files</q-item-label>-->
-        <!---->
-        <!--              <q-item clickable>-->
-        <!--                <q-item-section avatar>-->
-        <!--                  <q-avatar icon="assignment" color="teal" text-color="white" />-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section>-->
-        <!--                  <q-item-label>London</q-item-label>-->
-        <!--                  <q-item-label caption>March 1st, 2018</q-item-label>-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section side>-->
-        <!--                  <q-icon name="info" color="amber" />-->
-        <!--                </q-item-section>-->
-        <!--              </q-item>-->
-        <!---->
-        <!--              <q-item clickable>-->
-        <!--                <q-item-section avatar>-->
-        <!--                  <q-avatar icon="assignment" color="teal" text-color="white" />-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section>-->
-        <!--                  <q-item-label>Paris</q-item-label>-->
-        <!--                  <q-item-label caption>January 22nd, 2017</q-item-label>-->
-        <!--                </q-item-section>-->
-        <!--                <q-item-section side>-->
-        <!--                  <q-icon name="info" color="amber" />-->
-        <!--                </q-item-section>-->
-        <!--              </q-item>-->
-        <!--            </q-list>-->
-        <!--          </q-btn-dropdown>-->
-
-
-      <!--        <q-btn-toggle-->
-      <!--          push-->
-      <!--          spread-->
-      <!--          no-caps-->
-      <!--          rounded-->
-      <!--          unelevated-->
-      <!--          glossy-->
-      <!--          toggle-color="primary"-->
-      <!--          :options="retryOptions"-->
-      <!--        >-->
-      <!--          <template v-for="option in retryOptions" :key="option.value" v-slot:[option.slot]>-->
-      <!--            <div class="row items-center no-wrap">-->
-      <!--              <div class="text-center">-->
-      <!--                {{ option.label }}-->
-      <!--              </div>-->
-      <!--              <q-icon right name="directions_boat" />-->
-      <!--            </div>-->
-      <!--          </template>-->
-      <!--        </q-btn-toggle>-->
 </template>
 
 <script setup lang="ts">
@@ -137,8 +57,6 @@ const emit = defineEmits(['update:modelValue'])
 
 onMounted(() => viewRun(props.jobRun.id));
 
-
-
 const jobLists = computed((): JobRun[] => {
   let jobs: JobRun[] = [];
 
@@ -147,7 +65,6 @@ const jobLists = computed((): JobRun[] => {
     jobs.push(jobRun);
     jobRun = jobRun.parent;
   }
-  jobs = jobs.reverse();
 
   // Iterate through each of the jobs, from oldest first.
   // If it's released, add to the released array
