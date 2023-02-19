@@ -20,11 +20,21 @@ class JobRun implements Arrayable, Jsonable
 {
     private JobStatus $jobStatus;
     private ?JobRun $parent;
+    /**
+     * @var JobRun[]|null
+     */
+    private ?array $releasedRuns;
 
-    public function __construct(JobStatus $jobStatus, ?JobRun $parent = null)
+    /**
+     * @param JobStatus $jobStatus
+     * @param JobRun|null $parent
+     * @param JobRun[]|null $releasedRuns
+     */
+    public function __construct(JobStatus $jobStatus, ?JobRun $parent = null, ?array $releasedRuns = [])
     {
         $this->jobStatus = $jobStatus;
         $this->parent = $parent;
+        $this->releasedRuns = $releasedRuns;
     }
 
     public function getTagsAsArray(): array

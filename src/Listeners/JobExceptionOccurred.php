@@ -3,7 +3,7 @@
 namespace JobStatus\Listeners;
 
 use JobStatus\Enums\Status;
-use JobStatus\Exception\JobCancelledException;
+use JobStatus\Exceptions\JobCancelledException;
 use JobStatus\JobStatusModifier;
 use JobStatus\Models\JobStatus;
 

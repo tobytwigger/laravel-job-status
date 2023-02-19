@@ -12,15 +12,11 @@ use JobStatus\Search\Result\TrackedJob;
 
 class JobStatusCollection extends Collection
 {
-    public function runs(): JobRunCollection
+    private function createJobRunCollection(Collection $jobStatusesGroupedByUuid): JobRunCollection
     {
-        $queryResult = $this
-            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
-            ->groupBy(['uuid']);
-
         $jobRuns = new JobRunCollection();
 
-        foreach ($queryResult as $uuid => $runs) {
+        foreach ($jobStatusesGroupedByUuid as $uuid => $runs) {
             $runs = $runs->sortBy('created_at')->values();
             if ($uuid === null || $uuid === '') {
                 foreach ($runs as $run) {
@@ -34,6 +30,15 @@ class JobStatusCollection extends Collection
         }
 
         return $jobRuns;
+    }
+
+    public function runs(): JobRunCollection
+    {
+        $queryResult = $this
+            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
+            ->groupBy(['uuid']);
+
+        return $this->createJobRunCollection($queryResult);
     }
 
     public function jobs(): TrackedJobCollection
@@ -51,19 +56,7 @@ class JobStatusCollection extends Collection
                 ->first()
                 ?->class;
 
-            $jobRuns = new JobRunCollection();
-            foreach ($exactJobGrouped as $uuid => $runs) {
-                $runs = $runs->sortBy('created_at')->values();
-                if ($uuid === null || $uuid === '') {
-                    foreach ($runs as $run) {
-                        $jobRuns->push(new JobRun($run, null));
-                    }
-                } else {
-                    $jobRuns->push($runs->reduce(
-                        fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
-                    ));
-                }
-            }
+            $jobRuns = $this->createJobRunCollection($exactJobGrouped);
             $trackedJobs->push(
                 new TrackedJob($jobClass, $jobRuns, $jobAlias)
             );
@@ -85,19 +78,8 @@ class JobStatusCollection extends Collection
             }
             // Groups of the same run
             $exactJobGrouped = $sameQueueJobs->groupBy('uuid');
-            $jobRuns = new JobRunCollection();
-            foreach ($exactJobGrouped as $uuid => $runs) {
-                $runs = $runs->sortBy([['created_at', 'asc'], ['id', 'asc']])->values();
-                if ($uuid === null || $uuid === '') {
-                    foreach ($runs as $run) {
-                        $jobRuns->push(new JobRun($run, null));
-                    }
-                } else {
-                    $jobRuns->push($runs->reduce(
-                        fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
-                    ));
-                }
-            }
+            $jobRuns = $this->createJobRunCollection($exactJobGrouped);
+
             $queues->push(
                 new Queue($queueName, $jobRuns)
             );
@@ -121,20 +103,8 @@ class JobStatusCollection extends Collection
 
             // Groups of the same run
             $exactJobGrouped = $sameJobTypes->groupBy('uuid');
+            $jobRuns = $this->createJobRunCollection($exactJobGrouped);
 
-            $jobRuns = new JobRunCollection();
-            foreach ($exactJobGrouped as $uuid => $runs) {
-                $runs = $runs->sortBy('created_at')->values();
-                if ($uuid === null || $uuid === '') {
-                    foreach ($runs as $run) {
-                        $jobRuns->push(new JobRun($run, null));
-                    }
-                } else {
-                    $jobRuns->push($runs->reduce(
-                        fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
-                    ));
-                }
-            }
             $batches->push(
                 new Batch(JobBatch::findOrFail($batchId), $jobRuns)
             );

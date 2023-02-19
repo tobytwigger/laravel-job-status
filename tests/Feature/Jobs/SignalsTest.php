@@ -3,7 +3,7 @@
 namespace JobStatus\Tests\Feature\Jobs;
 
 use Illuminate\Testing\Assert;
-use JobStatus\Exception\JobCancelledException;
+use JobStatus\Exceptions\JobCancelledException;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;

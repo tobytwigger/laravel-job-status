@@ -1,6 +1,6 @@
 <?php
 
-namespace JobStatus\Exception;
+namespace JobStatus\Exceptions;
 
 use JobStatus\Models\JobSignal;
 
