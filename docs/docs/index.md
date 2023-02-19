@@ -49,6 +49,12 @@ You can publish the configuration file by running
 php artisan vendor:publish --tag=laravel-job-status-config
 ```
 
+## Demo site
+
+We've set up a demo site to dispatch fake jobs and see how this package tracks them.
+
+View it at (https://job-tracker.gpsvault.co.uk)[https://job-tracker.gpsvault.co.uk].
+
 ## Quick-start guide
 
 - [Step 1](./enable-tracking.md) - Enable tracking for at least one job.
