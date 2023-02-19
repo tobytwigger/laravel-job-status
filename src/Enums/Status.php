@@ -22,7 +22,7 @@ enum Status: string
         return [
             self::FAILED,
             self::CANCELLED,
-            self::SUCCEEDED
+            self::SUCCEEDED,
         ];
     }
 
@@ -33,7 +33,7 @@ enum Status: string
     {
         return [
             self::QUEUED,
-            self::STARTED
+            self::STARTED,
         ];
     }
 
@@ -41,7 +41,7 @@ enum Status: string
     {
         return [
             self::CANCELLED,
-            self::SUCCEEDED
+            self::SUCCEEDED,
         ];
     }
 

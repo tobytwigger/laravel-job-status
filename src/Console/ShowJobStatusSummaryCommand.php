@@ -45,26 +45,26 @@ class ShowJobStatusSummaryCommand extends Command
     {
         $statuses = JobStatus::when(
             $this->option('class'),
-            fn(Builder $query) => $query->where('class', $this->option('class'))
+            fn (Builder $query) => $query->where('class', $this->option('class'))
         )
             ->when(
                 $this->option('alias'),
-                fn(Builder $query) => $query->where('alias', $this->option('alias'))
+                fn (Builder $query) => $query->where('alias', $this->option('alias'))
             )
             ->orderBy('class')
             ->get();
 
-        $data = $statuses->jobs()->map(fn(TrackedJob $trackedJob) => array_merge(
+        $data = $statuses->jobs()->map(fn (TrackedJob $trackedJob) => array_merge(
             [
                 $trackedJob->jobClass(),
             ],
-            collect(Status::cases())->map(fn(Status $enum) => $this->getStatusCount($trackedJob, $enum))->toArray()
+            collect(Status::cases())->map(fn (Status $enum) => $this->getStatusCount($trackedJob, $enum))->toArray()
         ));
         $this->table(array_merge(
             [
-                'Job'
+                'Job',
             ],
-            collect(Status::cases())->map(fn(Status $enum) => Status::convertToHuman($enum))->toArray()
+            collect(Status::cases())->map(fn (Status $enum) => Status::convertToHuman($enum))->toArray()
         ), $data);
 
         return static::SUCCESS;
@@ -72,6 +72,6 @@ class ShowJobStatusSummaryCommand extends Command
 
     private function getStatusCount(TrackedJob $trackedJob, Status $status): int
     {
-        return $trackedJob->runs()->filter(fn(JobRun $jobStatusResult) => $jobStatusResult->getStatus() === $status)->count();
+        return $trackedJob->runs()->filter(fn (JobRun $jobStatusResult) => $jobStatusResult->getStatus() === $status)->count();
     }
 }

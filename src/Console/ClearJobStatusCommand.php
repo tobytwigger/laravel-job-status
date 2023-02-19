@@ -41,7 +41,7 @@ class ClearJobStatusCommand extends Command
      */
     public function handle()
     {
-        $hours = (int)$this->option('preserve') ?? 0;
+        $hours = (int) $this->option('preserve') ?? 0;
 
         $statuses = JobStatus::query();
         if (!$this->option('all')) {
