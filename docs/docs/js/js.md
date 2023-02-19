@@ -141,6 +141,7 @@ Interact with times that your jobs have ran
         has_payload: boolean; // Whether we've stored the payload of the job
         connection_name: string | null; // The name of the connection the job is stored on
         queue: string | null; // The queue the job is in
+        released_runs: [{...}] // Any times this run ran but was stopped by rate limiting middleware. This is an array of runs with the same structure as this data structure.
     }]
     ```
 
