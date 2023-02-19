@@ -58,13 +58,13 @@ class ShowJobStatusSummaryCommand extends Command
             [
                 $trackedJob->jobClass(),
             ],
-            collect(Status::cases())->map(fn(Status $enum) => $this->getStatusCount($trackedJob, $enum))->toArray()
+            collect(Status::cases())->filter(fn(Status $status) => $status !== Status::RELEASED)->map(fn(Status $enum) => $this->getStatusCount($trackedJob, $enum))->toArray()
         ));
         $this->table(array_merge(
             [
                 'Job'
             ],
-            collect(Status::cases())->map(fn(Status $enum) => Status::convertToHuman($enum))->toArray()
+            collect(Status::cases())->filter(fn(Status $status) => $status !== Status::RELEASED)->map(fn(Status $enum) => Status::convertToHuman($enum))->toArray()
         ), $data);
 
         return static::SUCCESS;

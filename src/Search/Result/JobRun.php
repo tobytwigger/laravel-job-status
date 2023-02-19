@@ -15,22 +15,20 @@ use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 use JobStatus\Models\JobStatusStatus;
 use JobStatus\Retry\Retrier;
+use JobStatus\Search\Collections\JobRunCollection;
 
 class JobRun implements Arrayable, Jsonable
 {
     private JobStatus $jobStatus;
     private ?JobRun $parent;
-    /**
-     * @var JobRun[]|null
-     */
-    private ?array $releasedRuns;
+    private JobRunCollection $releasedRuns;
 
     /**
      * @param JobStatus $jobStatus
      * @param JobRun|null $parent
-     * @param JobRun[]|null $releasedRuns
+     * @param JobRunCollection|null $releasedRuns
      */
-    public function __construct(JobStatus $jobStatus, ?JobRun $parent = null, ?array $releasedRuns = [])
+    public function __construct(JobStatus $jobStatus, ?JobRun $parent = null, JobRunCollection $releasedRuns = new JobRunCollection())
     {
         $this->jobStatus = $jobStatus;
         $this->parent = $parent;
@@ -92,6 +90,7 @@ class JobRun implements Arrayable, Jsonable
             'has_payload' => $this->jobStatus->payload !== null,
             'connection_name' => $this->jobStatus->connection_name,
             'queue' => $this->jobStatus->queue,
+            'released_runs' => $this->releasedRuns->toArray(),
         ];
     }
 
@@ -206,5 +205,10 @@ class JobRun implements Arrayable, Jsonable
     public function retry()
     {
         Retrier::for($this->jobStatus)->retry();
+    }
+
+    public function releasedRuns(): JobRunCollection
+    {
+        return $this->releasedRuns;
     }
 }

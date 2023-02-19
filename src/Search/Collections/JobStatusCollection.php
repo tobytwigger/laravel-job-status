@@ -3,6 +3,7 @@
 namespace JobStatus\Search\Collections;
 
 use Illuminate\Database\Eloquent\Collection;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Result\Batch;
@@ -23,9 +24,22 @@ class JobStatusCollection extends Collection
                     $jobRuns->push(new JobRun($run, null));
                 }
             } else {
-                $jobRuns->push($runs->reduce(
-                    fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
-                ));
+                $jobRun = null;
+                $released = new JobRunCollection();
+                foreach ($runs as $run) {
+                    if($run->status === Status::RELEASED) {
+                        $released->push(new JobRun($run));
+                    } else {
+                        $jobRun = new JobRun($run, $jobRun, $released);
+                        $released = new JobRunCollection();
+                    }
+                }
+                if($jobRun !== null) {
+                    $jobRuns->push($jobRun);
+                }
+//                $jobRuns->push($runs->reduce(
+//                    fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
+//                ));
             }
         }
 
