@@ -139,9 +139,7 @@ class JobRun implements Arrayable, Jsonable
 
     public function isFinished(): bool
     {
-        return $this->jobStatus->status === Status::SUCCEEDED
-            || $this->jobStatus->status === Status::FAILED
-            || $this->jobStatus->status === Status::CANCELLED;
+        return in_array($this->jobStatus->status, Status::getFinishedStatuses());
     }
 
     public function isSuccessful(): bool

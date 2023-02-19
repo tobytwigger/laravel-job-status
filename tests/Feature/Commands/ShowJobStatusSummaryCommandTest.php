@@ -18,7 +18,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
             ], [
                 [
                     'MyFirstJob', 1, 1, 0, 20, 0,
@@ -36,7 +36,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
             ], [
                 ['MyFirstJob', 1, 0, 0, 20, 0],
                 ['MySecondJob', 0, 1, 0, 0, 0],
@@ -52,7 +52,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary --class=MySecondJob')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
             ], [
                 ['MySecondJob', 0, 1, 0, 0, 0],
             ])
@@ -69,7 +69,7 @@ class ShowJobStatusSummaryCommandTest extends TestCase
         $response = $this->artisan('job-status:summary --alias=MySecondJob')
             ->assertOk()
             ->expectsTable([
-                'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
+                'Job', 'Queued', 'Started', 'Cancelled', 'Failed', 'Succeeded',
             ], [
                 ['SomeJobTwo', 0, 1, 0, 0, 0],
             ])
