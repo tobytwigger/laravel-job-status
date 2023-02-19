@@ -299,7 +299,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
 
 
     /** @test */
-    public function it_does_not_track_a_new_job_when_failed_and_retried_and_already_manually_released()
+    public function it_does_track_a_new_job_when_failed_and_retried_and_already_manually_released()
     {
         config()->set('laravel-job-status.track_anonymous', true);
         $job = (new JobFakeFactory())
@@ -309,7 +309,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
             ->setCallback(static::class . '@it_tracks_a_new_job_when_failed_and_retried_if_already_manually_released_callback')
             ->dispatch();
 
-        Assert::assertCount(1, JobStatus::all());
+        Assert::assertCount(2, JobStatus::all());
 
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFakeWithoutTrackable::class, $jobStatus->class);
@@ -331,6 +331,22 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
         Assert::assertNull($jobStatus->batch);
         Assert::assertCount(0, JobBatch::all());
+
+        $jobStatusRetryNotRan = JobStatus::all()[1];
+        $this->assertEquals(JobFakeWithoutTrackable::class, $jobStatusRetryNotRan->class);
+        $this->assertEquals(JobFakeWithoutTrackable::class, $jobStatusRetryNotRan->alias);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetryNotRan->status);
+        $this->assertEquals(0, $jobStatusRetryNotRan->percentage);
+        $this->assertEquals(1, $jobStatusRetryNotRan->job_id);
+        $this->assertEquals('database', $jobStatusRetryNotRan->connection_name);
+        $this->assertNotNull($jobStatusRetryNotRan->uuid);
+        $this->assertEquals(true, $jobStatusRetryNotRan->is_unprotected);
+
+        $this->assertCount(0, $jobStatusRetryNotRan->tags);
+        $this->assertCount(0, $jobStatusRetryNotRan->messages()->orderBy('id')->get());
+        $this->assertCount(1, $jobStatusRetryNotRan->statuses);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetryNotRan->statuses[0]->status);
+        Assert::assertNull($jobStatusRetryNotRan->batch);
     }
 
 
@@ -358,7 +374,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $jobStatus = JobStatus::first();
         $this->assertEquals(JobFakeWithoutTrackable::class, $jobStatus->class);
         $this->assertEquals(JobFakeWithoutTrackable::class, $jobStatus->alias);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -372,7 +388,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatus->statuses[2]->status);
 
         $this->assertCount(0, $jobStatus->users()->get());
 
@@ -381,7 +397,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $jobStatusRetry = JobStatus::all()[1];
         $this->assertEquals(JobFakeWithoutTrackable::class, $jobStatusRetry->class);
         $this->assertEquals(JobFakeWithoutTrackable::class, $jobStatusRetry->alias);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatusRetry->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatusRetry->status);
         $this->assertEquals(100, $jobStatusRetry->percentage);
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
@@ -394,7 +410,7 @@ class DatabaseQueueWithoutTrackableTest extends TestCase
         $this->assertCount(3, $jobStatusRetry->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatusRetry->statuses[1]->status);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatusRetry->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatusRetry->statuses[2]->status);
         Assert::assertNull($jobStatusRetry->batch);
         Assert::assertCount(0, JobBatch::all());
 

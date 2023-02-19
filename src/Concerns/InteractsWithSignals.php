@@ -4,7 +4,7 @@ namespace JobStatus\Concerns;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use JobStatus\Exception\JobCancelledException;
+use JobStatus\Exceptions\JobCancelledException;
 use JobStatus\Models\JobSignal;
 use JobStatus\Models\JobStatus;
 

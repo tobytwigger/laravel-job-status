@@ -14,6 +14,8 @@ enum Status: string
 
     case SUCCEEDED = 'succeeded';
 
+    case RELEASED = 'released';
+
     /**
      * @return Status[]
      */
@@ -23,6 +25,7 @@ enum Status: string
             self::FAILED,
             self::CANCELLED,
             self::SUCCEEDED,
+            self::RELEASED
         ];
     }
 
@@ -42,6 +45,7 @@ enum Status: string
         return [
             self::CANCELLED,
             self::SUCCEEDED,
+            self::RELEASED
         ];
     }
 
