@@ -1,1 +1,0 @@
-var e=(r=>(r.Queued="queued",r.Started="started",r.Cancelled="cancelled",r.Failed="failed",r.Succeeded="succeeded",r))(e||{}),d=(r=>(r.Success="success",r.Error="error",r.Info="info",r.Warning="warning",r.Debug="debug",r))(d||{});export{d as M,e as S};
