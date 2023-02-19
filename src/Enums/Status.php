@@ -36,7 +36,7 @@ enum Status: string
     {
         return [
             self::QUEUED,
-            self::STARTED
+            self::STARTED,
         ];
     }
 

@@ -7,7 +7,6 @@ use JobStatus\Tests\TestCase;
 
 class StatusTest extends TestCase
 {
-
     /** @test */
     public function it_returns_all_finished_statuses(){
         $this->assertCount(4, Status::getFinishedStatuses());
@@ -18,14 +17,16 @@ class StatusTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_all_unfinished_statuses(){
+    public function it_returns_all_unfinished_statuses()
+    {
         $this->assertCount(2, Status::getUnfinishedStatuses());
         $this->assertContains(Status::QUEUED, Status::getUnfinishedStatuses());
         $this->assertContains(Status::STARTED, Status::getUnfinishedStatuses());
     }
 
     /** @test */
-    public function it_returns_all_finished_unfailed_statuses(){
+    public function it_returns_all_finished_unfailed_statuses()
+    {
         $this->assertCount(3, Status::getFinishedUnfailedStatuses());
         $this->assertContains(Status::SUCCEEDED, Status::getFinishedUnfailedStatuses());
         $this->assertContains(Status::CANCELLED, Status::getFinishedUnfailedStatuses());
@@ -39,7 +40,7 @@ class StatusTest extends TestCase
      * @param string $human
      * @param Status $enum
      */
-    public function convertToHuman_converts_to_human_text(string $human, Status $enum)
+    public function convert_to_human_converts_to_human_text(string $human, Status $enum)
     {
         $this->assertEquals(
             $human,
@@ -58,6 +59,4 @@ class StatusTest extends TestCase
             ['Released', Status::RELEASED]
         ];
     }
-
-
 }
