@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref, defineProps, onMounted} from "vue";
+import {computed, ref, defineProps, onMounted, watch} from "vue";
 import {JobRun} from "src/types/api";
 import RunShowToggleRunItem from "components/RunShowToggleRunItem.vue";
 
@@ -24,6 +24,11 @@ const props = defineProps<{
   modelValue: JobRun
 }>();
 
+watch(() => props.jobRun, (newRun, oldRun) => {
+  if(props.modelValue.id === newRun.id) {
+    viewRun(newRun.id);
+  }
+});
 
 function viewRun(runId: number) {
   let run = getRun(runId);
@@ -32,11 +37,9 @@ function viewRun(runId: number) {
 }
 
 function getRun(runId: number): JobRun|null {
-  console.log('getting ID' + runId);
   let jobRun: JobRun | null = props.jobRun;
 
   while (jobRun !== null) {
-    console.log('checking ID ' + jobRun.id.toString());
     if(jobRun.id.toString() === runId.toString()) {
       return jobRun;
     }
