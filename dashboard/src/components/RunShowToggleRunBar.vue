@@ -32,7 +32,6 @@ watch(() => props.jobRun, (newRun, oldRun) => {
 
 function viewRun(runId: number) {
   let run = getRun(runId);
-  console.log(run);
   emit('update:modelValue', run);
 }
 
@@ -44,8 +43,6 @@ function getRun(runId: number): JobRun|null {
       return jobRun;
     }
     for(let releasedRun of jobRun.released_runs) {
-      console.log('checking ID ' + releasedRun.id.toString());
-
       if(releasedRun.id.toString() === runId.toString()) {
         return releasedRun;
       }
@@ -69,9 +66,6 @@ const jobLists = computed((): JobRun[] => {
     jobRun = jobRun.parent;
   }
 
-  // Iterate through each of the jobs, from oldest first.
-  // If it's released, add to the released array
-  // Once we get to the first run that isn't released, give it all the previously released ones
   return jobs.reverse();
 });
 
