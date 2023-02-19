@@ -8,7 +8,8 @@ use JobStatus\Tests\TestCase;
 class StatusTest extends TestCase
 {
     /** @test */
-    public function it_returns_all_finished_statuses(){
+    public function it_returns_all_finished_statuses()
+    {
         $this->assertCount(4, Status::getFinishedStatuses());
         $this->assertContains(Status::FAILED, Status::getFinishedStatuses());
         $this->assertContains(Status::SUCCEEDED, Status::getFinishedStatuses());
@@ -56,7 +57,7 @@ class StatusTest extends TestCase
             ['Succeeded', Status::SUCCEEDED],
             ['Failed', Status::FAILED],
             ['Cancelled', Status::CANCELLED],
-            ['Released', Status::RELEASED]
+            ['Released', Status::RELEASED],
         ];
     }
 }

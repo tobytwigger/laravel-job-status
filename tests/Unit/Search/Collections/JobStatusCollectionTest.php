@@ -173,7 +173,8 @@ class JobStatusCollectionTest extends TestCase
     }
 
     /** @test */
-    public function it_groups_released_jobs_as_released_jobs(){
+    public function it_groups_released_jobs_as_released_jobs()
+    {
         $uuid1 = Str::uuid();
 
         $jobStatus1 = JobStatus::factory()->create(['class' => 'Class 1', 'alias' => '1', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(6), 'status' => Status::RELEASED]);
@@ -205,6 +206,5 @@ class JobStatusCollectionTest extends TestCase
         $this->assertCount(2, $thirdRecentJob->releasedRuns());
         $this->assertEquals($jobStatus1->id, $thirdRecentJob->releasedRuns()[0]->jobStatus()->id);
         $this->assertEquals($jobStatus2->id, $thirdRecentJob->releasedRuns()[1]->jobStatus()->id);
-
     }
 }

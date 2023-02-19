@@ -393,7 +393,7 @@ class JobRunTest extends TestCase
             'has_payload' => true,
             'connection_name' => 'database-test',
             'queue' => 'custom-queue',
-            'released_runs' => []
+            'released_runs' => [],
         ];
         $this->assertEquals($array, $run->toArray());
         $this->assertIsString($run->toJson());
@@ -468,7 +468,8 @@ class JobRunTest extends TestCase
     }
 
     /** @test */
-    public function releasedRuns_returns_all_released_runs(){
+    public function released_runs_returns_all_released_runs()
+    {
         $releasedRuns = JobStatus::factory()->count(5)->create()->runs();
         $status = JobStatus::factory()->create();
 

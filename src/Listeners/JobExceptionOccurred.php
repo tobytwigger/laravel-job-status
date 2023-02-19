@@ -40,7 +40,7 @@ class JobExceptionOccurred extends BaseListener
             }
 
             // Happens if the job has been released already during the job, and therefore won't be once job failed
-            if($event->job->isReleased()) {
+            if ($event->job->isReleased()) {
                 $jobStatus = JobStatus::create([
                     'queue' => $modifier->getJobStatus()->queue,
                     'class' => $modifier->getJobStatus()?->class,
