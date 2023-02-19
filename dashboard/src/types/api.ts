@@ -43,6 +43,8 @@ export interface JobRun {
   connection_name: string | null;
 
   queue: string | null;
+
+  released_runs: JobRun[];
 }
 
 export interface JobFailureReason {
@@ -119,6 +121,7 @@ export enum Status {
   Cancelled = 'cancelled',
   Failed = 'failed',
   Succeeded = 'succeeded',
+  Released = 'released'
 }
 
 export enum MessageType {
