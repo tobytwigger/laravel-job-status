@@ -126,6 +126,14 @@ class JobStatus extends Model
         $query->where('queue', $queue);
     }
 
+    public function scopeWithCustomOrder(Builder $query, string $sortBy, string $sortByDirection)
+    {
+        $query->orderBy(
+            $sortBy,
+            $sortByDirection
+        );
+    }
+
     public function scopeWhereTag(Builder $query, string $key, mixed $value = JobStatus::INDEXLESS_VALUE)
     {
         $query->whereHas('tags', function (Builder $query) use ($key, $value) {

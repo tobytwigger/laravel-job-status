@@ -55,7 +55,5 @@ class Controller extends \Illuminate\Routing\Controller
             $page,
             ['path' => url(request()->path())]
         ))->appends('per_page', $perPage);
-
-        return $this->paginationResponse($slicedItems, count($items));
     }
 }

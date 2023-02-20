@@ -10,6 +10,8 @@ Route::middleware(config('laravel-job-status.routes.api.middleware'))->group(fun
 
     Route::get('jobs', [\JobStatus\Http\Controllers\Api\JobController::class, 'index'])
         ->name('jobs.index');
+    Route::get('jobs/overview', [\JobStatus\Http\Controllers\Api\JobController::class, 'overview'])
+        ->name('jobs.overview');
     Route::get('jobs/{job_status_job_alias}', [\JobStatus\Http\Controllers\Api\JobController::class, 'show'])
         ->name('jobs.show');
 
