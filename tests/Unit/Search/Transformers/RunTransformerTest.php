@@ -169,7 +169,7 @@ class RunTransformerTest extends TestCase
         $jobStatus3_1 = JobStatus::factory()->create(['class' => 'Class 3', 'alias' => '3', 'uuid' => $uuid2, 'created_at' => Carbon::now()->subHours(2)]);
         $jobStatus3_2 = JobStatus::factory()->create(['class' => 'Class 3', 'alias' => '3', 'uuid' => $uuid2, 'created_at' => Carbon::now()->subHours(1)]);
 
-        $collection = (new RunsTransformer())->transform(JobStatus::whereIn('id', [$jobStatus1_1->id, $jobStatus2->id, $jobStatus3_2->id])->select(['job_id', 'connection_name', 'uuid'])->get());
+        $collection = (new RunsTransformer())->transform(JobStatus::whereIn('id', [$jobStatus1_1->id, $jobStatus2->id, $jobStatus3_2->id])->select(['selector'])->get());
 
         $this->assertCount(3, $collection);
         $this->assertInstanceOf(JobRunCollection::class, $collection);

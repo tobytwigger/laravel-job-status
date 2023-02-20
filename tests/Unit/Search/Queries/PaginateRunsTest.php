@@ -28,12 +28,15 @@ class PaginateRunsTest extends TestCase
         $this->assertEquals(5, $runs->lastItem());
         $this->assertEquals(10, $runs->total());
 
-        $this->assertCount(5, $runs->items());
-        $this->assertEquals($jobStatuses[9]->id, $runs->items()[0]->id);
-        $this->assertEquals($jobStatuses[8]->id, $runs->items()[1]->id);
-        $this->assertEquals($jobStatuses[7]->id, $runs->items()[2]->id);
-        $this->assertEquals($jobStatuses[6]->id, $runs->items()[3]->id);
-        $this->assertEquals($jobStatuses[5]->id, $runs->items()[4]->id);
+        $collection = $runs->items();
+        $this->assertCount(5, $collection);
+        $this->assertContainsOnlyInstancesOf(JobRun::class, $collection);
+
+        $this->assertEquals($jobStatuses[9]->id, $collection[0]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[8]->id, $collection[1]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[7]->id, $collection[2]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[6]->id, $collection[3]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[5]->id, $collection[4]->jobStatus()->id);
 
         /** @var LengthAwarePaginator $runs */
         $runs = JobStatus::paginateRuns(2, 5);
@@ -45,12 +48,15 @@ class PaginateRunsTest extends TestCase
         $this->assertEquals(10, $runs->lastItem());
         $this->assertEquals(10, $runs->total());
 
-        $this->assertCount(5, $runs->items());
-        $this->assertEquals($jobStatuses[4]->id, $runs->items()[0]->id);
-        $this->assertEquals($jobStatuses[3]->id, $runs->items()[1]->id);
-        $this->assertEquals($jobStatuses[2]->id, $runs->items()[2]->id);
-        $this->assertEquals($jobStatuses[1]->id, $runs->items()[3]->id);
-        $this->assertEquals($jobStatuses[0]->id, $runs->items()[4]->id);
+        $collection = $runs->items();
+        $this->assertCount(5, $collection);
+        $this->assertContainsOnlyInstancesOf(JobRun::class, $collection);
+
+        $this->assertEquals($jobStatuses[4]->id, $collection[0]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[3]->id, $collection[1]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[2]->id, $collection[2]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[1]->id, $collection[3]->jobStatus()->id);
+        $this->assertEquals($jobStatuses[0]->id, $collection[4]->jobStatus()->id);
     }
 
     /** @test */
@@ -77,28 +83,15 @@ class PaginateRunsTest extends TestCase
 
         $collection = $runs->items();
 
-        // I expect three items, with only uuid.
-        $this->assertEquals([
-            [
-                'uuid' => (string) $uuid3,
-                'created_at' => $jobStatus3->created_at->toDateTimeString(),
-                'id' => $jobStatus3->id
-            ],
-            [
-                'uuid' => (string) $uuid2,
-                'created_at' => $jobStatus2_2->created_at->toDateTimeString(),
-                'id' => $jobStatus2_2->id
-            ],
-            [
-                'uuid' => (string) $uuid1,
-                'created_at' => $jobStatus1_3->created_at->toDateTimeString(),
-                'id' => $jobStatus1_3->id
-            ]
-        ], collect($collection)->toArray());
+        $this->assertContainsOnlyInstancesOf(JobRun::class, $collection);
 
+        $this->assertEquals($jobStatus3->id, $collection[0]->jobStatus()->id);
+        $this->assertEquals($jobStatus2_2->id, $collection[1]->jobStatus()->id);
+        $this->assertEquals($jobStatus2_1->id, $collection[1]->parent()->jobStatus()->id);
+        $this->assertEquals($jobStatus1_3->id, $collection[2]->jobStatus()->id);
+        $this->assertEquals($jobStatus1_2->id, $collection[2]->parent()->jobStatus()->id);
+        $this->assertEquals($jobStatus1_1->id, $collection[2]->parent()->parent()->jobStatus()->id);
     }
-
-
 
     /** @test */
     public function it_can_paginate_using_just_job_ids_with_no_uuids(){
@@ -118,31 +111,57 @@ class PaginateRunsTest extends TestCase
 
         $collection = $runs->items();
 
-        // I expect three items, with only uuid.
-        $this->assertEquals([
-            [
-                'uuid' => null,
-                'created_at' => $jobStatus3->created_at->toDateTimeString(),
-                'id' => $jobStatus3->id,
-                'job_id' => 3,
-                'connection_name' => 'database'
-            ],
-            [
-                'uuid' => null,
-                'created_at' => $jobStatus2->created_at->toDateTimeString(),
-                'id' => $jobStatus2->id,
-                'job_id' => 2,
-                'connection_name' => 'database'
-            ],
-            [
-                'uuid' => null,
-                'created_at' => $jobStatus1->created_at->toDateTimeString(),
-                'id' => $jobStatus1->id,
-                'job_id' => 1,
-                'connection_name' => 'database'
-            ]
-        ], collect($collection)->toArray());
+        $this->assertContainsOnlyInstancesOf(JobRun::class, $collection);
 
+        $this->assertEquals($jobStatus3->id, $collection[0]->jobStatus()->id);
+        $this->assertEquals($jobStatus2->id, $collection[1]->jobStatus()->id);
+        $this->assertEquals($jobStatus1->id, $collection[2]->jobStatus()->id);
+
+    }
+
+
+    /** @test */
+    public function it_can_paginate_with_a_mixture(){
+        $uuid1 = Str::uuid();
+
+        $jobStatus1 = JobStatus::factory()->create(['class' => 'Class 1', 'job_id' => 1, 'connection_name' => 'database', 'alias' => '1', 'uuid' => null, 'created_at' => Carbon::now()->subHours(6)]);
+        $jobStatus2 = JobStatus::factory()->create(['class' => 'Class 2', 'job_id' => 2, 'connection_name' => 'database', 'alias' => '1', 'uuid' => null, 'created_at' => Carbon::now()->subHours(5)]);
+        $jobStatus3_1 = JobStatus::factory()->create(['class' => 'Class 3', 'alias' => '3', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(3)]);
+        $jobStatus3_2 = JobStatus::factory()->create(['class' => 'Class 3', 'alias' => '3', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(2)]);
+        $jobStatus4 = JobStatus::factory()->create(['class' => 'Class 3', 'job_id' => 4, 'connection_name' => 'database', 'alias' => '1', 'uuid' => null, 'created_at' => Carbon::now()->subHours(1)]);
+
+        $runs = JobStatus::paginateRuns(1, 2);
+
+        $this->assertEquals(1, $runs->currentPage());
+        $this->assertEquals(2, $runs->lastPage());
+        $this->assertEquals(2, $runs->perPage());
+        $this->assertEquals(1, $runs->firstItem());
+        $this->assertEquals(2, $runs->lastItem());
+        $this->assertEquals(4, $runs->total());
+
+        $collection = $runs->items();
+
+        $this->assertContainsOnlyInstancesOf(JobRun::class, $collection);
+
+        $this->assertEquals($jobStatus4->id, $collection[0]->jobStatus()->id);
+        $this->assertEquals($jobStatus3_2->id, $collection[1]->jobStatus()->id);
+        $this->assertEquals($jobStatus3_1->id, $collection[1]->parent()->jobStatus()->id);
+
+        $runs = JobStatus::paginateRuns(2, 2);
+
+        $this->assertEquals(2, $runs->currentPage());
+        $this->assertEquals(2, $runs->lastPage());
+        $this->assertEquals(2, $runs->perPage());
+        $this->assertEquals(3, $runs->firstItem());
+        $this->assertEquals(4, $runs->lastItem());
+        $this->assertEquals(4, $runs->total());
+
+        $collection = $runs->items();
+
+        $this->assertContainsOnlyInstancesOf(JobRun::class, $collection);
+
+        $this->assertEquals($jobStatus2->id, $collection[0]->jobStatus()->id);
+        $this->assertEquals($jobStatus1->id, $collection[1]->jobStatus()->id);
 
     }
 

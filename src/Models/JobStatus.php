@@ -72,6 +72,11 @@ class JobStatus extends Model
             if ($jobStatus->alias === null) {
                 $jobStatus->alias = $jobStatus->class;
             }
+            if($jobStatus->selector === null) {
+                $jobStatus->selector = $jobStatus->uuid === null
+                    ? $jobStatus->job_id . '-' . $jobStatus->connection_name
+                    : $jobStatus->uuid;
+            }
         });
     }
 

@@ -54,8 +54,9 @@ class RunController extends Controller
             $query->whereTags($request->input('tags'));
         }
 
-        return $this->paginate(
-            $query->get()->runs()
+        return $query->paginateRuns(
+            $request->input('page', 1),
+            $request->input('per_page', 10)
         );
     }
 
