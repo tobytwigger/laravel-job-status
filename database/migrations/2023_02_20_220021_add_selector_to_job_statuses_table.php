@@ -23,7 +23,6 @@ return new class() extends Migration {
     public function updateJobSelectors()
     {
         $jobStatuses = \JobStatus\Models\JobStatus::query()
-            ->select(['selector', 'uuid', 'job_id', 'connection_name'])
             ->withoutEagerLoads()
             ->get();
         foreach ($jobStatuses as $jobStatus) {
