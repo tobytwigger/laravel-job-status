@@ -27,7 +27,7 @@ class JobException extends Model
     ];
 
     protected $with = [
-        'previous'
+        'previous',
     ];
 
     protected $dateFormat = 'Y-m-d H:i:s.v';
@@ -61,7 +61,7 @@ class JobException extends Model
             if (Str::startsWith($string, '.')) {
                 $string = Str::substr($string, 1);
             }
-            if(!$this->relationLoaded($string)) {
+            if (!$this->relationLoaded($string)) {
                 $this->load($string);
             }
             $currentException = $currentException->previous;
