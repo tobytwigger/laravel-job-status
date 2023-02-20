@@ -1,7 +1,7 @@
 <template>
   <q-page class="justify-evenly" padding v-if="selectedRun !== null">
     <q-breadcrumbs>
-      <q-breadcrumbs-el icon="list" to="/jobs" label="Jobs"/>
+      <q-breadcrumbs-el icon="list" to="/jobs" label="Jobs" />
       <q-breadcrumbs-el
         :label="selectedRun.alias"
         icon="view_stream"
@@ -80,7 +80,7 @@
                 clickable
                 @click="selectedRun = run"
                 v-close-popup
-                >
+              >
                 <q-item-section>
                   <q-item-label>Run {{ index + 1 }}</q-item-label>
                 </q-item-section>
@@ -88,20 +88,22 @@
             </q-list>
           </q-btn-dropdown>
 
-<!--          <q-btn-->
-<!--            icon="cancel"-->
-<!--            :label="'View ' + selectedRun.released_runs.length + ' delay.'"-->
-<!--          />-->
+          <!--          <q-btn-->
+          <!--            icon="cancel"-->
+          <!--            :label="'View ' + selectedRun.released_runs.length + ' delay.'"-->
+          <!--          />-->
         </q-btn-group>
       </div>
     </div>
 
     <div class="row" v-if="selectedRun !== null">
       <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
-        <run-show-toggle-run-bar v-model="selectedRun" :job-run="results" v-if="results !== null"></run-show-toggle-run-bar>
-        <div v-else>
-          Loading runs
-        </div>
+        <run-show-toggle-run-bar
+          v-model="selectedRun"
+          :job-run="results"
+          v-if="results !== null"
+        ></run-show-toggle-run-bar>
+        <div v-else>Loading runs</div>
       </div>
       <div class="col-12 col-sm-7 col-md-8 col-lg-9 col-xl-10">
         <div class="row" v-if="selectedRun !== null">
@@ -166,8 +168,12 @@
 
               <q-item>
                 <q-item-section>
-                  <q-item-label>{{ selectedRun.released_runs.length }}</q-item-label>
-                  <q-item-label caption>Times delayed by middleware</q-item-label>
+                  <q-item-label>{{
+                    selectedRun.released_runs.length
+                  }}</q-item-label>
+                  <q-item-label caption
+                    >Times delayed by middleware</q-item-label
+                  >
                 </q-item-section>
               </q-item>
 
@@ -195,18 +201,22 @@
           <div class="col-12 q-py-md">
             <q-card>
               <q-tabs v-model="tab" class="text-teal">
-                <q-tab name="timeline" icon="timeline" label="Timeline"/>
-                <q-tab name="messages" icon="mail" label="Messages"/>
+                <q-tab name="timeline" icon="timeline" label="Timeline" />
+                <q-tab name="messages" icon="mail" label="Messages" />
                 <q-tab
                   name="signals"
                   icon="connect_without_contact"
                   label="Signals"
                 />
-                <q-tab name="statuses" icon="move_down" label="Status History"/>
-                <q-tab name="exception" icon="error" label="Exception"/>
+                <q-tab
+                  name="statuses"
+                  icon="move_down"
+                  label="Status History"
+                />
+                <q-tab name="exception" icon="error" label="Exception" />
               </q-tabs>
 
-              <q-separator/>
+              <q-separator />
 
               <q-tab-panels v-model="tab" animated>
                 <q-tab-panel name="timeline">
@@ -237,31 +247,31 @@
                       :key="signal.id"
                       :title="signal.signal"
                       :subtitle="
-                    signal.cancel_job ? 'Job stopped' : 'Job continued'
-                  "
+                        signal.cancel_job ? 'Job stopped' : 'Job continued'
+                      "
                     >
                       <div>
                         <q-list bordered separator>
                           <q-item>
                             <q-item-section>
-                              <q-item-label>{{ signal.parameters }}</q-item-label>
+                              <q-item-label>{{
+                                signal.parameters
+                              }}</q-item-label>
                               <q-item-label caption>Parameters</q-item-label>
                             </q-item-section>
                           </q-item>
                           <q-item>
                             <q-item-section>
-                              <q-item-label>{{
-                                  dayjs(signal.created_at).format('L LTS')
-                                }}
+                              <q-item-label
+                                >{{ dayjs(signal.created_at).format('L LTS') }}
                               </q-item-label>
                               <q-item-label caption>Sent at</q-item-label>
                             </q-item-section>
                           </q-item>
                           <q-item>
                             <q-item-section>
-                              <q-item-label>{{
-                                  dayjs(signal.handled_at).format('L LTS')
-                                }}
+                              <q-item-label
+                                >{{ dayjs(signal.handled_at).format('L LTS') }}
                               </q-item-label>
                               <q-item-label caption>Handled at</q-item-label>
                             </q-item-section>
@@ -291,24 +301,24 @@
                   <div v-if="!selectedRun.exception">
                     No exceptions were detected in this job
                   </div>
-                  <exception-view v-else :exceptions="exceptions"></exception-view>
+                  <exception-view
+                    v-else
+                    :exceptions="exceptions"
+                  ></exception-view>
                 </q-tab-panel>
               </q-tab-panels>
             </q-card>
           </div>
         </div>
-
       </div>
     </div>
-    <div v-else>
-      &lt; Please select a run
-    </div>
+    <div v-else>&lt; Please select a run</div>
   </q-page>
   <q-page class="items-center justify-evenly" v-else padding> Loading</q-page>
 </template>
 
 <script setup lang="ts">
-import {computed, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import {
   JobException,
   JobRun,
@@ -319,8 +329,8 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import JobRunTimeline from 'components/JobRunTimeline.vue';
 import ExceptionView from 'components/ExceptionView.vue';
-import {client} from '@tobytwigger/laravel-job-status-js';
-import RunShowToggleRunBar from "components/RunShowToggleRunBar.vue";
+import { client } from '@tobytwigger/laravel-job-status-js';
+import RunShowToggleRunBar from 'components/RunShowToggleRunBar.vue';
 
 dayjs.extend(localizedFormat);
 
@@ -339,7 +349,7 @@ onMounted(() => {
     .listen()
     .onUpdated((newResults) => {
       results.value = newResults;
-      if(selectedRun.value === null) {
+      if (selectedRun.value === null) {
         selectedRun.value = results.value;
       }
     })
@@ -416,21 +426,22 @@ const runTime = computed((): number => {
 });
 
 const queueTime = computed((): number => {
-  let startTime: Date|null = selectedRun.value === null ? null : selectedRun.value.created_at;
-  let endTime: Date|null = selectedRun.value === null ? null : selectedRun.value.started_at;
+  let startTime: Date | null =
+    selectedRun.value === null ? null : selectedRun.value.created_at;
+  let endTime: Date | null =
+    selectedRun.value === null ? null : selectedRun.value.started_at;
 
-  if(selectedRun.value !== null && selectedRun.value.released_runs.length > 0) {
+  if (
+    selectedRun.value !== null &&
+    selectedRun.value.released_runs.length > 0
+  ) {
     startTime = selectedRun.value.released_runs[0].created_at;
   }
 
-  if(startTime === null) {
+  if (startTime === null) {
     return 0;
   }
-  return getDuration(
-    startTime,
-    endTime ?? new Date(),
-    true
-  );
+  return getDuration(startTime, endTime ?? new Date(), true);
 });
 
 function getDuration(

@@ -25,7 +25,7 @@ enum Status: string
             self::FAILED,
             self::CANCELLED,
             self::SUCCEEDED,
-            self::RELEASED
+            self::RELEASED,
         ];
     }
 
@@ -45,7 +45,7 @@ enum Status: string
         return [
             self::CANCELLED,
             self::SUCCEEDED,
-            self::RELEASED
+            self::RELEASED,
         ];
     }
 

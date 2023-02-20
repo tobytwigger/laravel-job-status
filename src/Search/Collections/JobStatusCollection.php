@@ -27,14 +27,14 @@ class JobStatusCollection extends Collection
                 $jobRun = null;
                 $released = new JobRunCollection();
                 foreach ($runs as $run) {
-                    if($run->status === Status::RELEASED) {
+                    if ($run->status === Status::RELEASED) {
                         $released->push(new JobRun($run));
                     } else {
                         $jobRun = new JobRun($run, $jobRun, $released);
                         $released = new JobRunCollection();
                     }
                 }
-                if($jobRun !== null) {
+                if ($jobRun !== null) {
                     $jobRuns->push($jobRun);
                 }
             }
