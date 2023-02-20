@@ -7,15 +7,15 @@
     <q-chip v-else dense :color="props.color" text-color="white">
       <q-avatar :color="color" text-color="white"></q-avatar>
       <span>{{ props.label }}</span>
-       <q-tooltip>
+      <q-tooltip>
         {{ props.count }}
-       </q-tooltip>
+      </q-tooltip>
     </q-chip>
   </span>
 </template>
 
 <script setup lang="ts">
-import {defineProps} from 'vue';
+import { defineProps } from 'vue';
 
 const props = defineProps<{
   count: number;
