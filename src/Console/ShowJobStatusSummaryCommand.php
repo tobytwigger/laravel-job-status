@@ -54,17 +54,18 @@ class ShowJobStatusSummaryCommand extends Command
             ->orderBy('class')
             ->get();
 
-        $data = $statuses->jobs()->map(fn (TrackedJob $trackedJob) => [
-            $trackedJob->jobClass(),
-            $this->getStatusCount($trackedJob, Status::QUEUED),
-            $this->getStatusCount($trackedJob, Status::STARTED),
-            $this->getStatusCount($trackedJob, Status::SUCCEEDED),
-            $this->getStatusCount($trackedJob, Status::FAILED),
-            $this->getStatusCount($trackedJob, Status::CANCELLED),
-        ]);
-        $this->table([
-            'Job', 'Queued', 'Running', 'Succeeded', 'Failed', 'Cancelled',
-        ], $data);
+        $data = $statuses->jobs()->map(fn (TrackedJob $trackedJob) => array_merge(
+            [
+                $trackedJob->jobClass(),
+            ],
+            collect(Status::cases())->filter(fn (Status $status) => $status !== Status::RELEASED)->map(fn (Status $enum) => $this->getStatusCount($trackedJob, $enum))->toArray()
+        ));
+        $this->table(array_merge(
+            [
+                'Job',
+            ],
+            collect(Status::cases())->filter(fn (Status $status) => $status !== Status::RELEASED)->map(fn (Status $enum) => Status::convertToHuman($enum))->toArray()
+        ), $data);
 
         return static::SUCCESS;
     }

@@ -5,8 +5,11 @@
       {{ props.label }}
     </q-chip>
     <q-chip v-else dense :color="props.color" text-color="white">
-      <q-avatar :color="color" text-color="white">{{ props.count }}</q-avatar>
-      {{ props.label }}
+      <q-avatar :color="color" text-color="white"></q-avatar>
+      <span>{{ props.label }}</span>
+      <q-tooltip>
+        {{ props.count }}
+      </q-tooltip>
     </q-chip>
   </span>
 </template>

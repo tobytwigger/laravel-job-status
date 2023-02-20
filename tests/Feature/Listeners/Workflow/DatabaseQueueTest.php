@@ -20,6 +20,8 @@ class DatabaseQueueTest extends TestCase
     /** @test */
     public function a_run_is_handled()
     {
+        config()->set('laravel-job-status.track_anonymous', true);
+
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
             ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'my-indexless-tag'])
@@ -505,7 +507,7 @@ class DatabaseQueueTest extends TestCase
 
 
     /** @test */
-    public function it_does_not_track_a_new_job_when_failed_and_retried_and_already_manually_released()
+    public function it_does_track_a_new_job_when_failed_and_retried_and_already_manually_released()
     {
         $job = (new JobFakeFactory())
             ->setAlias('my-fake-job')
@@ -516,7 +518,7 @@ class DatabaseQueueTest extends TestCase
             ->onQueue('my-database-queue')
             ->dispatch();
 
-        Assert::assertCount(1, JobStatus::all());
+        Assert::assertCount(2, JobStatus::all());
 
         $jobStatus = JobStatus::first();
         $this->assertNotNull($jobStatus->payload);
@@ -545,6 +547,34 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
         $this->assertEquals(\JobStatus\Enums\Status::FAILED, $jobStatus->statuses[2]->status);
+
+        Assert::assertNull($jobStatus->batch);
+        Assert::assertCount(0, JobBatch::all());
+
+        $jobStatus = JobStatus::get()[1];
+        $this->assertNull($jobStatus->payload);
+        $this->assertEquals('my-database-queue', $jobStatus->queue);
+        $this->assertEquals(JobFake::class, $jobStatus->class);
+        $this->assertEquals('my-fake-job', $jobStatus->alias);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->status);
+        $this->assertEquals(0, $jobStatus->percentage);
+        $this->assertEquals(1, $jobStatus->job_id);
+        $this->assertEquals('database', $jobStatus->connection_name);
+        $this->assertNotNull($jobStatus->uuid);
+        $this->assertEquals(true, $jobStatus->is_unprotected);
+
+        $this->assertCount(2, $jobStatus->tags);
+        $this->assertEquals('my-first-tag', $jobStatus->tags[0]->key);
+        $this->assertEquals(1, $jobStatus->tags[0]->value);
+        $this->assertEquals('my-second-tag', $jobStatus->tags[1]->key);
+        $this->assertEquals('mytag-value', $jobStatus->tags[1]->value);
+
+        $this->assertNull($jobStatus->exception);
+
+        $this->assertCount(0, $jobStatus->messages()->orderBy('id')->get());
+
+        $this->assertCount(1, $jobStatus->statuses);
+        $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
 
         Assert::assertNull($jobStatus->batch);
         Assert::assertCount(0, JobBatch::all());
@@ -580,7 +610,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-database-queue', $jobStatus->queue);
         $this->assertEquals(JobFake::class, $jobStatus->class);
         $this->assertEquals('my-fake-job', $jobStatus->alias);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatus->status);
         $this->assertEquals(100, $jobStatus->percentage);
         $this->assertEquals(1, $jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
@@ -599,7 +629,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertCount(3, $jobStatus->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatus->statuses[1]->status);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatus->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatus->statuses[2]->status);
 
         $this->assertCount(2, $jobStatus->users()->get());
         $this->assertEquals(1, $jobStatus->users()->get()[0]->user_id);
@@ -612,7 +642,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-database-queue', $jobStatusRetry->queue);
         $this->assertEquals(JobFake::class, $jobStatusRetry->class);
         $this->assertEquals('my-fake-job', $jobStatusRetry->alias);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatusRetry->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatusRetry->status);
         $this->assertEquals(100, $jobStatusRetry->percentage);
         $this->assertEquals(2, $jobStatusRetry->job_id);
         $this->assertEquals('database', $jobStatusRetry->connection_name);
@@ -634,7 +664,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertCount(3, $jobStatusRetry->statuses);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetry->statuses[0]->status);
         $this->assertEquals(\JobStatus\Enums\Status::STARTED, $jobStatusRetry->statuses[1]->status);
-        $this->assertEquals(\JobStatus\Enums\Status::SUCCEEDED, $jobStatusRetry->statuses[2]->status);
+        $this->assertEquals(\JobStatus\Enums\Status::RELEASED, $jobStatusRetry->statuses[2]->status);
         Assert::assertNull($jobStatusRetry->batch);
 
         Assert::assertCount(0, JobBatch::all());

@@ -4,6 +4,7 @@ namespace JobStatus\Tests\Unit\Search\Collections;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Collections\BatchCollection;
@@ -169,5 +170,41 @@ class JobStatusCollectionTest extends TestCase
         $this->assertCount(2, $collection[3]->runs());
         $this->assertEquals($jobStatus1_2->id, $collection[3]->runs()[0]->jobStatus()->id);
         $this->assertEquals($jobStatus1_1->id, $collection[3]->runs()[1]->jobStatus()->id);
+    }
+
+    /** @test */
+    public function it_groups_released_jobs_as_released_jobs()
+    {
+        $uuid1 = Str::uuid();
+
+        $jobStatus1 = JobStatus::factory()->create(['class' => 'Class 1', 'alias' => '1', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(6), 'status' => Status::RELEASED]);
+        $jobStatus2 = JobStatus::factory()->create(['class' => 'Class 1', 'alias' => '1', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(5), 'status' => Status::RELEASED]);
+        $jobStatus3 = JobStatus::factory()->create(['class' => 'Class 1', 'alias' => '1', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(4), 'status' => Status::FAILED]);
+        $jobStatus4 = JobStatus::factory()->create(['class' => 'Class 1', 'alias' => '1', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(3), 'status' => Status::RELEASED]);
+        $jobStatus5 = JobStatus::factory()->create(['class' => 'Class 1', 'alias' => '1', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(2), 'status' => Status::FAILED]);
+        $jobStatus6 = JobStatus::factory()->create(['class' => 'Class 1', 'alias' => '1', 'uuid' => $uuid1, 'created_at' => Carbon::now()->subHours(1), 'status' => Status::QUEUED]);
+
+        $collection = JobStatus::all()
+            ->runs();
+
+        $this->assertCount(1, $collection);
+
+        $mostRecentJob = $collection[0];
+        $this->assertInstanceOf(JobRun::class, $mostRecentJob);
+        $this->assertEquals($jobStatus6->id, $mostRecentJob->jobStatus()->id);
+        $this->assertCount(0, $mostRecentJob->releasedRuns());
+
+        $secondRecentJob = $collection[0]->parent();
+        $this->assertInstanceOf(JobRun::class, $secondRecentJob);
+        $this->assertEquals($jobStatus5->id, $secondRecentJob->jobStatus()->id);
+        $this->assertCount(1, $secondRecentJob->releasedRuns());
+        $this->assertEquals($jobStatus4->id, $secondRecentJob->releasedRuns()[0]->jobStatus()->id);
+
+        $thirdRecentJob = $collection[0]->parent()->parent();
+        $this->assertInstanceOf(JobRun::class, $thirdRecentJob);
+        $this->assertEquals($jobStatus3->id, $thirdRecentJob->jobStatus()->id);
+        $this->assertCount(2, $thirdRecentJob->releasedRuns());
+        $this->assertEquals($jobStatus1->id, $thirdRecentJob->releasedRuns()[0]->jobStatus()->id);
+        $this->assertEquals($jobStatus2->id, $thirdRecentJob->releasedRuns()[1]->jobStatus()->id);
     }
 }

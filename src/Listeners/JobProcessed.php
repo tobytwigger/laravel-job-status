@@ -36,6 +36,8 @@ class JobProcessed extends BaseListener
 
                 if ($event->job->hasFailed()) {
                     $modifier->setStatus(Status::FAILED);
+                } elseif ($event->job->isReleased()) {
+                    $modifier->setStatus(Status::RELEASED);
                 } elseif ($this->batchIsCancelled($modifier->getJobStatus())) {
                     $modifier->setStatus(Status::CANCELLED);
                     $modifier->warningMessage('The batch that the job is a part of has been cancelled');

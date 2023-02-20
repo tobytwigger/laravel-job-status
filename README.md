@@ -50,6 +50,10 @@ We've taken care over documenting everything you'll need to get started and use 
 Contributions are welcome! Before contributing to this project, familiarize
 yourself with [CONTRIBUTING.md](CONTRIBUTING.md).
 
+Feel free to open an issue or message me on discord (tobytwigger#7153) to chat about this package or potential features.
+
+You can see the full roadmap in the [discussions](https://github.com/tobytwigger/laravel-job-status/discussions/71).
+
 ## Copyright and Licence
 
 This package is copyright © [Toby Twigger](https://github.com/tobytwigger)

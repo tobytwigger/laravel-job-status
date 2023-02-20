@@ -28,6 +28,7 @@ class JobStatus extends Model
     use HasFactory;
 
     const INDEXLESS_VALUE = 'JOB_STATUS_MODEL_INDEXLESS';
+
     protected $fillable = [
         'class', 'alias', 'percentage', 'status', 'uuid', 'job_id', 'connection_name', 'exception_id',
         'started_at', 'finished_at', 'is_unprotected', 'batch_id', 'queue', 'payload',
@@ -42,6 +43,10 @@ class JobStatus extends Model
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
         'payload' => 'array',
+    ];
+
+    protected $with = [
+        'statuses', 'tags', 'signals', 'messages', 'exception', 'batch', 'exception.previous', 'users',
     ];
 
     protected $dateFormat = 'Y-m-d H:i:s.v';
@@ -151,16 +156,12 @@ class JobStatus extends Model
 
     public function scopeWhereFinished(Builder $query)
     {
-        $query->whereStatusIn([
-            Status::FAILED, Status::SUCCEEDED, Status::CANCELLED,
-        ]);
+        $query->whereStatusIn(Status::getFinishedStatuses());
     }
 
     public function scopeWhereNotFinished(Builder $query)
     {
-        $query->whereStatusIn([
-            Status::QUEUED, Status::STARTED,
-        ]);
+        $query->whereStatusIn(Status::getUnfinishedStatuses());
     }
 
     public function scopeWhereTags(Builder $query, array $tags)

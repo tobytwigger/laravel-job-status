@@ -5,7 +5,7 @@ namespace JobStatus\Listeners;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\BatchRepository;
 use JobStatus\Enums\Status;
-use JobStatus\Exception\JobCancelledException;
+use JobStatus\Exceptions\JobCancelledException;
 
 /**
  * Thrown when a job has failed and will no longer be ran.

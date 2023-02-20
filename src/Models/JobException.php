@@ -26,6 +26,10 @@ class JobException extends Model
         'code' => 'integer',
     ];
 
+    protected $with = [
+        'previous',
+    ];
+
     protected $dateFormat = 'Y-m-d H:i:s.v';
 
     public function __construct(array $attributes = [])
@@ -57,7 +61,9 @@ class JobException extends Model
             if (Str::startsWith($string, '.')) {
                 $string = Str::substr($string, 1);
             }
-            $this->load($string);
+            if (!$this->relationLoaded($string)) {
+                $this->load($string);
+            }
             $currentException = $currentException->previous;
         }
 

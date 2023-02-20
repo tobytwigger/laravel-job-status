@@ -23,6 +23,7 @@ class JobReleasedAfterException extends BaseListener
             if ($modifier === null) {
                 return;
             }
+
             $jobStatus = JobStatus::create([
                 'queue' => $modifier->getJobStatus()->queue,
                 'class' => $modifier->getJobStatus()?->class,

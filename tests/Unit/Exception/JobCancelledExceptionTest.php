@@ -2,7 +2,7 @@
 
 namespace JobStatus\Tests\Unit\Exception;
 
-use JobStatus\Exception\JobCancelledException;
+use JobStatus\Exceptions\JobCancelledException;
 use JobStatus\Models\JobSignal;
 use JobStatus\Tests\TestCase;
 

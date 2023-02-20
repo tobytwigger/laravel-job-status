@@ -3,7 +3,9 @@
 namespace JobStatus\Listeners;
 
 use JobStatus\Enums\Status;
-use JobStatus\Exception\JobCancelledException;
+use JobStatus\Exceptions\JobCancelledException;
+use JobStatus\JobStatusModifier;
+use JobStatus\Models\JobStatus;
 
 /**
  * Occurs when an exception occurs in the job execution.
@@ -34,6 +36,39 @@ class JobExceptionOccurred extends BaseListener
                 } else {
                     $modifier->setStatus(Status::FAILED);
                     $modifier->addException($event->exception);
+                }
+            }
+
+            // Happens if the job has been released already during the job, and therefore won't be once job failed
+            if ($event->job->isReleased()) {
+                $jobStatus = JobStatus::create([
+                    'queue' => $modifier->getJobStatus()->queue,
+                    'class' => $modifier->getJobStatus()?->class,
+                    'alias' => $modifier->getJobStatus()?->alias,
+                    'percentage' => 0,
+                    'batch_id' => $modifier->getJobStatus()->batch_id,
+                    'status' => Status::QUEUED,
+                    'uuid' => $event->job->uuid(),
+                    'connection_name' => $event->job->getConnectionName(),
+                    'job_id' => $event->job->getJobId(),
+                    'is_unprotected' => $modifier->getJobStatus()?->is_unprotected,
+                ]);
+
+
+                JobStatusModifier::forJobStatus($jobStatus)->setStatus(Status::QUEUED);
+
+                foreach ($modifier->getJobStatus()->tags()->get() as $tag) {
+                    $jobStatus->tags()->create([
+                        'key' => $tag->key,
+                        'value' => $tag->value,
+                        'is_indexless' => $tag->is_indexless,
+                    ]);
+                }
+
+                foreach ($modifier->getJobStatus()->users()->get() as $user) {
+                    $jobStatus->users()->create([
+                        'user_id' => $user->user_id,
+                    ]);
                 }
             }
 
