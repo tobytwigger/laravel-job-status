@@ -45,6 +45,10 @@ class JobStatus extends Model
         'payload' => 'array',
     ];
 
+    protected $with = [
+        'statuses', 'tags', 'signals', 'messages', 'exception', 'batch', 'exception.previous', 'users'
+    ];
+
     protected $dateFormat = 'Y-m-d H:i:s.v';
 
     public function __construct(array $attributes = [])

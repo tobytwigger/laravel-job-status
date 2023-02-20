@@ -37,9 +37,6 @@ class JobStatusCollection extends Collection
                 if($jobRun !== null) {
                     $jobRuns->push($jobRun);
                 }
-//                $jobRuns->push($runs->reduce(
-//                    fn (?JobRun $result, JobStatus $jobStatus, int $key) => new JobRun($jobStatus, $result)
-//                ));
             }
         }
 

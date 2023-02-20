@@ -28,11 +28,11 @@ class JobRun implements Arrayable, Jsonable
      * @param JobRun|null $parent
      * @param JobRunCollection|null $releasedRuns
      */
-    public function __construct(JobStatus $jobStatus, ?JobRun $parent = null, JobRunCollection $releasedRuns = new JobRunCollection())
+    public function __construct(JobStatus $jobStatus, ?JobRun $parent = null, ?JobRunCollection $releasedRuns = null)
     {
         $this->jobStatus = $jobStatus;
         $this->parent = $parent;
-        $this->releasedRuns = $releasedRuns;
+        $this->releasedRuns = $releasedRuns ?? new JobRunCollection();
     }
 
     public function getTagsAsArray(): array
@@ -76,16 +76,16 @@ class JobRun implements Arrayable, Jsonable
             'tags' => $this->getTagsAsArray(),
             'created_at' => $this->jobStatus->created_at,
             'exception' => $this->getException()?->toArray(),
-            'messages' => $this->jobStatus->messages()->orderByDesc('created_at')->orderByDesc('id')->get()
+            'messages' => $this->jobStatus->messages->sortBy([['created_at', 'desc'], ['id', 'desc']])
                 ->map(fn (JobMessage $message) => $message->toArray()),
-            'signals' => $this->jobStatus->signals()->orderByDesc('created_at')->orderByDesc('id')->get()
+            'signals' => $this->jobStatus->signals->sortBy([['created_at', 'desc'], ['id', 'desc']])
                 ->map(fn (JobSignal $signal) => $signal->toArray()),
             'started_at' => $this->jobStatus->started_at,
             'finished_at' => $this->jobStatus->finished_at,
             'id' => $this->jobStatus->id,
             'batch_id' => $this->jobStatus->batch_id,
             'batch_id_uuid' => $this->jobStatus->batch?->batch_id,
-            'statuses' => $this->jobStatus->statuses()->orderByDesc('created_at')->orderByDesc('id')->get()
+            'statuses' => $this->jobStatus->statuses->sortBy([['created_at', 'desc'], ['id', 'desc']])
                 ->map(fn (JobStatusStatus $status) => $status->toArray()),
             'has_payload' => $this->jobStatus->payload !== null,
             'connection_name' => $this->jobStatus->connection_name,
@@ -97,9 +97,7 @@ class JobRun implements Arrayable, Jsonable
     public function getException(): ?JobException
     {
         return $this->jobStatus
-            ->exception()
-            ->with('previous')
-            ->first()
+            ->exception
             ?->loadAllPrevious();
     }
 
