@@ -10,6 +10,7 @@ use JobStatus\Search\Result\Batch;
 use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Queue;
 use JobStatus\Search\Result\TrackedJob;
+use JobStatus\Search\Transformers\RunsTransformer;
 
 class JobStatusCollection extends Collection
 {
@@ -45,11 +46,7 @@ class JobStatusCollection extends Collection
 
     public function runs(): JobRunCollection
     {
-        $queryResult = $this
-            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
-            ->groupBy(['uuid']);
-
-        return $this->createJobRunCollection($queryResult);
+        return (new RunsTransformer())->transform($this);
     }
 
     public function jobs(): TrackedJobCollection
