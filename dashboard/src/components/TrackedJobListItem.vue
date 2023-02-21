@@ -17,27 +17,27 @@
       </q-item-label>
       <q-item-label caption lines="5">
         <status-count
-          :count="queuedCount"
+          :count="props.trackedJob.queued_count"
           label="Queued"
           color="primary"
         ></status-count>
         <status-count
-          :count="runningCount"
+          :count="props.trackedJob.queued_count"
           label="Running"
           color="info"
         ></status-count>
         <status-count
-          :count="cancelledCount"
+          :count="props.trackedJob.cancelled_count"
           label="Cancelled"
           color="warning"
         ></status-count>
         <status-count
-          :count="failedCount"
+          :count="props.trackedJob.failed_count"
           label="Failed"
           color="negative"
         ></status-count>
         <status-count
-          :count="succeededCount"
+          :count="props.trackedJob.successful_count"
           label="Succeeded"
           color="positive"
         ></status-count>
@@ -63,36 +63,6 @@ const props = defineProps<{
 
 // Counts
 
-const failedCount = computed(
-  (): number =>
-    props.trackedJob.runs.filter(
-      (jobRun: JobRun) => jobRun.status === Status.Failed
-    ).length
-);
-const runningCount = computed(
-  (): number =>
-    props.trackedJob.runs.filter(
-      (jobRun: JobRun) => jobRun.status === Status.Started
-    ).length
-);
-const queuedCount = computed(
-  (): number =>
-    props.trackedJob.runs.filter(
-      (jobRun: JobRun) => jobRun.status === Status.Queued
-    ).length
-);
-const cancelledCount = computed(
-  (): number =>
-    props.trackedJob.runs.filter(
-      (jobRun: JobRun) => jobRun.status === Status.Cancelled
-    ).length
-);
-const succeededCount = computed(
-  (): number =>
-    props.trackedJob.runs.filter(
-      (jobRun: JobRun) => jobRun.status === Status.Succeeded
-    ).length
-);
 </script>
 
 <style scoped></style>

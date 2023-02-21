@@ -1,7 +1,11 @@
 export interface TrackedJob {
   class: string;
   alias: string;
-  runs: JobRun[];
+  successful_count: number;
+  failed_count: number;
+  started_count: number;
+  queued_count: number;
+  cancelled_count: number;
   count: number;
   failure_reasons: JobFailureReason[];
 }
