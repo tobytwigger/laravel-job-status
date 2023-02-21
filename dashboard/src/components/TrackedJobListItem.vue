@@ -17,27 +17,27 @@
       </q-item-label>
       <q-item-label caption lines="5">
         <status-count
-          :count="props.trackedJob.queued_count"
+          :count="props.trackedJob.queued"
           label="Queued"
           color="primary"
         ></status-count>
         <status-count
-          :count="props.trackedJob.queued_count"
+          :count="props.trackedJob.queued"
           label="Running"
           color="info"
         ></status-count>
         <status-count
-          :count="props.trackedJob.cancelled_count"
+          :count="props.trackedJob.cancelled"
           label="Cancelled"
           color="warning"
         ></status-count>
         <status-count
-          :count="props.trackedJob.failed_count"
+          :count="props.trackedJob.failed"
           label="Failed"
           color="negative"
         ></status-count>
         <status-count
-          :count="props.trackedJob.successful_count"
+          :count="props.trackedJob.successful"
           label="Succeeded"
           color="positive"
         ></status-count>

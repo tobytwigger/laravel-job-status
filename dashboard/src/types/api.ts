@@ -1,11 +1,11 @@
 export interface TrackedJob {
   class: string;
   alias: string;
-  successful_count: number;
-  failed_count: number;
-  started_count: number;
-  queued_count: number;
-  cancelled_count: number;
+  successful: number;
+  failed: number;
+  started: number;
+  queued: number;
+  cancelled: number;
   count: number;
   failure_reasons: JobFailureReason[];
 }
