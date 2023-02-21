@@ -3,6 +3,7 @@
 namespace JobStatus\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Queries\PaginateBatches;
@@ -32,14 +33,13 @@ class BatchController extends Controller
         if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
-        $results = $query->get();
+        /** @var LengthAwarePaginator $result */
+        $result = $query->paginateBatches(1, 1);
 
-        if ($results->count() === 0) {
-            abort(403);
+        if ($result->count() === 0) {
+            abort(404);
         }
 
-        return $results
-            ->batches()
-            ->first();
+        return $result->first();
     }
 }
