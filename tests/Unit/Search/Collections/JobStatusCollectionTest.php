@@ -79,20 +79,14 @@ class JobStatusCollectionTest extends TestCase
         $this->assertContainsOnlyInstancesOf(TrackedJob::class, $collection);
 
         $this->assertEquals('Class 3', $collection[0]->jobClass());
-        $this->assertCount(1, $collection[0]->runs());
-        $this->assertEquals($jobStatus3->id, $collection[0]->runs()[0]->jobStatus()->id);
-        $this->assertNull($collection[0]->runs()[0]->parent());
+        $this->assertEquals(1, $collection[0]->numberOfRuns());
 
         $this->assertEquals('Class 2', $collection[1]->jobClass());
-        $this->assertCount(1, $collection[1]->runs());
-        $this->assertEquals($jobStatus2_2->id, $collection[1]->runs()[0]->jobStatus()->id);
-        $this->assertEquals($jobStatus2_1->id, $collection[1]->runs()[0]->parent()->jobStatus()->id);
+        $this->assertEquals(1, $collection[1]->numberOfRuns());
 
         $this->assertEquals('Class 1', $collection[2]->jobClass());
-        $this->assertCount(2, $collection[2]->runs());
-        $this->assertEquals($jobStatus1_3->id, $collection[2]->runs()[0]->jobStatus()->id);
-        $this->assertEquals($jobStatus1_2->id, $collection[2]->runs()[1]->jobStatus()->id);
-        $this->assertEquals($jobStatus1_1->id, $collection[2]->runs()[1]->parent()->jobStatus()->id);
+        $this->assertEquals(2, $collection[2]->numberOfRuns());
+
     }
 
     /** @test */

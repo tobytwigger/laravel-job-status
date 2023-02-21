@@ -10,7 +10,7 @@ use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Transformers\RunsTransformer;
 use JobStatus\Tests\TestCase;
 
-class RunTransformerTest extends TestCase
+class RunsTransformerTest extends TestCase
 {
 
     /** @test */

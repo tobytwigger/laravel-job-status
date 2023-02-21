@@ -2,19 +2,21 @@
 
 namespace JobStatus\Http\Controllers\Api;
 
+use Illuminate\Http\Request;
 use JobStatus\Models\JobStatus;
 
 class JobController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = JobStatus::query();
         if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
 
-        return $this->paginate(
-            $query->get()->jobs()
+        return $query->paginateJobs(
+            $request->input('page', 1),
+            $request->input('per_page', 10)
         );
     }
 

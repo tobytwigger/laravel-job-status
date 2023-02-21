@@ -5,6 +5,7 @@ namespace JobStatus\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use JobStatus\Enums\Status;
+use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\fakes\JobFake;
 
@@ -31,5 +32,14 @@ class JobStatusFactory extends Factory
             'status' => Status::QUEUED,
             'is_unprotected' => true,
         ];
+    }
+
+    public function withException(string $message)
+    {
+        return $this->state(function(array $attributes) use ($message) {
+            return [
+                'exception_id' => JobException::factory()->create(['message' => $message])->id
+            ];
+        });
     }
 }

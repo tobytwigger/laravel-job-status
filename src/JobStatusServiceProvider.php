@@ -22,6 +22,7 @@ use JobStatus\Dashboard\Commands\InstallAssets;
 use JobStatus\Dashboard\Http\Composers\DashboardVariables;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\Queries\PaginateJobs;
 use JobStatus\Search\Queries\PaginateRuns;
 
 /**
@@ -58,11 +59,24 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->defineBladeDirective();
         $this->setupGates();
         $this->publishDashboardAssets();
-
+        $this->setupPaginationMethods();
         \Illuminate\Database\Eloquent\Builder::macro(
             'paginateRuns',
             fn() => app(PaginateRuns::class)->paginate($this, ...func_get_args())
         );
+    }
+
+    public function setupPaginationMethods()
+    {
+        foreach([
+            'paginateRuns' => PaginateRuns::class,
+            'paginateJobs' => PaginateJobs::class,
+        ] as $name => $class) {
+            \Illuminate\Database\Eloquent\Builder::macro(
+                $name,
+                fn() => app($class)->paginate($this, ...func_get_args())
+            );
+        }
     }
 
     /**

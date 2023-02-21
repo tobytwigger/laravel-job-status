@@ -13,106 +13,23 @@ use JobStatus\Tests\TestCase;
 class TrackedJobTest extends TestCase
 {
     /** @test */
-    public function runs_returns_the_runs()
-    {
-        $run1 = new JobRun(JobStatus::factory()->create());
-        $run2 = new JobRun(JobStatus::factory()->create());
-        $run3 = new JobRun(JobStatus::factory()->create());
-        $runs = new JobRunCollection([
-            $run1, $run2, $run3,
-        ]);
-
-        $job = new TrackedJob('JobClass', $runs, 'job-alias');
-        $this->assertEquals($runs, $job->runs());
-    }
-
-    /** @test */
     public function alias_returns_the_alias()
     {
-        $job = new TrackedJob('JobClass', collect(), 'job-alias');
+        $job = new TrackedJob('JobClass', 'job-alias');
         $this->assertEquals('job-alias', $job->alias());
     }
 
     /** @test */
-    public function class_returns_the_alias()
+    public function class_returns_the_class()
     {
-        $job = new TrackedJob('JobClass', collect(), 'job-alias');
+        $job = new TrackedJob('JobClass', 'job-alias');
         $this->assertEquals('JobClass', $job->jobClass());
-    }
-
-    /** @test */
-    public function latest_returns_the_latest_run()
-    {
-        $run1 = new JobRun(JobStatus::factory()->create());
-        $run2 = new JobRun(JobStatus::factory()->create());
-        $run3 = new JobRun(JobStatus::factory()->create());
-
-        $job = new TrackedJob('JobClass', new JobRunCollection([
-            $run1, $run2, $run3,
-        ]), 'job-alias');
-        $this->assertEquals($run1, $job->latest());
-    }
-
-    /** @test */
-    public function number_of_runs_returns_the_number_of_runs()
-    {
-        $run1 = new JobRun(JobStatus::factory()->create());
-        $run2 = new JobRun(JobStatus::factory()->create());
-        $run3 = new JobRun(JobStatus::factory()->create());
-
-        $job = new TrackedJob('JobClass', new JobRunCollection([
-            $run1, $run2, $run3,
-        ]), 'job-alias');
-        $this->assertEquals(3, $job->numberOfRuns());
     }
 
     /** @test */
     public function it_can_be_casted_to_an_array_or_json()
     {
-        $exception1 = JobException::factory(['message' => 'Test One'])->create();
-        $exception2 = JobException::factory(['message' => 'Test Two'])->create();
-        $run1 = new JobRun(JobStatus::factory()->create(['exception_id' => $exception1->id, 'alias' => 'alias1', 'status' => Status::FAILED, 'created_at' => now()->subHour()]));
-        $run2 = new JobRun(JobStatus::factory()->create(['exception_id' => $exception2->id, 'alias' => 'alias1', 'status' => Status::FAILED, 'created_at' => now()->subHours(2)]));
-        $run3 = new JobRun(JobStatus::factory()->create(['exception_id' => $exception1->id, 'alias' => 'alias2', 'status' => Status::FAILED, 'created_at' => now()->subHours(3)]));
-
-        $runs = new JobRunCollection([$run1, $run2, $run3]);
-
-        $job = new TrackedJob('JobClass', $runs, 'job-alias');
-
-        $array = [
-            'count' => 3,
-            'alias' => 'job-alias',
-            'class' => 'JobClass',
-            'runs' => $runs->toArray(),
-            'failure_reasons' => [
-                [
-                    'message' => 'Test One',
-                    'count' => 2,
-                ],
-                [
-                    'message' => 'Test Two',
-                    'count' => 1,
-                ],
-            ],
-        ];
-        $this->assertEquals($array, $job->toArray());
-        $this->assertEquals(json_encode($array), $job->toJson());
-    }
-
-    /** @test */
-    public function get_failure_reasons_gets_all_failure_reasons_from_run_exceptions()
-    {
-        $exception1 = JobException::factory(['message' => 'Test One'])->create();
-        $exception2 = JobException::factory(['message' => 'Test Two'])->create();
-        $run1 = new JobRun(JobStatus::factory()->create(['exception_id' => $exception1->id, 'alias' => 'alias1', 'status' => Status::FAILED, 'created_at' => now()->subHour()]));
-        $run2 = new JobRun(JobStatus::factory()->create(['exception_id' => $exception2->id, 'alias' => 'alias1', 'status' => Status::FAILED, 'created_at' => now()->subHours(2)]));
-        $run3 = new JobRun(JobStatus::factory()->create(['exception_id' => $exception1->id, 'alias' => 'alias2', 'status' => Status::FAILED, 'created_at' => now()->subHours(3)]));
-
-        $runs = new JobRunCollection([$run1, $run2, $run3]);
-
-        $job = new TrackedJob('JobClass', $runs, 'job-alias');
-
-        $this->assertEquals([
+        $failureReasons = [
             [
                 'message' => 'Test One',
                 'count' => 2,
@@ -121,6 +38,54 @@ class TrackedJobTest extends TestCase
                 'message' => 'Test Two',
                 'count' => 1,
             ],
-        ], $job->getFailureReasons());
+        ];
+
+        $job = new TrackedJob('JobClass', 'job-alias', numberOfRuns: 3, failureReasons: $failureReasons);
+
+        $array = [
+            'count' => 3,
+            'alias' => 'job-alias',
+            'class' => 'JobClass',
+            'failure_reasons' => $failureReasons,
+        ];
+        $this->assertEquals($array, $job->toArray());
+        $this->assertEquals(json_encode($array), $job->toJson());
+    }
+
+    /** @test */
+    public function get_failure_reasons_gets_all_failure_reasons()
+    {
+        $failureReasons = [
+            [
+                'message' => 'Test One',
+                'count' => 2,
+            ],
+            [
+                'message' => 'Test Two',
+                'count' => 1,
+            ],
+        ];
+
+        $job = new TrackedJob('JobClass', 'job-alias', failureReasons: $failureReasons);
+
+        $this->assertEquals($failureReasons, $job->getFailureReasons());
+    }
+
+    /** @test */
+    public function countWithStatus_returns_the_count_for_the_status(){
+        $job = new TrackedJob('JobClass', 'job-alias', countWithStatus: [
+            Status::QUEUED->value => 5,
+            Status::FAILED->value => 10,
+            Status::STARTED->value => 15,
+            Status::SUCCEEDED->value => 20,
+            Status::CANCELLED->value => 25
+        ]);
+
+        $this->assertEquals(5, $job->countWithStatus(Status::QUEUED));
+        $this->assertEquals(10, $job->countWithStatus(Status::FAILED));
+        $this->assertEquals(15, $job->countWithStatus(Status::STARTED));
+        $this->assertEquals(20, $job->countWithStatus(Status::SUCCEEDED));
+        $this->assertEquals(25, $job->countWithStatus(Status::CANCELLED));
+
     }
 }
