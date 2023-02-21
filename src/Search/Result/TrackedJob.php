@@ -45,11 +45,11 @@ class TrackedJob implements Arrayable, Jsonable
             'alias' => $this->alias,
             'class' => $this->jobClass,
             'failure_reasons' => $this->getFailureReasons(),
-            'successful_count' => $this->countWithStatus(Status::SUCCEEDED),
-            'failed_count' => $this->countWithStatus(Status::FAILED),
-            'started_count' => $this->countWithStatus(Status::STARTED),
-            'queued_count' => $this->countWithStatus(Status::QUEUED),
-            'cancelled_count' => $this->countWithStatus(Status::CANCELLED),
+            'successful' => $this->countWithStatus(Status::SUCCEEDED),
+            'failed' => $this->countWithStatus(Status::FAILED),
+            'started' => $this->countWithStatus(Status::STARTED),
+            'queued' => $this->countWithStatus(Status::QUEUED),
+            'cancelled' => $this->countWithStatus(Status::CANCELLED),
         ];
     }
 

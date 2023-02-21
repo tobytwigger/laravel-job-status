@@ -40,14 +40,27 @@ class TrackedJobTest extends TestCase
             ],
         ];
 
-        $job = new TrackedJob('JobClass', 'job-alias', numberOfRuns: 3, failureReasons: $failureReasons);
+        $job = new TrackedJob('JobClass', 'job-alias', numberOfRuns: 3, failureReasons: $failureReasons,
+            countWithStatus: [
+                Status::QUEUED->value => 5,
+                Status::FAILED->value => 10,
+                Status::STARTED->value => 15,
+                Status::SUCCEEDED->value => 20,
+                Status::CANCELLED->value => 25
+            ]);
 
         $array = [
             'count' => 3,
             'alias' => 'job-alias',
             'class' => 'JobClass',
             'failure_reasons' => $failureReasons,
+            'successful' => 20,
+            'failed' => 10,
+            'started' => 15,
+            'queued' => 5,
+            'cancelled' => 25
         ];
+
         $this->assertEquals($array, $job->toArray());
         $this->assertEquals(json_encode($array), $job->toJson());
     }
@@ -72,7 +85,8 @@ class TrackedJobTest extends TestCase
     }
 
     /** @test */
-    public function countWithStatus_returns_the_count_for_the_status(){
+    public function countWithStatus_returns_the_for_the_status()
+    {
         $job = new TrackedJob('JobClass', 'job-alias', countWithStatus: [
             Status::QUEUED->value => 5,
             Status::FAILED->value => 10,
