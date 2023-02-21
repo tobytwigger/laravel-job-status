@@ -4,6 +4,7 @@ namespace JobStatus\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\Queries\PaginateJobs;
 
 class JobController extends Controller
 {
@@ -14,10 +15,12 @@ class JobController extends Controller
             $query->forUsers($this->resolveAuth());
         }
 
-        return $query->paginateJobs(
-            $request->input('page', 1),
-            $request->input('per_page', 10)
-        );
+        return (new PaginateJobs())
+            ->paginate(
+                $query,
+                $request->input('page', 1),
+                $request->input('per_page', 10)
+            );
     }
 
     public function show(string $jobStatusJobAlias)

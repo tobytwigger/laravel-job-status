@@ -5,6 +5,7 @@ namespace JobStatus\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\Queries\PaginateBatches;
 
 class BatchController extends Controller
 {
@@ -15,10 +16,14 @@ class BatchController extends Controller
             $query->forUsers($this->resolveAuth());
         }
 
-        return $query->paginateBatches(
-            $request->input('page', 1),
-            $request->input('per_page', 10)
-        );
+        return (new PaginateBatches())
+            ->paginate(
+                $query,
+                $request->input('page', 1),
+                $request->input('per_page', 10),
+                bypassAuth: $this->shouldBypassAuth(),
+                userId: $this->resolveAuth()
+            );
     }
 
     public function show(JobBatch $batch)

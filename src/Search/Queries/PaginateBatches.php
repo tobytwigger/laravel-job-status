@@ -11,7 +11,7 @@ use JobStatus\Search\Collections\JobStatusCollection;
 class PaginateBatches
 {
 
-    public function paginate(Builder $query, int $page, int $perPage): LengthAwarePaginator
+    public function paginate(Builder $query, int $page, int $perPage, bool $bypassAuth = true, ?int $userId = null): LengthAwarePaginator
     {
         $query->select(['batch_id'])
             ->selectRaw('max(created_at) as created_at')

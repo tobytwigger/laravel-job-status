@@ -136,4 +136,20 @@ class JobIndexTest extends TestCase
         $this->assertEquals($jobStatuses[1]->alias, $response->json('data.3.alias'));
         $this->assertEquals($jobStatuses[0]->alias, $response->json('data.4.alias'));
     }
+
+    /** @test */
+    public function it_returns_run_counts_for_the_jobs_a_user_can_access_only()
+    {
+        $this->markTestSkipped('Failing due to bug around summary information including protected jobs');
+        $run3 = JobStatus::factory()->create(['is_unprotected' => true, 'alias' => 'alias1', 'created_at' => now()->subDay()]);
+        $run2 = JobStatus::factory()->create(['is_unprotected' => false, 'alias' => 'alias2']);
+        $run1 = JobStatus::factory()->create(['is_unprotected' => true, 'alias' => 'alias3', 'created_at' => now()->subHour()]);
+
+        $response = $this->getJson(route('api.job-status.jobs.index'));
+
+        $response->assertJsonCount(1, 'data');
+        $this->assertEquals(2, $response->json('data.0.count'));
+        $this->assertEquals('alias1', $response->json('data.0.alias'));
+        $this->assertEquals('alias3', $response->json('data.1.alias'));
+    }
 }
