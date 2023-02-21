@@ -24,6 +24,8 @@ class JobsTransformer
         $queryResult = JobStatus::query()
             ->select('alias')
             ->selectRaw('MAX(class) as class')
+            ->selectRaw('MAX(created_at) as created_at')
+            ->selectRaw('MAX(id) as id')
             ->selectRaw('COUNT(DISTINCT selector) as count')
             ->whereIn('alias', $aliases)
             ->groupBy('alias')
