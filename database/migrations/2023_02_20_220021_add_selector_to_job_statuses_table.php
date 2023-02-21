@@ -11,24 +11,27 @@ return new class() extends Migration {
      */
     public function up()
     {
-        $this->truncateTable('job_status_statuses');
-        $this->truncateTable('job_status_tags');
-        $this->truncateTable('job_signals');
-        $this->truncateTable('job_messages');
-        $this->truncateTable('job_exceptions');
-        $this->truncateTable('job_batches');
-        $this->truncateTable('job_statuses');
-
         Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), function (Blueprint $table) {
+            $table->string('selector')->nullable();
+        });
+        $this->updateJobSelectors();
+        Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), function (Blueprint $table) {
+            $table->string('selector')->nullable(false)->change();
             $table->string('selector');
         });
     }
 
-    private function truncateTable(string $table)
+    private function updateJobSelectors()
     {
-        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        \Illuminate\Support\Facades\DB::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), $table))->truncate();
-        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        $jobStatuses = \JobStatus\Models\JobStatus::query()
+            ->withoutEagerLoads()
+            ->get();
+        foreach ($jobStatuses as $jobStatus) {
+            $jobStatus->selector = $jobStatus->uuid === null
+                ? $jobStatus->job_id . '-' . $jobStatus->connection_name
+                : $jobStatus->uuid;
+            $jobStatus->save();
+        }
     }
 
     /**
