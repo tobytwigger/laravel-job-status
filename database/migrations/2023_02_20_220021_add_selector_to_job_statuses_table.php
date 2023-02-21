@@ -17,7 +17,6 @@ return new class() extends Migration {
         $this->updateJobSelectors();
         Schema::table(sprintf('%s_%s', config('laravel-job-status.table_prefix'), 'job_statuses'), function (Blueprint $table) {
             $table->string('selector')->nullable(false)->change();
-            $table->string('selector');
         });
     }
 
