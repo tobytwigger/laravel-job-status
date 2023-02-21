@@ -62,10 +62,6 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->setupGates();
         $this->publishDashboardAssets();
         $this->setupPaginationMethods();
-        \Illuminate\Database\Eloquent\Builder::macro(
-            'paginateRuns',
-            fn() => app(PaginateRuns::class)->paginate($this, ...func_get_args())
-        );
     }
 
     public function setupPaginationMethods()
