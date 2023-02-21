@@ -37,7 +37,7 @@ class BatchController extends Controller
         $result = $query->paginateBatches(1, 1);
 
         if ($result->count() === 0) {
-            abort(404);
+            abort(403);
         }
 
         return $result->first();
