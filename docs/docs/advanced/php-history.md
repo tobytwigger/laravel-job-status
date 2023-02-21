@@ -46,10 +46,15 @@ Calling `batches()` gets you an array of `\JobStatus\Search\Results\Batch`.
 
 This contains information about the batch the jobs ran in. It will discard any results not in a batch.
 
+### Queues
+
+Calling `queues()` gets you an array of `\JobStatus\Search\Results\Queue`.
+
+This contains information about the queue the jobs ran in.
+
 ### Runs
 
 Calling `runs()` converts the models into instances of a `\JobStatus\Search\Results\JobRun` class. This has handy tools to help you interact with the run, and groups retries together so that you only see the latest runs and any retries are stored in the latest run.
-
 
 ## Methods available
 
@@ -59,17 +64,23 @@ Represents a job class itself. Contains information about the job and about the 
 
 - `jobClass()` - The class of the job
 - `alias()` - The alias of the job
-- `runs()` - Every run the job has made
-- `latest()` - The latest run
 - `numberOfRuns()` - The number of runs made
+- `countWithStatus(Status $status)` - How many jobs have the given status
+- `getFailureReasons()` - Get a list of reasons why the job has failed in the past
 
 ### Batch
 
 - `batchId()` - The ID of the batch.
+- `numberOfRuns()` - Count how many runs are in the batch
 - `name()` - The name of the batch.
-- `runs()` - The jobs that make up the batch.
-- `countRunsWithStatus($status)` - Count how many runs are in the batch with the given status
-- `latest()` - The latest run in the batch
+- `countWithStatus($status)` - Count how many runs are in the batch with the given status
+
+### Queue
+
+- `name()` - The name of the queue.
+- `numberOfRuns()` - Count how many runs are in the queue
+- `countWithStatus($status)` - Count how many runs are in the queue with the given status
+
 
 ### Job Run
 
