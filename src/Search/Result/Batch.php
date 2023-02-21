@@ -11,26 +11,21 @@ use JobStatus\Search\Collections\JobRunCollection;
 class Batch implements Arrayable, Jsonable
 {
     private JobBatch $batch;
+    private ?int $numberOfRuns;
+    private array $countWithStatus;
 
-    private JobRunCollection $runs;
-
-    public function __construct(JobBatch $batch, JobRunCollection $runs)
+    public function __construct(JobBatch $batch,
+                                ?int $numberOfRuns = null,
+                                array    $countWithStatus = [])
     {
         $this->batch = $batch;
-        $this->runs = $runs;
+        $this->numberOfRuns = $numberOfRuns;
+        $this->countWithStatus = $countWithStatus;
     }
 
     public function batchId(): string
     {
         return $this->batch->batch_id;
-    }
-
-    /**
-     * @return JobRunCollection
-     */
-    public function runs(): JobRunCollection
-    {
-        return $this->runs;
     }
 
     public function name(): ?string
@@ -41,25 +36,29 @@ class Batch implements Arrayable, Jsonable
     public function toArray()
     {
         return [
-            'count' => $this->runs->count(),
-            'runs' => $this->runs->toArray(),
+            'count' => $this->numberOfRuns(),
             'name' => $this->name(),
             'batch_id' => $this->batchId(),
-            'queued' => $this->countRunsWithStatus(Status::QUEUED),
-            'started' => $this->countRunsWithStatus(Status::STARTED),
-            'failed' => $this->countRunsWithStatus(Status::FAILED),
-            'succeeded' => $this->countRunsWithStatus(Status::SUCCEEDED),
-            'cancelled' => $this->countRunsWithStatus(Status::CANCELLED),
+            'queued' => $this->countWithStatus(Status::QUEUED),
+            'started' => $this->countWithStatus(Status::STARTED),
+            'failed' => $this->countWithStatus(Status::FAILED),
+            'succeeded' => $this->countWithStatus(Status::SUCCEEDED),
+            'cancelled' => $this->countWithStatus(Status::CANCELLED),
             'created_at' => $this->batch->created_at,
             'id' => $this->batch->id,
         ];
     }
 
-    public function countRunsWithStatus(Status $status): int
+    public function numberOfRuns(): int
     {
-        return $this->runs()
-            ->filter(fn (JobRun $jobRun) => $jobRun->getStatus() === $status)
-            ->count();
+        return $this->numberOfRuns ?? 0;
+    }
+
+    public function countWithStatus(Status $status): int
+    {
+        return array_key_exists($status->value, $this->countWithStatus)
+            ? $this->countWithStatus[$status->value]
+            : 0;
     }
 
     public function toJson($options = 0)
@@ -67,8 +66,4 @@ class Batch implements Arrayable, Jsonable
         return json_encode($this->toArray(), $options);
     }
 
-    public function latest(): JobRun
-    {
-        return $this->runs()->first();
-    }
 }

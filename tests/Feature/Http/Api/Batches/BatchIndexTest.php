@@ -60,22 +60,6 @@ class BatchIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_runs_for_the_jobs_a_user_can_access()
-    {
-        $batch = JobBatch::factory()->create();
-        $run3 = JobStatus::factory()->create(['is_unprotected' => true, 'batch_id' => $batch->id, 'created_at' => now()->subDay()]);
-        $run2 = JobStatus::factory()->create(['is_unprotected' => false, 'batch_id' => $batch->id]);
-        $run1 = JobStatus::factory()->create(['is_unprotected' => true, 'batch_id' => $batch->id, 'created_at' => now()->subHour()]);
-
-        $response = $this->getJson(route('api.job-status.batches.index'));
-
-        $response->assertJsonCount(1, 'data');
-        $response->assertJsonCount(2, 'data.0.runs');
-        $this->assertEquals($run1->id, $response->json('data.0.runs.0.id'));
-        $this->assertEquals($run3->id, $response->json('data.0.runs.1.id'));
-    }
-
-    /** @test */
     public function it_returns_an_empty_array_for_no_batches()
     {
         $response = $this->getJson(route('api.job-status.batches.index'));
@@ -98,59 +82,16 @@ class BatchIndexTest extends TestCase
         $response = $this->getJson(route('api.job-status.batches.index'));
         $response->assertJsonCount(1, 'data');
 
-        $result = new AssertableJsonString(json_encode((new AssertableJsonString($response->decodeResponseJson()->json('data')))[0]['runs']));
-        $this->assertEquals('OurAliasTwo', $response->json('data.0.runs.0.alias'));
-        $this->assertEquals($accessible->jobStatus[9]->id, $response->json('data.0.runs.0.id'));
-        $this->assertEquals($accessible->jobStatus[8]->id, $response->json('data.0.runs.1.id'));
-        $this->assertEquals($accessible->jobStatus[7]->id, $response->json('data.0.runs.2.id'));
-        $this->assertEquals($accessible->jobStatus[6]->id, $response->json('data.0.runs.3.id'));
-        $this->assertEquals($accessible->jobStatus[5]->id, $response->json('data.0.runs.4.id'));
-        $this->assertEquals($accessible->jobStatus[4]->id, $response->json('data.0.runs.5.id'));
-        $this->assertEquals($accessible->jobStatus[3]->id, $response->json('data.0.runs.6.id'));
-        $this->assertEquals($accessible->jobStatus[2]->id, $response->json('data.0.runs.7.id'));
-        $this->assertEquals($accessible->jobStatus[1]->id, $response->json('data.0.runs.8.id'));
-        $this->assertEquals($accessible->jobStatus[0]->id, $response->json('data.0.runs.9.id'));
+        $this->assertEquals(10, $response->json('data.0.count'));
+        $this->assertEquals($accessible->id, $response->json('data.0.id'));
 
         $response = $this->getJson(route('api.job-status.batches.index', ['bypassAuth' => true]));
         $response->assertJsonCount(2, 'data');
 
-        $result = new AssertableJsonString(json_encode((new AssertableJsonString($response->decodeResponseJson()->json('data')))[0]['runs']));
-        $this->assertEquals('OurAliasTwo', $response->json('data.0.runs.0.alias'));
-        $this->assertEquals($accessible->jobStatus[9]->id, $response->json('data.0.runs.0.id'));
-        $this->assertEquals($accessible->jobStatus[8]->id, $response->json('data.0.runs.1.id'));
-        $this->assertEquals($accessible->jobStatus[7]->id, $response->json('data.0.runs.2.id'));
-        $this->assertEquals($accessible->jobStatus[6]->id, $response->json('data.0.runs.3.id'));
-        $this->assertEquals($accessible->jobStatus[5]->id, $response->json('data.0.runs.4.id'));
-        $this->assertEquals($accessible->jobStatus[4]->id, $response->json('data.0.runs.5.id'));
-        $this->assertEquals($accessible->jobStatus[3]->id, $response->json('data.0.runs.6.id'));
-        $this->assertEquals($accessible->jobStatus[2]->id, $response->json('data.0.runs.7.id'));
-        $this->assertEquals($accessible->jobStatus[1]->id, $response->json('data.0.runs.8.id'));
-        $this->assertEquals($accessible->jobStatus[0]->id, $response->json('data.0.runs.9.id'));
-
-        $this->assertEquals('OurAlias', $response->json('data.1.runs.0.alias'));
-        $this->assertEquals($inaccessible->jobStatus[9]->id, $response->json('data.1.runs.0.id'));
-        $this->assertEquals($inaccessible->jobStatus[8]->id, $response->json('data.1.runs.1.id'));
-        $this->assertEquals($inaccessible->jobStatus[7]->id, $response->json('data.1.runs.2.id'));
-        $this->assertEquals($inaccessible->jobStatus[6]->id, $response->json('data.1.runs.3.id'));
-        $this->assertEquals($inaccessible->jobStatus[5]->id, $response->json('data.1.runs.4.id'));
-        $this->assertEquals($inaccessible->jobStatus[4]->id, $response->json('data.1.runs.5.id'));
-        $this->assertEquals($inaccessible->jobStatus[3]->id, $response->json('data.1.runs.6.id'));
-        $this->assertEquals($inaccessible->jobStatus[2]->id, $response->json('data.1.runs.7.id'));
-        $this->assertEquals($inaccessible->jobStatus[1]->id, $response->json('data.1.runs.8.id'));
-        $this->assertEquals($inaccessible->jobStatus[0]->id, $response->json('data.1.runs.9.id'));
-
-        $result = new AssertableJsonString(json_encode((new AssertableJsonString($response->decodeResponseJson()->json('data')))[1]['runs']));
-        $result->assertFragment(['alias' => 'OurAlias']);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[0]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[1]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[2]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[3]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[4]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[5]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[6]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[7]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[8]->id]);
-        $result->assertFragment(['id' => $inaccessible->jobStatus[9]->id]);
+        $this->assertEquals(10, $response->json('data.0.count'));
+        $this->assertEquals(10, $response->json('data.1.count'));
+        $this->assertEquals($accessible->id, $response->json('data.0.id'));
+        $this->assertEquals($inaccessible->id, $response->json('data.1.id'));
     }
 
     /** @test */

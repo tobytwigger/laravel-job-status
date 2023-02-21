@@ -2,20 +2,22 @@
 
 namespace JobStatus\Http\Controllers\Api;
 
+use Illuminate\Http\Request;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 
 class BatchController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = JobStatus::query();
         if (!$this->shouldBypassAuth()) {
             $query->forUsers($this->resolveAuth());
         }
 
-        return $this->paginate(
-            $query->get()->batches()
+        return $query->paginateBatches(
+            $request->input('page', 1),
+            $request->input('per_page', 10)
         );
     }
 

@@ -22,6 +22,7 @@ use JobStatus\Dashboard\Commands\InstallAssets;
 use JobStatus\Dashboard\Http\Composers\DashboardVariables;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\Queries\PaginateBatches;
 use JobStatus\Search\Queries\PaginateJobs;
 use JobStatus\Search\Queries\PaginateQueues;
 use JobStatus\Search\Queries\PaginateRuns;
@@ -72,7 +73,8 @@ class JobStatusServiceProvider extends ServiceProvider
         foreach([
             'paginateRuns' => PaginateRuns::class,
             'paginateJobs' => PaginateJobs::class,
-            'paginateQueues' => PaginateQueues::class
+            'paginateQueues' => PaginateQueues::class,
+            'paginateBatches' => PaginateBatches::class,
         ] as $name => $class) {
             \Illuminate\Database\Eloquent\Builder::macro(
                 $name,
