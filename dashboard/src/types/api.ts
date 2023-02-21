@@ -12,7 +12,6 @@ export interface TrackedJob {
 
 export interface Queue {
   count: number;
-  runs: JobRun[];
   name: string | null;
   queued: number;
   started: number;
@@ -65,7 +64,6 @@ export interface JobStatusStatus {
 export interface Batch {
   id: number;
   count: number;
-  runs: JobRun[];
   batch_id: string;
   name: string | null;
   created_at: Date;
