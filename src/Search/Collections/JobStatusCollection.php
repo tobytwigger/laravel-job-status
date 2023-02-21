@@ -11,6 +11,7 @@ use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Queue;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Search\Transformers\JobsTransformer;
+use JobStatus\Search\Transformers\QueuesTransformer;
 use JobStatus\Search\Transformers\RunsTransformer;
 
 class JobStatusCollection extends Collection
@@ -57,25 +58,7 @@ class JobStatusCollection extends Collection
 
     public function queues(): QueueCollection
     {
-        $queryResult = $this
-            ->sortBy([['created_at', 'desc'], ['id', 'desc']])
-            ->groupBy(['queue']);
-
-        $queues = new QueueCollection();
-        foreach ($queryResult as $queueName => $sameQueueJobs) {
-            if ($queueName === null) {
-                continue;
-            }
-            // Groups of the same run
-            $exactJobGrouped = $sameQueueJobs->groupBy('uuid');
-            $jobRuns = $this->createJobRunCollection($exactJobGrouped);
-
-            $queues->push(
-                new Queue($queueName, $jobRuns)
-            );
-        }
-
-        return $queues;
+        return (new QueuesTransformer())->transform($this);
     }
 
     public function batches(): BatchCollection

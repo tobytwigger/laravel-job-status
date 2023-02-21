@@ -20,19 +20,8 @@ class QueueIndexTest extends TestCase
 
         $this->assertEquals('OurQueueTwo', $response->json('data.0.name'));
         $this->assertEquals('OurQueue', $response->json('data.1.name'));
-        $response->assertJsonCount(5, 'data.0.runs');
-        $response->assertJsonCount(5, 'data.1.runs');
-
-        $this->assertEquals($job2[4]->id, $response->json('data.0.runs.0.id'));
-        $this->assertEquals($job2[3]->id, $response->json('data.0.runs.1.id'));
-        $this->assertEquals($job2[2]->id, $response->json('data.0.runs.2.id'));
-        $this->assertEquals($job2[1]->id, $response->json('data.0.runs.3.id'));
-        $this->assertEquals($job2[0]->id, $response->json('data.0.runs.4.id'));
-        $this->assertEquals($job1[4]->id, $response->json('data.1.runs.0.id'));
-        $this->assertEquals($job1[3]->id, $response->json('data.1.runs.1.id'));
-        $this->assertEquals($job1[2]->id, $response->json('data.1.runs.2.id'));
-        $this->assertEquals($job1[1]->id, $response->json('data.1.runs.3.id'));
-        $this->assertEquals($job1[0]->id, $response->json('data.1.runs.4.id'));
+        $this->assertEquals(5, $response->json('data.0.count'));
+        $this->assertEquals(5, $response->json('data.1.count'));
     }
 
     /** @test */
@@ -46,18 +35,7 @@ class QueueIndexTest extends TestCase
         $response->assertJsonCount(1, 'data');
 
         $this->assertEquals('OurQueueTwo', $response->json('data.0.name'));
-        $response->assertJsonCount(10, 'data.0.runs');
-
-        $this->assertEquals($accessible[9]->id, $response->json('data.0.runs.0.id'));
-        $this->assertEquals($accessible[8]->id, $response->json('data.0.runs.1.id'));
-        $this->assertEquals($accessible[7]->id, $response->json('data.0.runs.2.id'));
-        $this->assertEquals($accessible[6]->id, $response->json('data.0.runs.3.id'));
-        $this->assertEquals($accessible[5]->id, $response->json('data.0.runs.4.id'));
-        $this->assertEquals($accessible[4]->id, $response->json('data.0.runs.5.id'));
-        $this->assertEquals($accessible[3]->id, $response->json('data.0.runs.6.id'));
-        $this->assertEquals($accessible[2]->id, $response->json('data.0.runs.7.id'));
-        $this->assertEquals($accessible[1]->id, $response->json('data.0.runs.8.id'));
-        $this->assertEquals($accessible[0]->id, $response->json('data.0.runs.9.id'));
+        $this->assertEquals(10, $response->json('data.0.count'));
     }
 
     /** @test */
@@ -70,13 +48,8 @@ class QueueIndexTest extends TestCase
 
         $response->assertJsonCount(1, 'data');
         $this->assertEquals('OurQueue', $response->json('data.0.name'));
-        $response->assertJsonCount(5, 'data.0.runs');
+        $this->assertEquals(5, $response->json('data.0.count'));
 
-        $this->assertEquals($job1[4]->id, $response->json('data.0.runs.0.id'));
-        $this->assertEquals($job1[3]->id, $response->json('data.0.runs.1.id'));
-        $this->assertEquals($job1[2]->id, $response->json('data.0.runs.2.id'));
-        $this->assertEquals($job1[1]->id, $response->json('data.0.runs.3.id'));
-        $this->assertEquals($job1[0]->id, $response->json('data.0.runs.4.id'));
     }
 
     /** @test */
@@ -100,30 +73,8 @@ class QueueIndexTest extends TestCase
 
         $this->assertEquals('OurQueueTwo', $response->json('data.0.name'));
         $this->assertEquals('OurQueue', $response->json('data.1.name'));
-        $response->assertJsonCount(10, 'data.0.runs');
-        $response->assertJsonCount(10, 'data.1.runs');
-
-        $this->assertEquals($accessible[9]->id, $response->json('data.0.runs.0.id'));
-        $this->assertEquals($accessible[8]->id, $response->json('data.0.runs.1.id'));
-        $this->assertEquals($accessible[7]->id, $response->json('data.0.runs.2.id'));
-        $this->assertEquals($accessible[6]->id, $response->json('data.0.runs.3.id'));
-        $this->assertEquals($accessible[5]->id, $response->json('data.0.runs.4.id'));
-        $this->assertEquals($accessible[4]->id, $response->json('data.0.runs.5.id'));
-        $this->assertEquals($accessible[3]->id, $response->json('data.0.runs.6.id'));
-        $this->assertEquals($accessible[2]->id, $response->json('data.0.runs.7.id'));
-        $this->assertEquals($accessible[1]->id, $response->json('data.0.runs.8.id'));
-        $this->assertEquals($accessible[0]->id, $response->json('data.0.runs.9.id'));
-
-        $this->assertEquals($inaccessible[9]->id, $response->json('data.1.runs.0.id'));
-        $this->assertEquals($inaccessible[8]->id, $response->json('data.1.runs.1.id'));
-        $this->assertEquals($inaccessible[7]->id, $response->json('data.1.runs.2.id'));
-        $this->assertEquals($inaccessible[6]->id, $response->json('data.1.runs.3.id'));
-        $this->assertEquals($inaccessible[5]->id, $response->json('data.1.runs.4.id'));
-        $this->assertEquals($inaccessible[4]->id, $response->json('data.1.runs.5.id'));
-        $this->assertEquals($inaccessible[3]->id, $response->json('data.1.runs.6.id'));
-        $this->assertEquals($inaccessible[2]->id, $response->json('data.1.runs.7.id'));
-        $this->assertEquals($inaccessible[1]->id, $response->json('data.1.runs.8.id'));
-        $this->assertEquals($inaccessible[0]->id, $response->json('data.1.runs.9.id'));
+        $this->assertEquals(10, $response->json('data.0.count'));
+        $this->assertEquals(10, $response->json('data.1.count'));
     }
 
     /** @test */
