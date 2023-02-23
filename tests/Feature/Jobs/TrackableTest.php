@@ -24,7 +24,7 @@ class TrackableTest extends TestCase
 
         $search = JobFake::search();
         $this->assertInstanceOf(Builder::class, $search);
-        $this->assertCount(10, $search->get()->jobs()->first()->runs());
+        $this->assertEquals(10, $search->get()->jobs()->first()->numberOfRuns());
     }
 
     /** @test */
@@ -36,7 +36,7 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'jobfake']);
         $search = JobFake::search(['key1' => 'val1']);
         $this->assertInstanceOf(Builder::class, $search);
-        $this->assertCount(8, $search->get()->jobs()->first()->runs());
+        $this->assertEquals(8, $search->get()->runs()->count());
     }
 
     /** @test */
@@ -57,8 +57,8 @@ class TrackableTest extends TestCase
         JobStatus::factory()->count(15)->create(['class' => 'AnotherClass', 'alias' => 'jobfake']);
         $search = JobFake::search(['keyone-indexless', 'key1' => 'val1']);
         $this->assertInstanceOf(Builder::class, $search);
-        
-        $this->assertCount(8, $search->get()->jobs()->first()->runs());
+
+        $this->assertEquals(8, $search->get()->runs()->count());
     }
 
     /** @test */
@@ -78,7 +78,7 @@ class TrackableTest extends TestCase
 
         $jobs = $job->history();
         $this->assertInstanceOf(TrackedJob::class, $jobs);
-        $this->assertCount(8, $jobs->runs());
+        $this->assertEquals(14, $jobs->numberOfRuns());
     }
 
     /** @test */

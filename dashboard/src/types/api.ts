@@ -1,14 +1,17 @@
 export interface TrackedJob {
   class: string;
   alias: string;
-  runs: JobRun[];
+  successful: number;
+  failed: number;
+  started: number;
+  queued: number;
+  cancelled: number;
   count: number;
   failure_reasons: JobFailureReason[];
 }
 
 export interface Queue {
   count: number;
-  runs: JobRun[];
   name: string | null;
   queued: number;
   started: number;
@@ -61,7 +64,6 @@ export interface JobStatusStatus {
 export interface Batch {
   id: number;
   count: number;
-  runs: JobRun[];
   batch_id: string;
   name: string | null;
   created_at: Date;

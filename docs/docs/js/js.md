@@ -260,12 +260,21 @@ Interact with the jobs in your Laravel app
     ```
 
 === "Response"
-    ``` js
+
+    ```ts
     [{
         class: string; // The class of the job
         alias: string; // The alias of the job
-        runs: JobRun[]; // An array of times the job has ran.
         count: number; // The number of times this job has ran
+        successful: number; // The number of successful jobs
+        failed: number; // The number of failed jobs
+        started: number; // The number of started jobs
+        queued: number; // The number of queued jobs
+        cancelled: number; // The number of cancelled jobs
+        failure_reasons: [  // The reasons the job has failed
+            {message: 'Your error message', count: 10}
+        ];
+
     }]
     ```
 
@@ -282,12 +291,20 @@ Interact with the jobs in your Laravel app
     ```
 
 === "Response"
+
     ``` js
     {
         class: string; // The class of the job
         alias: string; // The alias of the job
-        runs: JobRun[]; // An array of times the job has ran.
         count: number; // The number of times this job has ran
+        successful: number; // The number of successful jobs
+        failed: number; // The number of failed jobs
+        started: number; // The number of started jobs
+        queued: number; // The number of queued jobs
+        cancelled: number; // The number of cancelled jobs
+        failure_reasons: [  // The reasons the job has failed
+            {message: 'Your error message', count: 10}
+        ];
     }
     ```
 
@@ -307,10 +324,10 @@ Retrieve information about the batches that have ran through your queue system
     ```
 
 === "Response"
+
     ``` js
     [{
         count: number; // The number of jobs in this batch
-        runs: JobRun[]; // The runs in this batch
         batch_id: string; // The UUID of this batch that Laravel assigned
         name: string | null; // The name of this batch
         created_at: Date; // When this batch was created
@@ -337,7 +354,6 @@ Retrieve information about the batches that have ran through your queue system
     ``` js
     {
         count: number; // The number of jobs in this batch
-        runs: JobRun[]; // The runs in this batch
         batch_id: string; // The UUID of this batch that Laravel assigned
         name: string | null; // The name of this batch
         created_at: Date; // When this batch was created

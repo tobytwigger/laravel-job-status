@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Collection;
 use JobStatus\Enums\Status;
+use JobStatus\Models\JobStatus;
 use JobStatus\Search\Collections\JobRunCollection;
 
 class TrackedJob implements Arrayable, Jsonable
@@ -13,53 +14,48 @@ class TrackedJob implements Arrayable, Jsonable
     private string $jobClass;
 
     private ?string $alias;
+    private ?int $numberOfRuns;
+    private array $failureReasons;
+    private array $countWithStatus;
 
     public function jobClass(): string
     {
         return $this->jobClass;
     }
 
-    /**
-     * @var Collection|JobRun[]
-     */
-    private Collection $runs;
-
-    public function __construct(string $jobClass, Collection $runs, ?string $alias = null)
+    public function __construct(
+        string $jobClass,
+        string $alias,
+        ?int $numberOfRuns = null,
+        array $failureReasons = [],
+        array $countWithStatus = []
+    )
     {
         $this->jobClass = $jobClass;
-        $this->runs = $runs;
         $this->alias = $alias;
-    }
-
-    /**
-     * @return Collection|JobRun[]
-     */
-    public function runs(): Collection
-    {
-        return $this->runs;
+        $this->numberOfRuns = $numberOfRuns;
+        $this->failureReasons = $failureReasons;
+        $this->countWithStatus = $countWithStatus;
     }
 
     public function toArray()
     {
         return [
-            'count' => $this->runs->count(),
+            'count' => $this->numberOfRuns(),
             'alias' => $this->alias,
             'class' => $this->jobClass,
-            'runs' => $this->runs->toArray(),
             'failure_reasons' => $this->getFailureReasons(),
+            'successful' => $this->countWithStatus(Status::SUCCEEDED),
+            'failed' => $this->countWithStatus(Status::FAILED),
+            'started' => $this->countWithStatus(Status::STARTED),
+            'queued' => $this->countWithStatus(Status::QUEUED),
+            'cancelled' => $this->countWithStatus(Status::CANCELLED),
         ];
     }
 
     public function getFailureReasons(): array
     {
-        return $this->runs()
-            ->filter(fn (JobRun $jobRun) => $jobRun->getStatus() === Status::FAILED && $jobRun->getException() !== null)
-            ->groupBy(fn (JobRun $jobRun) => $jobRun->getException()->message)
-            ->map(fn (JobRunCollection $failureGroup, string $failureReason) => [
-                'message' => $failureReason,
-                'count' => count($failureGroup),
-            ])
-            ->values()->all();
+        return $this->failureReasons;
     }
 
     public function toJson($options = 0)
@@ -72,13 +68,15 @@ class TrackedJob implements Arrayable, Jsonable
         return $this->alias;
     }
 
-    public function latest(): JobRun
-    {
-        return $this->runs()->first();
-    }
-
     public function numberOfRuns(): int
     {
-        return $this->runs()->count();
+        return $this->numberOfRuns ?? 0;
+    }
+
+    public function countWithStatus(Status $status): int
+    {
+        return array_key_exists($status->value, $this->countWithStatus)
+            ? $this->countWithStatus[$status->value]
+            : 0;
     }
 }

@@ -20,13 +20,12 @@ class JobShowTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
         $response->assertOk();
-        $result = $response->decodeResponseJson()->json('runs');
-        $this->assertnotNull($result);
-        $this->assertCount(1, $result);
+        $result = $response->decodeResponseJson()->json();
+        $this->assertNotNull($result);
 
-        $this->assertEquals($status->id, $result[0]['id'] ?? null);
-        $this->assertEquals($status->class, $result[0]['class'] ?? null);
-        $this->assertEquals($status->alias, $result[0]['alias'] ?? null);
+        $this->assertEquals(1, $result['count'] ?? null);
+        $this->assertEquals($status->class, $result['class'] ?? null);
+        $this->assertEquals($status->alias, $result['alias'] ?? null);
     }
 
     /** @test */
@@ -78,13 +77,12 @@ class JobShowTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
         $response->assertOk();
-        $result = $response->decodeResponseJson()->json('runs');
-        $this->assertnotNull($result);
-        $this->assertCount(1, $result);
+        $result = $response->decodeResponseJson()->json();
+        $this->assertNotNull($result);
 
-        $this->assertEquals($status->id, $result[0]['id'] ?? null);
-        $this->assertEquals($status->class, $result[0]['class'] ?? null);
-        $this->assertEquals($status->alias, $result[0]['alias'] ?? null);
+        $this->assertEquals(1, $result['count'] ?? null);
+        $this->assertEquals($status->class, $result['class'] ?? null);
+        $this->assertEquals($status->alias, $result['alias'] ?? null);
     }
 
     /** @test */
@@ -98,13 +96,12 @@ class JobShowTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
         $response->assertOk();
-        $result = $response->decodeResponseJson()->json('runs');
-        $this->assertnotNull($result);
-        $this->assertCount(1, $result);
+        $result = $response->decodeResponseJson()->json();
+        $this->assertNotNull($result);
 
-        $this->assertEquals($status->id, $result[0]['id'] ?? null);
-        $this->assertEquals($status->class, $result[0]['class'] ?? null);
-        $this->assertEquals($status->alias, $result[0]['alias'] ?? null);
+        $this->assertEquals(1, $result['count'] ?? null);
+        $this->assertEquals($status->class, $result['class'] ?? null);
+        $this->assertEquals($status->alias, $result['alias'] ?? null);
     }
 
     /** @test */
@@ -116,13 +113,12 @@ class JobShowTest extends TestCase
 
         $response = $this->getJson(route('api.job-status.jobs.show', 'Job 1'));
         $response->assertOk();
-        $result = $response->decodeResponseJson()->json('runs');
-        $this->assertnotNull($result);
-        $this->assertCount(1, $result);
+        $result = $response->decodeResponseJson()->json();
+        $this->assertNotNull($result);
 
-        $this->assertEquals($status->id, $result[0]['id'] ?? null);
-        $this->assertEquals($status->class, $result[0]['class'] ?? null);
-        $this->assertEquals($status->alias, $result[0]['alias'] ?? null);
+        $this->assertEquals(1, $result['count'] ?? null);
+        $this->assertEquals($status->class, $result['class'] ?? null);
+        $this->assertEquals($status->alias, $result['alias'] ?? null);
     }
 
     /** @test */

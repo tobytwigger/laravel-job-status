@@ -15,23 +15,6 @@ use JobStatus\Tests\TestCase;
 class BatchTest extends TestCase
 {
     /** @test */
-    public function runs_gets_the_runs()
-    {
-        $batchModel = JobBatch::factory()->create();
-        $runs = JobStatus::factory()->count(4)->create(['batch_id' => $batchModel->id])->runs();
-
-        $batch = new Batch($batchModel, $runs);
-
-        $collection = $batch->runs();
-
-        $this->assertCount(4, $collection);
-        $this->assertInstanceOf(JobRunCollection::class, $collection);
-        $this->assertContainsOnlyInstancesOf(JobRun::class, $collection);
-
-        $this->assertEquals($runs->pluck('id')->sort()->values(), $collection->pluck('id')->sort()->values());
-    }
-
-    /** @test */
     public function it_can_be_cast_with_to_array_and_to_json()
     {
         $batchModel = JobBatch::factory()->create(['batch_id' => 'abc123', 'name' => 'My Batch']);
@@ -42,18 +25,23 @@ class BatchTest extends TestCase
             ->merge(JobStatus::factory()->count(2)->create(['batch_id' => $batchModel->id, 'status' => Status::CANCELLED]))
             ->runs();
 
-        $batch = new Batch($batchModel, $runs);
+        $batch = new Batch($batchModel, 55, countWithStatus: [
+            Status::QUEUED->value => 5,
+            Status::FAILED->value => 10,
+            Status::STARTED->value => 15,
+            Status::SUCCEEDED->value => 20,
+            Status::CANCELLED->value => 25
+        ]);
 
         $attributes = [
-            'count' => 81,
-            'runs' => $runs->toArray(),
+            'count' => 55,
             'name' => 'My Batch',
             'batch_id' => 'abc123',
-            'queued' => 4,
-            'started' => 40,
-            'failed' => 23,
-            'succeeded' => 12,
-            'cancelled' => 2,
+            'queued' => 5,
+            'started' => 15,
+            'failed' => 10,
+            'succeeded' => 20,
+            'cancelled' => 25,
             'created_at' => $batchModel->created_at,
             'id' => $batchModel->id,
         ];
@@ -63,31 +51,11 @@ class BatchTest extends TestCase
     }
 
     /** @test */
-    public function latest_gets_the_latest_run()
-    {
-        $batchModel = JobBatch::factory()->create();
-        $runsOne = JobStatus::factory()->create(['batch_id' => $batchModel->id, 'created_at' => Carbon::now()->subHours(5)]);
-        $runsTwo = JobStatus::factory()->create(['batch_id' => $batchModel->id, 'created_at' => Carbon::now()->subHours(4)]);
-        $runsThree = JobStatus::factory()->create(['batch_id' => $batchModel->id, 'created_at' => Carbon::now()->subHours(3)]);
-        $runsFour = JobStatus::factory()->create(['batch_id' => $batchModel->id, 'created_at' => Carbon::now()->subHours(50)]);
-
-        $runs = (new JobStatusCollection([$runsOne, $runsTwo, $runsThree, $runsFour]))->runs();
-
-        $batch = new Batch($batchModel, $runs);
-
-        $run = $batch->latest();
-
-        $this->assertInstanceOf(JobRun::class, $run);
-        $this->assertTrue($runsThree->is($run->jobStatus()));
-    }
-
-    /** @test */
     public function batch_id_gets_the_batch_id()
     {
         $batchModel = JobBatch::factory()->create();
-        $runs = JobStatus::factory()->count(4)->create(['batch_id' => $batchModel->id])->runs();
 
-        $batch = new Batch($batchModel, $runs);
+        $batch = new Batch($batchModel);
 
         $batchId = $batch->batchId();
 
@@ -98,9 +66,8 @@ class BatchTest extends TestCase
     public function name_gets_the_batch_name()
     {
         $batchModel = JobBatch::factory()->create(['name' => 'My Batch']);
-        $runs = JobStatus::factory()->count(4)->create(['batch_id' => $batchModel->id])->runs();
 
-        $batch = new Batch($batchModel, $runs);
+        $batch = new Batch($batchModel);
 
         $batchName = $batch->name();
 
@@ -111,19 +78,28 @@ class BatchTest extends TestCase
     public function count_runs_with_status_gets_the_count_of_jobs_with_the_status()
     {
         $batchModel = JobBatch::factory()->create(['name' => 'My Batch']);
-        $runs = JobStatus::factory()->count(4)->create(['batch_id' => $batchModel->id, 'status' => Status::QUEUED])
-            ->merge(JobStatus::factory()->count(40)->create(['batch_id' => $batchModel->id, 'status' => Status::STARTED]))
-            ->merge(JobStatus::factory()->count(23)->create(['batch_id' => $batchModel->id, 'status' => Status::FAILED]))
-            ->merge(JobStatus::factory()->count(12)->create(['batch_id' => $batchModel->id, 'status' => Status::SUCCEEDED]))
-            ->merge(JobStatus::factory()->count(2)->create(['batch_id' => $batchModel->id, 'status' => Status::CANCELLED]))
-            ->runs();
 
-        $batch = new Batch($batchModel, $runs);
+        $batch = new Batch($batchModel, countWithStatus: [
+            Status::QUEUED->value => 5,
+            Status::FAILED->value => 10,
+            Status::STARTED->value => 15,
+            Status::SUCCEEDED->value => 20,
+            Status::CANCELLED->value => 25
+        ]);
 
-        $this->assertEquals(4, $batch->countRunsWithStatus(Status::QUEUED));
-        $this->assertEquals(40, $batch->countRunsWithStatus(Status::STARTED));
-        $this->assertEquals(23, $batch->countRunsWithStatus(Status::FAILED));
-        $this->assertEquals(12, $batch->countRunsWithStatus(Status::SUCCEEDED));
-        $this->assertEquals(2, $batch->countRunsWithStatus(Status::CANCELLED));
+        $this->assertEquals(5, $batch->countWithStatus(Status::QUEUED));
+        $this->assertEquals(10, $batch->countWithStatus(Status::FAILED));
+        $this->assertEquals(15, $batch->countWithStatus(Status::STARTED));
+        $this->assertEquals(20, $batch->countWithStatus(Status::SUCCEEDED));
+        $this->assertEquals(25, $batch->countWithStatus(Status::CANCELLED));
+    }
+
+    /** @test */
+    public function it_returns_the_number_of_runs(){
+        $batchModel = JobBatch::factory()->create(['name' => 'My Batch']);
+
+        $batch = new Batch($batchModel, numberOfRuns: 22);
+
+        $this->assertEquals(22, $batch->numberOfRuns());
     }
 }

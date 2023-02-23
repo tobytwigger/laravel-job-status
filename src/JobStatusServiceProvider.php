@@ -22,6 +22,10 @@ use JobStatus\Dashboard\Commands\InstallAssets;
 use JobStatus\Dashboard\Http\Composers\DashboardVariables;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
+use JobStatus\Search\Queries\PaginateBatches;
+use JobStatus\Search\Queries\PaginateJobs;
+use JobStatus\Search\Queries\PaginateQueues;
+use JobStatus\Search\Queries\PaginateRuns;
 
 /**
  * The service provider for loading Laravel Setting.
@@ -57,6 +61,22 @@ class JobStatusServiceProvider extends ServiceProvider
         $this->defineBladeDirective();
         $this->setupGates();
         $this->publishDashboardAssets();
+        $this->setupPaginationMethods();
+    }
+
+    public function setupPaginationMethods()
+    {
+        foreach([
+            'paginateRuns' => PaginateRuns::class,
+            'paginateJobs' => PaginateJobs::class,
+            'paginateQueues' => PaginateQueues::class,
+            'paginateBatches' => PaginateBatches::class,
+        ] as $name => $class) {
+            \Illuminate\Database\Eloquent\Builder::macro(
+                $name,
+                fn() => app($class)->paginate($this, ...func_get_args())
+            );
+        }
     }
 
     /**

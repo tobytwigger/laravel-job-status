@@ -72,6 +72,6 @@ class ShowJobStatusSummaryCommand extends Command
 
     private function getStatusCount(TrackedJob $trackedJob, Status $status): int
     {
-        return $trackedJob->runs()->filter(fn (JobRun $jobStatusResult) => $jobStatusResult->getStatus() === $status)->count();
+        return $trackedJob->countWithStatus($status);
     }
 }

@@ -499,4 +499,29 @@ class JobStatusTest extends TestCase
             $jobStatus->toRun()->jobStatus()
         ));
     }
+
+    /**
+     * @dataProvider selectorDataProvider
+     * @test
+     */
+    public function the_selector_is_saved(int $jobId, string $connectionName, ?string $uuid, string $result){
+        $jobStatus = JobStatus::factory()->create([
+            'job_id' => $jobId,
+            'connection_name' => $connectionName,
+            'uuid' => $uuid,
+        ]);
+
+        $this->assertEquals($result, $jobStatus->selector);
+        $this->assertDatabaseHas(config('laravel-job-status.table_prefix') . '_job_statuses', [
+            'id' => $jobStatus->id,
+            'selector' => $result,
+        ]);
+    }
+
+    public function selectorDataProvider(){
+        return [
+            [1, 'database', 'uuid-123', 'uuid-123'],
+            [1, 'database', null, '1-database'],
+        ];
+    }
 }
