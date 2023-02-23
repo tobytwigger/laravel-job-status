@@ -2,23 +2,15 @@
 
 namespace JobStatus\Search\Transformers;
 
-use Illuminate\Database\Eloquent\Builder;
-use JobStatus\Enums\Status;
-use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
-use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Collections\BatchCollection;
+use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Result\Batch;
-use JobStatus\Search\Result\JobRun;
-use JobStatus\Search\Result\TrackedJob;
 
 class BatchesTransformer
 {
-
     public function transform(JobStatusCollection $jobStatusCollection): BatchCollection
     {
-
         $batchIds = $jobStatusCollection->groupBy('batch_id')
             ->keys();
 
@@ -48,7 +40,6 @@ class BatchesTransformer
         }
 
         return $batchCollection;
-
     }
 
     private function loadCount(int $batchId): array
@@ -60,8 +51,7 @@ class BatchesTransformer
             ->select('status')
             ->selectRaw('COUNT(DISTINCT selector) as count')
             ->get()
-            ->mapWithKeys(fn($result) => [$result->status->value => $result->count])
+            ->mapWithKeys(fn ($result) => [$result->status->value => $result->count])
             ->toArray();
     }
-
 }

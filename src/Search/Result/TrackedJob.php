@@ -4,10 +4,7 @@ namespace JobStatus\Search\Result;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Collection;
 use JobStatus\Enums\Status;
-use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
 
 class TrackedJob implements Arrayable, Jsonable
 {
@@ -29,8 +26,7 @@ class TrackedJob implements Arrayable, Jsonable
         ?int $numberOfRuns = null,
         array $failureReasons = [],
         array $countWithStatus = []
-    )
-    {
+    ) {
         $this->jobClass = $jobClass;
         $this->alias = $alias;
         $this->numberOfRuns = $numberOfRuns;

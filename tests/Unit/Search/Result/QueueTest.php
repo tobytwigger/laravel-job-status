@@ -3,15 +3,11 @@
 namespace JobStatus\Tests\Unit\Search\Result;
 
 use JobStatus\Enums\Status;
-use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Queue;
 use JobStatus\Tests\TestCase;
 
 class QueueTest extends TestCase
 {
-
     /** @test */
     public function it_can_be_cast_with_to_array_and_to_json()
     {
@@ -20,7 +16,7 @@ class QueueTest extends TestCase
             Status::FAILED->value => 10,
             Status::STARTED->value => 15,
             Status::SUCCEEDED->value => 20,
-            Status::CANCELLED->value => 25
+            Status::CANCELLED->value => 25,
         ]);
 
         $attributes = [
@@ -55,7 +51,7 @@ class QueueTest extends TestCase
             Status::FAILED->value => 10,
             Status::STARTED->value => 15,
             Status::SUCCEEDED->value => 20,
-            Status::CANCELLED->value => 25
+            Status::CANCELLED->value => 25,
         ]);
 
         $this->assertEquals(5, $queue->countWithStatus(Status::QUEUED));
@@ -66,7 +62,8 @@ class QueueTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_the_number_of_runs(){
+    public function it_returns_the_number_of_runs()
+    {
         $queue = new Queue('my-queue', numberOfRuns: 22);
 
         $this->assertEquals(22, $queue->numberOfRuns());

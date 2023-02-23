@@ -66,7 +66,7 @@ class JobStatusServiceProvider extends ServiceProvider
 
     public function setupPaginationMethods()
     {
-        foreach([
+        foreach ([
             'paginateRuns' => PaginateRuns::class,
             'paginateJobs' => PaginateJobs::class,
             'paginateQueues' => PaginateQueues::class,
@@ -74,7 +74,7 @@ class JobStatusServiceProvider extends ServiceProvider
         ] as $name => $class) {
             \Illuminate\Database\Eloquent\Builder::macro(
                 $name,
-                fn() => app($class)->paginate($this, ...func_get_args())
+                fn () => app($class)->paginate($this, ...func_get_args())
             );
         }
     }

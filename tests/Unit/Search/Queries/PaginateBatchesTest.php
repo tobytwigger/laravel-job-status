@@ -9,7 +9,6 @@ use JobStatus\Tests\TestCase;
 
 class PaginateBatchesTest extends TestCase
 {
-
     /** @test */
     public function it_can_paginate()
     {
@@ -49,5 +48,4 @@ class PaginateBatchesTest extends TestCase
         $this->assertEquals($batch1->batch_id, $collection[0]->batchId());
         $this->assertEquals(5, $collection[0]->numberOfRuns());
     }
-
 }

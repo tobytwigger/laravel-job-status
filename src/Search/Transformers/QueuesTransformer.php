@@ -2,23 +2,15 @@
 
 namespace JobStatus\Search\Transformers;
 
-use Illuminate\Database\Eloquent\Builder;
-use JobStatus\Enums\Status;
-use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Collections\QueueCollection;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Queue;
-use JobStatus\Search\Result\TrackedJob;
 
 class QueuesTransformer
 {
-
     public function transform(JobStatusCollection $jobStatusCollection): QueueCollection
     {
-
         $queues = $jobStatusCollection->groupBy('queue')
             ->keys();
 
@@ -47,7 +39,6 @@ class QueuesTransformer
         }
 
         return $queueCollection;
-
     }
 
     private function loadCount(string $queue): array
@@ -59,8 +50,7 @@ class QueuesTransformer
             ->select('status')
             ->selectRaw('COUNT(DISTINCT selector) as count')
             ->get()
-            ->mapWithKeys(fn($result) => [$result->status->value => $result->count])
+            ->mapWithKeys(fn ($result) => [$result->status->value => $result->count])
             ->toArray();
     }
-
 }

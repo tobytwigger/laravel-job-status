@@ -6,14 +6,11 @@ use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Result\JobRun;
-use JobStatus\Search\Transformers\RunsTransformer;
 use JobStatus\Tests\TestCase;
 
 class PaginateRunsTest extends TestCase
 {
-
     /** @test */
     public function it_can_paginate()
     {
@@ -60,7 +57,8 @@ class PaginateRunsTest extends TestCase
     }
 
     /** @test */
-    public function it_can_paginate_using_just_uuids(){
+    public function it_can_paginate_using_just_uuids()
+    {
         $uuid1 = Str::uuid();
         $uuid2 = Str::uuid();
         $uuid3 = Str::uuid();
@@ -94,8 +92,8 @@ class PaginateRunsTest extends TestCase
     }
 
     /** @test */
-    public function it_can_paginate_using_just_job_ids_with_no_uuids(){
-
+    public function it_can_paginate_using_just_job_ids_with_no_uuids()
+    {
         $jobStatus1 = JobStatus::factory()->create(['class' => 'Class 1', 'job_id' => 1, 'connection_name' => 'database', 'alias' => '1', 'uuid' => null, 'created_at' => Carbon::now()->subHours(6)]);
         $jobStatus2 = JobStatus::factory()->create(['class' => 'Class 2', 'job_id' => 2, 'connection_name' => 'database', 'alias' => '1', 'uuid' => null, 'created_at' => Carbon::now()->subHours(5)]);
         $jobStatus3 = JobStatus::factory()->create(['class' => 'Class 3', 'job_id' => 3, 'connection_name' => 'database', 'alias' => '1', 'uuid' => null, 'created_at' => Carbon::now()->subHours(4)]);
@@ -116,12 +114,12 @@ class PaginateRunsTest extends TestCase
         $this->assertEquals($jobStatus3->id, $collection[0]->jobStatus()->id);
         $this->assertEquals($jobStatus2->id, $collection[1]->jobStatus()->id);
         $this->assertEquals($jobStatus1->id, $collection[2]->jobStatus()->id);
-
     }
 
 
     /** @test */
-    public function it_can_paginate_with_a_mixture(){
+    public function it_can_paginate_with_a_mixture()
+    {
         $uuid1 = Str::uuid();
 
         $jobStatus1 = JobStatus::factory()->create(['class' => 'Class 1', 'job_id' => 1, 'connection_name' => 'database', 'alias' => '1', 'uuid' => null, 'created_at' => Carbon::now()->subHours(6)]);
@@ -162,7 +160,5 @@ class PaginateRunsTest extends TestCase
 
         $this->assertEquals($jobStatus2->id, $collection[0]->jobStatus()->id);
         $this->assertEquals($jobStatus1->id, $collection[1]->jobStatus()->id);
-
     }
-
 }

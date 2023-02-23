@@ -4,13 +4,10 @@ namespace JobStatus\Search\Queries;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Collections\JobStatusCollection;
 
 class PaginateRuns
 {
-
     public function paginate(Builder $query, int $page, int $perPage): LengthAwarePaginator
     {
         $query->select(['selector'])
@@ -30,5 +27,4 @@ class PaginateRuns
             $page
         );
     }
-
 }

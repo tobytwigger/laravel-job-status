@@ -2,15 +2,12 @@
 
 namespace JobStatus\Tests\Unit\Search\Queries;
 
-use Illuminate\Pagination\LengthAwarePaginator;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Tests\TestCase;
 
 class PaginateJobsTest extends TestCase
 {
-
     /** @test */
     public function it_can_paginate()
     {
@@ -46,5 +43,4 @@ class PaginateJobsTest extends TestCase
         $this->assertEquals('alias1', $collection[0]->alias());
         $this->assertEquals(5, $collection[0]->numberOfRuns());
     }
-
 }

@@ -3,8 +3,6 @@
 namespace JobStatus\Http\Controllers\Api;
 
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use JobStatus\JobStatusServiceProvider;
@@ -39,5 +37,4 @@ class Controller extends \Illuminate\Routing\Controller
 
         return false;
     }
-
 }

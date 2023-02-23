@@ -504,7 +504,8 @@ class JobStatusTest extends TestCase
      * @dataProvider selectorDataProvider
      * @test
      */
-    public function the_selector_is_saved(int $jobId, string $connectionName, ?string $uuid, string $result){
+    public function the_selector_is_saved(int $jobId, string $connectionName, ?string $uuid, string $result)
+    {
         $jobStatus = JobStatus::factory()->create([
             'job_id' => $jobId,
             'connection_name' => $connectionName,
@@ -518,7 +519,8 @@ class JobStatusTest extends TestCase
         ]);
     }
 
-    public function selectorDataProvider(){
+    public function selectorDataProvider()
+    {
         return [
             [1, 'database', 'uuid-123', 'uuid-123'],
             [1, 'database', null, '1-database'],

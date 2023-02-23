@@ -36,9 +36,9 @@ class JobStatusFactory extends Factory
 
     public function withException(string $message)
     {
-        return $this->state(function(array $attributes) use ($message) {
+        return $this->state(function (array $attributes) use ($message) {
             return [
-                'exception_id' => JobException::factory()->create(['message' => $message])->id
+                'exception_id' => JobException::factory()->create(['message' => $message])->id,
             ];
         });
     }

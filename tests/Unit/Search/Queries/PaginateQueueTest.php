@@ -8,7 +8,6 @@ use JobStatus\Tests\TestCase;
 
 class PaginateQueueTest extends TestCase
 {
-
     /** @test */
     public function it_can_paginate()
     {
@@ -44,5 +43,4 @@ class PaginateQueueTest extends TestCase
         $this->assertEquals('queue1', $collection[0]->name());
         $this->assertEquals(5, $collection[0]->numberOfRuns());
     }
-
 }

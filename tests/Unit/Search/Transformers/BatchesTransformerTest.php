@@ -5,20 +5,18 @@ namespace JobStatus\Tests\Unit\Search\Transformers;
 use Illuminate\Support\Str;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;
-use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Collections\BatchCollection;
-use JobStatus\Search\Result\JobRun;
+use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Result\Batch;
 use JobStatus\Search\Transformers\BatchesTransformer;
 use JobStatus\Tests\TestCase;
 
 class BatchesTransformerTest extends TestCase
 {
-
     /** @test */
-    public function it_returns_the_jobs_with_the_basic_data_loaded(){
+    public function it_returns_the_jobs_with_the_basic_data_loaded()
+    {
         $batch1 = JobBatch::factory()->create();
         $batch2 = JobBatch::factory()->create();
         $batch3 = JobBatch::factory()->create();
@@ -44,7 +42,8 @@ class BatchesTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_takes_into_account_grouped_runs(){
+    public function it_takes_into_account_grouped_runs()
+    {
         $batch1 = JobBatch::factory()->create();
         $batch2 = JobBatch::factory()->create();
         $batch3 = JobBatch::factory()->create();
@@ -72,7 +71,8 @@ class BatchesTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_resolves_the_number_of_jobs_per_status(){
+    public function it_resolves_the_number_of_jobs_per_status()
+    {
         $batch1 = JobBatch::factory()->create();
 
         $runs = JobStatus::factory()->count(4)->create(['batch_id' => $batch1->id, 'status' => Status::QUEUED])
@@ -93,5 +93,4 @@ class BatchesTransformerTest extends TestCase
         $this->assertEquals(12, $queues[0]->countWithStatus(Status::SUCCEEDED));
         $this->assertEquals(2, $queues[0]->countWithStatus(Status::CANCELLED));
     }
-
 }

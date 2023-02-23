@@ -5,7 +5,6 @@ namespace JobStatus\Search\Result;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JobStatus\Enums\Status;
-use JobStatus\Search\Collections\JobRunCollection;
 
 class Queue implements Arrayable, Jsonable
 {
@@ -18,7 +17,8 @@ class Queue implements Arrayable, Jsonable
     public function __construct(
         string $queueName,
         ?int $numberOfRuns = null,
-        array $countWithStatus = [])
+        array $countWithStatus = []
+    )
     {
         $this->queueName = $queueName;
         $this->numberOfRuns = $numberOfRuns;
@@ -59,5 +59,4 @@ class Queue implements Arrayable, Jsonable
     {
         return json_encode($this->toArray(), $options);
     }
-
 }

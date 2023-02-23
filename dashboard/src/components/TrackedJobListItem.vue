@@ -62,7 +62,6 @@ const props = defineProps<{
 }>();
 
 // Counts
-
 </script>
 
 <style scoped></style>

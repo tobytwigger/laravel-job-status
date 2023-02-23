@@ -86,7 +86,6 @@ class JobStatusCollectionTest extends TestCase
 
         $this->assertEquals('Class 1', $collection[2]->jobClass());
         $this->assertEquals(2, $collection[2]->numberOfRuns());
-
     }
 
     /** @test */
@@ -155,7 +154,6 @@ class JobStatusCollectionTest extends TestCase
 
         $this->assertEquals('queue1', $collection[3]->name());
         $this->assertEquals(2, $collection[3]->numberOfRuns());
-
     }
 
     /** @test */

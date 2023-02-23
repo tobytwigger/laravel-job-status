@@ -8,16 +8,15 @@ use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Collections\TrackedJobCollection;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Search\Transformers\JobsTransformer;
 use JobStatus\Tests\TestCase;
 
 class JobsTransformerTest extends TestCase
 {
-
     /** @test */
-    public function it_returns_the_jobs_with_the_basic_data_loaded(){
+    public function it_returns_the_jobs_with_the_basic_data_loaded()
+    {
         $jobs1 = JobStatus::factory()->count(5)->create(['alias' => 'alias1', 'class' => 'JobClass1']);
         $jobs2 = JobStatus::factory()->count(6)->create(['alias' => 'alias2', 'class' => 'JobClass2']);
         $jobs3 = JobStatus::factory()->has(JobException::factory()->state(['message' => '123']), 'exception')->count(7)->create(['alias' => 'alias3', 'class' => 'JobClass3']);
@@ -43,7 +42,8 @@ class JobsTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_loads_failure_reasons(){
+    public function it_loads_failure_reasons()
+    {
         $jobs1 = JobStatus::factory()->count(5)
             ->withException('Test One')
             ->create(['alias' => 'alias1', 'class' => 'JobClass1', 'status' => Status::FAILED]);
@@ -68,7 +68,8 @@ class JobsTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_takes_into_account_grouped_runs(){
+    public function it_takes_into_account_grouped_runs()
+    {
         $uuid1 = Str::uuid();
 
         $jobs1 = JobStatus::factory()->count(5)->create(['alias' => 'alias1', 'class' => 'JobClass1', 'uuid' => $uuid1]);
@@ -96,7 +97,8 @@ class JobsTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_resolves_the_number_of_jobs_per_status(){
+    public function it_resolves_the_number_of_jobs_per_status()
+    {
         $runs = JobStatus::factory()->count(4)->create(['alias' => 'alias1', 'status' => Status::QUEUED])
             ->merge(JobStatus::factory()->count(40)->create(['alias' => 'alias1', 'status' => Status::STARTED]))
             ->merge(JobStatus::factory()->count(23)->create(['alias' => 'alias1', 'status' => Status::FAILED]))
@@ -115,5 +117,4 @@ class JobsTransformerTest extends TestCase
         $this->assertEquals(12, $jobs[0]->countWithStatus(Status::SUCCEEDED));
         $this->assertEquals(2, $jobs[0]->countWithStatus(Status::CANCELLED));
     }
-
 }

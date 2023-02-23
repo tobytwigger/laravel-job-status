@@ -12,7 +12,6 @@ use JobStatus\Tests\TestCase;
 
 class RunsTransformerTest extends TestCase
 {
-
     /** @test */
     public function it_returns_all_runs_grouped_when_given_full_runs()
     {
@@ -194,5 +193,4 @@ class RunsTransformerTest extends TestCase
         $this->assertEquals($jobStatus1_1->id, $collection[2]->parent()->parent()->jobStatus()?->id);
         $this->assertNull($collection[2]->parent()->parent()->parent());
     }
-
 }

@@ -3,21 +3,16 @@
 namespace JobStatus\Search\Transformers;
 
 use Illuminate\Database\Eloquent\Builder;
-use JobStatus\Enums\Status;
 use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Collections\TrackedJobCollection;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 
 class JobsTransformer
 {
-
     public function transform(JobStatusCollection $jobStatusCollection): TrackedJobCollection
     {
-
         $aliases = $jobStatusCollection->groupBy('alias')
             ->keys();
 
@@ -48,14 +43,13 @@ class JobsTransformer
         }
 
         return $trackedJobs;
-
     }
 
     private function getFailureReasons(string $alias): array
     {
         return JobException::query()
             ->withoutEagerLoads()
-            ->whereHas('jobStatus', fn(Builder $query) => $query->where('alias', $alias))
+            ->whereHas('jobStatus', fn (Builder $query) => $query->where('alias', $alias))
             ->select('message')
             ->selectRaw('COUNT(*) as count')
             ->groupBy('message')
@@ -65,7 +59,6 @@ class JobsTransformer
 
     private function loadCount(string $alias): array
     {
-
         return JobStatus::query()
             ->withoutEagerLoads()
             ->where('alias', $alias)
@@ -73,8 +66,7 @@ class JobsTransformer
             ->select('status')
             ->selectRaw('COUNT(DISTINCT selector) as count')
             ->get()
-            ->mapWithKeys(fn($result) => [$result->status->value => $result->count])
+            ->mapWithKeys(fn ($result) => [$result->status->value => $result->count])
             ->toArray();
     }
-
 }

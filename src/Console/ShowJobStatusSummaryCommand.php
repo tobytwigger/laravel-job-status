@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 
 class ShowJobStatusSummaryCommand extends Command

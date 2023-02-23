@@ -6,7 +6,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;
-use JobStatus\Search\Collections\JobRunCollection;
 
 class Batch implements Arrayable, Jsonable
 {
@@ -14,9 +13,11 @@ class Batch implements Arrayable, Jsonable
     private ?int $numberOfRuns;
     private array $countWithStatus;
 
-    public function __construct(JobBatch $batch,
-                                ?int $numberOfRuns = null,
-                                array    $countWithStatus = [])
+    public function __construct(
+        JobBatch $batch,
+        ?int $numberOfRuns = null,
+        array    $countWithStatus = []
+    )
     {
         $this->batch = $batch;
         $this->numberOfRuns = $numberOfRuns;
@@ -65,5 +66,4 @@ class Batch implements Arrayable, Jsonable
     {
         return json_encode($this->toArray(), $options);
     }
-
 }

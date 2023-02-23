@@ -4,13 +4,10 @@ namespace JobStatus\Search\Queries;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
-use JobStatus\Search\Collections\JobRunCollection;
 use JobStatus\Search\Collections\JobStatusCollection;
 
 class PaginateBatches
 {
-
     public function paginate(Builder $query, int $page, int $perPage, bool $bypassAuth = true, ?int $userId = null): LengthAwarePaginator
     {
         $query->select(['batch_id'])
@@ -30,5 +27,4 @@ class PaginateBatches
             $page
         );
     }
-
 }

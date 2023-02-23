@@ -3,10 +3,6 @@
 namespace JobStatus\Tests\Unit\Search\Result;
 
 use JobStatus\Enums\Status;
-use JobStatus\Models\JobException;
-use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\TrackedJob;
 use JobStatus\Tests\TestCase;
 
@@ -40,14 +36,19 @@ class TrackedJobTest extends TestCase
             ],
         ];
 
-        $job = new TrackedJob('JobClass', 'job-alias', numberOfRuns: 3, failureReasons: $failureReasons,
+        $job = new TrackedJob(
+            'JobClass',
+            'job-alias',
+            numberOfRuns: 3,
+            failureReasons: $failureReasons,
             countWithStatus: [
                 Status::QUEUED->value => 5,
                 Status::FAILED->value => 10,
                 Status::STARTED->value => 15,
                 Status::SUCCEEDED->value => 20,
-                Status::CANCELLED->value => 25
-            ]);
+                Status::CANCELLED->value => 25,
+            ]
+        );
 
         $array = [
             'count' => 3,
@@ -58,7 +59,7 @@ class TrackedJobTest extends TestCase
             'failed' => 10,
             'started' => 15,
             'queued' => 5,
-            'cancelled' => 25
+            'cancelled' => 25,
         ];
 
         $this->assertEquals($array, $job->toArray());
@@ -85,14 +86,14 @@ class TrackedJobTest extends TestCase
     }
 
     /** @test */
-    public function countWithStatus_returns_the_for_the_status()
+    public function count_with_status_returns_the_for_the_status()
     {
         $job = new TrackedJob('JobClass', 'job-alias', countWithStatus: [
             Status::QUEUED->value => 5,
             Status::FAILED->value => 10,
             Status::STARTED->value => 15,
             Status::SUCCEEDED->value => 20,
-            Status::CANCELLED->value => 25
+            Status::CANCELLED->value => 25,
         ]);
 
         $this->assertEquals(5, $job->countWithStatus(Status::QUEUED));
@@ -100,6 +101,5 @@ class TrackedJobTest extends TestCase
         $this->assertEquals(15, $job->countWithStatus(Status::STARTED));
         $this->assertEquals(20, $job->countWithStatus(Status::SUCCEEDED));
         $this->assertEquals(25, $job->countWithStatus(Status::CANCELLED));
-
     }
 }

@@ -2,7 +2,6 @@
 
 namespace JobStatus\Search\Transformers;
 
-use Illuminate\Database\Eloquent\Builder;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Collections\JobRunCollection;
@@ -11,10 +10,9 @@ use JobStatus\Search\Result\JobRun;
 
 class RunsTransformer
 {
-
     public function transform(JobStatusCollection $jobStatusCollection): JobRunCollection
     {
-        $selectors = $jobStatusCollection->map(fn(JobStatus $jobStatus) => $jobStatus->selector);
+        $selectors = $jobStatusCollection->map(fn (JobStatus $jobStatus) => $jobStatus->selector);
 
         $jobs = JobStatus::whereIn('selector', $selectors)
             ->orderBy('created_at', 'desc')
@@ -43,5 +41,4 @@ class RunsTransformer
 
         return $jobRuns;
     }
-
 }

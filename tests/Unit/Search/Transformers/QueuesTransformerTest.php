@@ -4,20 +4,18 @@ namespace JobStatus\Tests\Unit\Search\Transformers;
 
 use Illuminate\Support\Str;
 use JobStatus\Enums\Status;
-use JobStatus\Models\JobException;
 use JobStatus\Models\JobStatus;
 use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Collections\QueueCollection;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Search\Result\Queue;
 use JobStatus\Search\Transformers\QueuesTransformer;
 use JobStatus\Tests\TestCase;
 
 class QueuesTransformerTest extends TestCase
 {
-
     /** @test */
-    public function it_returns_the_jobs_with_the_basic_data_loaded(){
+    public function it_returns_the_jobs_with_the_basic_data_loaded()
+    {
         $jobs1 = JobStatus::factory()->count(5)->create(['queue' => 'queue1']);
         $jobs2 = JobStatus::factory()->count(6)->create(['queue' => 'queue2']);
         $jobs3 = JobStatus::factory()->count(15)->create(['queue' => 'queue3']);
@@ -39,7 +37,8 @@ class QueuesTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_takes_into_account_grouped_runs(){
+    public function it_takes_into_account_grouped_runs()
+    {
         $uuid1 = Str::uuid();
 
         $jobs1 = JobStatus::factory()->count(5)->create(['queue' => 'queue1', 'uuid' => $uuid1]);
@@ -63,7 +62,8 @@ class QueuesTransformerTest extends TestCase
     }
 
     /** @test */
-    public function it_resolves_the_number_of_jobs_per_status(){
+    public function it_resolves_the_number_of_jobs_per_status()
+    {
         $runs = JobStatus::factory()->count(4)->create(['queue' => 'queue1', 'status' => Status::QUEUED])
             ->merge(JobStatus::factory()->count(40)->create(['queue' => 'queue1', 'status' => Status::STARTED]))
             ->merge(JobStatus::factory()->count(23)->create(['queue' => 'queue1', 'status' => Status::FAILED]))
@@ -82,5 +82,4 @@ class QueuesTransformerTest extends TestCase
         $this->assertEquals(12, $queues[0]->countWithStatus(Status::SUCCEEDED));
         $this->assertEquals(2, $queues[0]->countWithStatus(Status::CANCELLED));
     }
-
 }

@@ -49,7 +49,6 @@ class QueueIndexTest extends TestCase
         $response->assertJsonCount(1, 'data');
         $this->assertEquals('OurQueue', $response->json('data.0.name'));
         $this->assertEquals(5, $response->json('data.0.count'));
-
     }
 
     /** @test */

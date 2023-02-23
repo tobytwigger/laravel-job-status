@@ -2,14 +2,10 @@
 
 namespace JobStatus\Tests\Unit\Search\Result;
 
-use Carbon\Carbon;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
-use JobStatus\Search\Collections\JobRunCollection;
-use JobStatus\Search\Collections\JobStatusCollection;
 use JobStatus\Search\Result\Batch;
-use JobStatus\Search\Result\JobRun;
 use JobStatus\Tests\TestCase;
 
 class BatchTest extends TestCase
@@ -30,7 +26,7 @@ class BatchTest extends TestCase
             Status::FAILED->value => 10,
             Status::STARTED->value => 15,
             Status::SUCCEEDED->value => 20,
-            Status::CANCELLED->value => 25
+            Status::CANCELLED->value => 25,
         ]);
 
         $attributes = [
@@ -84,7 +80,7 @@ class BatchTest extends TestCase
             Status::FAILED->value => 10,
             Status::STARTED->value => 15,
             Status::SUCCEEDED->value => 20,
-            Status::CANCELLED->value => 25
+            Status::CANCELLED->value => 25,
         ]);
 
         $this->assertEquals(5, $batch->countWithStatus(Status::QUEUED));
@@ -95,7 +91,8 @@ class BatchTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_the_number_of_runs(){
+    public function it_returns_the_number_of_runs()
+    {
         $batchModel = JobBatch::factory()->create(['name' => 'My Batch']);
 
         $batch = new Batch($batchModel, numberOfRuns: 22);
