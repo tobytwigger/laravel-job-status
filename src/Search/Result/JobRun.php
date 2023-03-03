@@ -77,16 +77,16 @@ class JobRun implements Arrayable, Jsonable
             'created_at' => $this->jobStatus->created_at,
             'exception' => $this->getException()?->toArray(),
             'messages' => $this->jobStatus->messages->sortBy([['created_at', 'desc'], ['id', 'desc']])
-                ->map(fn (JobMessage $message) => $message->toArray()),
+                ->map(fn (JobMessage $message) => $message->toArray())->values(),
             'signals' => $this->jobStatus->signals->sortBy([['created_at', 'desc'], ['id', 'desc']])
-                ->map(fn (JobSignal $signal) => $signal->toArray()),
+                ->map(fn (JobSignal $signal) => $signal->toArray())->values(),
             'started_at' => $this->jobStatus->started_at,
             'finished_at' => $this->jobStatus->finished_at,
             'id' => $this->jobStatus->id,
             'batch_id' => $this->jobStatus->batch_id,
             'batch_id_uuid' => $this->jobStatus->batch?->batch_id,
             'statuses' => $this->jobStatus->statuses->sortBy([['created_at', 'desc'], ['id', 'desc']])
-                ->map(fn (JobStatusStatus $status) => $status->toArray()),
+                ->map(fn (JobStatusStatus $status) => $status->toArray())->values(),
             'has_payload' => $this->jobStatus->payload !== null,
             'connection_name' => $this->jobStatus->connection_name,
             'queue' => $this->jobStatus->queue,
