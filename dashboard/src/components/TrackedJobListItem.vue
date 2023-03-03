@@ -4,16 +4,12 @@
       <q-icon name="account_tree" color="black" size="34px" />
     </q-item-section>
 
-    <q-item-section top class="col-2 gt-sm">
-      <q-item-label class="q-mt-sm">{{ props.trackedJob.class }}</q-item-label>
-    </q-item-section>
-
     <q-item-section top>
       <q-item-label lines="1">
         <span class="text-weight-medium">{{
           props.trackedJob.alias ?? props.trackedJob.class
         }}</span>
-        <!--        <span class="text-grey-8"> - {{ finishedCount }} finished.</span>-->
+        <span v-if="props.trackedJob.alias !== props.trackedJob.class" class="text-grey-8"> - {{ props.trackedJob.class }}</span>
       </q-item-label>
       <q-item-label caption lines="5">
         <status-count
