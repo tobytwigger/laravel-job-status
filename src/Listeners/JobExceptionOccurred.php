@@ -2,9 +2,12 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Queue\Jobs\Job;
 use JobStatus\Enums\Status;
 use JobStatus\Exceptions\JobCancelledException;
 use JobStatus\JobStatusModifier;
+use JobStatus\Listeners\Utils\Helper;
 use JobStatus\Models\JobStatus;
 
 /**
@@ -13,17 +16,19 @@ use JobStatus\Models\JobStatus;
  * Sometimes this will happen after job failed, but job failed is not fired if there are more attempts left. Therefore
  * we are looking for job statuses which are running or finished (since they may have come through the job exception.
  */
-class JobExceptionOccurred extends BaseListener
+class JobExceptionOccurred
 {
+
     public function handle(\Illuminate\Queue\Events\JobExceptionOccurred $event)
     {
-        if ($this->isTrackingEnabled()) {
+        $helper = Helper::forJob($event->job);
+
+        if (Helper::isTrackingEnabled()) {
             // If the job is a cancelled job, we want to make sure the job doesn't run again. For this, we need to actually fail the job!
             if ($event->exception instanceof JobCancelledException) {
-                $event->job->fail($event->exception);
+                $helper->getJob()->fail($event->exception);
             }
-
-            $modifier = $this->getJobStatusModifier($event->job);
+            $modifier = $helper->getJobStatusModifier();
             if ($modifier === null) {
                 return true;
             }
@@ -40,7 +45,7 @@ class JobExceptionOccurred extends BaseListener
             }
 
             // Happens if the job has been released already during the job, and therefore won't be once job failed
-            if ($event->job->isReleased()) {
+            if ($helper->getJob()->isReleased()) {
                 $jobStatus = JobStatus::create([
                     'queue' => $modifier->getJobStatus()->queue,
                     'class' => $modifier->getJobStatus()?->class,
@@ -48,9 +53,9 @@ class JobExceptionOccurred extends BaseListener
                     'percentage' => 0,
                     'batch_id' => $modifier->getJobStatus()->batch_id,
                     'status' => Status::QUEUED,
-                    'uuid' => $event->job->uuid(),
-                    'connection_name' => $event->job->getConnectionName(),
-                    'job_id' => $event->job->getJobId(),
+                    'uuid' => $helper->getJob()->uuid(),
+                    'connection_name' => $helper->getJob()->getConnectionName(),
+                    'job_id' => $helper->getJob()->getJobId(),
                     'is_unprotected' => $modifier->getJobStatus()?->is_unprotected,
                 ]);
 
@@ -75,4 +80,5 @@ class JobExceptionOccurred extends BaseListener
             $modifier->setPercentage(100);
         }
     }
+
 }

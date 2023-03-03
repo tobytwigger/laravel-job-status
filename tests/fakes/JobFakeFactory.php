@@ -7,7 +7,10 @@ use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
+use JobStatus\Models\JobStatus;
 
 class JobFakeFactory
 {
@@ -225,6 +228,28 @@ class JobFakeFactory
         return $job;
     }
 
+    public function dispatchAsListener(int $jobsToRun = 1)
+    {
+        Event::listen(FakeEvent::class, ListenerFake::class);
+
+        ListenerFake::setupParameters(
+            $this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback',
+            $this->signals, $this->users, $this->isUnprotected, queue: $this->queue,
+            maxExceptions: $this->maxExceptions, tries: $this->tries
+        );
+
+        static::createJobsTable();
+        static::createFailedJobsTable();
+
+        FakeEvent::dispatch('some-test-value');
+
+        $this->runQueueWorker($jobsToRun);
+
+        Event::forget(FakeEvent::class);
+
+        ListenerFake::reset();
+    }
+
     public function runQueueWorker(int $jobsToRun)
     {
         $runCommand = 'queue:work database --once --stop-when-empty';
@@ -252,7 +277,7 @@ class JobFakeFactory
         return $this;
     }
 
-    private static function createJobsTable()
+    public static function createJobsTable()
     {
         if (!Schema::hasTable('jobs')) {
             Schema::create('jobs', function (Blueprint $table) {
@@ -267,7 +292,7 @@ class JobFakeFactory
         }
     }
 
-    private static function createBatchesTable()
+    public static function createBatchesTable()
     {
         if (!Schema::hasTable('job_batches')) {
             Schema::create('job_batches', function (Blueprint $table) {
@@ -285,12 +310,12 @@ class JobFakeFactory
         }
     }
 
-    private static function createFailedJobsTable()
+    public static function createFailedJobsTable()
     {
         if (!Schema::hasTable('failed_jobs')) {
             Schema::create('failed_jobs', function (Blueprint $table) {
                 $table->id();
-                $table->string('uuid')->unique();
+                $table->string('uuid')->unique()->nullable();
                 $table->text('connection');
                 $table->text('queue');
                 $table->longText('payload');
@@ -313,4 +338,5 @@ class JobFakeFactory
 
         return $this;
     }
+
 }

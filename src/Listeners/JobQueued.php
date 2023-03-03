@@ -2,10 +2,14 @@
 
 namespace JobStatus\Listeners;
 
+use Illuminate\Contracts\Queue\Job as JobContract;
+use Illuminate\Events\CallQueuedListener;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Queue;
+use JobStatus\Concerns\Trackable;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
+use JobStatus\Listeners\Utils\Helper;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 
@@ -14,7 +18,7 @@ use JobStatus\Models\JobStatus;
  *
  * Create a new JobStatus and add the tags.
  */
-class JobQueued extends BaseListener
+class JobQueued
 {
     /**
      * @param \Illuminate\Queue\Events\JobQueued $event
@@ -22,9 +26,12 @@ class JobQueued extends BaseListener
      */
     public function handle(\Illuminate\Queue\Events\JobQueued $event)
     {
-        if ($this->isTrackingEnabled()) {
+        if (Helper::isTrackingEnabled()) {
             $job = $event->job;
 
+            if($job instanceof CallQueuedListener) {
+                $job = app($job->displayName());
+            }
             if ($this->validateJob($job) === false) {
                 return true;
             }
@@ -86,4 +93,49 @@ class JobQueued extends BaseListener
             }
         }
     }
+
+    protected function validateJob(mixed $job): bool
+    {
+        if (is_string($job) || $job instanceof \Closure) {
+            return false;
+        }
+        if (!is_object($job)) {
+            return false;
+        }
+
+        // True if extends Illuminate\Contracts\Queue\Job
+        if (method_exists($job, 'resolveName')) {
+            if (!$job->resolveName() || !class_exists($job->resolveName())) {
+                return false;
+            }
+            if (!in_array(Trackable::class, class_uses_recursive($job->resolveName()))) {
+                return config('laravel-job-status.track_anonymous', false);
+            }
+        } else {
+            if (!in_array(Trackable::class, class_uses_recursive($job))) {
+                return config('laravel-job-status.track_anonymous', false);
+            }
+        }
+
+        return true;
+    }
+
+    protected function checkJobUpToDate(JobStatusModifier $jobStatusModifier, JobContract $job): void
+    {
+        if ($job->uuid() !== null && $jobStatusModifier->getJobStatus()->uuid !== $job->uuid()) {
+            $jobStatusModifier->setUuid($job->uuid());
+        }
+        if ($job->getJobId() !== null && $jobStatusModifier->getJobStatus()->job_id !== $job->getJobId()) {
+            $jobStatusModifier->setJobId($job->getJobId());
+        }
+
+        if ($jobStatusModifier->getJobStatus()->payload === null) {
+            $jobStatusModifier->setPayload($job->payload());
+        }
+
+        if ($job->getQueue() !== null && $jobStatusModifier->getJobStatus()->queue !== $job->getQueue()) {
+            $jobStatusModifier->setQueue($job->getQueue());
+        }
+    }
+
 }

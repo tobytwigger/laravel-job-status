@@ -161,7 +161,7 @@ class AssertJobStatus
         return $this;
     }
 
-    public function hasQueue(string $queue)
+    public function hasQueue(?string $queue)
     {
         Assert::assertEquals($queue, $this->jobStatus->queue);
 

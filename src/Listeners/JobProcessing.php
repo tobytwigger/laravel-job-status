@@ -5,21 +5,24 @@ namespace JobStatus\Listeners;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\BatchRepository;
 use JobStatus\Enums\Status;
+use JobStatus\Listeners\Utils\Helper;
 
 /**
  * Fired when a job is processing. This happens when the queue worker picks up the job.
  *
  * - Mark the job as started.
  */
-class JobProcessing extends BaseListener
+class JobProcessing
 {
     /**
      * @param \Illuminate\Queue\Events\JobProcessing $event
      */
     public function handle(\Illuminate\Queue\Events\JobProcessing $event)
     {
-        if ($this->isTrackingEnabled()) {
-            $modifier = $this->getJobStatusModifier($event->job);
+        $helper = Helper::forJob($event->job);
+
+        if (Helper::isTrackingEnabled()) {
+            $modifier = $helper->getJobStatusModifier();
 
             if ($modifier !== null) {
                 $modifier->setStatus(Status::STARTED);

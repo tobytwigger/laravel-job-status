@@ -6,6 +6,7 @@ use Illuminate\Bus\Batch;
 use Illuminate\Bus\BatchRepository;
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
+use JobStatus\Listeners\Utils\Helper;
 use JobStatus\Models\JobStatus;
 
 /**
@@ -17,15 +18,17 @@ use JobStatus\Models\JobStatus;
  * - Job status to successful if it's running.
  * - Set percentage to 100%.
  */
-class JobProcessed extends BaseListener
+class JobProcessed
 {
     /**
      * @param \Illuminate\Queue\Events\JobProcessed $event
      */
     public function handle(\Illuminate\Queue\Events\JobProcessed $event)
     {
-        if ($this->isTrackingEnabled()) {
-            $modifier = $this->getJobStatusModifier($event->job);
+        $helper = Helper::forJob($event->job);
+
+        if (Helper::isTrackingEnabled()) {
+            $modifier = $helper->getJobStatusModifier();
             if ($modifier === null) {
                 return;
             }
@@ -34,9 +37,9 @@ class JobProcessed extends BaseListener
                 $modifier->setFinishedAt(now());
                 $modifier->setPercentage(100.0);
 
-                if ($event->job->hasFailed()) {
+                if ($helper->getJob()->hasFailed()) {
                     $modifier->setStatus(Status::FAILED);
-                } elseif ($event->job->isReleased()) {
+                } elseif ($helper->getJob()->isReleased()) {
                     $modifier->setStatus(Status::RELEASED);
                 } elseif ($this->batchIsCancelled($modifier->getJobStatus())) {
                     $modifier->setStatus(Status::CANCELLED);
@@ -46,7 +49,7 @@ class JobProcessed extends BaseListener
                 }
             }
 
-            if ($event->job->isReleased()) {
+            if ($helper->getJob()->isReleased()) {
                 $jobStatus = JobStatus::create([
                     'class' => $modifier->getJobStatus()?->class,
                     'alias' => $modifier->getJobStatus()?->alias,
@@ -54,9 +57,9 @@ class JobProcessed extends BaseListener
                     'batch_id' => $modifier->getJobStatus()->batch_id,
                     'percentage' => 0,
                     'status' => Status::QUEUED,
-                    'uuid' => $event->job->uuid(),
-                    'connection_name' => $event->job->getConnectionName(),
-                    'job_id' => $event->job->getJobId(),
+                    'uuid' => $helper->getJob()->uuid(),
+                    'connection_name' => $helper->getJob()->getConnectionName(),
+                    'job_id' => $helper->getJob()->getJobId(),
                     'is_unprotected' => $modifier->getJobStatus()?->is_unprotected,
                 ]);
 

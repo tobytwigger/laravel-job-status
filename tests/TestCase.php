@@ -15,6 +15,7 @@ use JobStatus\Tests\fakes\AssertBatch;
 use JobStatus\Tests\fakes\AssertBatches;
 use JobStatus\Tests\fakes\AssertJobStatus;
 use JobStatus\Tests\fakes\AssertJobStatuses;
+use JobStatus\Tests\fakes\JobFakeFactory;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -31,6 +32,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
         $this->loadMigrationsFrom(realpath(__DIR__ . '/../database/migrations'));
+        JobFakeFactory::createJobsTable();
+        JobFakeFactory::createBatchesTable();
+        JobFakeFactory::createFailedJobsTable();
     }
 
     /**
@@ -40,6 +44,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
+        $app['config']->set('queue.failed', [
+            'table' => 'failed_jobs',
+            'database' => 'test'
+        ]);
         $app['config']->set('database.default', 'test');
         $app['config']->set('database.connections.test', [
             'driver'   => 'sqlite',
