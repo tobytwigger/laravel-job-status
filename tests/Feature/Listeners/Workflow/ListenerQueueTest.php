@@ -873,7 +873,7 @@ class ListenerQueueTest extends TestCase
     public function cannot_retry_a_queued_job()
     {
         $this->expectException(\JobStatus\Exceptions\CannotBeRetriedException::class);
-        $this->expectExceptionMessage('All the following fields must be given: Queue, Payload');
+        $this->expectExceptionMessage('All the following fields must be given: Payload');
 
         (new JobFakeFactory())
             ->setAlias('my-fake-listener')
@@ -882,7 +882,6 @@ class ListenerQueueTest extends TestCase
             ->maxExceptions(1)
             ->setUsers([1, 2])
             ->setIsUnprotected(true)
-            ->onQueue('my-database-queue')
             ->dispatchAsListener(0);
 
 
@@ -892,7 +891,7 @@ class ListenerQueueTest extends TestCase
                 0,
                 fn (AssertJobStatus $jobStatus) => $jobStatus
                     ->missingPayload()
-                    ->hasQueue(null)
+                    ->hasQueue('default')
                     ->hasClass(ListenerFake::class)
                     ->hasAlias('my-fake-listener')
                     ->hasStatus(Status::QUEUED)
