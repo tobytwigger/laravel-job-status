@@ -4,6 +4,7 @@ namespace JobStatus\Listeners;
 
 use JobStatus\Enums\Status;
 use JobStatus\JobStatusModifier;
+use JobStatus\Listeners\Utils\Helper;
 use JobStatus\Models\JobStatus;
 
 /**
@@ -11,15 +12,17 @@ use JobStatus\Models\JobStatus;
  *
  * - Create a new job status.
  */
-class JobReleasedAfterException extends BaseListener
+class JobReleasedAfterException
 {
     /**
      * @param \Illuminate\Queue\Events\JobReleasedAfterException $event
      */
     public function handle(\Illuminate\Queue\Events\JobReleasedAfterException $event)
     {
-        if ($this->isTrackingEnabled()) {
-            $modifier = $this->getJobStatusModifier($event->job);
+        $helper = Helper::forJob($event->job);
+
+        if (Helper::isTrackingEnabled()) {
+            $modifier = $helper->getJobStatusModifier();
             if ($modifier === null) {
                 return;
             }
@@ -31,9 +34,9 @@ class JobReleasedAfterException extends BaseListener
                 'percentage' => 0,
                 'batch_id' => $modifier->getJobStatus()->batch_id,
                 'status' => Status::QUEUED,
-                'uuid' => $event->job->uuid(),
-                'connection_name' => $event->job->getConnectionName(),
-                'job_id' => $event->job->getJobId(),
+                'uuid' => $helper->getJob()->uuid(),
+                'connection_name' => $helper->getJob()->getConnectionName(),
+                'job_id' => $helper->getJob()->getJobId(),
                 'is_unprotected' => $modifier->getJobStatus()?->is_unprotected,
             ]);
 

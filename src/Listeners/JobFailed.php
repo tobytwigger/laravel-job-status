@@ -6,6 +6,7 @@ use Illuminate\Bus\Batch;
 use Illuminate\Bus\BatchRepository;
 use JobStatus\Enums\Status;
 use JobStatus\Exceptions\JobCancelledException;
+use JobStatus\Listeners\Utils\Helper;
 
 /**
  * Thrown when a job has failed and will no longer be ran.
@@ -19,12 +20,14 @@ use JobStatus\Exceptions\JobCancelledException;
  * - Set the percentage to 100%
  *
  */
-class JobFailed extends BaseListener
+class JobFailed
 {
     public function handle(\Illuminate\Queue\Events\JobFailed $event)
     {
-        if ($this->isTrackingEnabled()) {
-            $modifier = $this->getJobStatusModifier($event->job);
+        $helper = Helper::forJob($event->job);
+
+        if (Helper::isTrackingEnabled()) {
+            $modifier = $helper->getJobStatusModifier();
             if ($modifier === null) {
                 return true;
             }

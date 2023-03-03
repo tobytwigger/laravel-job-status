@@ -1,10 +1,9 @@
 <?php
 
-namespace JobStatus\Listeners;
+namespace JobStatus\Listeners\Utils;
 
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Queue\Job;
-use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Support\Facades\App;
 use JobStatus\Concerns\Trackable;
 use JobStatus\Enums\Status;
@@ -13,24 +12,42 @@ use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
 
-class BaseListener
+class Helper
 {
-    protected function getJobStatusModifier(JobContract $job): ?JobStatusModifier
-    {
-        if ($this->validateJob($job) === false) {
-            return null;
-        }
-        $jobStatus = $this->getJobStatus($job);
-        if ($jobStatus === null) {
-            return null;
-        }
-        $modifier = new JobStatusModifier($jobStatus);
-        $this->checkJobUpToDate($modifier, $job);
+    private Job $job;
 
-        return $modifier;
+    public function __construct(Job $job)
+    {
+        $this->job = $job;
     }
 
-    protected function checkJobUpToDate(JobStatusModifier $jobStatusModifier, JobContract $job): void
+    public static function forJob(Job $job)
+    {
+        return new static($job);
+    }
+
+    public static function isTrackingEnabled(): bool
+    {
+        return config('laravel-job-status.enabled', true);
+    }
+
+    public function getJob(): Job
+    {
+        return $this->job;
+    }
+
+    public function getTrackable(): null|object|string
+    {
+        $job = null;
+
+        if ($this->job instanceof \Illuminate\Queue\Jobs\Job) {
+            $job = $this->job->resolveName();
+        }
+
+        return $job;
+    }
+
+    protected function checkJobUpToDate(JobStatusModifier $jobStatusModifier, Job $job): void
     {
         if ($job->uuid() !== null && $jobStatusModifier->getJobStatus()->uuid !== $job->uuid()) {
             $jobStatusModifier->setUuid($job->uuid());
@@ -48,33 +65,16 @@ class BaseListener
         }
     }
 
-    protected function validateJob(mixed $job): bool
+    protected function isTrackable(): bool
     {
-        if (is_string($job) || $job instanceof \Closure) {
-            return false;
-        }
-        if (!is_object($job)) {
-            return false;
-        }
-
-        // True if extends Illuminate\Contracts\Queue\Job
-        if (method_exists($job, 'resolveName')) {
-            if (!$job->resolveName() || !class_exists($job->resolveName())) {
-                return false;
-            }
-            if (!in_array(Trackable::class, class_uses_recursive($job->resolveName()))) {
-                return config('laravel-job-status.track_anonymous', false);
-            }
-        } else {
-            if (!in_array(Trackable::class, class_uses_recursive($job))) {
-                return config('laravel-job-status.track_anonymous', false);
-            }
+        if (!in_array(Trackable::class, class_uses_recursive($this->getTrackable()))) {
+            return config('laravel-job-status.track_anonymous', false);
         }
 
         return true;
     }
 
-    protected function getJobStatus(JobContract $job): ?JobStatus
+    protected function getJobStatus(Job $job): ?JobStatus
     {
         $jobStatus = null;
 
@@ -101,7 +101,7 @@ class BaseListener
                 )->id;
             }
             $jobStatus = JobStatus::create([
-                'class' => get_class($command),
+                'class' => method_exists($command, 'displayName') ? $command->displayName() : get_class($command),
                 'alias' => method_exists($command, 'alias') ? $command->alias() : get_class($command),
                 'queue' => $job->getQueue(),
                 'payload' => $job->payload(),
@@ -138,8 +138,20 @@ class BaseListener
         return $jobStatus;
     }
 
-    protected function isTrackingEnabled()
+    public function getJobStatusModifier(): ?JobStatusModifier
     {
-        return config('laravel-job-status.enabled', true);
+        if ($this->isTrackable() === false) {
+            return null;
+        }
+
+        $jobStatus = $this->getJobStatus($this->job);
+
+        if ($jobStatus === null) {
+            return null;
+        }
+        $modifier = new JobStatusModifier($jobStatus);
+        $this->checkJobUpToDate($modifier, $this->job);
+
+        return $modifier;
     }
 }

@@ -18,8 +18,7 @@ class Queue implements Arrayable, Jsonable
         string $queueName,
         ?int $numberOfRuns = null,
         array $countWithStatus = []
-    )
-    {
+    ) {
         $this->queueName = $queueName;
         $this->numberOfRuns = $numberOfRuns;
         $this->countWithStatus = $countWithStatus;
