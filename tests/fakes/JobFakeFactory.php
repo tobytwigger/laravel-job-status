@@ -7,10 +7,8 @@ use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
-use JobStatus\Models\JobStatus;
 
 class JobFakeFactory
 {
@@ -233,9 +231,15 @@ class JobFakeFactory
         Event::listen(FakeEvent::class, ListenerFake::class);
 
         ListenerFake::setupParameters(
-            $this->alias, $this->tags, $this->callback ?? static::class . '@fakeCallback',
-            $this->signals, $this->users, $this->isUnprotected, queue: $this->queue,
-            maxExceptions: $this->maxExceptions, tries: $this->tries
+            $this->alias,
+            $this->tags,
+            $this->callback ?? static::class . '@fakeCallback',
+            $this->signals,
+            $this->users,
+            $this->isUnprotected,
+            queue: $this->queue,
+            maxExceptions: $this->maxExceptions,
+            tries: $this->tries
         );
 
         static::createJobsTable();
@@ -338,5 +342,4 @@ class JobFakeFactory
 
         return $this;
     }
-
 }

@@ -14,5 +14,4 @@ class FakeEvent
     {
         $this->someParameter = $someParameter;
     }
-
 }

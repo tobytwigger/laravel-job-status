@@ -4,7 +4,6 @@ namespace JobStatus\Listeners\Utils;
 
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Queue\Job;
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\App;
 use JobStatus\Concerns\Trackable;
 use JobStatus\Enums\Status;
@@ -12,11 +11,9 @@ use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
-use Prophecy\Call\Call;
 
 class Helper
 {
-
     private Job $job;
 
     public function __construct(Job $job)
@@ -34,7 +31,7 @@ class Helper
         return config('laravel-job-status.enabled', true);
     }
 
-    public function getJob(): \Illuminate\Contracts\Queue\Job
+    public function getJob(): Job
     {
         return $this->job;
     }
@@ -43,7 +40,7 @@ class Helper
     {
         $job = null;
 
-        if($this->job instanceof \Illuminate\Queue\Jobs\Job) {
+        if ($this->job instanceof \Illuminate\Queue\Jobs\Job) {
             $job = $this->job->resolveName();
         }
 
@@ -73,6 +70,7 @@ class Helper
         if (!in_array(Trackable::class, class_uses_recursive($this->getTrackable()))) {
             return config('laravel-job-status.track_anonymous', false);
         }
+
         return true;
     }
 

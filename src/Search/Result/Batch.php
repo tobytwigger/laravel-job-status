@@ -17,8 +17,7 @@ class Batch implements Arrayable, Jsonable
         JobBatch $batch,
         ?int $numberOfRuns = null,
         array    $countWithStatus = []
-    )
-    {
+    ) {
         $this->batch = $batch;
         $this->numberOfRuns = $numberOfRuns;
         $this->countWithStatus = $countWithStatus;

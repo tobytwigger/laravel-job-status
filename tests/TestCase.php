@@ -46,7 +46,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         $app['config']->set('queue.failed', [
             'table' => 'failed_jobs',
-            'database' => 'test'
+            'database' => 'test',
         ]);
         $app['config']->set('database.default', 'test');
         $app['config']->set('database.connections.test', [

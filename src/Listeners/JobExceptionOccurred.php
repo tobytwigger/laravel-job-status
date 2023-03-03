@@ -2,7 +2,6 @@
 
 namespace JobStatus\Listeners;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Queue\Jobs\Job;
 use JobStatus\Enums\Status;
 use JobStatus\Exceptions\JobCancelledException;
@@ -18,7 +17,6 @@ use JobStatus\Models\JobStatus;
  */
 class JobExceptionOccurred
 {
-
     public function handle(\Illuminate\Queue\Events\JobExceptionOccurred $event)
     {
         $helper = Helper::forJob($event->job);
@@ -80,5 +78,4 @@ class JobExceptionOccurred
             $modifier->setPercentage(100);
         }
     }
-
 }

@@ -29,7 +29,7 @@ class JobQueued
         if (Helper::isTrackingEnabled()) {
             $job = $event->job;
 
-            if($job instanceof CallQueuedListener) {
+            if ($job instanceof CallQueuedListener) {
                 $job = app($job->displayName());
             }
             if ($this->validateJob($job) === false) {
@@ -137,5 +137,4 @@ class JobQueued
             $jobStatusModifier->setQueue($job->getQueue());
         }
     }
-
 }
