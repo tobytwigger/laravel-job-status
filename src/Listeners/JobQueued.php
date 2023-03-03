@@ -53,7 +53,7 @@ class JobQueued
                 'percentage' => 0,
                 'queue' => (property_exists($job, 'job') && $job?->job && $job->job?->getQueue())
                     ? $job->job->getQueue()
-                    : $job?->queue ?? $job?->queue ?? null,
+                    : $job?->queue ?? $job?->queue ?? config(sprintf('queue.connections.%s.queue', $event->connectionName), null),
                 'payload' => ((property_exists($job, 'job') && $job?->job && $job->job?->getQueue())
                     ? $job->job?->payload()
                     : null),

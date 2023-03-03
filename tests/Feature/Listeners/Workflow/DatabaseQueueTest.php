@@ -1955,4 +1955,22 @@ class DatabaseQueueTest extends TestCase
 
         $jobRun->retry();
     }
+
+    /** @test */
+    public function it_assigns_the_default_queue_name_to_the_queue_if_no_queue_specified()
+    {
+        config()->set('laravel-job-status.track_anonymous', true);
+
+        $job = (new JobFakeFactory())
+            ->setAlias('my-fake-job')
+            ->setTags(['my-first-tag' => 1, 'my-second-tag' => 'mytag-value', 'my-indexless-tag'])
+            ->setUsers([1, 2])
+            ->setIsUnprotected(true)
+            ->dispatch(0);
+
+        $this->assertCount(1, JobStatus::all());
+        $this->assertEquals('default', JobStatus::first()->queue);
+
+    }
+
 }
