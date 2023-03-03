@@ -9,7 +9,12 @@
         <span class="text-weight-medium">{{
           props.trackedJob.alias ?? props.trackedJob.class
         }}</span>
-        <span v-if="props.trackedJob.alias !== props.trackedJob.class" class="text-grey-8"> - {{ props.trackedJob.class }}</span>
+        <span
+          v-if="props.trackedJob.alias !== props.trackedJob.class"
+          class="text-grey-8"
+        >
+          - {{ props.trackedJob.class }}</span
+        >
       </q-item-label>
       <q-item-label caption lines="5">
         <status-count
