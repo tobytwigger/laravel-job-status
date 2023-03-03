@@ -1970,7 +1970,5 @@ class DatabaseQueueTest extends TestCase
 
         $this->assertCount(1, JobStatus::all());
         $this->assertEquals('default', JobStatus::first()->queue);
-
     }
-
 }
