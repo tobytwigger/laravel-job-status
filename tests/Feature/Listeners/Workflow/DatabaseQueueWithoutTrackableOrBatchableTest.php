@@ -339,7 +339,7 @@ class DatabaseQueueWithoutTrackableOrBatchableTest extends TestCase
         $this->assertEquals(JobFakeWithoutTrackableOrBatchable::class, $jobStatusRetryNotRan->alias);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatusRetryNotRan->status);
         $this->assertEquals(0, $jobStatusRetryNotRan->percentage);
-        $this->assertEquals(1, $jobStatusRetryNotRan->job_id);
+        $this->assertNull($jobStatusRetryNotRan->job_id);
         $this->assertEquals('database', $jobStatusRetryNotRan->connection_name);
         $this->assertNotNull($jobStatusRetryNotRan->uuid);
         $this->assertEquals(true, $jobStatusRetryNotRan->is_unprotected);

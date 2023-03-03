@@ -558,7 +558,7 @@ class DatabaseQueueTest extends TestCase
         $this->assertEquals('my-fake-job', $jobStatus->alias);
         $this->assertEquals(\JobStatus\Enums\Status::QUEUED, $jobStatus->status);
         $this->assertEquals(0, $jobStatus->percentage);
-        $this->assertEquals(1, $jobStatus->job_id);
+        $this->assertNull($jobStatus->job_id);
         $this->assertEquals('database', $jobStatus->connection_name);
         $this->assertNotNull($jobStatus->uuid);
         $this->assertEquals(true, $jobStatus->is_unprotected);
