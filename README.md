@@ -74,3 +74,4 @@ at [tobytwigger1@gmail.com](mailto:tobytwigger1@gmail.com)
 
 
 ![dashboard timeline](https://github.com/tobytwigger/laravel-job-status/blob/main/docs/docs/assets/images/dashboard/run-timeline.png "View the timeline for a particular run of a job")
+
