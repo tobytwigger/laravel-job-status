@@ -53,7 +53,6 @@ class JobExceptionOccurred
                     'status' => Status::QUEUED,
                     'uuid' => $helper->getJob()->uuid(),
                     'connection_name' => $helper->getJob()->getConnectionName(),
-                    'job_id' => $helper->getJob()->getJobId(),
                     'is_unprotected' => $modifier->getJobStatus()?->is_unprotected,
                 ]);
 
