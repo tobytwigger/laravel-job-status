@@ -3,6 +3,7 @@
 namespace JobStatus\Tests\Feature\Http\Api\Queues;
 
 use Illuminate\Support\Facades\Gate;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobStatus;
 use JobStatus\Tests\TestCase;
 
@@ -142,5 +143,26 @@ class QueueIndexTest extends TestCase
         $this->assertEquals(2, $response->json('data.0.count'));
         $this->assertEquals('queue1', $response->json('data.0.queue'));
         $this->assertEquals('queue3', $response->json('data.1.queue'));
+    }
+
+    /** @test */
+    public function it_returns_the_full_data_by_default(){
+        JobStatus::factory(['queue' => 'OurQueue', 'is_unprotected' => true, 'status' => Status::QUEUED])->count(5)->create();
+        JobStatus::factory(['queue' => 'OurQueue', 'is_unprotected' => true, 'status' => Status::SUCCEEDED])->count(4)->create();
+        JobStatus::factory(['queue' => 'OurQueue', 'is_unprotected' => true, 'status' => Status::CANCELLED])->count(2)->create();
+
+        $response = $this->getJson(route('api.job-status.queues.index'));
+
+        $response->assertJsonCount(1, 'data');
+
+        $this->assertEquals([
+            'count' => 11,
+            'name' => 'OurQueue',
+            'queued' => 5,
+            'started' => 0,
+            'failed' => 0,
+            'succeeded' => 4,
+            'cancelled' => 2
+        ], $response->json('data.0'));
     }
 }

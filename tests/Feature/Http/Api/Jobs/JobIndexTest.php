@@ -3,7 +3,9 @@
 namespace JobStatus\Tests\Feature\Http\Api\Jobs;
 
 use Illuminate\Support\Facades\Gate;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobStatus;
+use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
 class JobIndexTest extends TestCase
@@ -151,5 +153,28 @@ class JobIndexTest extends TestCase
         $this->assertEquals(2, $response->json('data.0.count'));
         $this->assertEquals('alias1', $response->json('data.0.alias'));
         $this->assertEquals('alias3', $response->json('data.1.alias'));
+    }
+
+    /** @test */
+    public function it_returns_the_full_dataset(){
+        JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => true, 'status' => Status::QUEUED])->count(5)->create();
+        JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => true, 'status' => Status::SUCCEEDED])->count(4)->create();
+        JobStatus::factory(['alias' => 'OurAlias', 'is_unprotected' => true, 'status' => Status::CANCELLED])->count(2)->create();
+
+        $response = $this->getJson(route('api.job-status.jobs.index'));
+
+        $response->assertJsonCount(1, 'data');
+
+        $this->assertEquals([
+            'count' => 11,
+            'alias' => 'OurAlias',
+            'class' => JobFake::class,
+            'queued' => 5,
+            'started' => 0,
+            'failed' => 0,
+            'cancelled' => 2,
+            'failure_reasons' => [],
+            'successful' => 4,
+        ], $response->json('data.0'));
     }
 }

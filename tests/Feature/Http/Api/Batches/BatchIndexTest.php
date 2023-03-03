@@ -4,8 +4,10 @@ namespace JobStatus\Tests\Feature\Http\Api\Batches;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Testing\AssertableJsonString;
+use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;
 use JobStatus\Models\JobStatus;
+use JobStatus\Tests\fakes\JobFake;
 use JobStatus\Tests\TestCase;
 
 class BatchIndexTest extends TestCase
@@ -162,5 +164,31 @@ class BatchIndexTest extends TestCase
         $this->assertEquals($batches[2]->id, $response->json('data.2.id'));
         $this->assertEquals($batches[1]->id, $response->json('data.3.id'));
         $this->assertEquals($batches[0]->id, $response->json('data.4.id'));
+    }
+
+    /** @test */
+    public function it_returns_the_full_dataset(){
+        $batch = JobBatch::factory()->create();
+
+        JobStatus::factory(['batch_id' => $batch->id, 'is_unprotected' => true, 'status' => Status::QUEUED])->count(5)->create();
+        JobStatus::factory(['batch_id' => $batch->id, 'is_unprotected' => true, 'status' => Status::SUCCEEDED])->count(4)->create();
+        JobStatus::factory(['batch_id' => $batch->id, 'is_unprotected' => true, 'status' => Status::CANCELLED])->count(2)->create();
+
+        $response = $this->getJson(route('api.job-status.batches.index'));
+
+        $response->assertJsonCount(1, 'data');
+
+        $this->assertEquals([
+            'count' => 11,
+            'name' => $batch->name,
+            'batch_id' => $batch->batch_id,
+            'queued' => 5,
+            'started' => 0,
+            'failed' => 0,
+            'succeeded' => 4,
+            'cancelled' => 2,
+            'created_at' => $batch->created_at->toIsoString(),
+            'id' => $batch->id,
+        ], $response->json('data.0'));
     }
 }

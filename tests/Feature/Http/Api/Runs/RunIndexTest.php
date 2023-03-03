@@ -2,6 +2,7 @@
 
 namespace JobStatus\Tests\Feature\Http\Api\Runs;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use JobStatus\Enums\Status;
 use JobStatus\Models\JobBatch;
@@ -67,7 +68,7 @@ class RunIndexTest extends TestCase
         $jobStatus = JobStatus::factory()->has(
             JobStatusTag::factory(['key' => 'one', 'value' => 'yes']),
             'tags'
-        )->create(['alias' => 'mystatus', 'status' => \JobStatus\Enums\Status::STARTED]);
+        )->create(['alias' => 'mystatus', 'status' => Status::STARTED]);
         JobStatus::factory()->count(10)->create();
 
         $statusQuery = [
@@ -227,7 +228,6 @@ class RunIndexTest extends TestCase
         $this->assertEquals([], $response->json('data'));
 
 
-
         $response = $this->getJson(route('api.job-status.runs.index', ['alias' => [$jobStatus->alias], 'bypassAuth' => true]));
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
@@ -383,5 +383,41 @@ class RunIndexTest extends TestCase
         $this->assertEquals($jobStatus[2]->id, $response->json('data.6.id'));
         $this->assertEquals($jobStatus[1]->id, $response->json('data.7.id'));
         $this->assertEquals($jobStatus[0]->id, $response->json('data.8.id'));
+    }
+
+    /** @test */
+    public function by_default_it_gives_all_properties()
+    {
+        /** @var JobStatus $jobStatus */
+        $jobStatus = JobStatus::factory()->has(JobStatusTag::factory(['key' => 'one', 'value' => 'yes']), 'tags')->create(['alias' => 'mystatus']);
+
+        $response = $this->getJson(route('api.job-status.runs.index'));
+
+        $this->assertEquals([
+            'alias' => 'mystatus',
+            'class' => 'JobStatus\Tests\fakes\JobFake',
+            'percentage' => round($jobStatus->percentage, 0),
+            'status' => $jobStatus->status->value,
+            'uuid' => $jobStatus->uuid->toString(),
+            'has_parent' => false,
+            'parent' => null,
+            'tags' => [
+                'one' => 'yes',
+            ],
+            'created_at' => (string) $jobStatus->created_at->toISOString(),
+            'exception' => null,
+            'messages' => [],
+            'signals' => [],
+            'started_at' => null,
+            'finished_at' => null,
+            'id' => 1,
+            'batch_id' => null,
+            'batch_id_uuid' => null,
+            'statuses' => [],
+            'has_payload' => true,
+            'connection_name' => 'database',
+            'queue' => $jobStatus->queue,
+            'released_runs' => [],
+        ], $response->json('data.0'));
     }
 }
