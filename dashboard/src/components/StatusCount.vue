@@ -1,9 +1,9 @@
 <template>
   <span>
-<!--    <q-chip v-if="props.count === 0" dense>-->
-<!--      <q-avatar :color="color" text-color="white">{{ props.count }}</q-avatar>-->
-<!--      {{ props.label }}-->
-<!--    </q-chip>-->
+    <!--    <q-chip v-if="props.count === 0" dense>-->
+    <!--      <q-avatar :color="color" text-color="white">{{ props.count }}</q-avatar>-->
+    <!--      {{ props.label }}-->
+    <!--    </q-chip>-->
     <q-chip dense :color="props.color" text-color="white">
       <span>
         {{ props.label }}
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps} from 'vue';
+import { defineProps } from 'vue';
 
 const props = defineProps<{
   count: number;
