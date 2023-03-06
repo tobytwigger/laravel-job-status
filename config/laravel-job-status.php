@@ -47,7 +47,7 @@ return [
     'routes' => [
         'api' => [
             // The full URL to the API, e.g. https://example.com/api. You may also omit the path after the domain and use the prefix instead.
-            'base_url' => 'api',
+            'base_url' => null,
             // Can be used to append `/api` to the domain. If the `base_url` is https://example.com and the prefix is `api`, the url will be https://example.com/api
             'prefix' => 'api',
             // Whether the API is enabled
