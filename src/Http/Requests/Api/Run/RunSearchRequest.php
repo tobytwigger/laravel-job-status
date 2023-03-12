@@ -13,7 +13,14 @@ class RunSearchRequest extends FormRequest
     {
         return [
             'alias' => 'sometimes|array',
-            'tags' => 'sometimes|array',
+            'tags' => ['sometimes', function($attribute, $value, $fail) {
+                if(!is_array($value)) {
+                    $value = json_decode($value, true);
+                }
+                if (!is_array($value)) {
+                    $fail('The tags must be an array.');
+                }
+            }],
             'status' => ['sometimes', 'array'],
             'status.*' => [
                 'string',

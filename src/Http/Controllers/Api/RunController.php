@@ -51,7 +51,11 @@ class RunController extends Controller
 
 
         if ($request->has('tags')) {
-            $query->whereTags($request->input('tags'));
+            $query->whereTags(
+                is_array($request->input('tags', []))
+                    ? $request->input('tags', [])
+                    : json_decode($request->input('tags'), true)
+            );
         }
 
         return $query->paginateRuns(
