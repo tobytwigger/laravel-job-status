@@ -153,7 +153,7 @@ class JobFakeFactory
         $job->maxExceptions = $this->maxExceptions;
         $job->tries = $this->tries;
 
-        if($this->withoutTracking === true) {
+        if ($this->withoutTracking === true) {
             $job->withoutTracking();
         }
 

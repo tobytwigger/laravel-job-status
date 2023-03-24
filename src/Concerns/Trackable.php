@@ -8,7 +8,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
-use JobStatus\NullJobStatusModifier;
 use JobStatus\Search\Result\TrackedJob;
 
 trait Trackable
