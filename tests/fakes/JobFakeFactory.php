@@ -41,6 +41,8 @@ class JobFakeFactory
 
     private ?string $queue = null;
 
+    private bool $withoutTracking = false;
+
     /**
      * @return int
      */
@@ -150,6 +152,10 @@ class JobFakeFactory
         }
         $job->maxExceptions = $this->maxExceptions;
         $job->tries = $this->tries;
+
+        if($this->withoutTracking === true) {
+            $job->withoutTracking();
+        }
 
         return $job;
     }
@@ -339,6 +345,13 @@ class JobFakeFactory
     public function onQueue(?string $queue)
     {
         $this->queue = $queue;
+
+        return $this;
+    }
+
+    public function withoutTracking()
+    {
+        $this->withoutTracking = true;
 
         return $this;
     }
