@@ -51,14 +51,15 @@ class ClearJobStatusCommand extends Command
                 $statuses->whereFinished();
             }
         }
-        
+
         if ($hours !== 0) {
             $statuses->where('updated_at', '<', now()->subHours($hours));
         }
 
-        $statuses = $statuses->get();
+        $statuses = $statuses->pluck('id');
 
-        $this->withProgressBar($statuses, function (JobStatus $jobStatus) {
+        $this->withProgressBar($statuses, function (int $jobStatusId) {
+            $jobStatus = JobStatus::findOrFail($jobStatusId);
             if ($this->option('trim')) {
                 $jobStatus->statuses()->delete();
                 $jobStatus->signals()->delete();
