@@ -8,6 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use JobStatus\JobStatusModifier;
 use JobStatus\JobStatusRepository;
 use JobStatus\Models\JobStatus;
+use JobStatus\NullJobStatusModifier;
 use JobStatus\Search\Result\TrackedJob;
 
 trait Trackable
@@ -15,6 +16,18 @@ trait Trackable
     use InteractsWithSignals, InteractsWithQueue, Batchable;
 
     public ?JobStatus $jobStatus = null;
+
+    public bool $shouldTrack = true;
+
+    public function withoutTracking(bool $shouldTrack = false): void
+    {
+        $this->shouldTrack = $shouldTrack;
+    }
+
+    public function shouldTrack(): bool
+    {
+        return $this->shouldTrack;
+    }
 
     public static function search(array $tags = []): Builder
     {
@@ -53,7 +66,7 @@ trait Trackable
 
     public function status(): JobStatusModifier
     {
-        if ($this->getJobStatus() === null) {
+        if ($this->getJobStatus() === null && $this->shouldTrack()) {
             throw new \Exception('Could not get the status of the job');
         }
 
