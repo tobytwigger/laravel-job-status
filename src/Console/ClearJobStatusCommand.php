@@ -50,10 +50,12 @@ class ClearJobStatusCommand extends Command
             } else {
                 $statuses->whereFinished();
             }
-            if ($hours !== 0) {
-                $statuses->where('updated_at', '<', now()->subHours($hours));
-            }
         }
+        
+        if ($hours !== 0) {
+            $statuses->where('updated_at', '<', now()->subHours($hours));
+        }
+
         $statuses = $statuses->get();
 
         $this->withProgressBar($statuses, function (JobStatus $jobStatus) {
