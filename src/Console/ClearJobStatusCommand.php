@@ -60,8 +60,8 @@ class ClearJobStatusCommand extends Command
 
         $this->withProgressBar($statuses, function (int $jobStatusId) {
             $jobStatus = JobStatus::find($jobStatusId);
-            if($jobStatus === null) {
-                return;   
+            if ($jobStatus === null) {
+                return;
             }
             if ($this->option('trim')) {
                 $jobStatus->statuses()->delete();
