@@ -59,7 +59,10 @@ class ClearJobStatusCommand extends Command
         $statuses = $statuses->pluck('id');
 
         $this->withProgressBar($statuses, function (int $jobStatusId) {
-            $jobStatus = JobStatus::findOrFail($jobStatusId);
+            $jobStatus = JobStatus::find($jobStatusId);
+            if($jobStatus === null) {
+                return;   
+            }
             if ($this->option('trim')) {
                 $jobStatus->statuses()->delete();
                 $jobStatus->signals()->delete();
