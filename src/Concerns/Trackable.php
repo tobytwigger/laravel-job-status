@@ -25,7 +25,7 @@ trait Trackable
 
     public function shouldTrack(): bool
     {
-        return $this->shouldTrack;
+        return $this->shouldTrack && config('laravel-job-status.enabled', true);
     }
 
     public static function search(array $tags = []): Builder
